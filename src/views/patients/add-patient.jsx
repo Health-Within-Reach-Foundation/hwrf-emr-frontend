@@ -1,170 +1,254 @@
-import React from "react";
+import React, { useState } from "react";
 import Card from "../../components/Card";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
-
-//Images
-import img11 from "/assets/images/user/11.png"
+import { Button, Col, Form, Row } from "react-bootstrap";
+import toast from "react-hot-toast";
+import patientServices from "../../api/patient-services";
 
 const AddPatient = () => {
-    return (
-        <>
-            <Row>
-                <Col lg={3}>
-                    <Card>
-                        <Card.Header className="d-flex justify-content-between">
-                            <Card.Header.Title>
-                                <h4 className="card-title">Add User</h4>
-                            </Card.Header.Title>
-                        </Card.Header>
-                        <Card.Body>
-                            <Form>
-                                <Form.Group className="form-group">
-                                    <Container className="d-flex flex-column align-items-center py-5">
-                                        <div className="text-center">
-                                            <img className="profile-pic img-fluid rounded-circle mb-3" src={img11} alt="profile-pic" style={{ width: "150px", height: "150px", objectFit: "cover" }} />
-                                            <div>
-                                                <Button type="button" className="btn btn-primary rounded-1" onClick={() => document.getElementById('file-upload').click()}>Profile Upload</Button>
-                                                <input id="file-upload" className="d-none" type="file" accept="image/*" />
-                                            </div>
-                                        </div>
-                                        <div className="mt-3 text-center">
-                                            <span>Only</span>{" "}
-                                            <a href="#" className="text-primary">.jpg</a>{" "}
-                                            <a href="#" className="text-primary">.png</a>{" "}
-                                            <a href="#" className="text-primary">.jpeg</a>{" "}
-                                            <span>allowed</span>
-                                        </div>
-                                    </Container>
-                                </Form.Group>
-                                <Form.Group className="form-group cust-form-input">
-                                    <Form.Label className="mb-0">User Role:</Form.Label>
-                                    <select className="form-control my-2" id="selectuserrole">
-                                        <option>Select</option>
-                                        <option>Surgery</option>
-                                        <option>Gastroenterologist</option>
-                                        <option>Endocrinologist</option>
-                                        <option>Orthopaedic surgeon</option>
-                                        <option>Cardiologist </option>
-                                    </select>
-                                </Form.Group>
-                                <Form.Group className="form-group cust-form-input">
-                                    <Form.Label htmlFor="furl" className="mb-0">Facebook Url:</Form.Label>
-                                    <Form.Control type="text" className="my-2" id="furl" placeholder="Facebook Url" />
-                                </Form.Group>
-                                <Form.Group className="form-group cust-form-input">
-                                    <Form.Label htmlFor="turl" className="mb-0">Twitter Url:</Form.Label>
-                                    <Form.Control type="text" className="form-control my-2" id="turl" placeholder="Twitter Url" />
-                                </Form.Group>
-                                <Form.Group className="form-group cust-form-input">
-                                    <Form.Label htmlFor="instaurl" className="mb-0" >Instagram Url:</Form.Label>
-                                    <Form.Control type="text" className="form-control my-2" id="instaurl" placeholder="Instagram Url" />
-                                </Form.Group>
-                                <Form.Group className="form-group cust-form-input">
-                                    <Form.Label htmlFor="lurl" className="mb-0" >Linkedin Url:</Form.Label>
-                                    <Form.Control type="text" className="form-control my-2" id="lurl" placeholder="Linkedin Url" />
-                                </Form.Group>
-                            </Form>
-                        </Card.Body>
-                    </Card>
-                </Col>
-                <Col lg={9}>
-                    <Card>
-                        <Card.Header className="d-flex justify-content-between">
-                            <Card.Header.Title>
-                                <h4 className="card-title">New User Information</h4>
-                            </Card.Header.Title>
-                        </Card.Header>
-                        <Card.Body>
-                            <div className="new-user-info">
-                                <Form>
-                                    <Row className="cust-form-input">
-                                        <Col md={6} className="form-group">
-                                            <Form.Label htmlFor="fname" className="mb-0">First Name:</Form.Label>
-                                            <Form.Control type="text" className="my-2" id="fname" placeholder="First Name" />
-                                        </Col>
-                                        <Col md={6} className="form-group">
-                                            <Form.Label htmlFor="lname" className="mb-0">Last Name:</Form.Label>
-                                            <Form.Control type="text" className="my-2" id="lname" placeholder="Last Name" />
-                                        </Col>
-                                        <Col md={6} className="form-group">
-                                            <Form.Label htmlFor="add1" className="mb-0">Street Address 1:</Form.Label>
-                                            <Form.Control type="text" className="my-2" id="add1" placeholder="Street Address 1" />
-                                        </Col>
-                                        <Col md={6} className="form-group">
-                                            <Form.Label htmlFor="add2" className="mb-0">Street Address 2:</Form.Label>
-                                            <Form.Control type="text" className="my-2" id="add2" placeholder="Street Address 2" />
-                                        </Col>
-                                        <Col sm={12} className="form-group">
-                                            <Form.Label htmlFor="cname" className="mb-0">Department Name:</Form.Label>
-                                            <Form.Control type="text" className="my-2" id="cname" placeholder="Department Name" />
-                                        </Col>
-                                        <Col sm={12} className="form-group">
-                                            <Form.Label className="mb-0">Country:</Form.Label>
-                                            <select className="form-control my-2" id="selectcountry">
-                                                <option>Select Country</option>
-                                                <option>Caneda</option>
-                                                <option>Noida</option>
-                                                <option>USA</option>
-                                                <option>India</option>
-                                                <option>Africa</option>
-                                            </select>
-                                        </Col>
-                                        <Col md={6} className="form-group">
-                                            <Form.Label htmlFor="mobno" className="mb-0">Mobile Number:</Form.Label>
-                                            <Form.Control type="text" className="my-2" id="mobno" placeholder="Mobile Number" />
-                                        </Col>
-                                        <Col md={6} className="form-group">
-                                            <Form.Label htmlFor="altconno" className="mb-0">Alternate Contact:</Form.Label>
-                                            <Form.Control type="text" className="my-2" id="altconno"
-                                                placeholder="Alternate Contact" />
-                                        </Col>
-                                        <Col md={6} className="form-group">
-                                            <Form.Label htmlFor="email" className="mb-0">Email:</Form.Label>
-                                            <Form.Control type="email" className="my-2" id="email" placeholder="Email" />
-                                        </Col>
-                                        <Col md={6} className="form-group">
-                                            <Form.Label htmlFor="pno" className="mb-0">Pin Code:</Form.Label>
-                                            <Form.Control type="text" className="my-2" id="pno" placeholder="Pin Code" />
-                                        </Col>
-                                        <Col md={6} className="form-group">
-                                            <Form.Label htmlFor="city" className="mb-0">Town/City:</Form.Label>
-                                            <Form.Control type="text" className="my-2" id="city" placeholder="Town/City" />
-                                        </Col>
-                                    </Row>
-                                    <hr />
-                                    <h5 className="mb-3">Security</h5>
-                                    <Row className="cust-form-input">
-                                        <Col md={12} className="form-group">
-                                            <Form.Label htmlFor="uname" className="mb-0">User Name:</Form.Label>
-                                            <Form.Control type="text" className="form-control my-2" id="uname" placeholder="User Name" />
-                                        </Col>
-                                        <Col md={6} className="form-group">
-                                            <Form.Label htmlFor="pass" className="mb-0">Password:</Form.Label>
-                                            <Form.Control type="password" className="form-control my-2" id="pass" placeholder="Password" />
-                                        </Col>
-                                        <Col md={6} className="form-group">
-                                            <Form.Label htmlFor="rpass" className="mb-0">Repeat Password:</Form.Label>
-                                            <Form.Control type="password" className="form-control my-2" id="rpass"
-                                                placeholder="Repeat Password " />
-                                        </Col>
-                                    </Row>
-                                    <div className="custom-control custom-checkbox mb-4 p-0 d-flex justity-content-center gap-1">
-                                        <input type="checkbox" className="custom-control-input me-1" id="customCheck1" />
-                                        <label className="custom-control-label" htmlFor="customCheck1">Enable
-                                            Two-Factor-Authentication</label>
-                                    </div>
-                                    <div className="d-flex gap-2">
-                                        <button type="submit" className="btn btn-danger-subtle">Cancel</button>
-                                        <button type="submit" className="btn btn-primary-subtle">Save</button>
-                                    </div>
-                                </Form>
-                            </div>
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
-        </>
-    )
-}
+  const [formData, setFormData] = useState({
+    fname: "",
+    lname: "",
+    mobile: "",
+    age: "",
+    sex: "",
+    city: "",
+    add1: "",
+  });
 
-export default AddPatient
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false); // Loading state
+
+  // Handle input change
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData({ ...formData, [id]: value });
+  };
+
+  // Validate form
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.fname.trim()) newErrors.fname = "First name is required.";
+    if (!formData.lname.trim()) newErrors.lname = "Last name is required.";
+    if (!formData.mobile.trim()) {
+      newErrors.mobile = "Mobile number is required.";
+    } else if (!/^\d{10}$/.test(formData.mobile)) {
+      newErrors.mobile = "Mobile number must be 10 digits.";
+    }
+    if (!formData.age.trim()) {
+      newErrors.age = "Age is required.";
+    } else if (!/^\d+$/.test(formData.age) || parseInt(formData.age, 10) <= 0) {
+      newErrors.age = "Age must be a positive number.";
+    }
+    if (!formData.sex.trim()) newErrors.sex = "Sex is required.";
+    if (!formData.city.trim()) newErrors.city = "City is required.";
+    if (!formData.add1.trim()) newErrors.add1 = "Address is required.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (validateForm()) {
+      setLoading(true); // Set loading to true
+      const patientData = {
+        name: `${formData.fname} ${formData.lname}`,
+        mobile: formData.mobile,
+        age: formData.age,
+        sex: formData.sex,
+        address: `${formData.add1}, ${formData.city}`,
+      };
+
+      try {
+        const response = await patientServices.addPatient(patientData);
+        if (response.success) {
+          toast.success("Patient added successfully.");
+          setFormData({
+            fname: "",
+            lname: "",
+            mobile: "",
+            age: "",
+            sex: "",
+            city: "",
+            add1: "",
+          });
+        } else {
+          toast.error("Failed to add patient. Please try again.");
+        }
+      } catch (error) {
+        toast.error("An error occurred. Please try again later.");
+      } finally {
+        setLoading(false); // Set loading back to false
+      }
+    }
+  };
+
+  return (
+    <Row>
+      <Card>
+        <Card.Header className="d-flex justify-content-between">
+          <Card.Header.Title>
+            <h4 className="card-title">New Patient Information</h4>
+          </Card.Header.Title>
+        </Card.Header>
+        <Card.Body>
+          <div className="new-user-info">
+            <Form onSubmit={handleSubmit}>
+              <Row className="cust-form-input">
+                <Col md={6} className="form-group">
+                  <Form.Label htmlFor="fname" className="mb-0">
+                    First Name:
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    className={`my-2 ${errors.fname ? "is-invalid" : ""}`}
+                    id="fname"
+                    placeholder="First Name"
+                    value={formData.fname}
+                    onChange={handleInputChange}
+                    disabled={loading} // Disable field when loading
+                  />
+                  {errors.fname && (
+                    <div className="invalid-feedback">{errors.fname}</div>
+                  )}
+                </Col>
+                <Col md={6} className="form-group">
+                  <Form.Label htmlFor="lname" className="mb-0">
+                    Last Name:
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    className={`my-2 ${errors.lname ? "is-invalid" : ""}`}
+                    id="lname"
+                    placeholder="Last Name"
+                    value={formData.lname}
+                    onChange={handleInputChange}
+                    disabled={loading}
+                  />
+                  {errors.lname && (
+                    <div className="invalid-feedback">{errors.lname}</div>
+                  )}
+                </Col>
+                <Col md={6} className="form-group">
+                  <Form.Label htmlFor="mobile" className="mb-0">
+                    Mobile Number:
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    className={`my-2 ${errors.mobile ? "is-invalid" : ""}`}
+                    id="mobile"
+                    placeholder="Mobile Number"
+                    value={formData.mobile}
+                    onChange={handleInputChange}
+                    disabled={loading}
+                  />
+                  {errors.mobile && (
+                    <div className="invalid-feedback">{errors.mobile}</div>
+                  )}
+                </Col>
+                <Col md={6} className="form-group">
+                  <Form.Label htmlFor="age" className="mb-0">
+                    Age:
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    className={`my-2 ${errors.age ? "is-invalid" : ""}`}
+                    id="age"
+                    placeholder="Age"
+                    value={formData.age}
+                    onChange={handleInputChange}
+                    disabled={loading}
+                  />
+                  {errors.age && (
+                    <div className="invalid-feedback">{errors.age}</div>
+                  )}
+                </Col>
+                <Col md={6} className="form-group">
+                  <Form.Label htmlFor="sex" className="mb-0">
+                    Sex:
+                  </Form.Label>
+                  <Form.Control
+                    as="select"
+                    className={`my-2 ${errors.sex ? "is-invalid" : ""}`}
+                    id="sex"
+                    value={formData.sex}
+                    onChange={handleInputChange}
+                    disabled={loading}
+                  >
+                    <option value="">Select Sex</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </Form.Control>
+                  {errors.sex && (
+                    <div className="invalid-feedback">{errors.sex}</div>
+                  )}
+                </Col>
+                <Col md={6} className="form-group">
+                  <Form.Label htmlFor="city" className="mb-0">
+                    Town/City:
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    className={`my-2 ${errors.city ? "is-invalid" : ""}`}
+                    id="city"
+                    placeholder="Town/City"
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    disabled={loading}
+                  />
+                  {errors.city && (
+                    <div className="invalid-feedback">{errors.city}</div>
+                  )}
+                </Col>
+                <Col md={6} className="form-group">
+                  <Form.Label htmlFor="add1" className="mb-0">
+                    Address:
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    className={`my-2 ${errors.add1 ? "is-invalid" : ""}`}
+                    id="add1"
+                    placeholder="Street Address 1"
+                    value={formData.add1}
+                    onChange={handleInputChange}
+                    disabled={loading}
+                  />
+                  {errors.add1 && (
+                    <div className="invalid-feedback">{errors.add1}</div>
+                  )}
+                </Col>
+              </Row>
+              <hr />
+              <div className="d-flex gap-2">
+                <Button
+                  variant="danger-subtle"
+                  type="button"
+                  disabled={loading} // Disable Cancel button when loading
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary-subtle"
+                  type="submit"
+                  disabled={loading} // Disable Save button when loading
+                >
+                  {loading ? (
+                    <span className="spinner-border spinner-border-sm"></span>
+                  ) : (
+                    "Save"
+                  )}
+                </Button>
+              </div>
+            </Form>
+          </div>
+        </Card.Body>
+      </Card>
+    </Row>
+  );
+};
+
+export default AddPatient;

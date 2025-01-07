@@ -136,7 +136,7 @@ const VerticalNav = () => {
                       <Tooltip id="Administration">Administration</Tooltip>
                     }
                   >
-                    <i class="ri-home-gear-line"></i>
+                    <i className="ri-home-gear-line"></i>
                   </OverlayTrigger>
                   <span className="item-name">Administration</span>
                   <ArrowIcon />
@@ -169,6 +169,30 @@ const VerticalNav = () => {
           </Accordion>
         )}
 
+{!userRoles.includes("superadmin") && (
+          <Nav.Item as="li">
+            <Link
+              to="/queues"
+              className={`nav-link ${
+                location.pathname === "/queues" ? "active" : ""
+              }`}
+            >
+              <OverlayTrigger
+                key={"Queues"}
+                placement={"right"}
+                overlay={<Tooltip id="Dashboard">Queues</Tooltip>}
+              >
+                <i
+                  className="ri-list-view"
+                  data-bs-toggle="tooltip"
+                  title="Queues"
+                  data-bs-placement="right"
+                ></i>
+              </OverlayTrigger>
+              <span className="item-name ">Queues </span>
+            </Link>
+          </Nav.Item>
+        )}
         {/* patients management */}
         {!userRoles.includes("superadmin") && (
           <Accordion bsPrefix="bg-none" onSelect={(e) => setActiveMenu(e)}>
@@ -240,7 +264,7 @@ const VerticalNav = () => {
             </Accordion.Item>
           </Accordion>
         )}
-
+        
         <Nav.Item as="li">
           <Link
             to="/dashboard-pages/dashboard-1"
@@ -332,7 +356,7 @@ const VerticalNav = () => {
               <span className="mini-icon">-</span>
             </Nav.Link>
           </Nav.Item>
-          
+
           {/* <Accordion.Item
             as="li"
             className={`nav-item ${active === "Email" && "active"} ${

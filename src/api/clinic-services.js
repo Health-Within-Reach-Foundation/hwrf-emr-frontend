@@ -127,7 +127,7 @@ const approveClinic = async (clinicId) => {
 
 const getUsersByClinic = async () => {
   try {
-    const response = await apiClient.get(`/clinics/user/all`);
+    const response = await apiClient.get(`/clinics/user`);
     return response.data; // Assuming `data` contains the user list
   } catch (error) {
     console.error("Error fetching clinic users:", error);
@@ -135,10 +135,21 @@ const getUsersByClinic = async () => {
   }
 };
 
+const getSpecialtyDepartmentsByClinic = async (clinicId) => {
+  try {
+    const response = await apiClient.get(`/clinics/specialty-department`);
+    return response.data; // Assuming `data` contains the department list
+  } catch (error) {
+    console.error("Error fetching clinic departments:", error);
+    throw error; // Re-throw to handle in the component
+  }
+}
+
 export default {
   onBoardClinic,
   getClinics,
   getClinicById,
   approveClinic,
   getUsersByClinic,
+  getSpecialtyDepartmentsByClinic
 };

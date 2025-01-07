@@ -54,16 +54,16 @@ const patientItems = [
     name: "Add Patient",
     icon: "ri-user-add-fill",
   },
-  {
-    path: "/patient/patient-profile",
-    name: "Patient Profile",
-    icon: "ri-profile-fill",
-  },
-  {
-    path: "/patient/edit-patient",
-    name: "Edit Patient",
-    icon: "ri-file-edit-fill",
-  },
+  // {
+  //   path: "/patient/patient-profile",
+  //   name: "Patient Profile",
+  //   icon: "ri-profile-fill",
+  // },
+  // {
+  //   path: "/patient/edit-patient",
+  //   name: "Edit Patient",
+  //   icon: "ri-file-edit-fill",
+  // },
 ];
 
 const uiElementsItems = [

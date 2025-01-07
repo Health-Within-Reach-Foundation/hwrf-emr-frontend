@@ -10,7 +10,7 @@ import {
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import JoinUsCarousel from "../../components/join-us-carousel";
-import clinicSerivces from "../../api/clinic-serivces";
+import clinicSerivces from "../../api/clinic-services";
 import toast from "react-hot-toast";
 const initialStateFormData = {
   adminName: "",

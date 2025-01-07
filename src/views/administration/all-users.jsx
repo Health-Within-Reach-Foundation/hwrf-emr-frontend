@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 
 import CustomTable from "../../components/custom-table";
 import { Loading } from "../../components/loading";
-import clinicSerivces from "../../api/clinic-serivces";
+import clinicSerivces from "../../api/clinic-services";
 
 const AllUsers = () => {
   const [loading, setLoading] = useState(false);

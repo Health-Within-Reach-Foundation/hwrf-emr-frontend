@@ -12,7 +12,7 @@ import {
   Breadcrumb,
 } from "react-bootstrap";
 import { Loading } from "../../components/loading";
-import clinicSerivces from "../../api/clinic-serivces";
+import clinicSerivces from "../../api/clinic-services";
 import toast from "react-hot-toast";
 
 const ClinicDetails = () => {

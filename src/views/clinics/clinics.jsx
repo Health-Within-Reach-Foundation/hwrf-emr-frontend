@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import useDataTable from "../../components/hooks/useDatatable";
 import Card from "../../components/Card";
-import clinicSerivces from "../../api/clinic-serivces";
+import clinicServices from "../../api/clinic-services";
 import { Loading } from "../../components/loading";
 import { Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -54,7 +54,7 @@ const Clinics = () => {
   const getPendingClinics = async () => {
     try {
       setLoading(true);
-      const response = await clinicSerivces.getClinics("pending");
+      const response = await clinicServices.getClinics("pending");
       setPendingClinicsTableData(response.data); // Use transformed data directly
     } catch (error) {
       console.error("Error fetching clinics:", error);
@@ -66,7 +66,7 @@ const Clinics = () => {
   const getEnrolledClincs = async () => {
     try {
       setLoading(true);
-      const response = await clinicSerivces.getClinics("active");
+      const response = await clinicServices.getClinics("active");
       setEnrolledClinicsTableData(response.data); // Use transformed data directly
     } catch (error) {
       console.error("Error fetching clinics:", error);
@@ -125,7 +125,6 @@ const Clinics = () => {
           </Card>
         </Col>
       </Row>
-      
     </div>
   );
 };

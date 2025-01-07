@@ -109,6 +109,7 @@ import PatientProfile from "../views/patients/patient-profile";
 import AllUsers from "../views/administration/all-users";
 import AddUser from "../views/administration/add-user";
 import ConfirmPassword from "../views/auth/confirm-password";
+import Appointment from "../views/appointment";
 
 export const DefaultRoute = [
   {
@@ -161,7 +162,7 @@ export const DefaultRoute = [
         element: <AddPatient />,
       },
       {
-        path: "/patient/patient-profile",
+        path: "/patient/patient-profile/:id",
         element: <PatientProfile />,
       },
       {
@@ -169,8 +170,13 @@ export const DefaultRoute = [
         element: <EditPatient />,
       },
       {
+        path: "/queues",
+        element: <Appointment />,
+      },
+      {
         path: "/dashboard-pages/dashboard-1",
-        element: <HospitalDashboardOne />,
+        // element: <HospitalDashboardOne />,
+        element: <BlankPage />,
       },
       {
         path: "/dashboard-pages/dashboard-2",

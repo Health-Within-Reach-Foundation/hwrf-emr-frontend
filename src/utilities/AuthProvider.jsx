@@ -5,6 +5,7 @@ const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  // const [userSpecialty, setUserSpecialty] = useState(null);
   const [userRoles, setUserRoles] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -13,6 +14,7 @@ const AuthProvider = ({ children }) => {
     setUser(authData.user);
     setIsAuthenticated(true);
     setUserRoles(authData.user.roles.map((role) => role.roleName));
+    // setUserSpecialty(authData.user.specialties[0].id);
     localStorage.setItem("accessToken", authData.tokens.access.token);
     localStorage.setItem("refreshToken", authData.tokens.refresh.token);
   };
