@@ -150,14 +150,14 @@ const JoinUs = () => {
                         isInvalid={!!getFieldError("specialties")}
                         required
                       >
-                        <option value="0faae5c1-d75f-4a03-a458-0db59bccf760">
+                        <option value="7f226dc7-d337-4b49-bbcf-fa8427e7c7cd">
                           General Physician
                         </option>
-                        <option value="3e6b6890-6c81-46c7-a69e-723ecd58b946">
+                        <option value="1df43ce8-9492-4584-b103-cd799996c077">
                           Dentist
                         </option>
-                        <option value="12d8b31e-364f-417f-93e2-58bf9acef138">
-                          Pediatrician
+                        <option value="4f69c41b-0aa9-4b29-899c-8bf501f8ed5b">
+                          Mammogram
                         </option>
                       </Form.Select>
                       <Form.Control.Feedback type="invalid">
