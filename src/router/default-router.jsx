@@ -110,6 +110,7 @@ import AllUsers from "../views/administration/all-users";
 import AddUser from "../views/administration/add-user";
 import ConfirmPassword from "../views/auth/confirm-password";
 import Appointment from "../views/appointment";
+import Roles from "../views/administration/roles-management";
 
 export const DefaultRoute = [
   {
@@ -142,6 +143,14 @@ export const DefaultRoute = [
         element: (
           <ClinicRouteGuard allowedRoles={["admin"]}>
             <AllUsers />
+          </ClinicRouteGuard>
+        ),
+      },
+      {
+        path: "/administration/roles",
+        element: (
+          <ClinicRouteGuard allowedRoles={["admin"]}>
+            <Roles />
           </ClinicRouteGuard>
         ),
       },

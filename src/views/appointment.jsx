@@ -81,6 +81,7 @@ const Appointment = () => {
         response.data.map((patient) => ({
           value: patient.id,
           label: patient.name,
+          phoneNumber: patient.mobile,
         }))
       );
     } catch (error) {
@@ -218,6 +219,7 @@ const Appointment = () => {
           />
         </Col>
       </Row>
+      
       <AppointmentForm
         show={show}
         modalClose={() => setShow(false)}

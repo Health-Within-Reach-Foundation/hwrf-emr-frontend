@@ -135,15 +135,37 @@ const getUsersByClinic = async () => {
   }
 };
 
-const getSpecialtyDepartmentsByClinic = async (clinicId) => {
+const getSpecialtyDepartmentsByClinic = async () => {
   try {
-    const response = await apiClient.get(`/clinics/specialty-department`);
+    const response = await apiClient.get(`/clinics/specialities`);
     return response.data; // Assuming `data` contains the department list
   } catch (error) {
     console.error("Error fetching clinic departments:", error);
     throw error; // Re-throw to handle in the component
   }
-}
+};
+
+const createRole = async (roleData) => {
+  try {
+    const response = await apiClient.post("/clinics/roles", roleData);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating role:", error);
+    throw error;
+  }
+};
+
+const getRoles = async () => {
+  try {
+    const response = await apiClient.get("/clinics/roles");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching roles:", error);
+    throw error;
+  }
+};
+
+
 
 export default {
   onBoardClinic,
@@ -151,5 +173,7 @@ export default {
   getClinicById,
   approveClinic,
   getUsersByClinic,
-  getSpecialtyDepartmentsByClinic
+  getSpecialtyDepartmentsByClinic,
+  createRole,
+  getRoles,
 };

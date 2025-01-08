@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Card from "../../components/Card";
 import { Button, Col, Form, Row, Alert } from "react-bootstrap";
 import adminService from "../../api/admin-services";
 import { Loading } from "../../components/loading";
 import toast from "react-hot-toast";
+import clinicServices from "../../api/clinic-services";
+import { Select } from "antd";
 
 const AddUser = () => {
   const [formData, setFormData] = useState({
-    role: "",
-    specialist: "",
+    roles: [],
+    specialities: [],
     firstName: "",
     lastName: "",
     phoneNumber: "",
@@ -16,52 +18,76 @@ const AddUser = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const [showAlert, setShowAlert] = useState(false);
+  const [roles, setRoles] = useState([]);
+  const [specialities, setSpecialities] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
-
-    // Update form data
-    setFormData({ ...formData, [id]: value });
-
-    // Clear individual field error if it exists
-    if (errors[id]) {
-      setErrors((prevErrors) => {
-        const updatedErrors = { ...prevErrors };
-        delete updatedErrors[id];
-        return updatedErrors;
-      });
+  // Fetch roles
+  const getRoles = async () => {
+    try {
+      setLoading(true);
+      const response = await clinicServices.getRoles();
+      setRoles(
+        response.data.map((role) => ({
+          value: role.id,
+          label: role.roleName,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  // Fetch specialities
+  const getSpecialities = async () => {
+    try {
+      setLoading(true);
+      const response = await clinicServices.getSpecialtyDepartmentsByClinic();
+      setSpecialities(
+        response.data.map((speciality) => ({
+          value: speciality.id,
+          label: speciality.name,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching specialities:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getRoles();
+    getSpecialities();
+  }, []);
+
+  const handleSelectChange = (field) => (value) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [field]: value,
+    }));
   };
 
   const validateForm = () => {
     const newErrors = {};
-
-    // Validation rules
-    if (!formData.role || formData.role === "Select")
-      newErrors.role = "User Role is required.";
-
-    if (!formData.specialist || formData.specialist === "Select")
-      newErrors.specialist = "User Speciality is required.";
-
+    if (!formData.roles.length)
+      newErrors.roles = "At least one role is required.";
+    if (!formData.specialities.length)
+      newErrors.specialities = "At least one speciality is required.";
     if (!formData.firstName.trim())
       newErrors.firstName = "First Name is required.";
-
     if (!formData.lastName.trim())
       newErrors.lastName = "Last Name is required.";
-
-    if (!formData.phoneNumber.trim()) {
-      newErrors.phoneNumber = "Mobile Number is required.";
-    } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
-      newErrors.phoneNumber = "Enter a valid 10-digit mobile number.";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Enter a valid email address.";
-    }
+    if (!formData.phoneNumber.trim() || !/^\d{10}$/.test(formData.phoneNumber))
+      newErrors.phoneNumber = "A valid 10-digit mobile number is required.";
+    if (
+      !formData.email.trim() ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+    )
+      newErrors.email = "A valid email address is required.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -73,38 +99,29 @@ const AddUser = () => {
     if (validateForm()) {
       setLoading(true);
       try {
-        // Step 1: Concatenate firstName and lastName to form 'name'
         const name = `${formData.firstName} ${formData.lastName}`;
-
-        // Step 2: Exclude firstName and lastName from formData
         const { firstName, lastName, ...restFormData } = formData;
-
-        // Step 3: Add the 'name' key to the formData
         const updatedFormData = { ...restFormData, name };
 
         const result = await adminService.inviteUser(updatedFormData);
-
         if (result.success) {
-          setShowAlert(true); // Show success alert
+          setShowAlert(true);
           setFormData({
-            role: "",
-            specialist: "",
+            roles: [],
+            specialities: [],
             firstName: "",
             lastName: "",
             phoneNumber: "",
             email: "",
           });
-          setErrors({}); // Clear any residual errors
-          setLoading(false);
-          toast.success("Invitation send to the user");
+          setErrors({});
+          toast.success("Invitation sent to the user.");
         } else {
-          // Handle error using toast or alert
-          setLoading(false);
           toast.error(result.error);
         }
       } catch (err) {
         console.error("Unexpected error:", err);
-        toast.error("An unexpected error occurred");
+        toast.error("An unexpected error occurred.");
       } finally {
         setLoading(false);
       }
@@ -129,41 +146,42 @@ const AddUser = () => {
               <Form>
                 <Form.Group className="form-group cust-form-input">
                   <Form.Label className="mb-0">User Role:</Form.Label>
-                  <Form.Control
-                    as="select"
-                    className="my-2"
-                    id="role"
-                    value={formData.role}
-                    onChange={handleInputChange}
-                  >
-                    <option>Select</option>
-                    <option>doctor</option>
-                    <option>receptionist</option>
-                    <option>assistant</option>
-                  </Form.Control>
-                  {errors.role && (
-                    <Form.Text className="text-danger">{errors.role}</Form.Text>
+                  <Select
+                    mode="multiple"
+                    placeholder="Select Role"
+                    value={formData.roles}
+                    options={roles}
+                    onChange={handleSelectChange("roles")}
+                    allowClear
+                    className="w-100 my-2"
+                    // showSearch
+                    filterOption={(input, option) =>
+                      option.label.toLowerCase().includes(input.toLowerCase())
+                    }
+                  />
+                  {errors.roles && (
+                    <Form.Text className="text-danger">
+                      {errors.roles}
+                    </Form.Text>
                   )}
                 </Form.Group>
                 <Form.Group className="form-group cust-form-input">
                   <Form.Label className="mb-0">User Speciality:</Form.Label>
-                  <Form.Control
-                    as="select"
-                    className="my-2"
-                    id="specialist"
-                    value={formData.specialist}
-                    onChange={handleInputChange}
-                  >
-                    <option>Select</option>
-                    <option>None</option>
-                    <option>General Physician</option>
-                    <option>Dentist</option>
-                    <option>Cardiologist</option>
-                    <option>Pediatrician</option>
-                  </Form.Control>
-                  {errors.specialist && (
+                  <Select
+                    mode="multiple"
+                    placeholder="Select Speciality"
+                    value={formData.specialities}
+                    options={specialities}
+                    onChange={handleSelectChange("specialities")}
+                    allowClear
+                    filterOption={(input, option) =>
+                      option.label.toLowerCase().includes(input.toLowerCase())
+                    }
+                    className="w-100 my-2"
+                  />
+                  {errors.specialities && (
                     <Form.Text className="text-danger">
-                      {errors.specialist}
+                      {errors.specialities}
                     </Form.Text>
                   )}
                 </Form.Group>
@@ -179,100 +197,99 @@ const AddUser = () => {
               </Card.Header.Title>
             </Card.Header>
             <Card.Body>
-              <div className="new-user-info">
-                <Form onSubmit={handleSubmit}>
-                  <Row className="cust-form-input">
-                    <Col md={6} className="form-group">
-                      <Form.Label htmlFor="firstName" className="mb-0">
-                        First Name:
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        className="my-2"
-                        id="firstName"
-                        placeholder="First Name"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                      />
-                      {errors.firstName && (
-                        <Form.Text className="text-danger">
-                          {errors.firstName}
-                        </Form.Text>
-                      )}
-                    </Col>
-                    <Col md={6} className="form-group">
-                      <Form.Label htmlFor="lastName" className="mb-0">
-                        Last Name:
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        className="my-2"
-                        id="lastName"
-                        placeholder="Last Name"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                      />
-                      {errors.lastName && (
-                        <Form.Text className="text-danger">
-                          {errors.lastName}
-                        </Form.Text>
-                      )}
-                    </Col>
-                    <Col md={6} className="form-group">
-                      <Form.Label htmlFor="phoneNumber" className="mb-0">
-                        Mobile Number:
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        className="my-2"
-                        id="phoneNumber"
-                        placeholder="Mobile Number"
-                        value={formData.phoneNumber}
-                        onChange={handleInputChange}
-                      />
-                      {errors.phoneNumber && (
-                        <Form.Text className="text-danger">
-                          {errors.phoneNumber}
-                        </Form.Text>
-                      )}
-                    </Col>
-                    <Col md={6} className="form-group">
-                      <Form.Label htmlFor="email" className="mb-0">
-                        Email:
-                      </Form.Label>
-                      <Form.Control
-                        type="email"
-                        className="my-2"
-                        id="email"
-                        placeholder="Email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                      />
-                      {errors.email && (
-                        <Form.Text className="text-danger">
-                          {errors.email}
-                        </Form.Text>
-                      )}
-                    </Col>
-                  </Row>
-                  <hr />
-                  <div className="d-flex gap-2">
-                    <Button type="submit" className="btn btn-primary-subtle">
-                      Send Invitation
-                    </Button>
-                  </div>
-                  {showAlert && (
-                    <Alert
-                      variant="success"
-                      className="mt-3"
-                      onClose={() => setShowAlert(false)}
-                      dismissible
-                    >
-                      User invited successfully!
-                    </Alert>
-                  )}
-                </Form>
-              </div>
+              <Form onSubmit={handleSubmit}>
+                <Row className="cust-form-input">
+                  <Col md={6}>
+                    <Form.Label>First Name:</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="First Name"
+                      value={formData.firstName}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          firstName: e.target.value,
+                        }))
+                      }
+                    />
+                    {errors.firstName && (
+                      <Form.Text className="text-danger">
+                        {errors.firstName}
+                      </Form.Text>
+                    )}
+                  </Col>
+                  <Col md={6}>
+                    <Form.Label>Last Name:</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Last Name"
+                      value={formData.lastName}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          lastName: e.target.value,
+                        }))
+                      }
+                    />
+                    {errors.lastName && (
+                      <Form.Text className="text-danger">
+                        {errors.lastName}
+                      </Form.Text>
+                    )}
+                  </Col>
+                  <Col md={6}>
+                    <Form.Label>Mobile Number:</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Mobile Number"
+                      value={formData.phoneNumber}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          phoneNumber: e.target.value,
+                        }))
+                      }
+                    />
+                    {errors.phoneNumber && (
+                      <Form.Text className="text-danger">
+                        {errors.phoneNumber}
+                      </Form.Text>
+                    )}
+                  </Col>
+                  <Col md={6}>
+                    <Form.Label>Email:</Form.Label>
+                    <Form.Control
+                      type="email"
+                      placeholder="Email"
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
+                    />
+                    {errors.email && (
+                      <Form.Text className="text-danger">
+                        {errors.email}
+                      </Form.Text>
+                    )}
+                  </Col>
+                </Row>
+                <Button type="submit" className="mt-3">
+                  Send Invitation
+                </Button>
+                {showAlert && (
+                  <Alert
+                    variant="success"
+                    className="mt-3"
+                    onClose={() => setShowAlert(false)}
+                    dismissible
+                  >
+                    User invited successfully!
+                  </Alert>
+                )}
+              </Form>
             </Card.Body>
           </Card>
         </Col>

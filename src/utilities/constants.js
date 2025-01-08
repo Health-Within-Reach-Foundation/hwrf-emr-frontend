@@ -9,6 +9,11 @@ const adminiStartionItems = [
     name: "Add User",
     icon: "ri-user-add-fill",
   },
+  {
+    path:"/administration/roles",
+    name:"Roles",
+    icon:"ri-user-settings-fill"
+  }
 ];
 
 const emailItems = [
