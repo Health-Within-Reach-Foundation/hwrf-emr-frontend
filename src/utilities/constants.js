@@ -13,6 +13,11 @@ const adminiStartionItems = [
     path:"/administration/roles",
     name:"Roles",
     icon:"ri-user-settings-fill"
+  },
+  {
+    path:"/administration/campaigns",
+    name:"Campaigns",
+    icon:"ri-health-book-fill"
   }
 ];
 

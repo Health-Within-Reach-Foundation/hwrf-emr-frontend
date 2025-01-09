@@ -111,6 +111,7 @@ import AddUser from "../views/administration/add-user";
 import ConfirmPassword from "../views/auth/confirm-password";
 import Appointment from "../views/appointment";
 import Roles from "../views/administration/roles-management";
+import CampManagement from "../views/administration/campaigns";
 
 export const DefaultRoute = [
   {
@@ -159,6 +160,14 @@ export const DefaultRoute = [
         element: (
           <ClinicRouteGuard allowedRoles={["admin"]}>
             <AddUser />
+          </ClinicRouteGuard>
+        ),
+      },
+      {
+        path: "/administration/campaigns",
+        element: (
+          <ClinicRouteGuard allowedRoles={["admin"]}>
+            <CampManagement />
           </ClinicRouteGuard>
         ),
       },

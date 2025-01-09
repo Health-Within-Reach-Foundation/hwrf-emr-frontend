@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 // Import From React Bootstrap
 import { Col, Container, Dropdown, Nav, Navbar, Row } from "react-bootstrap";
@@ -25,13 +25,20 @@ import user04 from "/assets/images/user/04.jpg";
 
 import user001 from "/assets/images/user/001.png";
 import { useAuth } from "../../../utilities/AuthProvider";
+import CampSelectionModal from "../../camp-seletion-modal";
 
 const Header = () => {
   const pageLayout = useSelector(SettingSelector.page_layout);
   const auth = useAuth();
   const [open, setOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { user, userRoles } = useAuth();
+
+  const [currentCampData, setCurrentCampData] = useState(
+    user?.camps?.find((camp) => camp?.id == user?.currentCampId) || null
+  );
+
   useEffect(() => {
     const handleScrolld = () => {
       if (window.scrollY >= 75) {
@@ -523,9 +530,7 @@ const Header = () => {
                   />
                   <div className="caption d-none d-lg-block">
                     <h6 className="mb-0 line-height">{user.name}</h6>
-                    <span className="font-size-12">
-                      {userRoles.join(", ")}
-                    </span>
+                    <span className="font-size-12">{userRoles.join(", ")}</span>
                   </div>{" "}
                 </Dropdown.Toggle>{" "}
                 <Dropdown.Menu
@@ -536,11 +541,39 @@ const Header = () => {
                   <div className="m-0 -none card">
                     <div className="py-3 card-header d-flex justify-content-between bg-primary mb-0 rounded-top-3">
                       <div className="header-title">
-                        <h5 className="mb-0 text-white">{user.name}</h5>
+                        <h5 className="mb-0 text-white font-weight-bold">
+                          Camp: {currentCampData?.name}
+                        </h5>
+                        <small className="mb-0 text-white">
+                          <i class="ri-map-pin-fill"></i>{" "}
+                          {currentCampData?.address +
+                            " " +
+                            ", " +
+                            currentCampData?.city +
+                            " " +
+                            ", " +
+                            currentCampData?.state}
+                        </small>
                         {/* <span className="text-white ">Available</span> */}
                       </div>
                     </div>
                     <div className="p-0 card-body">
+                      <div
+                        className="iq-sub-card"
+                        onClick={() => {
+                          setShowModal(true);
+                        }}
+                      >
+                        <div className="d-flex align-items-center">
+                          <div className="bg-primary-subtle px-3 py-2 rounded-1">
+                            <i class="ri-checkbox-circle-fill"></i>
+                          </div>
+                          <div className="ms-3 flex-grow-1 text-start">
+                            <h6 className="mb-0 ">Manage camp</h6>
+                            <p className="mb-0">Change current camp</p>
+                          </div>
+                        </div>
+                      </div>
                       <Link to="/doctor/doctor-profile" className="iq-sub-card">
                         <div className="d-flex align-items-center">
                           <div className="bg-primary-subtle px-3 py-2 rounded-1">
@@ -554,7 +587,7 @@ const Header = () => {
                           </div>
                         </div>
                       </Link>
-                      <Link to="/doctor/edit-doctor" className="iq-sub-card">
+                      {/* <Link to="/doctor/edit-doctor" className="iq-sub-card">
                         <div className="d-flex align-items-center">
                           <div className="bg-primary-subtle px-3 py-2 rounded-1">
                             <i className="ri-profile-line "></i>
@@ -566,7 +599,7 @@ const Header = () => {
                             </p>
                           </div>
                         </div>
-                      </Link>
+                      </Link> */}
                       <Link
                         to="/extra-pages/account-setting"
                         className="iq-sub-card"
@@ -583,7 +616,7 @@ const Header = () => {
                           </div>
                         </div>
                       </Link>
-                      <Link
+                      {/* <Link
                         to="/extra-pages/privacy-setting"
                         className="iq-sub-card"
                       >
@@ -598,7 +631,7 @@ const Header = () => {
                             </p>
                           </div>
                         </div>
-                      </Link>
+                      </Link> */}
                       <div className="iq-sub-card d-flex justify-content-center">
                         <button
                           //   to="/auth/sign-in"
@@ -909,6 +942,17 @@ const Header = () => {
         </Navbar.Collapse>
       </Navbar>
       {/* </Navbar> */}
+
+      {showModal && (
+        <CampSelectionModal
+          open={showModal}
+          camps={user?.camps || []}
+          onClose={() => {
+            setShowModal(false);
+          }}
+          preCheckedCampId={user?.currentCampId}
+        />
+      )}
     </>
   );
 };
