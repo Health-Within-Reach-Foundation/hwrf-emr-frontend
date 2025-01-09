@@ -52,52 +52,59 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    const initializeAuth = async () => {
-      const accessToken = localStorage.getItem("accessToken");
-      const refreshToken = localStorage.getItem("refreshToken");
+  const initializeAuth = async () => {
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
 
-      if (!accessToken || !refreshToken) {
-        setUser(null);
-        setIsAuthenticated(false);
-        setLoading(false);
-        return;
-      }
+    if (!accessToken || !refreshToken) {
+      setUser(null);
+      setIsAuthenticated(false);
+      setLoading(false);
+      return;
+    }
 
-      try {
-        setLoading(true);
-        const data = await authServices.getUser();
-        setUser(data.user);
-        setUserRoles(data.user.roles.map((role) => role.roleName));
+    try {
+      setLoading(true);
+      const data = await authServices.getUser();
+      setUser(data.user);
+      setUserRoles(data.user.roles.map((role) => role.roleName));
 
-        setIsAuthenticated(true);
-      } catch (error) {
-        console.error("Failed to restore user:", error.message);
-        setIsAuthenticated(false);
-        setUser(null);
-        setUserRoles([]);
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error("Failed to restore user:", error.message);
+      setIsAuthenticated(false);
+      setUser(null);
+      setUserRoles([]);
 
-        if (error.response?.status === 401 && refreshToken) {
-          try {
-            const newTokens = await authServices.refreshAccessToken(
-              refreshToken
-            );
-            saveAuthData(newTokens);
-          } catch (refreshError) {
-            console.error("Token refresh failed:", refreshError.message);
-            logout();
-          }
+      if (error.response?.status === 401 && refreshToken) {
+        try {
+          const newTokens = await authServices.refreshAccessToken(refreshToken);
+          saveAuthData(newTokens);
+        } catch (refreshError) {
+          console.error("Token refresh failed:", refreshError.message);
+          logout();
         }
-      } finally {
-        setLoading(false);
       }
-    };
-      initializeAuth();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    initializeAuth();
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, login, logout, loading, userRoles }}
+      value={{
+        user,
+        isAuthenticated,
+        login,
+        logout,
+        loading,
+        userRoles,
+        initializeAuth,
+      }}
     >
       {children}
     </AuthContext.Provider>
