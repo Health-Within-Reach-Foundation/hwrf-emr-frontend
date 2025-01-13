@@ -111,6 +111,9 @@ import AddUser from "../views/administration/add-user";
 import ConfirmPassword from "../views/auth/confirm-password";
 import Appointment from "../views/appointment";
 import Roles from "../views/administration/roles-management";
+import FormTemplates from "../views/form-templates";
+import PatientForm from "../views/form-templates/patientForm";
+import EditableForm from "../views/form-templates/editableForm";
 import CampManagement from "../views/administration/campaigns";
 
 export const DefaultRoute = [
@@ -190,6 +193,22 @@ export const DefaultRoute = [
       {
         path: "/queues",
         element: <Appointment />,
+      },
+      {
+        path: "/form-templates",
+        element: <FormTemplates />,
+      },
+      {
+        path: "/form-templates/:id",
+        element: <PatientForm />,
+      },
+      {
+        path: "/form-templates/:id",
+        element: <EditableForm />,
+      },
+      {
+        path: "/form-templates/:id",
+        element: <EditableForm />,
       },
       {
         path: "/dashboard-pages/dashboard-1",

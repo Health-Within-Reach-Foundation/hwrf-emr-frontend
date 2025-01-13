@@ -1,0 +1,55 @@
+// Variables for colors
+$primary-color: #1890ff;
+$primary-hover-color: #40a9ff;
+$background-gradient: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+$card-bg-color: #ffffff;
+$shadow-color: rgba(0, 0, 0, 0.1);
+
+// Center the form on the screen
+.dynamic-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: none !important;
+  padding: 20px;
+
+  // Style the card
+  .dynamic-form-card {
+    width: 60% !important;
+    // max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px $shadow-color;
+    padding: 20px;
+    background-color: $card-bg-color;
+
+    // Enhance form spacing
+    .ant-form-item {
+      margin-bottom: 16px;
+    }
+
+    // Customize the submit button
+    .submit-button {
+      width: 100%;
+      background-color: $primary-color;
+      border-color: $primary-color;
+      font-size: 16px;
+      height: 40px;
+      font-weight: 500;
+
+      &:hover {
+        background-color: $primary-hover-color;
+        border-color: $primary-hover-color;
+      }
+    }
+
+    // Improve input styles
+    .ant-input,
+  
+    .ant-radio-group,
+    .ant-checkbox-group {
+      border-radius: 6px;
+      padding: 8px;
+    }
+  }
+}

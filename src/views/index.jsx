@@ -30,7 +30,7 @@ const generatePath = (path) => {
 const Index = () => {
   const backgroundImage = generatePath("/assets/images/page-img/38.png");
   const userImage = generatePath("/assets/images/user/11.png");
-  const { user } = useAuth();
+  const { user , userRoles} = useAuth();
   const [campDetails, setCampDetails] = useState(() => {
     const activeCamps = user?.camps?.filter((camp) => camp.status === "active");
     return activeCamps?.find((camp) => camp.id === user?.currentCampId) || null;
@@ -954,8 +954,16 @@ const Index = () => {
           </Card>
         </Col>
       </Row>
-      <CampSelectionModal open={campDetails === null} camps={user?.camps || []} onClose={()=>{}} preCheckedCampId={null}/>
-    </>
+      <CampSelectionModal
+        open={
+          campDetails === null &&
+          !userRoles.includes("superadmin") &&
+          !userRoles.includes("admin")
+        }
+        camps={user?.camps || []}
+        onClose={() => {}}
+        preCheckedCampId={null}
+      />    </>
   );
 };
 

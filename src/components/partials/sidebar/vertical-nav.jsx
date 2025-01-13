@@ -193,6 +193,30 @@ const VerticalNav = () => {
             </Link>
           </Nav.Item>
         )}
+{userRoles.includes("admin") && (
+          <Nav.Item as="li">
+            <Link
+              to="/form-templates"
+              className={`nav-link ${
+                location.pathname === "/form-templates" ? "active" : ""
+              }`}
+            >
+              <OverlayTrigger
+                key={"Form_Templtes"}
+                placement={"right"}
+                overlay={<Tooltip id="Dashboard">Form Templtes</Tooltip>}
+              >
+                <i
+                  className="ri-list-view"
+                  data-bs-toggle="tooltip"
+                  title="FormTempltes"
+                  data-bs-placement="right"
+                ></i>
+              </OverlayTrigger>
+              <span className="item-name ">Form Templtes </span>
+            </Link>
+          </Nav.Item>
+        )}
         {/* patients management */}
         {!userRoles.includes("superadmin") && (
           <Accordion bsPrefix="bg-none" onSelect={(e) => setActiveMenu(e)}>
