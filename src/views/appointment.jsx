@@ -10,6 +10,7 @@ import clinicServices from "../api/clinic-services";
 import CustomTable from "../components/custom-table";
 import { Loading } from "../components/loading";
 import DateCell from "../components/date-cell";
+import { Link } from "react-router-dom";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -29,31 +30,90 @@ const Appointment = () => {
   ];
 
   const columns = [
-    { data: "patientRegNo", title: "Reg. No" },
-    { data: "patientName", title: "Name" },
-    { data: "patientSex", title: "Sex" },
+    {
+      data: "patientRegNo",
+      title: "Reg. No",
+      render: (data, row) => {
+        return (
+          <a href={`/patient/patient-profile/${row.patientId}`} className="">
+            {data}
+          </a>
+        );
+      },
+    },
+    {
+      data: "patientName",
+      title: "Name",
+      render: (data, row) => {
+        return (
+          <a href={`/patient/patient-profile/${row.patientId}`} className="">
+            {data}
+          </a>
+        );
+      },
+    },
+    {
+      data: "patientSex",
+      title: "Sex",
+      render: (data, row) => {
+        return (
+          <a href={`/patient/patient-profile/${row.patientId}`} className="">
+            {data}
+          </a>
+        );
+      },
+    },
     {
       data: "appointmentDate",
       title: "Queue Date",
-      render: (data) => {
-        return <DateCell date={data} />;
+      render: (data, row) => {
+        // console.log(data,row);
+        return (
+          <a href={`/patient/patient-profile/${row.patientId}`} className="">
+            <DateCell date={data} />
+          </a>
+        );
       },
     },
     {
       data: "tokenNumber",
       title: "Token Number",
+      render: (data,row) => {
+        return (
+          <a href={`/patient/patient-profile/${row.patientId}`} className="">
+            {data}
+          </a>
+        );
+      },
     },
     {
       data: "queueType",
       title: "Queue Type",
+      render: (data, row) => {
+        return (
+          <a href={`/patient/patient-profile/${row.patientId}`} className="">
+            {data}
+          </a>
+        );
+      },
     },
-    { data: "status", title: "Status" },
     {
-      title: "View",
-      data: "patientId",
-      render: (data) =>
-        `<a href="/patient/patient-profile/${data}" class="btn btn-primary btn-sm">View</a>`,
+      data: "status",
+      title: "Status",
+      render: (data, row) => {
+        return (
+          <a href={`/patient/patient-profile/${row.patientId}`} className="">
+            {data}
+          </a>
+        );
+      },
     },
+    // {
+    //   title: "View",
+    //   data: "patientId",
+    //   render: (data) =>
+    //     `<a href="/patient/patient-profile/${data}" class="btn btn-primary btn-sm">View</a>`,
+    // },
   ];
 
   const fetchAppointments = async (selectedDate) => {
@@ -219,7 +279,7 @@ const Appointment = () => {
           />
         </Col>
       </Row>
-      
+
       <AppointmentForm
         show={show}
         modalClose={() => setShow(false)}

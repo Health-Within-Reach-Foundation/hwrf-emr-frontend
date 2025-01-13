@@ -248,7 +248,7 @@ const AppointmentForm = ({ show, modalClose, patients, departments }) => {
   return (
     <Modal show={show} onHide={modalClose} centered backdrop="static" animation>
       <Modal.Header>
-        <Modal.Title>Add Appointment</Modal.Title>
+        <Modal.Title>Add to queue</Modal.Title>
         <button
           type="button"
           className="btn-close"

@@ -3,7 +3,7 @@ import apiClient from "./axios-client";
 const inviteUser = async (userFormBody) => {
     try {
       // Make the POST request
-      const response = await apiClient.post(`/clinics/user`, userFormBody);
+      const response = await apiClient.post(`/clinics/users`, userFormBody);
   
       // Since the response has no content, we can assume success if no error is thrown
       return { success: true };

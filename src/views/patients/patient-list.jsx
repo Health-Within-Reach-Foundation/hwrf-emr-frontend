@@ -100,19 +100,89 @@ const PatientList = () => {
 
   // Table columns
   const columns = [
-    { title: "Register No", data: "regNo" },
-    { title: "Name", data: "name" },
-    { title: "Age", data: "age" },
-    { title: "Gender", data: "sex" },
-    { title: "Mobile", data: "mobile" },
-    { title: "Address", data: "address" },
+    {
+      title: "Register No",
+      data: "regNo",
+      render: (data, row) => {
+        console.log(data, row);
+        return (
+          <a href={`/patient/patient-profile/${row.id}`} className="">
+            {data}
+          </a>
+        );
+      },
+    },
+    {
+      title: "Name",
+      data: "name",
+      render: (data, row) => {
+        console.log(data, row);
+        return (
+          <a href={`/patient/patient-profile/${row.id}`} className="">
+            {data}
+          </a>
+        );
+      },
+    },
+    {
+      title: "Age",
+      data: "age",
+      render: (data, row) => {
+        console.log(data, row);
+        return (
+          <a href={`/patient/patient-profile/${row.id}`} className="">
+            {data}
+          </a>
+        );
+      },
+    },
+    {
+      title: "Gender",
+      data: "sex",
+      render: (data, row) => {
+        console.log(data, row);
+        return (
+          <a href={`/patient/patient-profile/${row.id}`} className="">
+            {data}
+          </a>
+        );
+      },
+    },
+    {
+      title: "Mobile",
+      data: "mobile",
+      render: (data, row) => {
+        console.log(data, row);
+        return (
+          <a href={`/patient/patient-profile/${row.id}`} className="">
+            {data}
+          </a>
+        );
+      },
+    },
+    {
+      title: "Address",
+      data: "address",
+      render: (data, row) => {
+        console.log(data, row);
+        return (
+          <a href={`/patient/patient-profile/${row.id}`} className="">
+            {data}
+          </a>
+        );
+      },
+    },
     // { title: "Register Date", data: "createdAt" },
     {
       title: "Register Date",
       data: "createdAt",
-      render: (data) => {
-        console.log("data -->", data);
-        return <DateCell date={data} />;
+      render: (data, row) => {
+        console.log(data, row);
+        return (
+          <a href={`/patient/patient-profile/${row.id}`} className="">
+            <DateCell date={data} />
+          </a>
+        );
       },
     },
   ];
@@ -254,7 +324,7 @@ const PatientList = () => {
           enableSearch
           enableFilters
           filtersConfig={filtersConfig} // Pass filters configuration
-          rowOnClick={handleRowClick} // Pass row click handler
+          // rowOnClick={handleRowClick} // Pass row click handler
           onApplyFilters={applyFilters} // Pass apply filters function
           onResetFilters={resetFilters} // Pass reset filters function
         />

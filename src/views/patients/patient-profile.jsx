@@ -10,13 +10,14 @@ import {
   Modal,
   Alert,
 } from "react-bootstrap";
-import { Drawer, Input, TreeSelect } from "antd"; // Import TreeSelect from antd
-import Select from "react-select";
+import { Drawer, Input, TreeSelect, Select } from "antd"; // Import TreeSelect from antd
+// import Select from "react-select";
 import { useParams } from "react-router-dom";
 import patientServices from "../../api/patient-services";
 import { Loading } from "../../components/loading";
 import { useAuth } from "../../utilities/AuthProvider";
 import CustomTable from "../../components/custom-table";
+import toast from "react-hot-toast";
 
 const PatientProfile = () => {
   const { id } = useParams();
@@ -62,7 +63,7 @@ const PatientProfile = () => {
       setLoading(true);
       const response = await patientServices.getPatientDetailsById(
         id,
-        user.specialties[0].id
+        user?.specialties[0]?.id
       );
       const { data } = response;
       console.log("patient profile data with medical records -->", data);
@@ -88,6 +89,31 @@ const PatientProfile = () => {
       setRecordForm(createEmptyRecord());
     }
     setDrawerVisible(true);
+  };
+  const handleInputChange = (key, value) => {
+    setPatientData((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleSavePatientData = async () => {
+    // const patientBody = { patientData };
+    const patientBody = {
+      name: patientData.name,
+      address: patientData.address,
+      age: patientData.age,
+      sex: patientData.sex,
+      mobile: patientData.mobileNumber,
+    };
+    try {
+      const response = await patientServices.updatePatientDetails(
+        id,
+        patientBody
+      );
+      if (response.success) {
+        toast.success(response.message);
+      }
+    } catch (error) {
+      toast.error("Error while updating patient !");
+    }
   };
 
   const handleSaveRecord = async () => {
@@ -116,6 +142,7 @@ const PatientProfile = () => {
 
   const hasMedicalRecord = (appointment) =>
     medicalRecords.some((rec) => rec.appointmentId === appointment.id);
+
   useEffect(() => {
     fetchPatientData();
   }, [id]);
@@ -182,10 +209,7 @@ const PatientProfile = () => {
                         disabled={!editingPatient}
                         value={patientData.name}
                         onChange={(e) =>
-                          setPatientData((prev) => ({
-                            ...prev,
-                            name: e.target.value,
-                          }))
+                          handleInputChange("name", e.target.value)
                         }
                       />
                     </Form.Group>
@@ -197,17 +221,64 @@ const PatientProfile = () => {
                         disabled={!editingPatient}
                         value={patientData.mobile}
                         onChange={(e) =>
-                          setPatientData((prev) => ({
-                            ...prev,
-                            mobile: e.target.value,
-                          }))
+                          handleInputChange("mobile", e.target.value)
+                        }
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group>
+                      <Form.Label>Age</Form.Label>
+                      <Form.Control
+                        type="number"
+                        disabled={!editingPatient}
+                        value={patientData.age || ""}
+                        onChange={(e) =>
+                          handleInputChange("age", e.target.value)
+                        }
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group>
+                      <Form.Label>Sex</Form.Label>
+                      <Select
+                        style={{ width: "100%" }}
+                        disabled={!editingPatient}
+                        value={patientData.sex || ""}
+                        onChange={(value) => handleInputChange("sex", value)}
+                        options={[
+                          { label: "Male", value: "male" },
+                          { label: "Female", value: "female" },
+                          { label: "Other", value: "other" },
+                        ]}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col md={12}>
+                    <Form.Group>
+                      <Form.Label>Address</Form.Label>
+                      <Form.Control
+                        as="input"
+                        rows={"1"}
+                        disabled={!editingPatient}
+                        value={patientData.address || ""}
+                        onChange={(e) =>
+                          handleInputChange("address", e.target.value)
                         }
                       />
                     </Form.Group>
                   </Col>
                 </Row>
                 {editingPatient && (
-                  <Button className="mt-3" onClick={() => {}}>
+                  <Button
+                    className="mt-3"
+                    onClick={() => {
+                      console.log("Updated Patient Data: ", patientData);
+                      setEditingPatient(false);
+                      handleSavePatientData();
+                    }}
+                  >
                     Save Details
                   </Button>
                 )}
@@ -219,48 +290,7 @@ const PatientProfile = () => {
 
       <Row className="mt-4">
         <Col>
-          {/* <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {appointments.map((appt) => (
-                <tr key={appt.id}>
-                  <td>{new Date(appt.appointmentDate).toLocaleDateString()}</td>
-                  <td>{appt.status}</td>
-                  <td>
-                    <Button
-                      variant="primary"
-                      onClick={() =>
-                        handleOpenDrawer(
-                          appt,
-                          medicalRecords.some(
-                            (rec) => rec.appointmentId === appt.id
-                          )
-                        )
-                      }
-                    >
-                      {medicalRecords.some(
-                        (rec) => rec.appointmentId === appt.id
-                      )
-                        ? "Edit Record"
-                        : "Add Record"}
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table> */}
-          {/* Refactored Table Component */}
-          {/* <Row className="mt-4"> */}
-            {/* <Col> */}
-              <CustomTable columns={columns} data={appointments} />
-            {/* </Col> */}
-          {/* </Row> */}
+          <CustomTable columns={columns} data={appointments} />
         </Col>
       </Row>
 
@@ -268,7 +298,7 @@ const PatientProfile = () => {
         title={isEdit ? "Edit Medical Record" : "Add Medical Record"}
         placement="right"
         onClose={() => setDrawerVisible(false)}
-        visible={drawerVisible}
+        open={drawerVisible}
         width={600}
       >
         <Form>
@@ -277,7 +307,7 @@ const PatientProfile = () => {
           <Form.Group>
             <Form.Label>Patient Complaints</Form.Label>
             <Select
-              isMulti
+              mode="multiple"
               options={[
                 { value: "toothAche", label: "Tooth Ache" },
                 { value: "toothMissing", label: "Tooth Missing" },
@@ -287,12 +317,13 @@ const PatientProfile = () => {
               onChange={(value) =>
                 setRecordForm((prev) => ({ ...prev, complaints: value }))
               }
+              className="w-100"
             />
           </Form.Group>
           <Form.Group>
             <Form.Label>Treatment</Form.Label>
             <Select
-              isMulti
+              mode="multiple"
               options={[
                 { value: "scalingRegular", label: "Scaling Regular" },
                 { value: "scalingComplex", label: "Scaling Complex" },
@@ -302,6 +333,7 @@ const PatientProfile = () => {
               onChange={(value) =>
                 setRecordForm((prev) => ({ ...prev, treatment: value }))
               }
+              className="w-100"
             />
           </Form.Group>
 
@@ -344,18 +376,20 @@ const PatientProfile = () => {
 
           <Form.Group>
             <Form.Label>Current Status</Form.Label>
-            <Form.Control
-              as="select"
+            <Select
+              mode="multiple"
               value={recordForm?.status}
-              onChange={(e) =>
-                setRecordForm((prev) => ({ ...prev, status: e.target.value }))
+              onChange={(value) =>
+                setRecordForm((prev) => ({ ...prev, status: value }))
               }
-            >
-              <option value="">Select Status</option>
-              <option value="completed">Completed</option>
-              <option value="pending">Pending</option>
-              <option value="cancelled">Cancelled</option>
-            </Form.Control>
+              placeholder="Select Status"
+              style={{ width: "100%" }}
+              options={[
+                { value: "completed", label: "Completed" },
+                { value: "pending", label: "Pending" },
+                { value: "cancelled", label: "Cancelled" },
+              ]}
+            />
           </Form.Group>
 
           <Form.Group>
