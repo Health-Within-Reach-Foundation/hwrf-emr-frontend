@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Button, Dropdown } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
 import Select from "react-select";
@@ -11,6 +11,7 @@ import CustomTable from "../components/custom-table";
 import { Loading } from "../components/loading";
 import DateCell from "../components/date-cell";
 import { Link } from "react-router-dom";
+import { Badge, Dropdown, Menu } from "antd";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -78,7 +79,7 @@ const Appointment = () => {
     {
       data: "tokenNumber",
       title: "Token Number",
-      render: (data,row) => {
+      render: (data, row) => {
         return (
           <a href={`/patient/patient-profile/${row.patientId}`} className="">
             {data}
@@ -101,19 +102,66 @@ const Appointment = () => {
       data: "status",
       title: "Status",
       render: (data, row) => {
+        // Define a color mapping for different statuses
+        const statusColors = {
+          "in queue": "success",
+          "in": "warning",
+          "out": "processing",
+        };
+  
         return (
           <a href={`/patient/patient-profile/${row.patientId}`} className="">
-            {data}
+            <Badge
+              size="default"
+              dot
+              // color={statusColors[data] || "default"}
+              status={statusColors[data]}
+              text={data.charAt(0).toUpperCase() + data.slice(1)} // Capitalize status
+            />
           </a>
         );
       },
     },
-    // {
-    //   title: "View",
-    //   data: "patientId",
-    //   render: (data) =>
-    //     `<a href="/patient/patient-profile/${data}" class="btn btn-primary btn-sm">View</a>`,
-    // },
+    {
+      data: null,
+      title: "Action",
+      render: (data, row) => {
+        // Create the dropdown menu with action options
+        const menu = (
+          <Menu>
+            <Menu.Item
+              key="1"
+              onClick={async () =>
+                await appointmentServices.markAppointment(row.id, {
+                  status: "in",
+                })
+              }
+            >
+              Mark as In
+            </Menu.Item>
+            <Menu.Item
+              key="2"
+              onClick={async () =>
+                await appointmentServices.markAppointment(row.id, {
+                  status: "out",
+                })
+              }
+            >
+              Mark as Out
+            </Menu.Item>
+          </Menu>
+        );
+
+        return (
+          <Dropdown overlay={menu} trigger={["click"]}>
+            <Button type="primary" size="sm">
+              Action
+            </Button>
+          </Dropdown>
+        );
+      },
+    },
+    
   ];
 
   const fetchAppointments = async (selectedDate) => {
@@ -137,13 +185,14 @@ const Appointment = () => {
     try {
       setLoading(true);
       const response = await patientServices.getPatients();
-      setPatientList(
-        response.data.map((patient) => ({
-          value: patient.id,
-          label: patient.name,
-          phoneNumber: patient.mobile,
-        }))
-      );
+      // setPatientList(
+      //   response.data.map((patient) => ({
+      //     value: patient.id,
+      //     label: patient.name,
+      //     phoneNumber: patient.mobile,
+      //   }))
+      // );
+      setPatientList(response.data);
     } catch (error) {
       console.error("Error fetching patients:", error);
     } finally {

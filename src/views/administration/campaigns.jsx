@@ -32,6 +32,7 @@ const CampManagement = () => {
     try {
       setLoading(true);
       const response = await campManagementService.getCamps(); // Replace with actual API call
+      console.log(camps);
       setCamps(response.camps || []);
       setFilteredCamps(response.camps || []);
     } catch (error) {
@@ -87,9 +88,8 @@ const CampManagement = () => {
   const columns = [
     { data: "name", title: "Camp Name" },
     { data: "status", title: "Status" },
-    { data: "address", title: "Address" },
+    { data: "location", title: "Location" },
     { data: "city", title: "City" },
-    { data: "state", title: "State" },
     {
       data: "startDate",
       title: "Start Date",
@@ -100,13 +100,7 @@ const CampManagement = () => {
       title: "End Date",
       render: (data) => new Date(data).toLocaleDateString(),
     },
-    {
-      title: "Actions",
-      data: "id",
-      render: (data) =>
-        // `<a href="/camp/details/${data}" class="btn btn-primary btn-sm">View</a>`,
-        `<a href="#" class="btn btn-primary btn-sm">View</a>`,
-    },
+   
   ];
 
   const filterComponents = [

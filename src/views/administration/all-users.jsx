@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Col, Row } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 import Card from "../../components/Card";
 import { Link } from "react-router-dom";
 
@@ -8,16 +8,19 @@ import { Link } from "react-router-dom";
 import CustomTable from "../../components/custom-table";
 import { Loading } from "../../components/loading";
 import clinicSerivces from "../../api/clinic-services";
+import UserDrawer from "../../components/administration/user-drawer";
+import clinicServices from "../../api/clinic-services";
+import rolePermissionService from "../../api/role-permission-service";
 
 const AllUsers = () => {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
-  //   const columns = [
-  //     { title: "ID", data: "id" },
-  //     { title: "Name", data: "name" },
-  //     { title: "Gender", data: "gender" },
-  //     { title: "Register Date", data: "registerDate" },
-  //   ];
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [allRoles, setAllRoles] = useState([]);
+  const [allDepartments, setAllDepartments] = useState([]);
+
+
 
   const columns = [
     // { title: "ID", data: "id" },
@@ -25,8 +28,35 @@ const AllUsers = () => {
     { title: "Email", data: "email" },
     { title: "Phone Number", data: "phoneNumber" },
     { title: "Specialist", data: "specialist" },
-    { title: "Roles", data: "roles" }, // For roles, we will format in the table
+    {
+      title: "Roles",
+      data: "roles",
+      render: (data, row) => {
+        return <div>{data?.map((role) => role.roleName).join(", ")}</div>;
+      },
+    }, // For roles, we will format in the table
+    {
+      title: "Department",
+      data: "department",
+      render: (data, row) => {
+        return <div>{data?.map((dept) => dept.departmentName).join(", ")}</div>;
+      },
+    },
     { title: "Register Date", data: "createdAt" },
+    {
+      data: null,
+      title: "View",
+      render: (data, row) => {
+        return (
+          // <a href={`/patient/patient-profile/${row.patientId}`} className="">
+          //   {data}
+          // </a>
+          <Button type="primary" size="sm" onClick={() => handleEditClick(row)}>
+            Manage
+          </Button>
+        );
+      },
+    },
   ];
 
   //   const data = [
@@ -39,9 +69,43 @@ const AllUsers = () => {
     { key: "specialist", label: "Specialist" },
     { key: "gender", label: "Gender" },
   ];
+  
+  const getSpecialtyDepartmentsByClinic = async () => {
+    try {
+      setLoading(true);
+      const response = await clinicServices.getSpecialtyDepartmentsByClinic();
+      setAllDepartments(
+        response.data.map((department) => ({
+          value: department.id,
+          label: department.departmentName,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch roles
+  const getRoles = async () => {
+    try {
+      setLoading(true);
+      const response = await rolePermissionService.getRoles();
+      setAllRoles(
+        response.data.map((role) => ({
+          value: role.id,
+          label: role.roleName,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getUsersbyClinic = async () => {
-    const clinicId = "123"; // Replace with dynamic clinicId if applicable
     setLoading(true);
     try {
       const response = await clinicSerivces.getUsersByClinic();
@@ -51,7 +115,9 @@ const AllUsers = () => {
         email: user.email,
         phoneNumber: user.phoneNumber,
         specialist: user.specialist,
-        roles: user.roles.map((role) => role.roleName).join(", "), // Combine role names
+        department: user.specialties,
+        // roles: user.roles.map((role) => role.roleName).join(", "), // Combine role names
+        roles: user.roles, // Combine role names
         createdAt: new Date(user.createdAt).toLocaleDateString(), // Format date
       }));
       setUsers(formattedUsers);
@@ -61,9 +127,14 @@ const AllUsers = () => {
       setLoading(false);
     }
   };
-
+  const handleEditClick = (user) => {
+    setSelectedUser(user);
+    setOpenDrawer(true);
+  };
   useEffect(() => {
     getUsersbyClinic();
+    getSpecialtyDepartmentsByClinic();
+    getRoles();
   }, []);
 
   if (loading) {
@@ -92,6 +163,16 @@ const AllUsers = () => {
             filtersConfig={filters}
           />
         </div>
+
+        {openDrawer && (
+          <UserDrawer
+            open={openDrawer}
+            onClose={() => setOpenDrawer(false)}
+            userData={selectedUser}
+            allRoles={allRoles}
+            allDepartments={allDepartments}
+          />
+        )}
       </Row>
     </>
   );

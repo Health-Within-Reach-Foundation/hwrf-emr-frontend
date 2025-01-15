@@ -1,0 +1,66 @@
+.camp-section {
+  .carousel-wrapper {
+    position: relative;
+
+    .camp-carousel {
+      display: flex;
+      gap: 16px; // Space between cards
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+      scrollbar-width: 1px;
+
+      .camp-card {
+        min-width: 250px; // Adjust based on design
+        cursor: pointer;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        border-radius: 8px;
+
+        &:hover {
+          transform: scale(1.05);
+          // box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        // Highlighted card styles
+        &.highlighted-card {
+          background-color: #f1c40f; // Yellow background
+          border: 2px solid #e67e22; // Orange border
+          // box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); // Subtle shadow
+        }
+      }
+
+      .camp-card-body {
+        border: none;
+        // background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  .carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    // background-color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    opacity: 0.8;
+    // transition: opacity 0.3s ease, transform 0.2s ease;
+
+    &:hover {
+      opacity: 1;
+      // transform: scale(1.1);
+    }
+
+    &.left-btn {
+      left: -20px;
+    }
+
+    &.right-btn {
+      right: -20px;
+    }
+  }
+}

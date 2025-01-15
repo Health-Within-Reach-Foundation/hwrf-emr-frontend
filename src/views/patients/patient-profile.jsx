@@ -9,6 +9,8 @@ import {
   Form,
   Modal,
   Alert,
+  Tabs,
+  Tab,
 } from "react-bootstrap";
 import { Drawer, Input, TreeSelect, Select } from "antd"; // Import TreeSelect from antd
 // import Select from "react-select";
@@ -18,13 +20,18 @@ import { Loading } from "../../components/loading";
 import { useAuth } from "../../utilities/AuthProvider";
 import CustomTable from "../../components/custom-table";
 import toast from "react-hot-toast";
+import PatientDiagnosisForm from "../../components/patient-diagnosis-form";
+import PatientTreatmentForm from "../../components/patient-treatment-form";
 
 const PatientProfile = () => {
   const { id } = useParams();
   const [patientData, setPatientData] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [selectedDiagnosis, setSelectedDiagnosis] = useState(null);
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const [openTreatmentDrawer, setOpenTreatmentDrawer] = useState(false);
+
   const [medicalRecords, setMedicalRecords] = useState([]);
   const [recordForm, setRecordForm] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
@@ -44,17 +51,62 @@ const PatientProfile = () => {
       data: "status",
       render: (data) => data.charAt(0).toUpperCase() + data.slice(1), // Capitalize first letter
     },
+    // {
+    //   title: "Actions",
+    //   data: null,
+    //   render: (_, record) => (
+    //     <Button
+    //       variant="primary"
+    //       onClick={() => handleOpenDrawer(record, hasMedicalRecord(record))}
+    //     >
+    //       {hasMedicalRecord(record) ? "Edit Record" : "Add Record"}
+    //     </Button>
+    //   ),
+    // },
+  ];
+
+  const dentistryColumns = [
     {
-      title: "Actions",
+      title: "Diagnosis date",
+      data: "createdAt",
+      // render: (data) => new Date(data).toLocaleDateString(),
+      render: (data, row) => {
+        // console.log(data, row);
+        return (
+          <a href={`/patient/patient-profile/${row.patientId}/${row.id}`} className="">
+            {new Date(data).toLocaleDateString()}
+          </a>
+        );
+      },
+    },
+    {
+      title: "Complaints",
+      data: "complaints",
+      // render: (data) => data?.join(", "),
+      render: (data, row) => {
+        // console.log(data, row);
+        return (
+          <a href={`/patient/patient-profile/${row.patientId}/${row.id}`} className="">
+            {data?.join(", ")}
+          </a>
+        );
+      },
+    },
+    {
+      title: "View Diagnosis",
       data: null,
-      render: (_, record) => (
-        <Button
-          variant="primary"
-          onClick={() => handleOpenDrawer(record, hasMedicalRecord(record))}
-        >
-          {hasMedicalRecord(record) ? "Edit Record" : "Add Record"}
-        </Button>
-      ),
+      render: (_, record) => {
+        // console.log(record);
+        return (
+          <Button
+            size="sm"
+            variant="primary"
+            onClick={() => handleOpenDrawer(record, true)}
+          >
+            View/Edit
+          </Button>
+        );
+      },
     },
   ];
 
@@ -77,17 +129,9 @@ const PatientProfile = () => {
     }
   };
 
-  const handleOpenDrawer = (appointment, isEditMode) => {
-    setSelectedAppointment(appointment);
-    setIsEdit(isEditMode);
-    if (isEditMode) {
-      const record = medicalRecords.find(
-        (rec) => rec.appointmentId === appointment.id
-      );
-      setRecordForm(record || createEmptyRecord());
-    } else {
-      setRecordForm(createEmptyRecord());
-    }
+  const handleOpenDrawer = (diagnosis, editMode) => {
+    setIsEdit(editMode);
+    setSelectedDiagnosis(editMode ? diagnosis : null);
     setDrawerVisible(true);
   };
   const handleInputChange = (key, value) => {
@@ -150,43 +194,14 @@ const PatientProfile = () => {
   if (loading) return <Loading />;
   if (!patientData) return <Alert variant="danger">Patient not found</Alert>;
 
-  const dentalQuadrantOptions = [
-    {
-      title: "Upper Left",
-      value: "upperLeft",
-      children: Array.from({ length: 8 }, (_, i) => ({
-        title: `Tooth ${i + 1}`,
-        value: `upperLeft-tooth${i + 1}`,
-      })),
-    },
-    {
-      title: "Upper Right",
-      value: "upperRight",
-      children: Array.from({ length: 8 }, (_, i) => ({
-        title: `Tooth ${i + 1}`,
-        value: `upperRight-tooth${i + 1}`,
-      })),
-    },
-    {
-      title: "Lower Left",
-      value: "lowerLeft",
-      children: Array.from({ length: 8 }, (_, i) => ({
-        title: `Tooth ${i + 1}`,
-        value: `lowerLeft-tooth${i + 1}`,
-      })),
-    },
-    {
-      title: "Lower Right",
-      value: "lowerRight",
-      children: Array.from({ length: 8 }, (_, i) => ({
-        title: `Tooth ${i + 1}`,
-        value: `lowerRight-tooth${i + 1}`,
-      })),
-    },
-  ];
+  const handleAddDiagnosis = () => {
+    setRecordForm({}); // Clear the form for a new diagnosis
+    setDrawerVisible(true);
+  };
 
   return (
     <Container>
+      {/* Patient Basic Details */}
       <Row>
         <Col>
           <Card>
@@ -274,7 +289,7 @@ const PatientProfile = () => {
                   <Button
                     className="mt-3"
                     onClick={() => {
-                      console.log("Updated Patient Data: ", patientData);
+                      // console.log("Updated Patient Data: ", patientData);
                       setEditingPatient(false);
                       handleSavePatientData();
                     }}
@@ -287,168 +302,69 @@ const PatientProfile = () => {
           </Card>
         </Col>
       </Row>
+      {/* Patient Basic Details */}
 
-      <Row className="mt-4">
+      <Card>
+        <Card.Header>
+          <h4>Patient Medical Records</h4>
+        </Card.Header>
+        <Card.Body>
+          <Tabs defaultActiveKey="dentistry">
+            {/* Dentistry Tab */}
+            <Tab eventKey="dentistry" title="Dentistry">
+              <h5 className="mt-3">Diagnoses</h5>
+
+              <Button
+                variant="primary"
+                // className="float-end"
+                onClick={() => handleOpenDrawer(null, false)}
+              >
+                Add Diagnosis
+              </Button>
+              <CustomTable
+                columns={dentistryColumns}
+                data={patientData?.diagnoses}
+                enableFilters={false}
+              />
+            </Tab>
+
+            {/* GP Tab */}
+            <Tab eventKey="gp" title="GP">
+              <h5 className="mt-3">General Practice Content</h5>
+              <p>Coming soon...</p>
+            </Tab>
+
+            {/* Mammography Tab */}
+            <Tab eventKey="mammography" title="Mammography">
+              <h5 className="mt-3">Mammography Content</h5>
+              <p>Coming soon...</p>
+            </Tab>
+          </Tabs>
+        </Card.Body>
+      </Card>
+
+      {/* <Row className="mt-4">
         <Col>
           <CustomTable columns={columns} data={appointments} />
         </Col>
-      </Row>
+      </Row> */}
 
-      <Drawer
-        title={isEdit ? "Edit Medical Record" : "Add Medical Record"}
-        placement="right"
+      {/* Patient Diagnosis Form Drawer */}
+      <PatientDiagnosisForm
+        isEdit={isEdit}
+        drawerVisible={drawerVisible}
         onClose={() => setDrawerVisible(false)}
-        open={drawerVisible}
-        width={600}
-      >
-        <Form>
-          <label>Patient Name </label>
-          <Input placeholder="Name of the patient" disabled />
-          <Form.Group>
-            <Form.Label>Patient Complaints</Form.Label>
-            <Select
-              mode="multiple"
-              options={[
-                { value: "toothAche", label: "Tooth Ache" },
-                { value: "toothMissing", label: "Tooth Missing" },
-                { value: "badBreath", label: "Bad Breath" },
-              ]}
-              value={recordForm?.complaints}
-              onChange={(value) =>
-                setRecordForm((prev) => ({ ...prev, complaints: value }))
-              }
-              className="w-100"
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Treatment</Form.Label>
-            <Select
-              mode="multiple"
-              options={[
-                { value: "scalingRegular", label: "Scaling Regular" },
-                { value: "scalingComplex", label: "Scaling Complex" },
-                { value: "rcSimple", label: "RC Simple" },
-              ]}
-              value={recordForm?.treatment}
-              onChange={(value) =>
-                setRecordForm((prev) => ({ ...prev, treatment: value }))
-              }
-              className="w-100"
-            />
-          </Form.Group>
+        diagnosisData={selectedDiagnosis}
+        patientData={patientData}
+        onSave={() => {}}
+      />
 
-          <Form.Group>
-            <Form.Label>Dental Quadrant</Form.Label>
-            <TreeSelect
-              treeData={dentalQuadrantOptions}
-              value={recordForm?.dentalQuadrant}
-              onChange={(value) =>
-                setRecordForm((prev) => ({ ...prev, dentalQuadrant: value }))
-              }
-              treeCheckable={true}
-              showCheckedStrategy={TreeSelect.SHOW_PARENT}
-              placeholder="Please select"
-              style={{ width: "100%" }}
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Check
-              type="checkbox"
-              label="X-ray Status"
-              checked={recordForm?.xrayStatus}
-              onChange={(e) =>
-                setRecordForm((prev) => ({
-                  ...prev,
-                  xrayStatus: e.target.checked,
-                }))
-              }
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>File</Form.Label>
-            <Form.Control
-              type="file"
-              onChange={(e) =>
-                setRecordForm((prev) => ({ ...prev, file: e.target.files[0] }))
-              }
-            />
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Label>Current Status</Form.Label>
-            <Select
-              mode="multiple"
-              value={recordForm?.status}
-              onChange={(value) =>
-                setRecordForm((prev) => ({ ...prev, status: value }))
-              }
-              placeholder="Select Status"
-              style={{ width: "100%" }}
-              options={[
-                { value: "completed", label: "Completed" },
-                { value: "pending", label: "Pending" },
-                { value: "cancelled", label: "Cancelled" },
-              ]}
-            />
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Label>Notes</Form.Label>
-            <Form.Control
-              as="textarea"
-              value={recordForm?.notes}
-              onChange={(e) =>
-                setRecordForm((prev) => ({ ...prev, notes: e.target.value }))
-              }
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Total Cost</Form.Label>
-            <Form.Control
-              type="number"
-              value={recordForm?.billing.totalCost}
-              onChange={(e) =>
-                setRecordForm((prev) => ({
-                  ...prev,
-                  billing: { ...prev.billing, totalCost: e.target.value },
-                }))
-              }
-            />
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Label>Paid</Form.Label>
-            <Form.Control
-              type="number"
-              value={recordForm?.billing.paid}
-              onChange={(e) =>
-                setRecordForm((prev) => ({
-                  ...prev,
-                  billing: { ...prev.billing, paid: e.target.value },
-                }))
-              }
-            />
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Label>Remaining</Form.Label>
-            <Form.Control
-              type="number"
-              value={recordForm?.billing.remaining}
-              onChange={(e) =>
-                setRecordForm((prev) => ({
-                  ...prev,
-                  billing: { ...prev.billing, remaining: e.target.value },
-                }))
-              }
-            />
-          </Form.Group>
-          {/* Add the rest of the form fields */}
-          <Button className="mt-3" onClick={handleSaveRecord}>
-            {isEdit ? "Update Record" : "Add Record"}
-          </Button>
-        </Form>
-      </Drawer>
+      {/* <PatientTreatmentForm
+        drawerVisible={openTreatmentDrawer}
+        onClose={() => setOpenTreatmentDrawer(false)}
+        treatmentData={patientData?.treatments || []}
+        onSave={() => {}}
+      /> */}
     </Container>
   );
 };

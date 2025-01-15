@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import Card from "../../components/Card";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Alert, Button, Col, Form, Row } from "react-bootstrap";
 import toast from "react-hot-toast";
 import patientServices from "../../api/patient-services";
+import { Link } from "react-router-dom";
 
 const AddPatient = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +18,7 @@ const AddPatient = () => {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false); // Loading state
+  const [sucessAlert, setSucessAlert] = useState(false); // Loading state
 
   // Handle input change
   const handleInputChange = (e) => {
@@ -66,6 +68,7 @@ const AddPatient = () => {
         const response = await patientServices.addPatient(patientData);
         if (response.success) {
           toast.success("Patient added successfully.");
+          setSucessAlert(true);
           setFormData({
             fname: "",
             lname: "",
@@ -245,6 +248,11 @@ const AddPatient = () => {
               </div>
             </Form>
           </div>
+          {sucessAlert && (
+            <Alert className="mt-4" variant="success">
+              Patient added ! <Link to={"/queues"}>Add into queue ?</Link>
+            </Alert>
+          )}
         </Card.Body>
       </Card>
     </Row>

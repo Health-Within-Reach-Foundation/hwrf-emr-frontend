@@ -546,34 +546,15 @@ const Header = () => {
                         </h5>
                         <small className="mb-0 text-white">
                           <i class="ri-map-pin-fill"></i>{" "}
-                          {currentCampData?.address +
+                          {currentCampData?.location +
                             " " +
                             ", " +
-                            currentCampData?.city +
-                            " " +
-                            ", " +
-                            currentCampData?.state}
+                            currentCampData?.city}
                         </small>
                         {/* <span className="text-white ">Available</span> */}
                       </div>
                     </div>
                     <div className="p-0 card-body">
-                      <div
-                        className="iq-sub-card"
-                        onClick={() => {
-                          setShowModal(true);
-                        }}
-                      >
-                        <div className="d-flex align-items-center">
-                          <div className="bg-primary-subtle px-3 py-2 rounded-1">
-                            <i class="ri-checkbox-circle-fill"></i>
-                          </div>
-                          <div className="ms-3 flex-grow-1 text-start">
-                            <h6 className="mb-0 ">Manage camp</h6>
-                            <p className="mb-0">Change current camp</p>
-                          </div>
-                        </div>
-                      </div>
                       <Link to="/doctor/doctor-profile" className="iq-sub-card">
                         <div className="d-flex align-items-center">
                           <div className="bg-primary-subtle px-3 py-2 rounded-1">
@@ -943,16 +924,7 @@ const Header = () => {
       </Navbar>
       {/* </Navbar> */}
 
-      {showModal && (
-        <CampSelectionModal
-          open={showModal}
-          camps={user?.camps || []}
-          onClose={() => {
-            setShowModal(false);
-          }}
-          preCheckedCampId={user?.currentCampId}
-        />
-      )}
+     
     </>
   );
 };

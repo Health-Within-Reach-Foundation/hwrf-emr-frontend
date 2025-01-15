@@ -94,9 +94,64 @@ const getPatientDetailsById = async (patientId, specialtyId) => {
   }
 };
 
+const addPatientDiagnosis = async (patientDiagnosisData) => {
+  try {
+    const response = await apiClient.post(
+      `patients/diagnosis`,
+      patientDiagnosisData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data", // Set the Content-Type for FormData
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      // Handle specific error responses from the API
+      console.error("Error response:", error.response.data);
+      throw new Error(error.response.data.message || "Failed to add diagnosis");
+    } else {
+      // Handle other types of errors
+      console.error("Unexpected error:", error.message);
+      throw new Error(
+        "An unexpected error occurred while adding patient diagnosis"
+      );
+    }
+  }
+};
+
+const updatePatientDiagnosis = async (diagnosisId, patientDiagnosisData) => {
+  try {
+    const response = await apiClient.patch(
+      `patients/diagnosis/${diagnosisId}`,
+      patientDiagnosisData
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      // Handle specific error responses from the API
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to update diagnosis"
+      );
+    } else {
+      // Handle other types of errors
+      console.error("Unexpected error:", error.message);
+      throw new Error(
+        "An unexpected error occurred while updating patient diagnosis"
+      );
+    }
+  }
+};
+
 export default {
   addPatient,
   getPatients,
   getPatientDetailsById,
   updatePatientDetails,
+  addPatientDiagnosis,
+  updatePatientDiagnosis,
 };
