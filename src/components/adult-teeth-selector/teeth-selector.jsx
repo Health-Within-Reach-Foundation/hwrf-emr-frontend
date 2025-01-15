@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./teeth-selector.scss";
 
 const teethPositions = [
@@ -43,48 +43,118 @@ const teethPositions = [
   { id: 38, top: "40%", left: "76%" },
 ];
 
-const TeethSelector = () => {
-  const [selectedTeeth, setSelectedTeeth] = useState([]);
+// const TeethSelector = () => {
+//   const [selectedTeeth, setSelectedTeeth] = useState([]);
+
+//   const handleSelect = (id) => {
+//     setSelectedTeeth((prev) =>
+//       prev.includes(id) ? prev.filter((tooth) => tooth !== id) : [...prev, id]
+//     );
+//   };
+
+//   return (
+//     <div className="adult-teeth-selector" id='adult'>
+//       <div className="adult-teeth-image">
+//         {teethPositions.map((tooth) =>
+//           tooth.id > 30 ? (
+//             <button
+//               key={tooth.id}
+//               className={`adult-tooth-button ${
+//                 selectedTeeth.includes(tooth.id) ? "adult-selected" : ""
+//               }`}
+//               style={{ bottom: tooth.top, left: tooth.left }}
+//               onClick={() => handleSelect(tooth.id)}
+//             >
+//               {tooth.id}
+//             </button>
+//           ) : (
+//             <button
+//               key={tooth.id}
+//               className={`adult-tooth-button ${
+//                 selectedTeeth.includes(tooth.id) ? "adult-selected" : ""
+//               }`}
+//               style={{ top: tooth.top, right: tooth.left }}
+//               onClick={() => handleSelect(tooth.id)}
+//             >
+//               {tooth.id}
+//             </button>
+//           )
+//         )}
+//       </div>
+//       <div className="adult-selected-teeth">
+//         <h4>Selected Teeth:</h4>
+//         <p>{selectedTeeth.length > 0 ? selectedTeeth.join(", ") : "None"}</p>
+//       </div>
+//     </div>
+//   );
+// };
+
+const TeethSelector = ({ selectedTeeth = [], onChange, isEdit = false }) => {
+  // console.log("teeth state -->", teethState);
+  const [teethState, setTeethState] = useState(selectedTeeth);
+
+  useEffect(() => {
+    setTeethState(selectedTeeth); // Sync with external state
+  }, [selectedTeeth]);
 
   const handleSelect = (id) => {
-    setSelectedTeeth((prev) =>
-      prev.includes(id) ? prev.filter((tooth) => tooth !== id) : [...prev, id]
-    );
+    const updatedTeeth = teethState?.includes(id)
+      ? teethState?.filter((tooth) => tooth !== id)
+      : [...teethState, id];
+
+    setTeethState(updatedTeeth);
+    if (onChange) onChange(updatedTeeth); // Notify parent about changes
   };
 
   return (
-    <div className="adult-teeth-selector" id='adult'>
+    <div className="adult-teeth-selector" id="adult">
       <div className="adult-teeth-image">
         {teethPositions.map((tooth) =>
           tooth.id > 30 ? (
             <button
+              disabled={isEdit}
               key={tooth.id}
               className={`adult-tooth-button ${
-                selectedTeeth.includes(tooth.id) ? "adult-selected" : ""
+                teethState?.includes(tooth.id) ? "adult-selected" : ""
               }`}
-              style={{ bottom: tooth.top, left: tooth.left }}
-              onClick={() => handleSelect(tooth.id)}
+              style={{
+                bottom: tooth.top,
+                left: tooth.left,
+                cursor: isEdit ? "not-allowed" : "pointer",
+              }}
+              onClick={(e) => {
+                e.preventDefault(); // Prevent any default behavior
+                handleSelect(tooth.id);
+              }}
             >
               {tooth.id}
             </button>
           ) : (
             <button
+              disabled={isEdit}
               key={tooth.id}
               className={`adult-tooth-button ${
-                selectedTeeth.includes(tooth.id) ? "adult-selected" : ""
+                teethState?.includes(tooth.id) ? "adult-selected" : ""
               }`}
-              style={{ top: tooth.top, right: tooth.left }}
-              onClick={() => handleSelect(tooth.id)}
+              style={{
+                top: tooth.top,
+                right: tooth.left,
+                cursor: isEdit ? "not-allowed" : "pointer",
+              }}
+              onClick={(e) => {
+                e.preventDefault(); // Prevent any default behavior
+                handleSelect(tooth.id);
+              }}
             >
               {tooth.id}
             </button>
           )
         )}
       </div>
-      <div className="adult-selected-teeth">
+      {/* <div className="adult-selected-teeth">
         <h4>Selected Teeth:</h4>
-        <p>{selectedTeeth.length > 0 ? selectedTeeth.join(", ") : "None"}</p>
-      </div>
+        <p>{teethState.length > 0 ? teethState.join(", ") : "None"}</p>
+      </div> */}
     </div>
   );
 };

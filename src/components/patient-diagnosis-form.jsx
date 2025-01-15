@@ -253,6 +253,8 @@ import { Drawer, Input, TreeSelect, Select, Button } from "antd";
 import { Form } from "react-bootstrap";
 import patientServices from "../api/patient-services";
 import toast from "react-hot-toast";
+import TeethSelector from "./adult-teeth-selector/teeth-selector";
+import ChildTeethSelector from "./child-teeth-selector/child-teeth-selector";
 
 const PatientDiagnosisForm = ({
   isEdit,
@@ -302,11 +304,13 @@ const PatientDiagnosisForm = ({
   const [formState, setFormState] = useState({
     complaints: [],
     treatment: [],
-    dentalQuadrant: [],
+    // dentalQuadrant: [],
     xrayStatus: false,
     xray: [],
     notes: "",
     currentStatus: [],
+    dentalQuadrantType: "adult",
+    selectedTeeth: [],
   });
 
   useEffect(() => {
@@ -319,21 +323,35 @@ const PatientDiagnosisForm = ({
         patientId,
         id,
         additionalDetails,
+        selectedTeeth,
         ...filteredData
       } = diagnosisData;
-      setFormState({ ...filteredData, xray: [] });
+      setFormState({
+        ...filteredData,
+        xray: [],
+        selectedTeeth: [selectedTeeth],
+      });
     } else {
       setFormState({
         complaints: [],
         treatment: [],
-        dentalQuadrant: [],
+        // dentalQuadrant: [],
         xrayStatus: false,
         xray: [],
         notes: "",
         currentStatus: [],
+        dentalQuadrantType: "adult",
+        selectedTeeth: [], // Initialize selectedTeeth in new form
       });
     }
   }, [isEdit, diagnosisData]);
+
+  useEffect(() => {
+    setFormState((prev) => ({
+      ...prev,
+      selectedTeeth: [],
+    }));
+  }, [formState.dentalQuadrantType]);
 
   const handleInputChange = (key, value) => {
     setFormState((prev) => ({ ...prev, [key]: value }));
@@ -426,6 +444,65 @@ const PatientDiagnosisForm = ({
           />
         </Form.Group>
         <Form.Group className="py-2">
+          <Form.Check
+            id="adult-teeth"
+            type="radio"
+            label="Adult"
+            name="dentalQuadrant"
+            checked={formState.dentalQuadrantType === "adult"}
+            onChange={() =>
+              setFormState((prev) => ({
+                ...prev,
+                dentalQuadrantType: "adult",
+              }))
+            }
+          />
+          <Form.Check
+            id="child-teeth"
+            type="radio"
+            label="Child"
+            name="dentalQuadrant"
+            checked={formState.dentalQuadrantType === "child"}
+            onChange={() =>
+              setFormState((prev) => ({
+                ...prev,
+                dentalQuadrantType: "child",
+              }))
+            }
+          />
+        </Form.Group>
+        {formState.dentalQuadrantType === "adult" && (
+          <Form.Group className="py-2">
+            <TeethSelector
+              isEdit={isEdit}
+              selectedTeeth={formState.selectedTeeth || []}
+              onChange={(updatedTeeth) => {
+                console.log(updatedTeeth);
+                setFormState((prev) => ({
+                  ...prev,
+                  selectedTeeth: updatedTeeth,
+                }));
+              }}
+            />
+          </Form.Group>
+        )}
+        {formState.dentalQuadrantType === "child" && (
+          <Form.Group className="py-2">
+            <ChildTeethSelector
+              isEdit={isEdit}
+              selectedTeeth={formState.selectedTeeth || []}
+              onChange={(updatedTeeth) => {
+                console.log(updatedTeeth);
+                setFormState((prev) => ({
+                  ...prev,
+                  selectedTeeth: updatedTeeth,
+                }));
+              }}
+            />
+          </Form.Group>
+        )}
+
+        {/* <Form.Group className="py-2">
           <Form.Label>Dental Quadrant</Form.Label>
           <TreeSelect
             treeData={dentalQuadrantOptions}
@@ -438,7 +515,7 @@ const PatientDiagnosisForm = ({
             placeholder="Select teeth"
             style={{ width: "100%" }}
           />
-        </Form.Group>
+        </Form.Group> */}
         <Form.Group className="py-2">
           <Form.Check
             type="checkbox"
