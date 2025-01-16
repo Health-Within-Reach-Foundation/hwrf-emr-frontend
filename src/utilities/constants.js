@@ -15,10 +15,10 @@ const adminiStartionItems = [
     icon:"ri-user-settings-fill"
   },
   {
-    path:"/administration/campaigns",
-    name:"Campaigns",
-    icon:"ri-health-book-fill"
-  }
+    path:"/administration/form-templates",
+    name:"Form Templates",
+    icon:"ri-user-settings-fill"
+  },
 ];
 
 const emailItems = [

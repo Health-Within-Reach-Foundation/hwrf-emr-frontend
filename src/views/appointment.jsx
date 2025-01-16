@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Button, Dropdown } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
 import Select from "react-select";
@@ -10,6 +10,9 @@ import clinicServices from "../api/clinic-services";
 import CustomTable from "../components/custom-table";
 import { Loading } from "../components/loading";
 import DateCell from "../components/date-cell";
+import { Link } from "react-router-dom";
+import { Badge, Dropdown, Menu } from "antd";
+import { useAuth } from "../utilities/AuthProvider";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -20,6 +23,8 @@ const Appointment = () => {
   const [filters, setFilters] = useState({ status: "", queueType: "" });
   const [patientList, setPatientList] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
+  const [selectedQueueType, setSelectedQueueType] = useState(null); // Tracks the selected department
+  const { currentCampDetails } = useAuth();
 
   const statusOptions = [
     { value: "registered", label: "Registered" },
@@ -29,30 +34,135 @@ const Appointment = () => {
   ];
 
   const columns = [
-    { data: "patientRegNo", title: "Reg. No" },
-    { data: "patientName", title: "Name" },
-    { data: "patientSex", title: "Sex" },
+    {
+      data: "patientRegNo",
+      title: "Reg. No",
+      render: (data, row) => {
+        return (
+          <a href={`/patient/patient-profile/${row.patientId}`} className="">
+            {data}
+          </a>
+        );
+      },
+    },
+    {
+      data: "patientName",
+      title: "Name",
+      render: (data, row) => {
+        return (
+          <a href={`/patient/patient-profile/${row.patientId}`} className="">
+            {data}
+          </a>
+        );
+      },
+    },
+    {
+      data: "patientSex",
+      title: "Sex",
+      render: (data, row) => {
+        return (
+          <a href={`/patient/patient-profile/${row.patientId}`} className="">
+            {data}
+          </a>
+        );
+      },
+    },
     {
       data: "appointmentDate",
       title: "Queue Date",
-      render: (data) => {
-        return <DateCell date={data} />;
+      render: (data, row) => {
+        // console.log(data,row);
+        return (
+          <a href={`/patient/patient-profile/${row.patientId}`} className="">
+            <DateCell date={data} />
+          </a>
+        );
       },
     },
     {
       data: "tokenNumber",
       title: "Token Number",
+      render: (data, row) => {
+        return (
+          <a href={`/patient/patient-profile/${row.patientId}`} className="">
+            {data}
+          </a>
+        );
+      },
     },
     {
       data: "queueType",
       title: "Queue Type",
+      render: (data, row) => {
+        return (
+          <a href={`/patient/patient-profile/${row.patientId}`} className="">
+            {data}
+          </a>
+        );
+      },
     },
-    { data: "status", title: "Status" },
     {
-      title: "View",
-      data: "patientId",
-      render: (data) =>
-        `<a href="/patient/patient-profile/${data}" class="btn btn-primary btn-sm">View</a>`,
+      data: "status",
+      title: "Status",
+      render: (data, row) => {
+        // Define a color mapping for different statuses
+        const statusColors = {
+          "in queue": "success",
+          in: "warning",
+          out: "processing",
+        };
+
+        return (
+          <a href={`/patient/patient-profile/${row.patientId}`} className="">
+            <Badge
+              size="default"
+              dot
+              // color={statusColors[data] || "default"}
+              status={statusColors[data]}
+              text={data.charAt(0).toUpperCase() + data.slice(1)} // Capitalize status
+            />
+          </a>
+        );
+      },
+    },
+    {
+      data: null,
+      title: "Action",
+      render: (data, row) => {
+        // Create the dropdown menu with action options
+        const menu = (
+          <Menu>
+            <Menu.Item
+              key="1"
+              onClick={async () =>
+                await appointmentServices.markAppointment(row.id, {
+                  status: "in",
+                })
+              }
+            >
+              Mark as In
+            </Menu.Item>
+            <Menu.Item
+              key="2"
+              onClick={async () =>
+                await appointmentServices.markAppointment(row.id, {
+                  status: "out",
+                })
+              }
+            >
+              Mark as Out
+            </Menu.Item>
+          </Menu>
+        );
+
+        return (
+          <Dropdown overlay={menu} trigger={["click"]}>
+            <Button type="primary" size="sm">
+              Action
+            </Button>
+          </Dropdown>
+        );
+      },
     },
   ];
 
@@ -77,13 +187,14 @@ const Appointment = () => {
     try {
       setLoading(true);
       const response = await patientServices.getPatients();
-      setPatientList(
-        response.data.map((patient) => ({
-          value: patient.id,
-          label: patient.name,
-          phoneNumber: patient.mobile,
-        }))
-      );
+      // setPatientList(
+      //   response.data.map((patient) => ({
+      //     value: patient.id,
+      //     label: patient.name,
+      //     phoneNumber: patient.mobile,
+      //   }))
+      // );
+      setPatientList(response.data);
     } catch (error) {
       console.error("Error fetching patients:", error);
     } finally {
@@ -116,10 +227,6 @@ const Appointment = () => {
     getPatientList();
     getSpecialtyDepartmentsByClinic();
   }, []);
-
-  if (loading) {
-    return <Loading />;
-  }
 
   const filterComponents = [
     {
@@ -166,6 +273,24 @@ const Appointment = () => {
     // setShowFilters(false); // Close the filter panel after resetting
   };
 
+  const handleQueueTypeSort = (queueType) => {
+    if (selectedQueueType === queueType.label) {
+      // If the same department button is clicked again, reset the filter
+      setSelectedQueueType(null);
+      setFilteredAppointments(appointments);
+    } else {
+      // Apply the filter for the selected department
+      setSelectedQueueType(queueType.label);
+      const filtered = appointments.filter(
+        (appointment) => appointment.queueType === queueType.label
+      );
+      setFilteredAppointments(filtered);
+    }
+  };
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <>
       <Row>
@@ -189,12 +314,10 @@ const Appointment = () => {
                 />
               </Col>
             </Col>
-            <Col
-              xs={12}
-              md={6}
-              className="d-flex justify-content-end align-items-center mb-3"
-            >
-              {/* Buttons Section */}
+
+            {/* Department Buttons */}
+
+            <div className="d-flex flex-column">
               <div className="d-flex gap-2">
                 <Button
                   variant="primary"
@@ -205,21 +328,37 @@ const Appointment = () => {
                   Add to Queue
                 </Button>
               </div>
-            </Col>
+              <div className="d-flex gap-2">
+                {departmentList.map((department) => (
+                  <Button
+                    size="sm"
+                    key={department.value}
+                    variant={
+                      selectedQueueType === department.label
+                        ? "primary" // Highlight the selected button
+                        : "outline-primary"
+                    }
+                    onClick={() => handleQueueTypeSort(department)}
+                  >
+                    {department.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
           </Row>
 
           <CustomTable
             key={filteredAppointments.length} // Force re-render when data changes
             columns={columns}
             data={filteredAppointments}
-            enableFilters
+            enableFilters={false}
             filtersConfig={filterComponents}
             onApplyFilters={applyFilters}
             onResetFilters={resetFilters}
           />
         </Col>
       </Row>
-      
+
       <AppointmentForm
         show={show}
         modalClose={() => setShow(false)}

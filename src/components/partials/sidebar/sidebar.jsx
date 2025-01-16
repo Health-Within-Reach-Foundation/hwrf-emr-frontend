@@ -78,15 +78,15 @@ const Sidebar = () => {
             className={`sidebar sidebar-base sidebar-default ${sidebarColor} ${newsidebarType} ${sidebarMenuStyle}`}
             id="first-tour" data-toggle="main-sidebar" data-sidebar="responsive">
             <div className="sidebar-header d-flex align-items-center justify-content-start position-relative">
-               <Link to="/" className="navbar-brand me-5 pt-3">
+               <Link to="/" className="navbar-brand me-5 pt-3 p-2">
                   <Logo />
                </Link>{" "}
                <div className="ms-5 wrapper-menu d-flex d-none d-xl-block" onClick={() => { handleSidebar(true) }}>
-                  <div className="main-circle" role="button"><i className="ri-more-fill"></i></div>
+                  <div className="main-circle" role="button"><i className="ri-lock-line"></i></div>
                </div>
                <li className="nav-item d-block d-xl-none" onClick={handleSidebar}>
                   <a className="wrapper-menu" data-toggle="sidebar" data-active="true">
-                     <div className="main-circle "><i className="ri-more-fill"></i></div>
+                     <div className="main-circle "><i className="ri-lock-line"></i></div>
                   </a>
                </li>
             </div>

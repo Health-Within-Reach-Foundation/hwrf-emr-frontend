@@ -127,7 +127,7 @@ const approveClinic = async (clinicId) => {
 
 const getUsersByClinic = async () => {
   try {
-    const response = await apiClient.get(`/clinics/user`);
+    const response = await apiClient.get(`/clinics/users`);
     return response.data; // Assuming `data` contains the user list
   } catch (error) {
     console.error("Error fetching clinic users:", error);
@@ -145,25 +145,7 @@ const getSpecialtyDepartmentsByClinic = async () => {
   }
 };
 
-const createRole = async (roleData) => {
-  try {
-    const response = await apiClient.post("/clinics/roles", roleData);
-    return response.data;
-  } catch (error) {
-    console.error("Error creating role:", error);
-    throw error;
-  }
-};
 
-const getRoles = async () => {
-  try {
-    const response = await apiClient.get("/clinics/roles");
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching roles:", error);
-    throw error;
-  }
-};
 
 
 
@@ -174,6 +156,4 @@ export default {
   approveClinic,
   getUsersByClinic,
   getSpecialtyDepartmentsByClinic,
-  createRole,
-  getRoles,
 };

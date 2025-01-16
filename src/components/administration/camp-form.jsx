@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Modal, Form, Input, Button, Select, DatePicker } from "antd";
 import campManagementService from "../../api/camp-management-service";
 import toast from "react-hot-toast";
+import moment from "moment"; // Import moment to get the current date
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -12,6 +13,7 @@ const CampModalForm = ({ show, onClose, users, specialties }) => {
 
   console.log("users", users);
   console.log("specialties", specialties);
+
   // Form submission handler
   const handleSubmit = async () => {
     try {
@@ -24,8 +26,6 @@ const CampModalForm = ({ show, onClose, users, specialties }) => {
         startDate: dateRange[0].format("YYYY-MM-DD"),
         endDate: dateRange[1].format("YYYY-MM-DD"),
       };
-
-      //   onSubmit(formData); // Callback to handle the form submission in the parent component
 
       const response = await campManagementService.createCamp(formData);
       if (response?.success) {
@@ -52,53 +52,20 @@ const CampModalForm = ({ show, onClose, users, specialties }) => {
       className="overflow-hidden"
     >
       <Form
-    //   className="overflow-auto"
         form={form}
         layout="vertical"
         initialValues={{
           name: "",
-          address: "",
+          location: "",
           city: "",
-          state: "",
+          vans: [],
           specialties: [],
           users: [],
-          dateRange: null,
+          dateRange: [moment(), moment()], // Set today's date as the default range
         }}
         style={{ maxHeight: "500px", overflowY: "auto" }}
-
       >
-        <Form.Item
-          label="Camp Name"
-          name="name"
-          rules={[{ required: true, message: "Please enter the camp name!" }]}
-        >
-          <Input placeholder="Enter camp name" />
-        </Form.Item>
-
-        <Form.Item
-          label="Address"
-          name="address"
-          rules={[{ required: true, message: "Please enter the address!" }]}
-        >
-          <Input placeholder="Enter address" />
-        </Form.Item>
-
-        <Form.Item
-          label="City"
-          name="city"
-          rules={[{ required: true, message: "Please enter the city!" }]}
-        >
-          <Input placeholder="Enter city" />
-        </Form.Item>
-
-        <Form.Item
-          label="State"
-          name="state"
-          rules={[{ required: true, message: "Please enter the state!" }]}
-        >
-          <Input placeholder="Enter state" />
-        </Form.Item>
-
+        {/* Date Range */}
         <Form.Item
           label="Date Range"
           name="dateRange"
@@ -112,34 +79,81 @@ const CampModalForm = ({ show, onClose, users, specialties }) => {
           <RangePicker format="YYYY-MM-DD" />
         </Form.Item>
 
+        {/* Camp Name */}
         <Form.Item
-          label="Specialties"
-          name="specialties"
+          label="Camp Name"
+          name="name"
+          rules={[{ required: true, message: "Please enter the camp name!" }]}
+        >
+          <Input placeholder="Enter camp name" />
+        </Form.Item>
+
+        {/* Location (Address renamed) */}
+        <Form.Item
+          label="Location"
+          name="location"
+          rules={[{ required: true, message: "Please enter the location!" }]}
+        >
+          <Input placeholder="Enter location" />
+        </Form.Item>
+
+        {/* Camp City */}
+        <Form.Item
+          label="Camp City"
+          name="city"
+          rules={[{ required: true, message: "Please enter the city!" }]}
+        >
+          <Input placeholder="Enter city" />
+        </Form.Item>
+
+        <Form.Item
+          label="Vans"
+          name="vans"
           rules={[
-            {
-              required: true,
-              message: "Please select at least one specialty!",
-            },
+            { required: true, message: "Please select at least one van!" },
           ]}
         >
           <Select
             mode="multiple"
-            placeholder="Select specialties"
+            placeholder="Select Van"
+            allowClear
+            options={[
+              { value: "Van 1", label: "Van 1" },
+              { value: "Van 2", label: "Van 2" },
+              { value: "Van 3", label: "Van 3" },
+            ]}
+          />
+        </Form.Item>
+        {/* Services (Specialties renamed) */}
+        <Form.Item
+          label="Services"
+          name="specialties"
+          rules={[
+            { required: true, message: "Please select at least one service!" },
+          ]}
+        >
+          <Select
+            mode="multiple"
+            placeholder="Select services"
             allowClear
             options={specialties}
           />
         </Form.Item>
 
+        {/* Staff Attending (Users renamed) */}
         <Form.Item
-          label="Users"
+          label="Staff Attending"
           name="users"
           rules={[
-            { required: true, message: "Please select at least one user!" },
+            {
+              required: true,
+              message: "Please select at least one staff member!",
+            },
           ]}
         >
           <Select
             mode="multiple"
-            placeholder="Select users"
+            placeholder="Select staff"
             allowClear
             options={users}
             filterOption={(input, option) => {
@@ -154,6 +168,7 @@ const CampModalForm = ({ show, onClose, users, specialties }) => {
           />
         </Form.Item>
 
+        {/* Submit/Cancel Buttons */}
         <Form.Item>
           <Button
             type="primary"

@@ -6,6 +6,7 @@ import { Loading } from "../../components/loading";
 import toast from "react-hot-toast";
 import clinicServices from "../../api/clinic-services";
 import { Select } from "antd";
+import rolePermissionService from "../../api/role-permission-service";
 
 const AddUser = () => {
   const [formData, setFormData] = useState({
@@ -27,7 +28,7 @@ const AddUser = () => {
   const getRoles = async () => {
     try {
       setLoading(true);
-      const response = await clinicServices.getRoles();
+      const response = await rolePermissionService.getRoles();
       setRoles(
         response.data.map((role) => ({
           value: role.id,

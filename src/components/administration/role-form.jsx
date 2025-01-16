@@ -1,13 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
-import clinicServices from "../../api/clinic-services";
 import toast from "react-hot-toast";
+import rolePermissionService from "../../api/role-permission-service";
+import { Select } from "antd";
 
-const RoleModalForm = ({ showModal, setShowModal, getRoles }) => {
+const RoleModalForm = ({
+  showModal,
+  setShowModal,
+  getRoles,
+  permissions = [],
+  currentRole = null, // Receives the role being edited or null
+}) => {
   const [roleName, setRoleName] = useState("");
   const [roleDescription, setRoleDescription] = useState("");
+  const [selectedPermissions, setSelectedPermissions] = useState([]);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+
+  // Populate form fields if editing an existing role
+  useEffect(() => {
+    if (currentRole) {
+      setRoleName(currentRole.roleName || "");
+      setRoleDescription(currentRole.roleDescription || "");
+      setSelectedPermissions(
+        currentRole.permissions?.map((perm) => perm.id) || []
+      );
+    } else {
+      resetForm(); // Clear form for new role creation
+    }
+  }, [currentRole]);
+
+  const resetForm = () => {
+    setRoleName("");
+    setRoleDescription("");
+    setSelectedPermissions([]);
+    setErrors({});
+  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -20,36 +48,53 @@ const RoleModalForm = ({ showModal, setShowModal, getRoles }) => {
 
     try {
       setLoading(true);
-      const data = await clinicServices.createRole({
-        roleName,
+      const payload = {
+        name: roleName,
         roleDescription,
-      });
+        permissions: selectedPermissions,
+      };
+
+      let response;
+      if (currentRole) {
+        // Update role
+        console.log(currentRole.id, payload);
+        response = await rolePermissionService.updateRole(
+          currentRole.id,
+          payload
+        );
+      } else {
+        console.log(payload);
+        // Create new role
+        response = await rolePermissionService.createRole(payload);
+      }
+
+      toast.success(response.message || "Role saved successfully");
       setShowModal(false);
-      setRoleName("");
-      setRoleDescription("");
-      toast.success(data.message);
-      await getRoles();
+      resetForm();
+      await getRoles(); // Refresh roles list
     } catch (error) {
-      console.error("Error creating role:", error);
-      toast.error("Failed to create role. Please try again.");
+      console.error("Error saving role:", error);
+      toast.error("Failed to save role. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Form validation
+  // Validate form
   const validateForm = () => {
     const errors = {};
     if (!roleName.trim()) errors.roleName = "Role name is required.";
-    if (!roleDescription.trim())
-      errors.roleDescription = "Role description is required.";
+    // if (!roleDescription.trim())
+    //   errors.roleDescription = "Role description is required.";
+    if (selectedPermissions.length === 0)
+      errors.selectedPermissions = "At least one permission must be selected.";
     return errors;
   };
 
   return (
     <Modal show={showModal} onHide={() => setShowModal(false)} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Create Role</Modal.Title>
+        <Modal.Title>{currentRole ? "Edit Role" : "Create Role"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
@@ -70,15 +115,34 @@ const RoleModalForm = ({ showModal, setShowModal, getRoles }) => {
             <Form.Label>Role Description</Form.Label>
             <Form.Control
               as="textarea"
-              rows={3}
+              rows={2}
               value={roleDescription}
               onChange={(e) => setRoleDescription(e.target.value)}
-              isInvalid={!!errors.roleDescription}
+              // isInvalid={!!errors.roleDescription}
               placeholder="Enter role description"
             />
-            <Form.Control.Feedback type="invalid">
+            {/* <Form.Control.Feedback type="invalid">
               {errors.roleDescription}
-            </Form.Control.Feedback>
+            </Form.Control.Feedback> */}
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Permissions</Form.Label>
+            <Select
+              mode="multiple"
+              allowClear
+              placeholder="Select permissions"
+              dropdownStyle={{ zIndex: 9999 }} // Fix dropdown z-index
+              style={{ width: "100%" }}
+              value={selectedPermissions}
+              onChange={(value) => setSelectedPermissions(value)}
+              options={permissions.map((perm) => ({
+                label: perm.action,
+                value: perm.id,
+              }))}
+            />
+            {errors.selectedPermissions && (
+              <div className="text-danger">{errors.selectedPermissions}</div>
+            )}
           </Form.Group>
           <div className="d-flex justify-content-end">
             <Button
@@ -89,7 +153,7 @@ const RoleModalForm = ({ showModal, setShowModal, getRoles }) => {
               Cancel
             </Button>
             <Button variant="primary" type="submit" disabled={loading}>
-              {loading ? "Saving..." : "Create"}
+              {loading ? "Saving..." : currentRole ? "Update" : "Create"}
             </Button>
           </div>
         </Form>

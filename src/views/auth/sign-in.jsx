@@ -49,7 +49,7 @@ const SignIn = () => {
               <div className="sign-in-detail text-white">
                 <Link to="/" className="sign-in-logo mb-2">
                   <img
-                    src={generatePath("/assets/images/logo-white.png")}
+                    src={generatePath("/assets/images/HWRF Vertical.svg")}
                     className="img-fluid"
                     alt="Logo"
                   />

@@ -111,7 +111,12 @@ import AddUser from "../views/administration/add-user";
 import ConfirmPassword from "../views/auth/confirm-password";
 import Appointment from "../views/appointment";
 import Roles from "../views/administration/roles-management";
+import FormTemplates from "../views/form-templates";
+import PatientForm from "../views/form-templates/patientForm";
+import EditableForm from "../views/form-templates/editableForm";
 import CampManagement from "../views/administration/campaigns";
+import FormTemplateById from "../views/form-templates/form-template-id";
+import PatientTreatment from "../views/patient-treatment";
 
 export const DefaultRoute = [
   {
@@ -142,7 +147,19 @@ export const DefaultRoute = [
       {
         path: "/administration/users-list",
         element: (
-          <ClinicRouteGuard allowedRoles={["admin"]}>
+          <ClinicRouteGuard
+            requiredPermissions={["administration:read", "administration:write"]}
+          >
+            <AllUsers />
+          </ClinicRouteGuard>
+        ),
+      },
+      {
+        path: "/administration/users-list/:userId",
+        element: (
+          <ClinicRouteGuard
+            requiredPermissions={["administration:read", "administration:write"]}
+          >
             <AllUsers />
           </ClinicRouteGuard>
         ),
@@ -150,7 +167,9 @@ export const DefaultRoute = [
       {
         path: "/administration/roles",
         element: (
-          <ClinicRouteGuard allowedRoles={["admin"]}>
+          <ClinicRouteGuard
+            requiredPermissions={["administration:read", "administration:write"]}
+          >
             <Roles />
           </ClinicRouteGuard>
         ),
@@ -158,39 +177,131 @@ export const DefaultRoute = [
       {
         path: "/administration/add-user",
         element: (
-          <ClinicRouteGuard allowedRoles={["admin"]}>
+          <ClinicRouteGuard
+            requiredPermissions={["administration:read", "administration:write"]}
+          >
             <AddUser />
           </ClinicRouteGuard>
         ),
       },
       {
-        path: "/administration/campaigns",
+        path: "/administration/form-templates",
         element: (
-          <ClinicRouteGuard allowedRoles={["admin"]}>
-            <CampManagement />
+          <ClinicRouteGuard
+            requiredPermissions={["administration:read", "administration:write"]}
+          >
+            <FormTemplates />
+          </ClinicRouteGuard>
+        ),
+      },
+      {
+        path: "/administration/form-templates/:formId",
+        element: (
+          <ClinicRouteGuard
+            requiredPermissions={["administration:read", "administration:write"]}
+          >
+            <FormTemplateById />
           </ClinicRouteGuard>
         ),
       },
       {
         path: "/patient/patient-list",
-        element: <PatientList />,
+        // element: <PatientList />,
+        element: (
+          <ClinicRouteGuard
+            requiredPermissions={["patients:write", "patients:read"]}
+          >
+            <PatientList />
+          </ClinicRouteGuard>
+        ),
       },
       {
         path: "/patient/add-patient",
-        element: <AddPatient />,
+        // element: <AddPatient />,
+        element: (
+          <ClinicRouteGuard
+            requiredPermissions={["patients:write", "patients:read"]}
+          >
+            <AddPatient />
+          </ClinicRouteGuard>
+        ),
       },
       {
         path: "/patient/patient-profile/:id",
-        element: <PatientProfile />,
+        // element: <PatientProfile />,
+        element: (
+          <ClinicRouteGuard
+            requiredPermissions={["patients:write", "patients:read"]}
+          >
+            <PatientProfile />
+          </ClinicRouteGuard>
+        ),
       },
       {
-        path: "/patient/edit-patient",
-        element: <EditPatient />,
+        path: "/patient/patient-profile/:id/:diagnosisId",
+        // element: <PatientTreatment />,
+        element: (
+          <ClinicRouteGuard
+            requiredPermissions={["patients:write", "patients:read"]}
+          >
+            <PatientTreatment />
+          </ClinicRouteGuard>
+        ),
       },
+      // {
+      //   path: "/patient/edit-patient",
+      //   element: <EditPatient />,
+      // },
       {
         path: "/queues",
-        element: <Appointment />,
+        // element: <Appointment />,
+        element: (
+          <ClinicRouteGuard
+            requiredPermissions={["queues:write", "queues:read"]}
+          >
+            <Appointment />
+          </ClinicRouteGuard>
+        ),
       },
+      {
+        path: "/camps",
+        element: (
+          <ClinicRouteGuard
+            requiredPermissions={["camps:write", "camps:read"]}
+          >
+            <CampManagement />
+          </ClinicRouteGuard>
+        ),
+      },
+      {
+        path: "/form-templates",
+        element: (
+          <SuperadminRouteGuard allowedRoles={["superadmin"]}>
+            <FormTemplates />
+          </SuperadminRouteGuard>
+        ),
+      },
+      {
+        path: "/form-templates/:id",
+        element: (
+          <SuperadminRouteGuard allowedRoles={["superadmin"]}>
+            <FormTemplateById />
+          </SuperadminRouteGuard>
+        ),
+      },
+      {
+        path: "/form-templates/:id",
+        // element: <EditableForm />,
+        element: (
+          <SuperadminRouteGuard allowedRoles={["superadmin"]}>
+            <EditableForm />
+          </SuperadminRouteGuard>
+        ),
+      },
+      // {
+      //   path: "/form-templates/:id",
+      //   element: <EditableForm />,
+      // },
       {
         path: "/dashboard-pages/dashboard-1",
         // element: <HospitalDashboardOne />,

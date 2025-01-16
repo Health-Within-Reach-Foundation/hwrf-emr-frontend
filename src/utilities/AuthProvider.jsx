@@ -9,11 +9,17 @@ const AuthProvider = ({ children }) => {
   const [userRoles, setUserRoles] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [currentCampDetails, setCurrentCampDetails] = useState(null);
 
   const saveAuthData = (authData) => {
     setUser(authData.user);
     setIsAuthenticated(true);
     setUserRoles(authData.user.roles.map((role) => role.roleName));
+    setCurrentCampDetails(
+      authData?.user?.camps.find(
+        (eachCamp) => eachCamp.id == authData?.user.currentCampId
+      ) || null
+    );
     // setUserSpecialty(authData.user.specialties[0].id);
     localStorage.setItem("accessToken", authData.tokens.access.token);
     localStorage.setItem("refreshToken", authData.tokens.refresh.token);
@@ -70,12 +76,22 @@ const AuthProvider = ({ children }) => {
       setUserRoles(data.user.roles.map((role) => role.roleName));
 
       setIsAuthenticated(true);
+      setCurrentCampDetails(
+        data.user?.camps.find(
+          (eachCamp) => eachCamp.id.trim() == data.user.currentCampId.trim()
+        ) || null
+      );
+      console.log(
+        data.user?.camps.find(
+          (eachCamp) => eachCamp.id.trim() == data.user?.currentCampId.trim()
+        ) || null
+      );
     } catch (error) {
       console.error("Failed to restore user:", error.message);
       setIsAuthenticated(false);
       setUser(null);
       setUserRoles([]);
-
+      setCurrentCampDetails(null);
       if (error.response?.status === 401 && refreshToken) {
         try {
           const newTokens = await authServices.refreshAccessToken(refreshToken);
@@ -104,6 +120,7 @@ const AuthProvider = ({ children }) => {
         loading,
         userRoles,
         initializeAuth,
+        currentCampDetails
       }}
     >
       {children}

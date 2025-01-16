@@ -59,42 +59,42 @@ const Header = () => {
   // Fullscreen Functionality
   const [isFullScreen, setIsFullScreen] = useState(false);
 
-  const toggleFullScreen = () => {
-    if (
-      !document.fullscreenElement &&
-      !document.mozFullScreenElement &&
-      !document.webkitFullscreenElement &&
-      !document.msFullscreenElement
-    ) {
-      // Request fullscreen
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-      } else if (document.documentElement.mozRequestFullScreen) {
-        document.documentElement.mozRequestFullScreen();
-      } else if (document.documentElement.webkitRequestFullscreen) {
-        document.documentElement.webkitRequestFullscreen(
-          Element.ALLOW_KEYBOARD_INPUT
-        );
-      } else if (document.documentElement.msRequestFullscreen) {
-        document.documentElement.msRequestFullscreen(
-          Element.ALLOW_KEYBOARD_INPUT
-        );
-      }
-      setIsFullScreen(true);
-    } else {
-      // Exit fullscreen
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-      }
-      setIsFullScreen(false);
-    }
-  };
+  // const toggleFullScreen = () => {
+  //   if (
+  //     !document.fullscreenElement &&
+  //     !document.mozFullScreenElement &&
+  //     !document.webkitFullscreenElement &&
+  //     !document.msFullscreenElement
+  //   ) {
+  //     // Request fullscreen
+  //     if (document.documentElement.requestFullscreen) {
+  //       document.documentElement.requestFullscreen();
+  //     } else if (document.documentElement.mozRequestFullScreen) {
+  //       document.documentElement.mozRequestFullScreen();
+  //     } else if (document.documentElement.webkitRequestFullscreen) {
+  //       document.documentElement.webkitRequestFullscreen(
+  //         Element.ALLOW_KEYBOARD_INPUT
+  //       );
+  //     } else if (document.documentElement.msRequestFullscreen) {
+  //       document.documentElement.msRequestFullscreen(
+  //         Element.ALLOW_KEYBOARD_INPUT
+  //       );
+  //     }
+  //     setIsFullScreen(true);
+  //   } else {
+  //     // Exit fullscreen
+  //     if (document.exitFullscreen) {
+  //       document.exitFullscreen();
+  //     } else if (document.mozCancelFullScreen) {
+  //       document.mozCancelFullScreen();
+  //     } else if (document.webkitExitFullscreen) {
+  //       document.webkitExitFullscreen();
+  //     } else if (document.msExitFullscreen) {
+  //       document.msExitFullscreen();
+  //     }
+  //     setIsFullScreen(false);
+  //   }
+  // };
 
   const handleSidebar = () => {
     let aside = document.getElementsByTagName("ASIDE")[0];
@@ -241,7 +241,7 @@ const Header = () => {
                            </div>
                         </Dropdown.Menu> 
                      </Dropdown>*/}
-              <Nav.Item
+              {/* <Nav.Item
                 as="li"
                 className="nav-item iq-full-screen d-none d-xl-block"
                 id="fullscreen-item"
@@ -263,8 +263,8 @@ const Header = () => {
                     }`}
                   ></i>
                 </a>
-              </Nav.Item>
-              <Dropdown as="li" className="nav-item">
+              </Nav.Item> */}
+              {/* <Dropdown as="li" className="nav-item">
                 <Dropdown.Toggle
                   bsPrefix=" "
                   as="a"
@@ -370,8 +370,8 @@ const Header = () => {
                     </div>
                   </div>
                 </Dropdown.Menu>
-              </Dropdown>
-              <Dropdown as="li" className="nav-item">
+              </Dropdown> */}
+              {/* <Dropdown as="li" className="nav-item">
                 <Dropdown.Toggle
                   as="a"
                   bsPrefix=" "
@@ -476,7 +476,7 @@ const Header = () => {
                     </div>
                   </div>
                 </Dropdown.Menu>
-              </Dropdown>
+              </Dropdown> */}
               <Nav.Item
                 as="li"
                 className="nav-item d-block d-xl-none"
@@ -540,41 +540,21 @@ const Header = () => {
                 >
                   <div className="m-0 -none card">
                     <div className="py-3 card-header d-flex justify-content-between bg-primary mb-0 rounded-top-3">
-                      <div className="header-title">
+                      {/* <div className="header-title">
                         <h5 className="mb-0 text-white font-weight-bold">
                           Camp: {currentCampData?.name}
                         </h5>
                         <small className="mb-0 text-white">
                           <i class="ri-map-pin-fill"></i>{" "}
-                          {currentCampData?.address +
+                          {currentCampData?.location +
                             " " +
                             ", " +
-                            currentCampData?.city +
-                            " " +
-                            ", " +
-                            currentCampData?.state}
+                            currentCampData?.city}
                         </small>
-                        {/* <span className="text-white ">Available</span> */}
-                      </div>
+                      </div> */}
                     </div>
                     <div className="p-0 card-body">
-                      <div
-                        className="iq-sub-card"
-                        onClick={() => {
-                          setShowModal(true);
-                        }}
-                      >
-                        <div className="d-flex align-items-center">
-                          <div className="bg-primary-subtle px-3 py-2 rounded-1">
-                            <i class="ri-checkbox-circle-fill"></i>
-                          </div>
-                          <div className="ms-3 flex-grow-1 text-start">
-                            <h6 className="mb-0 ">Manage camp</h6>
-                            <p className="mb-0">Change current camp</p>
-                          </div>
-                        </div>
-                      </div>
-                      <Link to="/doctor/doctor-profile" className="iq-sub-card">
+                      {/* <Link to="/doctor/doctor-profile" className="iq-sub-card">
                         <div className="d-flex align-items-center">
                           <div className="bg-primary-subtle px-3 py-2 rounded-1">
                             <i className="ri-file-user-line "></i>
@@ -586,7 +566,7 @@ const Header = () => {
                             </p>
                           </div>
                         </div>
-                      </Link>
+                      </Link> */}
                       {/* <Link to="/doctor/edit-doctor" className="iq-sub-card">
                         <div className="d-flex align-items-center">
                           <div className="bg-primary-subtle px-3 py-2 rounded-1">
@@ -600,7 +580,7 @@ const Header = () => {
                           </div>
                         </div>
                       </Link> */}
-                      <Link
+                      {/* <Link
                         to="/extra-pages/account-setting"
                         className="iq-sub-card"
                       >
@@ -615,7 +595,7 @@ const Header = () => {
                             </p>
                           </div>
                         </div>
-                      </Link>
+                      </Link> */}
                       {/* <Link
                         to="/extra-pages/privacy-setting"
                         className="iq-sub-card"
@@ -727,7 +707,7 @@ const Header = () => {
                 </Dropdown.Menu>
               </Dropdown>{" "}
               <li className="nav-item dropdown"></li>
-              <Nav.Item
+              {/* <Nav.Item
                 className="iq-full-screen iq-full-screen2 d-block d-xl-none"
                 id="fullscreen-item"
               >
@@ -748,8 +728,8 @@ const Header = () => {
                     }`}
                   ></i>
                 </a>
-              </Nav.Item>{" "}
-              <Dropdown as="li" className="nav-item">
+              </Nav.Item>{" "} */}
+              {/* <Dropdown as="li" className="nav-item">
                 <Dropdown.Toggle
                   as="a"
                   bsPrefix=" "
@@ -935,7 +915,7 @@ const Header = () => {
                     </div>
                   </div>
                 </Dropdown.Menu>
-              </Dropdown>
+              </Dropdown> */}
             </Col>
           </Row>
           {/* -- dropdown -- */}
@@ -943,16 +923,7 @@ const Header = () => {
       </Navbar>
       {/* </Navbar> */}
 
-      {showModal && (
-        <CampSelectionModal
-          open={showModal}
-          camps={user?.camps || []}
-          onClose={() => {
-            setShowModal(false);
-          }}
-          preCheckedCampId={user?.currentCampId}
-        />
-      )}
+     
     </>
   );
 };
