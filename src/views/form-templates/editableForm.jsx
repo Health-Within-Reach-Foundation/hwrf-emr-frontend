@@ -3,60 +3,10 @@ import { Button, Dropdown, message, Card } from "antd";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import FieldRenderer from "./FieldRenderer";
 import "./editableForm.scss";
-
+import DynamicForm from "./formRender";
 
 const DynamicFields = () => {
-  const [fields, setFields] = useState([
-    {
-      id: "1736497422296",
-      type: "phone",
-      title: "name",
-      value: "Rohan",
-      options: null,
-    },
-    {
-      id: "1736497433985",
-      type: "phone",
-      title: "phone number",
-      value: "",
-      options: null,
-    },
-    {
-      id: "1736497444472",
-      type: "maidId",
-      title: "Email",
-      value: "",
-      options: null,
-    },
-    {
-      id: "1736497452593",
-      type: "radio",
-      title: "New Field",
-      value: "",
-      options: ["Rohan", "yash", "veer", "kedar", "navin"],
-    },
-    {
-      id: "1736497504441",
-      type: "checkbox",
-      title: "checkbox",
-      value: "",
-      options: ["yash", "navin", "veer"],
-    },
-    {
-      id: "1736497541449",
-      type: "select",
-      title: "select field",
-      value: "",
-      options: ["Option 1"],
-    },
-    {
-      id: "1736497607409",
-      type: "textarea",
-      title: "text area field",
-      value: "",
-      options: null,
-    },
-  ]);
+  const [fields, setFields] = useState([]);
 
   const handleMenuClick = ({ key }) => {
     setFields((prevFields) => [
@@ -66,7 +16,10 @@ const DynamicFields = () => {
         type: key,
         title: "New Field",
         value: "",
-        options: key === "radio" || key === "checkbox" || key === "select" ? ["Option 1"] : null,
+        options:
+          key === "radio" || key === "checkbox" || key === "select"
+            ? ["Option 1"]
+            : null,
       },
     ]);
   };
@@ -74,7 +27,7 @@ const DynamicFields = () => {
   const menuItems = [
     { label: "Input", key: "input" },
     { label: "Phone Number", key: "phone" },
-    { label: "Maid ID", key: "maidId" },
+    { label: "Mail ID", key: "mailId" },
     { label: "Radio Button", key: "radio" },
     { label: "Checkbox", key: "checkbox" },
     { label: "Select Field", key: "select" },
@@ -88,7 +41,9 @@ const DynamicFields = () => {
 
   const handleFieldUpdate = (updatedField) => {
     setFields((prevFields) =>
-      prevFields.map((field) => (field.id === updatedField.id ? updatedField : field))
+      prevFields.map((field) =>
+        field.id === updatedField.id ? updatedField : field
+      )
     );
   };
 
@@ -115,37 +70,106 @@ const DynamicFields = () => {
     setFields(reorderedFields);
   };
 
+  const handleDeleteField = (id) => {
+    setFields((prevFields) => prevFields.filter((field) => field.id !== id));
+  };
+
   return (
     <div
       style={{
         display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        // height: "100vh",
         background: "#f0f2f5",
+        gap: 2,
       }}
     >
-      <Card style={{ width: "60%", padding: "20px" }}>
+      <Card style={{ width: "100%", padding: "20px" }}>
+        <div className="d-flex flex-row-reverse">
+          <Dropdown menu={menu} trigger={["click"]} className="">
+            <Button
+              type="primary"
+              className="add-field-button"
+              style={{ marginBottom: "20px" }}
+            >
+              Add Field
+            </Button>
+          </Dropdown>
+        </div>
         <div className="dynamic-fields-container">
-       
-
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="fields">
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
                   {fields.map((field, index) => (
-                    <Draggable key={field.id} draggableId={field.id} index={index}>
+                    <Draggable
+                      key={field.id}
+                      draggableId={field.id}
+                      index={index}
+                    >
                       {(provided) => (
+                        // <div
+                        //   ref={provided.innerRef}
+                        //   {...provided.draggableProps}
+                        //   {...provided.dragHandleProps}
+                        //   style={{
+                        //     marginBottom: "20px",
+                        //     ...provided.draggableProps.style,
+                        //   }}
+                        // >
+                        //   <FieldRenderer
+                        //     field={field}
+                        //     onFieldUpdate={handleFieldUpdate}
+                        //   />
+                        //   <i className="ri-drag-move-2-line"></i>
+                        // </div>
                         <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}
-                          {...provided.dragHandleProps}
                           style={{
-                            marginBottom: "20px",
+                            marginBottom: "5px",
+                            padding: "30px",
+                            border: "1px solid",
+                            borderRadius: "8px",
+                            position: "relative", // Allow absolute positioning for drag handle
                             ...provided.draggableProps.style,
                           }}
                         >
-                          <FieldRenderer field={field} onFieldUpdate={handleFieldUpdate} />
+                          <div
+                            {...provided.dragHandleProps}
+                            style={{
+                              position: "absolute",
+                              top: "0px", // Adjust spacing as needed
+                              right: "0px", // Align to the top-right corner
+                              cursor: "grab",
+                              zIndex: 300,
+                              width: "fit-content",
+                            }}
+                          >
+                            <i
+                              className="ri-drag-move-2-line"
+                              style={{ fontSize: "20px", color: "#3978cd" }}
+                            ></i>
+                          </div>
+                          <FieldRenderer
+                            field={field}
+                            onFieldUpdate={handleFieldUpdate}
+                          />{" "}
+                          {/* Delete Icon */}
+                          <div
+                            onClick={() => handleDeleteField(field.id)}
+                            style={{
+                              position: "absolute",
+                              bottom: "0px",
+                              right: "0px",
+                              cursor: "pointer",
+                              zIndex: 300,
+                              fontSize: "20px",
+                              color: "#ff4d4f",
+                              width: "fit-content",
+                            }}
+                          >
+                            <i className="ri-delete-bin-7-line"></i>{" "}
+                          </div>
+                          {/* Fixed drag handle */}
                         </div>
                       )}
                     </Draggable>
@@ -164,12 +188,8 @@ const DynamicFields = () => {
             </div>
           )}
         </div>
-        <Dropdown menu={menu} trigger={["click"]}>
-            <Button type="primary" className="add-field-button" style={{ marginBottom: "20px" }}>
-              Add Field
-            </Button>
-          </Dropdown>
       </Card>
+      <DynamicForm data={fields} />
     </div>
   );
 };

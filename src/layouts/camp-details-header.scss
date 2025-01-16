@@ -1,0 +1,43 @@
+// Style for the camp details container
+.camp-details-container {
+  position: relative;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  max-height: 30px; // Initial height showing only the summary
+
+  &:hover {
+    max-height: 600px; // Expands to show full details
+  }
+
+  // Summary of camp - Only visible in collapsed state
+  .camp-summary {
+    margin-bottom: 10px;
+
+    h6 {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    p {
+      font-size: 14px;
+      color: #6c757d;
+    }
+  }
+
+  // Full camp details - Hidden when collapsed
+  .camp-full-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    h6 {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    p {
+      font-size: 14px;
+      color: #343a40;
+    }
+  }
+}

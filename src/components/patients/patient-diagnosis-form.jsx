@@ -251,10 +251,10 @@
 import React, { useEffect, useState } from "react";
 import { Drawer, Input, TreeSelect, Select, Button } from "antd";
 import { Form } from "react-bootstrap";
-import patientServices from "../api/patient-services";
+import patientServices from "../../api/patient-services";
 import toast from "react-hot-toast";
-import TeethSelector from "./adult-teeth-selector/teeth-selector";
-import ChildTeethSelector from "./child-teeth-selector/child-teeth-selector";
+import TeethSelector from "../adult-teeth-selector/teeth-selector";
+import ChildTeethSelector from "../child-teeth-selector/child-teeth-selector";
 
 const PatientDiagnosisForm = ({
   isEdit,
@@ -265,45 +265,12 @@ const PatientDiagnosisForm = ({
   patientData,
 }) => {
   const [loading, setLoading] = useState(false);
-  // console.log(patientData)
-  const dentalQuadrantOptions = [
-    {
-      title: "Upper Left",
-      value: "upperLeft",
-      children: Array.from({ length: 8 }, (_, i) => ({
-        title: `Tooth ${i + 1}`,
-        value: `upperLeft-tooth${i + 1}`,
-      })),
-    },
-    {
-      title: "Upper Right",
-      value: "upperRight",
-      children: Array.from({ length: 8 }, (_, i) => ({
-        title: `Tooth ${i + 1}`,
-        value: `upperRight-tooth${i + 1}`,
-      })),
-    },
-    {
-      title: "Lower Left",
-      value: "lowerLeft",
-      children: Array.from({ length: 8 }, (_, i) => ({
-        title: `Tooth ${i + 1}`,
-        value: `lowerLeft-tooth${i + 1}`,
-      })),
-    },
-    {
-      title: "Lower Right",
-      value: "lowerRight",
-      children: Array.from({ length: 8 }, (_, i) => ({
-        title: `Tooth ${i + 1}`,
-        value: `lowerRight-tooth${i + 1}`,
-      })),
-    },
-  ];
+
+  console.log(diagnosisData,"***********************")
 
   const [formState, setFormState] = useState({
     complaints: [],
-    treatment: [],
+    treatmentsSuggested: [],
     // dentalQuadrant: [],
     xrayStatus: false,
     xray: [],
@@ -319,7 +286,9 @@ const PatientDiagnosisForm = ({
         createdAt,
         updatedAt,
         appointmentId,
-        treatments,
+        treatmentsSuggested,
+        dentalQuadrant,
+        treatments,  // this is model treatement data
         patientId,
         id,
         additionalDetails,
@@ -329,17 +298,17 @@ const PatientDiagnosisForm = ({
       setFormState({
         ...filteredData,
         xray: [],
-        selectedTeeth: [selectedTeeth],
+        selectedTeeth: selectedTeeth === null ? [] : [selectedTeeth],
       });
     } else {
       setFormState({
         complaints: [],
-        treatment: [],
-        // dentalQuadrant: [],
+        treatmentsSuggested: [],
+        dentalQuadrant: [],
         xrayStatus: false,
         xray: [],
         notes: "",
-        currentStatus: [],
+        // currentStatus: [],
         dentalQuadrantType: "adult",
         selectedTeeth: [], // Initialize selectedTeeth in new form
       });
@@ -382,6 +351,7 @@ const PatientDiagnosisForm = ({
       // Make API call to save diagnosis
       let response;
       if (isEdit) {
+        formData.delete("selectedTeeth")
         response = await patientServices.updatePatientDiagnosis(
           diagnosisData.id,
           formData
@@ -433,8 +403,8 @@ const PatientDiagnosisForm = ({
           <Form.Label>Treatment</Form.Label>
           <Select
             mode="multiple"
-            value={formState.treatment}
-            onChange={(value) => handleInputChange("treatment", value)}
+            value={formState.treatmentsSuggested}
+            onChange={(value) => handleInputChange("treatmentsSuggested", value)}
             options={[
               { value: "Scaling Regular", label: "Scaling Regular" },
               { value: "Scaling Complex", label: "Scaling Complex" },

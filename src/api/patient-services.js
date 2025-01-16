@@ -147,6 +147,53 @@ const updatePatientDiagnosis = async (diagnosisId, patientDiagnosisData) => {
   }
 };
 
+const addTreatmentByDiagnosis = async (treatementBody) => {
+  try {
+    const response = await apiClient.post(`patients/treatment`, treatementBody);
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      // Handle specific error responses from the API
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to add treatement"
+      );
+    } else {
+      // Handle other types of errors
+      console.error("Unexpected error:", error.message);
+      throw new Error(
+        "An unexpected error occurred while adding patient diagnosis treatement"
+      );
+    }
+  }
+};
+
+const updateTreatmentById = async (treatementId, treatementBody) => {
+  try {
+    const response = await apiClient.patch(
+      `patients/treatment/${treatementId}`,
+      treatementBody
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      // Handle specific error responses from the API
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to add treatement"
+      );
+    } else {
+      // Handle other types of errors
+      console.error("Unexpected error:", error.message);
+      throw new Error(
+        "An unexpected error occurred while adding patient diagnosis treatement"
+      );
+    }
+  }
+};
+
 export default {
   addPatient,
   getPatients,
@@ -154,4 +201,6 @@ export default {
   updatePatientDetails,
   addPatientDiagnosis,
   updatePatientDiagnosis,
+  addTreatmentByDiagnosis,
+  updateTreatmentById
 };

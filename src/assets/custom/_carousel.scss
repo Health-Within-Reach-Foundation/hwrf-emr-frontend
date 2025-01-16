@@ -17,14 +17,14 @@
         border-radius: 8px;
 
         &:hover {
-          transform: scale(1.05);
+          transform: scale(1.005);
           // box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
 
         // Highlighted card styles
         &.highlighted-card {
-          background-color: #f1c40f; // Yellow background
-          border: 2px solid #e67e22; // Orange border
+          background-color: #4d8950; // Yellow background
+          border: 2px solid #039333; // Orange border
           // box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); // Subtle shadow
         }
       }

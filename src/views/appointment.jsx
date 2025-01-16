@@ -12,6 +12,7 @@ import { Loading } from "../components/loading";
 import DateCell from "../components/date-cell";
 import { Link } from "react-router-dom";
 import { Badge, Dropdown, Menu } from "antd";
+import { useAuth } from "../utilities/AuthProvider";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -22,6 +23,8 @@ const Appointment = () => {
   const [filters, setFilters] = useState({ status: "", queueType: "" });
   const [patientList, setPatientList] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
+  const [selectedQueueType, setSelectedQueueType] = useState(null); // Tracks the selected department
+  const { currentCampDetails } = useAuth();
 
   const statusOptions = [
     { value: "registered", label: "Registered" },
@@ -105,10 +108,10 @@ const Appointment = () => {
         // Define a color mapping for different statuses
         const statusColors = {
           "in queue": "success",
-          "in": "warning",
-          "out": "processing",
+          in: "warning",
+          out: "processing",
         };
-  
+
         return (
           <a href={`/patient/patient-profile/${row.patientId}`} className="">
             <Badge
@@ -161,7 +164,6 @@ const Appointment = () => {
         );
       },
     },
-    
   ];
 
   const fetchAppointments = async (selectedDate) => {
@@ -226,10 +228,6 @@ const Appointment = () => {
     getSpecialtyDepartmentsByClinic();
   }, []);
 
-  if (loading) {
-    return <Loading />;
-  }
-
   const filterComponents = [
     {
       key: "status",
@@ -275,6 +273,24 @@ const Appointment = () => {
     // setShowFilters(false); // Close the filter panel after resetting
   };
 
+  const handleQueueTypeSort = (queueType) => {
+    if (selectedQueueType === queueType.label) {
+      // If the same department button is clicked again, reset the filter
+      setSelectedQueueType(null);
+      setFilteredAppointments(appointments);
+    } else {
+      // Apply the filter for the selected department
+      setSelectedQueueType(queueType.label);
+      const filtered = appointments.filter(
+        (appointment) => appointment.queueType === queueType.label
+      );
+      setFilteredAppointments(filtered);
+    }
+  };
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <>
       <Row>
@@ -298,12 +314,10 @@ const Appointment = () => {
                 />
               </Col>
             </Col>
-            <Col
-              xs={12}
-              md={6}
-              className="d-flex justify-content-end align-items-center mb-3"
-            >
-              {/* Buttons Section */}
+
+            {/* Department Buttons */}
+
+            <div className="d-flex flex-column">
               <div className="d-flex gap-2">
                 <Button
                   variant="primary"
@@ -314,14 +328,30 @@ const Appointment = () => {
                   Add to Queue
                 </Button>
               </div>
-            </Col>
+              <div className="d-flex gap-2">
+                {departmentList.map((department) => (
+                  <Button
+                    size="sm"
+                    key={department.value}
+                    variant={
+                      selectedQueueType === department.label
+                        ? "primary" // Highlight the selected button
+                        : "outline-primary"
+                    }
+                    onClick={() => handleQueueTypeSort(department)}
+                  >
+                    {department.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
           </Row>
 
           <CustomTable
             key={filteredAppointments.length} // Force re-render when data changes
             columns={columns}
             data={filteredAppointments}
-            enableFilters
+            enableFilters={false}
             filtersConfig={filterComponents}
             onApplyFilters={applyFilters}
             onResetFilters={resetFilters}

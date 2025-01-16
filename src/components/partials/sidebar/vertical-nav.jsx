@@ -234,7 +234,7 @@ const VerticalNav = () => {
               <OverlayTrigger
                 key={"Form_Templtes"}
                 placement={"right"}
-                overlay={<Tooltip id="Dashboard">Form Templtes</Tooltip>}
+                overlay={<Tooltip id="Dashboard">Form Templates</Tooltip>}
               >
                 <i
                   className="ri-list-view"
@@ -243,7 +243,7 @@ const VerticalNav = () => {
                   data-bs-placement="right"
                 ></i>
               </OverlayTrigger>
-              <span className="item-name ">Form Templtes </span>
+              <span className="item-name ">Form Templates </span>
             </Link>
           </Nav.Item>
         )}

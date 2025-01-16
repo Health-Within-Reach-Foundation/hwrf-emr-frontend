@@ -91,6 +91,11 @@ const CampManagement = () => {
     { data: "location", title: "Location" },
     { data: "city", title: "City" },
     {
+      data: "vans",
+      title: "Vans",
+      render: (data) => data?.join(", ") || "",
+    },
+    {
       data: "startDate",
       title: "Start Date",
       render: (data) => new Date(data).toLocaleDateString(),
@@ -100,7 +105,6 @@ const CampManagement = () => {
       title: "End Date",
       render: (data) => new Date(data).toLocaleDateString(),
     },
-   
   ];
 
   const filterComponents = [

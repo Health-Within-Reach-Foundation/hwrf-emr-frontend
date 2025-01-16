@@ -58,7 +58,7 @@ const CampModalForm = ({ show, onClose, users, specialties }) => {
           name: "",
           location: "",
           city: "",
-          // vans: [],
+          vans: [],
           specialties: [],
           users: [],
           dateRange: [moment(), moment()], // Set today's date as the default range
@@ -106,7 +106,7 @@ const CampModalForm = ({ show, onClose, users, specialties }) => {
           <Input placeholder="Enter city" />
         </Form.Item>
 
-        {/* <Form.Item
+        <Form.Item
           label="Vans"
           name="vans"
           rules={[
@@ -123,7 +123,7 @@ const CampModalForm = ({ show, onClose, users, specialties }) => {
               { value: "Van 3", label: "Van 3" },
             ]}
           />
-        </Form.Item> */}
+        </Form.Item>
         {/* Services (Specialties renamed) */}
         <Form.Item
           label="Services"

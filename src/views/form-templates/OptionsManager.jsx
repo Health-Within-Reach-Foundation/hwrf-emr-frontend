@@ -24,24 +24,40 @@ const OptionsManager = ({ options, onOptionsUpdate }) => {
         placeholder="Enter new option"
         onPressEnter={handleAddOption}
       />
-      <Button type="primary" onClick={handleAddOption} style={{ marginTop: "5px" }}>
+      <Button
+        type="primary"
+        onClick={handleAddOption}
+        style={{ marginTop: "5px" }}
+      >
         Add Option
       </Button>
-      <List
-        dataSource={options}
-        renderItem={(item, index) => (
-          <List.Item
-            actions={[
-              <Button type="text" danger onClick={() => handleDeleteOption(index)}>
-                Delete
-              </Button>,
-            ]}
+      {/* Display options using div and map */}
+      <div style={{ marginTop: "10px" }}>
+        {options.map((item, index) => (
+          <div
+            key={index}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "5px",
+              padding: "5px",
+              border: "1px solid #d9d9d9",
+              borderRadius: "4px",
+            }}
           >
-            {item}
-          </List.Item>
-        )}
-        style={{ marginTop: "10px" }}
-      />
+            <span>{item}</span>
+            <Button
+              type="text"
+              danger
+              onClick={() => handleDeleteOption(index)}
+              style={{ padding: "5px", fontSize: "16px" }}
+            >
+              <i className="ri-delete-bin-line"></i>
+            </Button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

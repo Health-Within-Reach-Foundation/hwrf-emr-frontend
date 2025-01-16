@@ -57,7 +57,7 @@
     "react-responsive-masonry": "^2.1.7",
     "react-router-dom": "^6.26.1",
     "react-select": "^5.9.0",
-    "sass": "^1.77.8",
+    "sass": "^1.83.4",
     "sass-loader": "^16.0.1",
     "smooth-scrollbar": "^8.8.4",
     "smooth-scrollbar-react": "^2.4.1",

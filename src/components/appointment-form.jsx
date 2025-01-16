@@ -48,7 +48,7 @@ const AppointmentForm = ({ show, modalClose, patients, departments }) => {
       patientId: selectedPatient.id,  // Make sure it's using the correct field for patient ID
       specialties: selectedDepartments,
       appointmentDate: localDate,
-      status: "registered",
+      status: "in queue",
     };
 
     try {

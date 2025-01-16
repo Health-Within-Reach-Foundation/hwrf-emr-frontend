@@ -7,6 +7,8 @@ import campManagementService from "../api/camp-management-service";
 import { Loading } from "../components/loading";
 import clinicServices from "../api/clinic-services";
 import CampModalForm from "../components/administration/camp-form";
+import DynamicForm from "./form-templates/formRender";
+import DynamicFields from "./form-templates/editableForm";
 
 const Index = () => {
   const { user, initializeAuth, userRoles = [] } = useAuth();
@@ -24,7 +26,7 @@ const Index = () => {
       ? null
       : activeCamps?.find((camp) => camp.id === user?.currentCampId) || null;
   });
-
+  console.log(user);
   const getUsersbyClinic = async () => {
     setLoading(true);
     try {
@@ -150,7 +152,7 @@ const Index = () => {
               {sortedCamps.map((camp) => (
                 <div
                   key={camp.id}
-                  className={`camp-card mx-2 ${
+                  className={`camp-card ${
                     camp.id === user.currentCampId ? "highlighted-card" : ""
                   }`}
                   onClick={() => handleSelect(camp.id)}
@@ -211,6 +213,7 @@ const Index = () => {
           specialties={specialtiesOptions} // Pass specialty options here
         />
       )}
+      {/* <DynamicFields/> */}
     </>
   );
 };

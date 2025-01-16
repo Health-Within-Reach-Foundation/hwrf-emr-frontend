@@ -430,9 +430,11 @@ const JoinUs = () => {
     setLoading(true);
     e.preventDefault();
     delete formData["confirmPassword"];
+    console.log("formData of join us -->", formData);
     try {
       await clinicServices.onBoardClinic(formData);
-      toast.success("Clinic onboarded successfully!");
+      setFormData(initialStateFormData);
+      // toast.success("Clinic onboarded successfully!");
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Failed to onboard clinic");
@@ -491,7 +493,8 @@ const JoinUs = () => {
                     </Form.Group>
                     <Form.Group controlId="formSpecialty" className="py-2">
                       <Form.Label>
-                        Specialty Services <span className="text-danger">*</span>
+                        Specialty Services{" "}
+                        <span className="text-danger">*</span>
                       </Form.Label>
                       <Select
                         mode="multiple"

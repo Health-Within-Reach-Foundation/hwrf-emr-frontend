@@ -12,7 +12,7 @@ import {
   Tabs,
   Tab,
 } from "react-bootstrap";
-import { Drawer, Input, TreeSelect, Select } from "antd"; // Import TreeSelect from antd
+import { Drawer, Input, TreeSelect, Select, Checkbox } from "antd"; // Import TreeSelect from antd
 // import Select from "react-select";
 import { useParams } from "react-router-dom";
 import patientServices from "../../api/patient-services";
@@ -20,17 +20,18 @@ import { Loading } from "../../components/loading";
 import { useAuth } from "../../utilities/AuthProvider";
 import CustomTable from "../../components/custom-table";
 import toast from "react-hot-toast";
-import PatientDiagnosisForm from "../../components/patient-diagnosis-form";
-import PatientTreatmentForm from "../../components/patient-treatment-form";
-
+import PatientDiagnosisForm from "../../components/patients/patient-diagnosis-form";
+import { dentalQuadrant } from "../../utilities/utility-function";
+import DateCell from "../../components/date-cell";
+import SelectedDiagnosisTreatementDetaiils from "../../components/patients/diagnosis-treatment";
+import BasicPatientProfile from "../../components/patients/basic-patient-profile";
 const PatientProfile = () => {
   const { id } = useParams();
   const [patientData, setPatientData] = useState(null);
   const [appointments, setAppointments] = useState([]);
-  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  // const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [selectedDiagnosis, setSelectedDiagnosis] = useState(null);
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const [openTreatmentDrawer, setOpenTreatmentDrawer] = useState(false);
 
   const [medicalRecords, setMedicalRecords] = useState([]);
   const [recordForm, setRecordForm] = useState(null);
@@ -38,44 +39,77 @@ const PatientProfile = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const [editingPatient, setEditingPatient] = useState(false);
+  const [selectedDiagnosisRow, setSelectedDiagnosisRow] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [departmentList, setDepartmentList] = useState([]);
+  const [checkedRow, setCheckedRow] = useState(null); // Track a single selected row
 
-  // Define columns for CustomTable
-  const columns = [
-    {
-      title: "Appointment Date",
-      data: "appointmentDate",
-      render: (data) => new Date(data).toLocaleDateString(),
-    },
-    {
-      title: "Status",
-      data: "status",
-      render: (data) => data.charAt(0).toUpperCase() + data.slice(1), // Capitalize first letter
-    },
-    // {
-    //   title: "Actions",
-    //   data: null,
-    //   render: (_, record) => (
-    //     <Button
-    //       variant="primary"
-    //       onClick={() => handleOpenDrawer(record, hasMedicalRecord(record))}
-    //     >
-    //       {hasMedicalRecord(record) ? "Edit Record" : "Add Record"}
-    //     </Button>
-    //   ),
-    // },
-  ];
+  const handleCheckboxChange = (record) => {
+    setCheckedRow((prev) => (prev === record.id ? null : record.id)); // Toggle or select a new row
+    setSelectedDiagnosisRow(record);
+  };
 
   const dentistryColumns = [
+    {
+      title: "",
+      data: null,
+      render: (data, record) => {
+        return (
+          <Checkbox
+            checked={checkedRow === record.id} // Link checkbox to the tracked row
+            onChange={() => handleCheckboxChange(record)}
+          />
+        );
+      },
+    },
     {
       title: "Diagnosis date",
       data: "createdAt",
       // render: (data) => new Date(data).toLocaleDateString(),
-      render: (data, row) => {
+      render: (data, record) => {
+        return (
+          // <div
+          //   className="cursor-pointer"
+          //   onClick={() => handleSelectDiagnosisRow(record)}
+          // >
+          <DateCell
+            date={new Date(data).toLocaleDateString()}
+            dateFormat="D MMM, YYYY"
+          />
+          // </div>
+        );
+      },
+    },
+    {
+      title: "Dental Quadrant",
+      data: "selectedTeeth",
+      // render: (data) => new Date(data).toLocaleDateString(),
+      render: (data, record) => {
         // console.log(data, row);
         return (
-          <a href={`/patient/patient-profile/${row.patientId}/${row.id}`} className="">
-            {new Date(data).toLocaleDateString()}
-          </a>
+          <div
+
+          // className="cursor-pointer"
+          // onClick={() => handleSelectDiagnosisRow(record)}
+          >
+            {dentalQuadrant(data?.toString().charAt(0))}
+          </div>
+        );
+      },
+    },
+    {
+      title: "Tooth",
+      data: "selectedTeeth",
+      // render: (data) => new Date(data).toLocaleDateString(),
+      render: (data, record) => {
+        // console.log(data, row);
+        return (
+          <div
+          // className="cursor-pointer"
+          // onClick={() => handleSelectDiagnosisRow(record)}
+          >
+            {data?.toString().charAt(1)}
+          </div>
         );
       },
     },
@@ -83,12 +117,15 @@ const PatientProfile = () => {
       title: "Complaints",
       data: "complaints",
       // render: (data) => data?.join(", "),
-      render: (data, row) => {
+      render: (data, record) => {
         // console.log(data, row);
         return (
-          <a href={`/patient/patient-profile/${row.patientId}/${row.id}`} className="">
+          <div
+          // className="cursor-pointer"
+          // onClick={() => handleSelectDiagnosisRow(record)}
+          >
             {data?.join(", ")}
-          </a>
+          </div>
         );
       },
     },
@@ -122,6 +159,8 @@ const PatientProfile = () => {
       setPatientData(data);
       setAppointments(data.appointments);
       setMedicalRecords(data.medicalRecords || []);
+      setSelectedDiagnosisRow(null);
+      setCheckedRow(null);
     } catch (error) {
       console.error("Error fetching patient data:", error);
     } finally {
@@ -134,11 +173,12 @@ const PatientProfile = () => {
     setSelectedDiagnosis(editMode ? diagnosis : null);
     setDrawerVisible(true);
   };
-  const handleInputChange = (key, value) => {
-    setPatientData((prev) => ({ ...prev, [key]: value }));
+
+  const handleSelectDiagnosisRow = (record) => {
+    setSelectedDiagnosisRow(record);
   };
 
-  const handleSavePatientData = async () => {
+  const handleSavePatientData = async (primaryDoctor = null) => {
     // const patientBody = { patientData };
     const patientBody = {
       name: patientData.name,
@@ -147,6 +187,9 @@ const PatientProfile = () => {
       sex: patientData.sex,
       mobile: patientData.mobileNumber,
     };
+    if (primaryDoctor) {
+      patientBody.primaryDoctor = primaryDoctor;
+    }
     try {
       const response = await patientServices.updatePatientDetails(
         id,
@@ -159,15 +202,21 @@ const PatientProfile = () => {
       toast.error("Error while updating patient !");
     }
   };
-
-  const handleSaveRecord = async () => {
+  const getUsersbyClinic = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      // Logic for saving record
-      fetchPatientData();
-      setDrawerVisible(false);
+      const response = await clinicServices.getUsersByClinic();
+      const formattedUsers = response.data
+        .filter((eachUser) => {
+          return eachUser.specialist !== null;
+        })
+        .map((user) => ({
+          value: user.id,
+          label: user.name,
+          phoneNumber: user.phoneNumber,
+        }));
+      setUsers(formattedUsers);
     } catch (error) {
-      console.error("Error saving record:", error);
     } finally {
       setLoading(false);
     }
@@ -175,7 +224,7 @@ const PatientProfile = () => {
 
   const createEmptyRecord = () => ({
     complaints: [],
-    treatment: [],
+    treatmentsSuggested: [],
     dentalQuadrant: [],
     xrayStatus: false,
     file: null,
@@ -184,122 +233,43 @@ const PatientProfile = () => {
     billing: { totalCost: 0, paid: 0, remaining: 0 },
   });
 
-  const hasMedicalRecord = (appointment) =>
-    medicalRecords.some((rec) => rec.appointmentId === appointment.id);
+  const getSpecialtyDepartmentsByClinic = async () => {
+    try {
+      setLoading(true);
+      const response = await clinicServices.getSpecialtyDepartmentsByClinic();
+      setDepartmentList(
+        response.data.map((department) => ({
+          value: department.id,
+          label: department.departmentName,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchPatientData();
+    getUsersbyClinic();
+    getSpecialtyDepartmentsByClinic();
   }, [id]);
 
   if (loading) return <Loading />;
-  if (!patientData) return <Alert variant="danger">Patient not found</Alert>;
 
-  const handleAddDiagnosis = () => {
-    setRecordForm({}); // Clear the form for a new diagnosis
-    setDrawerVisible(true);
-  };
+  if (!patientData) return <Alert variant="danger">Patient not found</Alert>;
 
   return (
     <Container>
       {/* Patient Basic Details */}
       <Row>
         <Col>
-          <Card>
-            <Card.Header>
-              <h4>Patient Profile</h4>
-              <Button
-                variant="primary"
-                onClick={() => setEditingPatient(!editingPatient)}
-              >
-                {editingPatient ? "Cancel Edit" : "Edit Profile"}
-              </Button>
-            </Card.Header>
-            <Card.Body>
-              <Form>
-                <Row>
-                  <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>Name</Form.Label>
-                      <Form.Control
-                        disabled={!editingPatient}
-                        value={patientData.name}
-                        onChange={(e) =>
-                          handleInputChange("name", e.target.value)
-                        }
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>Mobile</Form.Label>
-                      <Form.Control
-                        disabled={!editingPatient}
-                        value={patientData.mobile}
-                        onChange={(e) =>
-                          handleInputChange("mobile", e.target.value)
-                        }
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>Age</Form.Label>
-                      <Form.Control
-                        type="number"
-                        disabled={!editingPatient}
-                        value={patientData.age || ""}
-                        onChange={(e) =>
-                          handleInputChange("age", e.target.value)
-                        }
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>Sex</Form.Label>
-                      <Select
-                        style={{ width: "100%" }}
-                        disabled={!editingPatient}
-                        value={patientData.sex || ""}
-                        onChange={(value) => handleInputChange("sex", value)}
-                        options={[
-                          { label: "Male", value: "male" },
-                          { label: "Female", value: "female" },
-                          { label: "Other", value: "other" },
-                        ]}
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={12}>
-                    <Form.Group>
-                      <Form.Label>Address</Form.Label>
-                      <Form.Control
-                        as="input"
-                        rows={"1"}
-                        disabled={!editingPatient}
-                        value={patientData.address || ""}
-                        onChange={(e) =>
-                          handleInputChange("address", e.target.value)
-                        }
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-                {editingPatient && (
-                  <Button
-                    className="mt-3"
-                    onClick={() => {
-                      // console.log("Updated Patient Data: ", patientData);
-                      setEditingPatient(false);
-                      handleSavePatientData();
-                    }}
-                  >
-                    Save Details
-                  </Button>
-                )}
-              </Form>
-            </Card.Body>
-          </Card>
+          <BasicPatientProfile
+            patientData={patientData}
+            handleSavePatientData={handleSavePatientData}
+            setPatientData={setPatientData}
+          />
         </Col>
       </Row>
       {/* Patient Basic Details */}
@@ -309,36 +279,100 @@ const PatientProfile = () => {
           <h4>Patient Medical Records</h4>
         </Card.Header>
         <Card.Body>
-          <Tabs defaultActiveKey="dentistry">
+          <Tabs
+            defaultActiveKey="dentistry"
+            className="border-bottom mb-3"
+            justify
+            variant="underline"
+          >
             {/* Dentistry Tab */}
-            <Tab eventKey="dentistry" title="Dentistry">
-              <h5 className="mt-3">Diagnoses</h5>
-
-              <Button
-                variant="primary"
-                // className="float-end"
-                onClick={() => handleOpenDrawer(null, false)}
-              >
-                Add Diagnosis
-              </Button>
-              <CustomTable
-                columns={dentistryColumns}
-                data={patientData?.diagnoses}
-                enableFilters={false}
-              />
-            </Tab>
+            {departmentList
+              .map((eachDepartment) => eachDepartment.label)
+              .includes("Dentistry") && (
+              <Tab eventKey="dentistry" title="Dentistry">
+                <label htmlFor="primary-doc" className="form-label">
+                  Primary Doctor
+                </label>
+                <Select
+                  placeholder="Select staff"
+                  className="w-100 mb-3"
+                  options={users}
+                  defaultValue={patientData?.primaryDoctor?.value}
+                  onChange={(value, option) => {
+                    // handleInputChange("primaryDoctor", );
+                    handleSavePatientData(option);
+                  }}
+                  filterOption={(input, option) => {
+                    const labelMatch = option.label
+                      .toLowerCase()
+                      .includes(input.toLowerCase());
+                    const phoneMatch = option.phoneNumber
+                      ? option.phoneNumber
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      : false;
+                    return labelMatch || phoneMatch;
+                  }}
+                />{" "}
+                <Card>
+                  <Card.Header>
+                    <h5 className="mt-3">Diagnoses</h5>
+                  </Card.Header>
+                  <Card.Body>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="my-3"
+                      onClick={() => handleOpenDrawer(null, false)}
+                    >
+                      Add Diagnosis
+                    </Button>
+                    <div className="d-flex flex-column">
+                      <CustomTable
+                        columns={dentistryColumns}
+                        data={patientData?.diagnoses}
+                        enableSearch={false}
+                        enableFilters={false}
+                      />
+                    </div>
+                  </Card.Body>
+                </Card>
+                {selectedDiagnosisRow && (
+                  <Card>
+                    <Card.Header>
+                      <h5 className="mt-4">Treatments Settings</h5>
+                    </Card.Header>
+                    <Card.Body>
+                      <SelectedDiagnosisTreatementDetaiils
+                        selectedDiagnosisRow={selectedDiagnosisRow}
+                        patientData={patientData}
+                        fetchPatientData={fetchPatientData}
+                      />
+                    </Card.Body>
+                  </Card>
+                )}
+              </Tab>
+            )}
 
             {/* GP Tab */}
-            <Tab eventKey="gp" title="GP">
-              <h5 className="mt-3">General Practice Content</h5>
-              <p>Coming soon...</p>
-            </Tab>
-
+            {departmentList
+              .map((eachDepartment) => eachDepartment.label)
+              .includes("GP") && (
+              <Tab eventKey="gp" title="GP">
+                <h5 className="mt-3">General Practice Content</h5>
+                <p>Coming soon...</p>
+              </Tab>
+            )}
             {/* Mammography Tab */}
-            <Tab eventKey="mammography" title="Mammography">
-              <h5 className="mt-3">Mammography Content</h5>
-              <p>Coming soon...</p>
-            </Tab>
+
+            {departmentList
+              .map((eachDepartment) => eachDepartment.label)
+              .includes("Mammography") && (
+              <Tab eventKey="mammography" title="Mammography">
+                <h5 className="mt-3">Mammography Content</h5>
+                <p>Coming soon...</p>
+              </Tab>
+            )}
           </Tabs>
         </Card.Body>
       </Card>
@@ -356,15 +390,8 @@ const PatientProfile = () => {
         onClose={() => setDrawerVisible(false)}
         diagnosisData={selectedDiagnosis}
         patientData={patientData}
-        onSave={() => {}}
+        onSave={() => fetchPatientData()}
       />
-
-      {/* <PatientTreatmentForm
-        drawerVisible={openTreatmentDrawer}
-        onClose={() => setOpenTreatmentDrawer(false)}
-        treatmentData={patientData?.treatments || []}
-        onSave={() => {}}
-      /> */}
     </Container>
   );
 };

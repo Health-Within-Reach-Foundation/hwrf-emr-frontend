@@ -101,7 +101,7 @@ const SettingOffCanvas = memo(() => {
                         <h4 className="offcanvas-title" id="live-customizer-label">Setting Panel</h4>
                     </div>
                     <div className="d-flex gap-2 align-items-center">
-                        <OverlayTrigger
+                        {/* <OverlayTrigger
                             key={"Extrapages"}
                             placement={"left"}
                             overlay={
@@ -126,7 +126,7 @@ const SettingOffCanvas = memo(() => {
                                 <i className="ph ph-file-plus"></i>
                                 Copy Config
                             </button>
-                        </OverlayTrigger>
+                        </OverlayTrigger> */}
                         <OverlayTrigger
                             key={"ResetAllSettings"}
                             placement={"left"}
@@ -176,25 +176,25 @@ const SettingOffCanvas = memo(() => {
                                     <hr className="hr-horizontal" />
                                     {/* -- Menu Style start here -- */}
 
-                                    <MenuStyle sidebarType={sidebarType} ></MenuStyle>
+                                    {/* <MenuStyle sidebarType={sidebarType} ></MenuStyle> */}
 
                                     {/* -- Menu Style end here -- */}
 
-                                    <hr className="hr-horizontal" />
+                                    {/* <hr className="hr-horizontal" /> */}
 
                                     {/* -- Active Menu Style start here -- */}
 
-                                    <MenuActiveStyle sidebarMenuStyle={sidebarMenuStyle} ></MenuActiveStyle>
-                                    <hr className="hr-horizontal" />
+                                    {/* <MenuActiveStyle sidebarMenuStyle={sidebarMenuStyle} ></MenuActiveStyle> */}
+                                    {/* <hr className="hr-horizontal" /> */}
                                     {/* -- Color customizer start here -- */}
-                                    <ColorCustomizer themeColor={themeColor}></ColorCustomizer>
+                                    {/* <ColorCustomizer themeColor={themeColor}></ColorCustomizer> */}
                                     {/* -- Color customizer end here -- */}
-                                    <hr className="hr-horizontal" />
+                                    {/* <hr className="hr-horizontal" /> */}
 
-                                    <PageStyle pageLayout={pageLayout}></PageStyle>
-                                    <hr className="hr-horizontal" />
+                                    {/* <PageStyle pageLayout={pageLayout}></PageStyle> */}
+                                    {/* <hr className="hr-horizontal" /> */}
                                     {/* -- Direction customizer start here -- */}
-                                    <Direction themeSchemeDirection={themeSchemeDirection}></Direction>
+                                    {/* <Direction themeSchemeDirection={themeSchemeDirection}></Direction> */}
                                     {/* -- Direction customizer end here -- */}
                                 </div>
                             </div>

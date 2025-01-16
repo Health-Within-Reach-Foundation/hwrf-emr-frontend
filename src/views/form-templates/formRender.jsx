@@ -1,96 +1,100 @@
-import React from "react";
+import React, { useState } from "react";
 import { Input, Radio, Checkbox, Select, Form, Button, Card } from "antd";
 import "./DynamicForm.scss"; // Importing the CSS file
 
 const { TextArea } = Input;
 
-const DynamicForm = ({ onSubmit }) => {
-  const jsonData = [
-    {
-      id: "1736497422296",
-      type: "phone",
-      title: "name",
-      value: "Rohan",
-      options: null,
-    },
-    {
-      id: "1736497433985",
-      type: "phone",
-      title: "phone number",
-      value: "",
-      options: null,
-    },
-    {
-      id: "1736497444472",
-      type: "maidId",
-      title: "Email",
-      value: "",
-      options: null,
-    },
-    {
-      id: "1736497452593",
-      type: "radio",
-      title: "New Field",
-      value: "",
-      options: ["Rohan", "yash", "veer", "kedar", "navin"],
-    },
-    {
-      id: "1736497504441",
-      type: "checkbox",
-      title: "checkbox",
-      value: "",
-      options: ["yash", "navin", "veer"],
-    },
-    {
-      id: "1736497541449",
-      type: "select",
-      title: "select field",
-      value: "",
-      options: ["Option 1"],
-    },
-    {
-      id: "1736497607409",
-      type: "textarea",
-      title: "text area field",
-      value: "",
-      options: null,
-    },
-  ];
+const DynamicForm = ({ onSubmit, data }) => {
+  const [formData, setFormData] = useState(
+    data.reduce((acc, field) => {
+      acc[field.title] = field.value || "";
+      return acc;
+    }, [])
+  );
+// Update state on input change
+  const handleFieldChange = (title, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [title]: value,
+    }));
+  };
 
   const [form] = Form.useForm();
+
 
   const renderField = (field) => {
     switch (field.type) {
       case "input":
-        return <Input placeholder={field.title} />;
+        return (
+          <Input
+            id={field.id}
+            placeholder={field.title}
+            defaultValue={field.value}
+            onChange={(e) => handleFieldChange(field.title, e.target.value)}
+          />
+        );
       case "phone":
-        return <Input type="tel" placeholder={field.title} />;
-      case "maidId":
-        return <Input placeholder={field.title} />;
+        return (
+          <Input
+            id={field.id}
+            type="tel"
+            placeholder={field.title}
+            defaultValue={field.value}
+            onChange={(e) => handleFieldChange(field.title, e.target.value)}
+          />
+        );
+      case "mailId":
+        return (
+          <Input
+            placeholder={field.title}
+            defaultValue={field.value}
+            id={field.id}
+            onChange={(e) => handleFieldChange(field.title, e.target.value)}
+          />
+        );
       case "textarea":
-        return <TextArea rows={4} placeholder={field.title} />;
+        return (
+          <TextArea
+            rows={4}
+            placeholder={field.title}
+            defaultValue={field.value}
+            id={field.id}
+            onChange={(e) => handleFieldChange(field.title, e.target.value)}
+          />
+        );
       case "radio":
         return (
           <Radio.Group
             options={field.options.map((opt) => ({ label: opt, value: opt }))}
+            defaultValue={field.value}
+            id={field.id}
+            onChange={(e) => handleFieldChange(field.title, e.target.value)}
           />
         );
       case "checkbox":
         return (
           <Checkbox.Group
             options={field.options.map((opt) => ({ label: opt, value: opt }))}
+            defaultValue={field.value}
+            onChange={(e) => handleFieldChange(field.title, e.target.value)}
+            id={field.id}
           />
         );
       case "select":
         return (
           <Select
             options={field.options.map((opt) => ({ label: opt, value: opt }))}
+            defaultValue={field.value}
             placeholder={field.title}
             style={{ width: "100%" }}
+            onChange={(label, option) => {
+              handleFieldChange(option.label, option.value);
+            }}
+            id={field.id}
           />
         );
       default:
-        return null;
+
     }
   };
 
@@ -102,7 +106,7 @@ const DynamicForm = ({ onSubmit }) => {
     <div className="dynamic-form-container">
       <Card className="dynamic-form-card" >
         <Form form={form} layout="vertical" onFinish={handleFinish}>
-          {jsonData.map((field) => (
+          {formData.map((field) => (
             <Form.Item
               key={field.id}
               name={field.title}
@@ -120,6 +124,7 @@ const DynamicForm = ({ onSubmit }) => {
           </Form.Item>
         </Form>
       </Card>
+
     </div>
   );
 };
