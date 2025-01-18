@@ -22,6 +22,7 @@ const CampManagement = () => {
     dateRange: [null, null],
   });
   const [showModal, setShowModal] = useState(false);
+  const [selectedCamp, setSelectedCamp] = useState(null);
 
   const statusOptions = [
     { value: "active", label: "Active" },
@@ -75,6 +76,12 @@ const CampManagement = () => {
     }
   };
 
+  // Handle editing an existing role
+  const handleEditCamp = (camp) => {
+    setSelectedCamp(camp); // Set the current role for editing
+    setShowModal(true);
+  };
+
   useEffect(() => {
     fetchCamps();
     getUsersbyClinic();
@@ -104,6 +111,19 @@ const CampManagement = () => {
       data: "endDate",
       title: "End Date",
       render: (data) => new Date(data).toLocaleDateString(),
+    },
+    {
+      title: "Manage",
+      data: null,
+      render: (_, row) => (
+        <Button
+          variant="outline-primary"
+          size="sm"
+          onClick={() => handleEditCamp(row)}
+        >
+          Edit
+        </Button>
+      ),
     },
   ];
 
@@ -221,10 +241,12 @@ const CampManagement = () => {
 
       {showModal && (
         <CampModalForm
+          editCampData={selectedCamp}
           show={showModal}
           onClose={() => setShowModal(false)}
           users={usersOptions} // Pass user options here
           specialties={specialtiesOptions} // Pass specialty options here
+          onSave={() => fetchCamps()}
         />
       )}
     </>

@@ -25,6 +25,7 @@ import { dentalQuadrant } from "../../utilities/utility-function";
 import DateCell from "../../components/date-cell";
 import SelectedDiagnosisTreatementDetaiils from "../../components/patients/diagnosis-treatment";
 import BasicPatientProfile from "../../components/patients/basic-patient-profile";
+import clinicServices from "../../api/clinic-services";
 const PatientProfile = () => {
   const { id } = useParams();
   const [patientData, setPatientData] = useState(null);

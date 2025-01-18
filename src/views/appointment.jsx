@@ -13,6 +13,7 @@ import DateCell from "../components/date-cell";
 import { Link } from "react-router-dom";
 import { Badge, Dropdown, Menu } from "antd";
 import { useAuth } from "../utilities/AuthProvider";
+import toast from "react-hot-toast";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -108,8 +109,8 @@ const Appointment = () => {
         // Define a color mapping for different statuses
         const statusColors = {
           "in queue": "success",
-          in: "warning",
-          out: "processing",
+          in: "processing",
+          out: "warning",
         };
 
         return (
@@ -134,8 +135,8 @@ const Appointment = () => {
           <Menu>
             <Menu.Item
               key="1"
-              onClick={async () =>
-                await appointmentServices.markAppointment(row.id, {
+              onClick={() =>
+                handleMarkAppointment(row.id, {
                   status: "in",
                 })
               }
@@ -144,8 +145,8 @@ const Appointment = () => {
             </Menu.Item>
             <Menu.Item
               key="2"
-              onClick={async () =>
-                await appointmentServices.markAppointment(row.id, {
+              onClick={() =>
+                handleMarkAppointment(row.id, {
                   status: "out",
                 })
               }
@@ -166,6 +167,24 @@ const Appointment = () => {
     },
   ];
 
+  const handleMarkAppointment = async (rowId, rowBody) => {
+    try {
+      const response = await appointmentServices.markAppointment(
+        rowId,
+        rowBody
+      );
+      if (response.success) {
+        toast.success(response?.message);
+      }
+    } catch (error) {
+      console.error("Error while marking appointment:", error);
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+      fetchAppointments(date);
+    }
+  };
+
   const fetchAppointments = async (selectedDate) => {
     try {
       setLoading(true);
@@ -174,7 +193,7 @@ const Appointment = () => {
       );
       const dateString = adjustedDate.toISOString().split("T")[0];
       const response = await appointmentServices.getAppointments(dateString);
-      setAppointments(response?.data || []);
+      setAppointments(response?.data.sort((a,b) => a.tokenNumber - b.tokenNumber) || []);
       setFilteredAppointments(response?.data || []);
     } catch (error) {
       console.error("Error fetching appointments:", error);
@@ -364,6 +383,7 @@ const Appointment = () => {
         modalClose={() => setShow(false)}
         patients={patientList}
         departments={departmentList}
+        onSave={() => fetchAppointments(date)}
       />
     </>
   );

@@ -49,7 +49,7 @@ const RoleModalForm = ({
     try {
       setLoading(true);
       const payload = {
-        name: roleName,
+        roleName,
         roleDescription,
         permissions: selectedPermissions,
       };
@@ -67,16 +67,20 @@ const RoleModalForm = ({
         // Create new role
         response = await rolePermissionService.createRole(payload);
       }
-
-      toast.success(response.message || "Role saved successfully");
-      setShowModal(false);
-      resetForm();
-      await getRoles(); // Refresh roles list
+      if (response.success) {
+        toast.success(response.message || "Role saved successfully");
+      }
+      // setShowModal(false);
+      // resetForm();
+      // await getRoles(); // Refresh roles list
     } catch (error) {
       console.error("Error saving role:", error);
       toast.error("Failed to save role. Please try again.");
     } finally {
       setLoading(false);
+      setShowModal(false);
+      resetForm();
+      await getRoles();
     }
   };
 

@@ -1,33 +1,41 @@
 import React, { useState } from "react";
 import { Modal, Form, Input, Button, Select, DatePicker } from "antd";
+import dayjs from "dayjs"; // Import dayjs
 import campManagementService from "../../api/camp-management-service";
 import toast from "react-hot-toast";
-import moment from "moment"; // Import moment to get the current date
 
 const { Option } = Select;
-const { RangePicker } = DatePicker;
 
-const CampModalForm = ({ show, onClose, users, specialties }) => {
+const CampModalForm = ({
+  show,
+  onClose,
+  users,
+  specialties,
+  onSave,
+  editCampData,
+}) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
-  console.log("users", users);
-  console.log("specialties", specialties);
-
-  // Form submission handler
   const handleSubmit = async () => {
     try {
       setLoading(true);
       const values = await form.validateFields();
-      const { dateRange, ...rest } = values;
 
       const formData = {
-        ...rest,
-        startDate: dateRange[0].format("YYYY-MM-DD"),
-        endDate: dateRange[1].format("YYYY-MM-DD"),
+        ...values,
+        startDate: values.startDate.format("YYYY-MM-DD"), // Format to YYYY-MM-DD
+        endDate: values.endDate.format("YYYY-MM-DD"), // Format to YYYY-MM-DD
       };
-
-      const response = await campManagementService.createCamp(formData);
+      let response;
+      if (editCampData) {
+        response = await campManagementService.updateCampById(
+          editCampData.id,
+          formData
+        );
+      } else {
+        response = await campManagementService.createCamp(formData);
+      }
       if (response?.success) {
         toast.success(response.message);
       } else {
@@ -38,48 +46,75 @@ const CampModalForm = ({ show, onClose, users, specialties }) => {
     } catch (error) {
       console.error("Validation failed:", error);
     } finally {
+      onSave();
       setLoading(false);
     }
   };
 
-  // Form layout
+  console.log("edit camp data -->", editCampData);
   return (
     <Modal
-      title="Create a New Camp"
+      title={editCampData !== null ? "Edit Camp" : "Create a New Camp"}
       open={show}
       onCancel={onClose}
       footer={null}
-      className="overflow-hidden"
     >
       <Form
         form={form}
         layout="vertical"
         initialValues={{
-          name: "",
-          location: "",
-          city: "",
-          vans: [],
-          specialties: [],
-          users: [],
-          dateRange: [moment(), moment()], // Set today's date as the default range
+          // name: "",
+          // location: "",
+          // city: "",
+          // vans: [],
+          // specialties: [],
+          // users: [],
+          // startDate: dayjs(), // Default today's date
+          // endDate: dayjs(), // Default today's date
+
+          name: editCampData?.name || "",
+          location: editCampData?.location || "",
+          city: editCampData?.city || "",
+          vans: editCampData?.vans || [],
+          specialties:
+            editCampData?.specialties.map((service) => service.id) || [],
+          users: editCampData?.users.map((user) => user.id) || [],
+          startDate: editCampData?.startDate
+            ? dayjs(editCampData.startDate)
+            : dayjs(),
+          endDate: editCampData?.endDate
+            ? dayjs(editCampData.endDate)
+            : dayjs(),
         }}
-        style={{ maxHeight: "500px", overflowY: "auto" }}
       >
-        {/* Date Range */}
+        {/* Start Date */}
         <Form.Item
-          label="Date Range"
-          name="dateRange"
-          rules={[
-            {
-              required: true,
-              message: "Please select the start and end dates!",
-            },
-          ]}
+          label="Start Date"
+          name="startDate"
+          rules={[{ required: true, message: "Please select the start date!" }]}
         >
-          <RangePicker format="YYYY-MM-DD" />
+          <DatePicker
+            className="w-100"
+            format="YYYY-MM-DD"
+            defaultValue={dayjs()} // Use dayjs for defaultValue
+          />
         </Form.Item>
 
-        {/* Camp Name */}
+        {/* End Date */}
+        <Form.Item
+          label="End Date"
+          name="endDate"
+          className="w-100"
+          rules={[{ required: true, message: "Please select the end date!" }]}
+        >
+          <DatePicker
+            className="w-100"
+            format="YYYY-MM-DD"
+            defaultValue={dayjs()} // Use dayjs for defaultValue
+          />
+        </Form.Item>
+
+        {/* Other Fields */}
         <Form.Item
           label="Camp Name"
           name="name"
@@ -88,7 +123,6 @@ const CampModalForm = ({ show, onClose, users, specialties }) => {
           <Input placeholder="Enter camp name" />
         </Form.Item>
 
-        {/* Location (Address renamed) */}
         <Form.Item
           label="Location"
           name="location"
@@ -97,7 +131,6 @@ const CampModalForm = ({ show, onClose, users, specialties }) => {
           <Input placeholder="Enter location" />
         </Form.Item>
 
-        {/* Camp City */}
         <Form.Item
           label="Camp City"
           name="city"
@@ -124,7 +157,7 @@ const CampModalForm = ({ show, onClose, users, specialties }) => {
             ]}
           />
         </Form.Item>
-        {/* Services (Specialties renamed) */}
+
         <Form.Item
           label="Services"
           name="specialties"
@@ -140,7 +173,6 @@ const CampModalForm = ({ show, onClose, users, specialties }) => {
           />
         </Form.Item>
 
-        {/* Staff Attending (Users renamed) */}
         <Form.Item
           label="Staff Attending"
           name="users"
@@ -156,19 +188,9 @@ const CampModalForm = ({ show, onClose, users, specialties }) => {
             placeholder="Select staff"
             allowClear
             options={users}
-            filterOption={(input, option) => {
-              const labelMatch = option.label
-                .toLowerCase()
-                .includes(input.toLowerCase());
-              const phoneMatch = option.phoneNumber
-                ? option.phoneNumber.toLowerCase().includes(input.toLowerCase())
-                : false;
-              return labelMatch || phoneMatch;
-            }}
           />
         </Form.Item>
 
-        {/* Submit/Cancel Buttons */}
         <Form.Item>
           <Button
             type="primary"
@@ -176,7 +198,7 @@ const CampModalForm = ({ show, onClose, users, specialties }) => {
             style={{ marginRight: 8 }}
             loading={loading}
           >
-            Submit
+            {editCampData === null ? "Submit" : "Update"}
           </Button>
           <Button onClick={onClose} loading={loading}>
             Cancel

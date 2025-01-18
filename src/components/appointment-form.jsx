@@ -5,7 +5,13 @@ import { Link } from "react-router-dom"; // For navigation
 import toast from "react-hot-toast";
 import appointmentServices from "../api/appointment-services";
 
-const AppointmentForm = ({ show, modalClose, patients, departments }) => {
+const AppointmentForm = ({
+  show,
+  modalClose,
+  patients,
+  departments,
+  onSave,
+}) => {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [selectedDepartments, setSelectedDepartments] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -45,7 +51,7 @@ const AppointmentForm = ({ show, modalClose, patients, departments }) => {
     ).toISOString(); // Strips the time and sends only the date
 
     const appointmentData = {
-      patientId: selectedPatient.id,  // Make sure it's using the correct field for patient ID
+      patientId: selectedPatient.id, // Make sure it's using the correct field for patient ID
       specialties: selectedDepartments,
       appointmentDate: localDate,
       status: "in queue",
@@ -59,7 +65,7 @@ const AppointmentForm = ({ show, modalClose, patients, departments }) => {
       );
 
       if (response?.success) {
-        toast.success("Appointment booked successfully!");
+        toast.success(response.message);
 
         // Reset fields
         setSelectedPatient(null);
@@ -73,6 +79,7 @@ const AppointmentForm = ({ show, modalClose, patients, departments }) => {
       toast.error(error.message || "An unexpected error occurred!");
     } finally {
       setIsLoading(false); // End loading state
+      onSave();
     }
   };
 
@@ -99,9 +106,9 @@ const AppointmentForm = ({ show, modalClose, patients, departments }) => {
             <Col xs={10}>
               <Select
                 placeholder="Select Patient"
-                value={selectedPatient?.id || null}  // Use `value` instead of `defaultValue`
+                value={selectedPatient?.id || null} // Use `value` instead of `defaultValue`
                 options={patients.map((patient) => ({
-                  value: patient.id,  // Ensure `id` is used as value
+                  value: patient.id, // Ensure `id` is used as value
                   label: (
                     <div className="d-flex justify-content-between align-items-center p-2">
                       <span className="fw-medium">{patient.name}</span>
@@ -113,7 +120,7 @@ const AppointmentForm = ({ show, modalClose, patients, departments }) => {
                   name: patient.name,
                   phoneNumber: patient.mobile,
                 }))}
-                onChange={handlePatientChange}  // Correctly updates state on change
+                onChange={handlePatientChange} // Correctly updates state on change
                 dropdownStyle={{ zIndex: 9999 }} // Fix dropdown z-index
                 className="w-100 my-2"
                 showSearch

@@ -5,19 +5,8 @@ import apiClient from "./axios-client";
 const onBoardClinic = async (clinicDetails) => {
   try {
     const response = await apiClient.post("auth/onboard-clinic", clinicDetails);
-
-    if (response.status === 201) {
-      // return {
-      //   success: true,
-      //   message: response.data.message,
-      //   clinic: response.data.clinic,
-      //   admin: response.data.admin,
-      // };
-      toast.success(response.data.message);
-    } else {
-      toast.error("Error please try again");
-      throw new Error("Unexpected status code: " + response.status);
-    }
+    return response.data;
+    
   } catch (error) {
     // Handle specific error responses based on the API documentation
     if (error.response) {
@@ -145,9 +134,26 @@ const getSpecialtyDepartmentsByClinic = async () => {
   }
 };
 
+const updateClinicById = async (clinicId, clinicBody) => {
+  try {
+    // Make the GET request with query parameters
+    const response = await apiClient.patch(`/clinics/${clinicId}`, clinicBody);
 
-
-
+    // Return the data from the response
+    return response.data;
+  } catch (error) {
+    // Handle potential errors
+    if (error.response) {
+      // Handle specific error responses from the API
+      console.error("Error response:", error.response.data);
+      throw new Error(error.response.data.message || "Failed to update clinic");
+    } else {
+      // Handle other types of errors
+      console.error("Unexpected error:", error.message);
+      throw new Error("An unexpected error occurred while updating clinic");
+    }
+  }
+};
 
 export default {
   onBoardClinic,
@@ -156,4 +162,5 @@ export default {
   approveClinic,
   getUsersByClinic,
   getSpecialtyDepartmentsByClinic,
+  updateClinicById,
 };

@@ -3,7 +3,7 @@ import authServices from "./auth-services";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL, // Base API URL
-  timeout: 10000,
+  timeout: 20000,
 });
 
 // Add request interceptor
