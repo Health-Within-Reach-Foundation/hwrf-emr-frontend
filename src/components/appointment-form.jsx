@@ -35,18 +35,15 @@ const AppointmentForm = ({
     }
 
     // Set today's date as appointment date
-    const appointmentDate = new Date();
+    const appointmentDate = new Date().toLocaleDateString("en-CA");
 
-    const localDate = new Date(
-      appointmentDate.getFullYear(),
-      appointmentDate.getMonth(),
-      appointmentDate.getDate()
-    ).toISOString(); // Strips the time and sends only the date
+    // const dateString = appointmentDate.toLocaleDateString("en-CA"); // Outputs 'YYYY-MM-DD'
 
     const appointmentData = {
-      patientId: selectedPatient.id, // Make sure it's using the correct field for patient ID
+      patientId: selectedPatient.id, // Ensure correct patient ID
       specialties: selectedDepartments,
-      appointmentDate: localDate,
+      appointmentDate,
+      // appointmentDate: appointmentDate.toISOString().split("T")[0], // Sends only "YYYY-MM-DD"
       status: "in queue",
     };
 

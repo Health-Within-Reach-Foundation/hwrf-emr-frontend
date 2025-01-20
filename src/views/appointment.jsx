@@ -221,7 +221,7 @@ const Appointment = () => {
       setAppointments(
         response?.data.sort((a, b) => a.tokenNumber - b.tokenNumber) || []
       );
-      setFilteredAppointments(response?.data || []);
+      setFilteredAppointments(response?.data.sort((a, b) => a.tokenNumber - b.tokenNumber) || []);
     } catch (error) {
       console.error("Error fetching appointments:", error);
     } finally {
@@ -326,6 +326,11 @@ const Appointment = () => {
     getPatientList();
     getSpecialtyDepartmentsByClinic();
   }, []);
+
+  useEffect(() => {
+    fetchAppointments(date);
+  }, [date]);
+
   if (loading || loadingPatient || loadingAppointments) {
     return <Loading />;
   }
@@ -335,7 +340,7 @@ const Appointment = () => {
       <Row>
         <Col>
           <Row className="align-items-center">
-            {/* <Col
+            <Col
               xs={12}
               md={6}
               className="d-flex justify-content-between align-items-center mb-3"
@@ -351,7 +356,7 @@ const Appointment = () => {
                   className="inline_flatpickr w-auto"
                 />
               </Col>
-            </Col> */}
+            </Col>
 
             {/* Department Buttons */}
 
@@ -391,9 +396,9 @@ const Appointment = () => {
             columns={columns}
             data={filteredAppointments}
             enableFilters={false}
-            filtersConfig={filterComponents}
-            onApplyFilters={applyFilters}
-            onResetFilters={resetFilters}
+            // filtersConfig={filterComponents}
+            // onApplyFilters={applyFilters}
+            // onResetFilters={resetFilters}
           />
         </Col>
       </Row>
