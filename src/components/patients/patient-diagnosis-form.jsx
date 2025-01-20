@@ -264,6 +264,7 @@ const PatientDiagnosisForm = ({
   onSave,
   patientData,
 }) => {
+  console.log("in the diagnosis drawer --> ", diagnosisData);
   const [loading, setLoading] = useState(false);
 
   const [formState, setFormState] = useState({
@@ -285,8 +286,8 @@ const PatientDiagnosisForm = ({
         updatedAt,
         appointmentId,
         // treatmentsSuggested,
-        // dentalQuadrant,
-        treatments,  // this is model treatement data
+        dentalQuadrant,
+        treatments, // this is model treatement data
         patientId,
         id,
         additionalDetails,
@@ -349,7 +350,7 @@ const PatientDiagnosisForm = ({
       // Make API call to save diagnosis
       let response;
       if (isEdit) {
-        formData.delete("selectedTeeth")
+        formData.delete("selectedTeeth");
         response = await patientServices.updatePatientDiagnosis(
           diagnosisData.id,
           formData
@@ -402,7 +403,9 @@ const PatientDiagnosisForm = ({
           <Select
             mode="multiple"
             value={formState.treatmentsSuggested}
-            onChange={(value) => handleInputChange("treatmentsSuggested", value)}
+            onChange={(value) =>
+              handleInputChange("treatmentsSuggested", value)
+            }
             options={[
               { value: "Scaling Regular", label: "Scaling Regular" },
               { value: "Scaling Complex", label: "Scaling Complex" },

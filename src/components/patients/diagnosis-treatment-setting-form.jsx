@@ -15,6 +15,8 @@ const DiagnosisTreatmentSettingForm = ({
   patientData,
   selectedTreatments,
 }) => {
+
+  console.log("selected treatement --> ", selectedTreatments, diagnosisData)
   const [loading, setLoading] = useState(false);
   const [formState, setFormState] = useState({
     complaints: diagnosisData?.complaints,
@@ -34,7 +36,7 @@ const DiagnosisTreatmentSettingForm = ({
       const {
         createdAt,
         updatedAt,
-        // treatments,
+        treatments,
         patientId,
         id,
         additionalDetails,
@@ -270,7 +272,7 @@ const DiagnosisTreatmentSettingForm = ({
           <Card.Header>Treatment Setting Form</Card.Header>
           <Card.Body>
             <Form.Group className="py-2">
-              <Form.Label>Treatment</Form.Label>
+              <Form.Label>Treatment Status</Form.Label>
               <Select
                 mode="multiple"
                 value={formState.treatmentStatus}

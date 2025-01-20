@@ -340,7 +340,7 @@ const PatientProfile = () => {
                     {Object.keys(categorizedDiagnoses).map(
                       (eachTreatmentType) => {
                         return (
-                          <Accordion className='mb-3'>
+                          <Accordion className='mb-3' key={eachTreatmentType}>
                             <Accordion.Item eventKey="0">
                               <Accordion.Header>
                                 {eachTreatmentType}
