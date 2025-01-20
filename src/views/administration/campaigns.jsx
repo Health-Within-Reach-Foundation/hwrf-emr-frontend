@@ -33,7 +33,7 @@ const CampManagement = () => {
     try {
       setLoading(true);
       const response = await campManagementService.getCamps(); // Replace with actual API call
-      console.log(camps);
+      console.log('camps: ', response.camps);
       setCamps(response.camps || []);
       setFilteredCamps(response.camps || []);
     } catch (error) {

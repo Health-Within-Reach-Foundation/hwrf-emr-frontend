@@ -11,6 +11,7 @@ import {
   Alert,
   Tabs,
   Tab,
+  Accordion,
 } from "react-bootstrap";
 import { Drawer, Input, TreeSelect, Select, Checkbox } from "antd"; // Import TreeSelect from antd
 // import Select from "react-select";
@@ -44,7 +45,7 @@ const PatientProfile = () => {
   const [users, setUsers] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
   const [checkedRow, setCheckedRow] = useState(null); // Track a single selected row
-
+  const [categorizedDiagnoses, setCategorizedDiagnoses] = useState({});
   const handleCheckboxChange = (record) => {
     setCheckedRow((prev) => (prev === record.id ? null : record.id)); // Toggle or select a new row
     setSelectedDiagnosisRow(record);
@@ -66,19 +67,8 @@ const PatientProfile = () => {
     {
       title: "Diagnosis date",
       data: "createdAt",
-      // render: (data) => new Date(data).toLocaleDateString(),
       render: (data, record) => {
-        return (
-          // <div
-          //   className="cursor-pointer"
-          //   onClick={() => handleSelectDiagnosisRow(record)}
-          // >
-          <DateCell
-            date={new Date(data).toLocaleDateString()}
-            dateFormat="D MMM, YYYY"
-          />
-          // </div>
-        );
+        return <DateCell date={new Date(data)} dateFormat="D MMM, YYYY" />;
       },
     },
     {
@@ -160,6 +150,25 @@ const PatientProfile = () => {
       setPatientData(data);
       setAppointments(data.appointments);
       setMedicalRecords(data.medicalRecords || []);
+
+      if (data.diagnoses.length > 0) {
+        // Step 1: Extract unique treatments
+        const uniqueTreatments = new Set(
+          data.diagnoses.flatMap((diagnosis) => diagnosis.treatmentsSuggested)
+        );
+
+        // Step 2: Categorize diagnoses by treatments
+        const categorizedDiagnoses = {};
+        uniqueTreatments.forEach((treatment) => {
+          categorizedDiagnoses[treatment] = data.diagnoses.filter((diagnosis) =>
+            diagnosis.treatmentsSuggested.includes(treatment)
+          );
+        });
+
+        setCategorizedDiagnoses(categorizedDiagnoses); // Save the categorized data
+        console.log("categorizedDiagnoses: ", categorizedDiagnoses);
+      }
+
       setSelectedDiagnosisRow(null);
       setCheckedRow(null);
     } catch (error) {
@@ -328,14 +337,31 @@ const PatientProfile = () => {
                     >
                       Add Diagnosis
                     </Button>
-                    <div className="d-flex flex-column">
-                      <CustomTable
-                        columns={dentistryColumns}
-                        data={patientData?.diagnoses}
-                        enableSearch={false}
-                        enableFilters={false}
-                      />
-                    </div>
+                    {Object.keys(categorizedDiagnoses).map(
+                      (eachTreatmentType) => {
+                        return (
+                          <Accordion className='mb-3'>
+                            <Accordion.Item eventKey="0">
+                              <Accordion.Header>
+                                {eachTreatmentType}
+                              </Accordion.Header>
+                              <Accordion.Body>
+                                <div className="d-flex flex-column">
+                                  <CustomTable
+                                    columns={dentistryColumns}
+                                    data={
+                                      categorizedDiagnoses[eachTreatmentType]
+                                    }
+                                    enableSearch={false}
+                                    enableFilters={false}
+                                  />
+                                </div>
+                              </Accordion.Body>
+                            </Accordion.Item>
+                          </Accordion>
+                        );
+                      }
+                    )}
                   </Card.Body>
                 </Card>
                 {selectedDiagnosisRow && (

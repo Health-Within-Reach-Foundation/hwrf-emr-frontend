@@ -30,10 +30,11 @@ const logout = async () => {
 };
 
 // Refresh token function
-const refreshAccessToken = async (refreshToken) => {
+const refreshAccessToken = async (refreshToken,accessToken) => {
   try {
     const response = await apiClient.post("auth/refresh-tokens", {
       refreshToken,
+      accessToken
     });
     return response.data;
   } catch (error) {

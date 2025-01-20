@@ -16,13 +16,6 @@ const AppointmentForm = ({
   const [selectedDepartments, setSelectedDepartments] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log(
-    "patients and departments",
-    patients,
-    departments,
-    selectedPatient
-  );
-
   // Patient select handler
   const handlePatientChange = (value) => {
     // Find the selected patient object based on the value

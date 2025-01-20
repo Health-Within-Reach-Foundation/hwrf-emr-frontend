@@ -18,6 +18,8 @@ import toast from "react-hot-toast";
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingPatient, setLoadingPatient] = useState(false);
+  const [loadingAppointments, setLoadingAppointments] = useState(false);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
@@ -25,7 +27,6 @@ const Appointment = () => {
   const [patientList, setPatientList] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
   const [selectedQueueType, setSelectedQueueType] = useState(null); // Tracks the selected department
-  const { currentCampDetails } = useAuth();
 
   const statusOptions = [
     { value: "registered", label: "Registered" },
@@ -49,13 +50,13 @@ const Appointment = () => {
     {
       data: "patientName",
       title: "Name",
-      render: (data, row) => {
-        return (
-          <a href={`/patient/patient-profile/${row.patientId}`} className="">
-            {data}
-          </a>
-        );
-      },
+      // render: (data, row) => {
+      //   return (
+      //     <a href={`/patient/patient-profile/${row.patientId}`} className="">
+      //       {data}
+      //     </a>
+      //   );
+      // },
     },
     {
       data: "patientSex",
@@ -130,34 +131,58 @@ const Appointment = () => {
       data: null,
       title: "Action",
       render: (data, row) => {
-        // Create the dropdown menu with action options
-        const menu = (
-          <Menu>
-            <Menu.Item
-              key="1"
-              onClick={() =>
+        // Define the menu options using the new menu structure with icons and proper alignment
+        const menu = {
+          items: [
+            {
+              key: "1",
+              label: (
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  <i className="ri-login-box-line"></i>
+                  <span>Mark as In</span>
+                </div>
+              ),
+              onClick: () =>
                 handleMarkAppointment(row.id, {
                   status: "in",
-                })
-              }
-            >
-              Mark as In
-            </Menu.Item>
-            <Menu.Item
-              key="2"
-              onClick={() =>
+                }),
+            },
+            {
+              key: "2",
+              label: (
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  <i className="ri-logout-box-line"></i>
+                  <span>Mark as Out</span>
+                </div>
+              ),
+              onClick: () =>
                 handleMarkAppointment(row.id, {
                   status: "out",
-                })
-              }
-            >
-              Mark as Out
-            </Menu.Item>
-          </Menu>
-        );
+                }),
+            },
+            // Uncomment if needed
+            // {
+            //   key: "3",
+            //   label: (
+            //     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            //       <i className="ri-queue-line"></i>
+            //       <span>In Queue</span>
+            //     </div>
+            //   ),
+            //   onClick: () =>
+            //     handleMarkAppointment(row.id, {
+            //       status: "in-queue",
+            //     }),
+            // },
+          ],
+        };
 
         return (
-          <Dropdown overlay={menu} trigger={["click"]}>
+          <Dropdown menu={menu} trigger={["click"]}>
             <Button type="primary" size="sm">
               Action
             </Button>
@@ -187,37 +212,32 @@ const Appointment = () => {
 
   const fetchAppointments = async (selectedDate) => {
     try {
-      setLoading(true);
+      setLoadingAppointments(true);
       const adjustedDate = new Date(
         selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000
       );
       const dateString = adjustedDate.toISOString().split("T")[0];
       const response = await appointmentServices.getAppointments(dateString);
-      setAppointments(response?.data.sort((a,b) => a.tokenNumber - b.tokenNumber) || []);
+      setAppointments(
+        response?.data.sort((a, b) => a.tokenNumber - b.tokenNumber) || []
+      );
       setFilteredAppointments(response?.data || []);
     } catch (error) {
       console.error("Error fetching appointments:", error);
     } finally {
-      setLoading(false);
+      setLoadingAppointments(false);
     }
   };
 
   const getPatientList = async () => {
     try {
-      setLoading(true);
+      setLoadingPatient(true);
       const response = await patientServices.getPatients();
-      // setPatientList(
-      //   response.data.map((patient) => ({
-      //     value: patient.id,
-      //     label: patient.name,
-      //     phoneNumber: patient.mobile,
-      //   }))
-      // );
       setPatientList(response.data);
     } catch (error) {
       console.error("Error fetching patients:", error);
     } finally {
-      setLoading(false);
+      setLoadingPatient(false);
     }
   };
 
@@ -238,14 +258,8 @@ const Appointment = () => {
     }
   };
 
-  useEffect(() => {
-    fetchAppointments(date);
-  }, [date]);
-
-  useEffect(() => {
-    getPatientList();
-    getSpecialtyDepartmentsByClinic();
-  }, []);
+  // useEffect(() => {
+  // }, [date]);
 
   const filterComponents = [
     {
@@ -306,7 +320,13 @@ const Appointment = () => {
       setFilteredAppointments(filtered);
     }
   };
-  if (loading) {
+
+  useEffect(() => {
+    fetchAppointments(date);
+    getPatientList();
+    getSpecialtyDepartmentsByClinic();
+  }, []);
+  if (loading || loadingPatient || loadingAppointments) {
     return <Loading />;
   }
 
@@ -315,12 +335,11 @@ const Appointment = () => {
       <Row>
         <Col>
           <Row className="align-items-center">
-            <Col
+            {/* <Col
               xs={12}
               md={6}
               className="d-flex justify-content-between align-items-center mb-3"
             >
-              {/* Date Picker with Label */}
               <Col md={6} className="mb-3">
                 <label htmlFor="appointmentDate" className="form-label">
                   Select Queue Date
@@ -332,7 +351,7 @@ const Appointment = () => {
                   className="inline_flatpickr w-auto"
                 />
               </Col>
-            </Col>
+            </Col> */}
 
             {/* Department Buttons */}
 
@@ -347,7 +366,7 @@ const Appointment = () => {
                   Add to Queue
                 </Button>
               </div>
-              <div className="d-flex gap-2">
+              <div className="d-flex align-items-center flex-row-reverse mb-3 gap-2">
                 {departmentList.map((department) => (
                   <Button
                     size="sm"
@@ -362,6 +381,7 @@ const Appointment = () => {
                     {department.label}
                   </Button>
                 ))}
+                Sort By:
               </div>
             </div>
           </Row>

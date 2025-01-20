@@ -16,7 +16,6 @@ const DiagnosisTreatmentSettingForm = ({
   selectedTreatments,
 }) => {
   const [loading, setLoading] = useState(false);
-  console.log(diagnosisData, selectedTreatments);
   const [formState, setFormState] = useState({
     complaints: diagnosisData?.complaints,
     treatments: diagnosisData?.treatments,
@@ -35,7 +34,7 @@ const DiagnosisTreatmentSettingForm = ({
       const {
         createdAt,
         updatedAt,
-        treatments,
+        // treatments,
         patientId,
         id,
         additionalDetails,
@@ -188,9 +187,9 @@ const DiagnosisTreatmentSettingForm = ({
           <Form.Label>Treatment</Form.Label>
           <Select
             mode="multiple"
-            value={diagnosisData.treatments}
+            value={diagnosisData.treatmentsSuggested}
             disabled
-            onChange={(value) => handleInputChange("treatments", value)}
+            onChange={(value) => handleInputChange("treatmentsSuggested", value)}
             options={[
               { value: "Scaling Regular", label: "Scaling Regular" },
               { value: "Scaling Complex", label: "Scaling Complex" },
