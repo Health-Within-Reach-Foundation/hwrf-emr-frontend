@@ -11,7 +11,7 @@ const JoinUsCarousel = () => {
       <div className="sign-in-detail text-white">
         <Link to="/" className="sign-in-logo mb-2">
           <img
-            src={generatePath("/assets/images/HWRF Vertical.svg")}
+            src={generatePath("/assets/images/hwrf-vertical.svg")}
             className="img-fluid"
             alt="Logo"
           />
@@ -25,16 +25,16 @@ const JoinUsCarousel = () => {
               alt="Slide 1"
             />
             <div className="carousel-caption-container">
-              <h4 className="mb-1 mt-1 text-white">lorem ipsum 1</h4>
-              <p className="pb-5">
+              {/* <h4 className="mb-1 mt-1 text-white">lorem ipsum 1</h4> */}
+              {/* <p className="pb-5">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem officiis, quia soluta eum eius iste doloremque tempore possimus minus aut porro, quasi esse cum necessitatibus magnam, nobis iure expedita eaque?
-              </p>
+              </p> */}
             </div>
           </Carousel.Item>
-          <Carousel.Item>
+          {/* <Carousel.Item>
             <img
-              // src={generatePath("/assets/images/login/2.png")}
-              src={generatePath("/assets/images/login/login-carousel-2.jpg")}
+              src={generatePath("/assets/images/login/2.png")}
+              // src={generatePath("/assets/images/login/login-carousel-2.jpg")}
               className="d-block w-100"
               alt="Slide 2"
             />
@@ -47,8 +47,8 @@ const JoinUsCarousel = () => {
           </Carousel.Item>
           <Carousel.Item>
             <img
-              // src={generatePath("/assets/images/login/3.png")}
-              src={generatePath("/assets/images/login/login-carousel-3.jpg")}
+              src={generatePath("/assets/images/login/3.png")}
+              // src={generatePath("/assets/images/login/login-carousel-3.jpg")}
               className="d-block w-100"
               alt="Slide 3"
             />
@@ -58,7 +58,7 @@ const JoinUsCarousel = () => {
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem officiis, quia soluta eum eius iste doloremque tempore possimus minus aut porro, quasi esse cum necessitatibus magnam, nobis iure expedita eaque?
               </p>
             </div>
-          </Carousel.Item>
+          </Carousel.Item> */}
         </Carousel>
       </div>
     </Col>

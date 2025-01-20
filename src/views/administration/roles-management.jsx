@@ -81,7 +81,6 @@ const Roles = () => {
     <Container className="mt-4">
       <h2>Role Management</h2>
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h5>Existing Roles</h5>
         <Button variant="primary" onClick={handleCreateRole}>
           Create Role
         </Button>

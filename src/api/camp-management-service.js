@@ -50,8 +50,27 @@ const selectCamp = async (campId) => {
   }
 };
 
+const updateCampById = async (campId, campData) => {
+  try {
+    const response = await apiClient.patch(
+      `/clinics/camps/${campId}`,
+      campData
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      throw new Error(error.response.data.message || "Failed to update camp");
+    } else {
+      console.error("Unexpected error:", error.message);
+      throw new Error("An unexpected error occurred while updating camp");
+    }
+  }
+};
+
 export default {
   getCamps,
   createCamp,
-  selectCamp
+  selectCamp,
+  updateCampById,
 };

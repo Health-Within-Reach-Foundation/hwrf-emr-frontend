@@ -266,8 +266,6 @@ const PatientDiagnosisForm = ({
 }) => {
   const [loading, setLoading] = useState(false);
 
-  console.log(diagnosisData,"***********************")
-
   const [formState, setFormState] = useState({
     complaints: [],
     treatmentsSuggested: [],
@@ -286,8 +284,8 @@ const PatientDiagnosisForm = ({
         createdAt,
         updatedAt,
         appointmentId,
-        treatmentsSuggested,
-        dentalQuadrant,
+        // treatmentsSuggested,
+        // dentalQuadrant,
         treatments,  // this is model treatement data
         patientId,
         id,
@@ -304,7 +302,7 @@ const PatientDiagnosisForm = ({
       setFormState({
         complaints: [],
         treatmentsSuggested: [],
-        dentalQuadrant: [],
+        // dentalQuadrant: [],
         xrayStatus: false,
         xray: [],
         notes: "",
