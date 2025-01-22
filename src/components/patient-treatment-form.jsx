@@ -101,9 +101,12 @@ const PatientTreatmentForm = ({
             value={formState.complaints}
             onChange={(value) => handleInputChange("complaints", value)}
             options={[
-              { value: "toothAche", label: "Tooth Ache" },
-              { value: "toothMissing", label: "Tooth Missing" },
-              { value: "badBreath", label: "Bad Breath" },
+              { value: "Tooth Ache", label: "Tooth Ache" },
+              { value: "Tooth Missing", label: "Tooth Missing" },
+              { value: "Bad Breath", label: "Bad Breath" },
+              { value: "Caries", label: "Caries" },
+              { value: "NA", label: "NA" },
+              { value: "Calculus", label: "Calculus" },
             ]}
             className="w-100"
           />
@@ -115,10 +118,25 @@ const PatientTreatmentForm = ({
             value={formState.treatment}
             onChange={(value) => handleInputChange("complaints", value)}
             options={[
-              { value: "Scaling Regular", label: "Scaling Regular" },
-              { value: "Scaling Complex", label: "Scaling Complex" },
-              { value: "RC Simple", label: "RC Simple" },
+              { value: "Scaling-Regular", label: "Scaling-Regular" },
+              { value: "Scaling-Complex", label: "Scaling-Complex" },
+              { value: "RC-Simple", label: "RC-Simple" },
+              { value: "RC-Complex", label: "RC-Complex" },
+              { value: "Filling-Regular", label: "Filling-Regular" },
+              { value: "Filling-Deep", label: "Filling-Deep" },
+              { value: "Extraction-Simple", label: "Extraction-Simple" },
+              { value: "Extraction-Complex", label: "Extraction-Complex" },
+              { value: "Crown-Metal", label: "Crown-Metal" },
+              { value: "Crown-PFM", label: "Crown-PFM" },
+              { value: "Crown-Zirconia", label: "Crown-Zirconia" },
+              { value: "Floride", label: "Floride" },
+              { value: "Pit Fissure Sealant", label: "Pit Fissure Sealant" },
+              { value: "Pulpectomy", label: "Pulpectomy" },
+              { value: "OPD Done", label: "OPD Done" },
+              { value: "OPD", label: "OPD" },
+              { value: "Crown Cutting", label: "Crown Cutting" },
             ]}
+
             className="w-100"
           />
         </Form.Group>

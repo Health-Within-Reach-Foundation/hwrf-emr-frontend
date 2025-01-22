@@ -30,11 +30,11 @@ const logout = async () => {
 };
 
 // Refresh token function
-const refreshAccessToken = async (refreshToken,accessToken) => {
+const refreshAccessToken = async (refreshToken, accessToken) => {
   try {
     const response = await apiClient.post("auth/refresh-tokens", {
       refreshToken,
-      accessToken
+      accessToken,
     });
     return response.data;
   } catch (error) {
@@ -53,9 +53,11 @@ const getUser = async () => {
 };
 
 const verifyToken = async (jwtToken) => {
-  console.log(jwtToken)
+  console.log(jwtToken);
   try {
-    const response = await apiClient.get(`/auth/verify-token/?token=${jwtToken}`);
+    const response = await apiClient.get(
+      `/auth/verify-token/?token=${jwtToken}`
+    );
     return response.data;
   } catch (error) {
     throw error.response?.data || new Error("Failed to fetch user data");
@@ -65,12 +67,27 @@ const verifyToken = async (jwtToken) => {
 const resetPassword = async (jwtToken, password) => {
   try {
     // Call the API endpoint to reset the password
-    await apiClient.post(`/auth/reset-password/?token=${jwtToken}`, { password });
-    return { success: true, message: "Password reset successful!" };
+    const response = await apiClient.post(`/auth/reset-password/?token=${jwtToken}`, {
+      password,
+    });
+    return response.data;
   } catch (error) {
     const errorMessage =
       error.response?.data?.message ||
       "Failed to reset password. Please try again.";
+    return { success: false, message: errorMessage };
+  }
+};
+
+const forgotPassword = async (email) => {
+  try {
+    // Call the API endpoint to reset the password
+    const response = await apiClient.post(`/auth//forgot-password`, { email });
+    return response.data;
+  } catch (error) {
+    const errorMessage =
+      error.response?.data?.message ||
+      "Failed to forgot password. Please try again.";
     return { success: false, message: errorMessage };
   }
 };
@@ -82,4 +99,5 @@ export default {
   getUser,
   verifyToken,
   resetPassword,
+  forgotPassword,
 };

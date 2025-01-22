@@ -82,6 +82,8 @@ const AuthProvider = ({ children }) => {
             (eachCamp) => eachCamp.id.trim() == data.user.currentCampId.trim()
           ) || null
         );
+      } else {
+        setCurrentCampDetails(null);
       }
     } catch (error) {
       console.error("Failed to restore user:", error.message);

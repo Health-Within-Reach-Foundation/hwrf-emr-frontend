@@ -3,12 +3,12 @@ import CustomTable from "../custom-table";
 import { Button } from "react-bootstrap";
 import DiagnosisTreatmentSettingForm from "./diagnosis-treatment-setting-form";
 
-const SelectedDiagnosisTreatementDetaiils = ({
-  treatementsRows = [],
-  patientData,
-  diagnosisData,
+const TreatmentSettings = ({
+  diagnosisData = [],
+  //   patientData,
   fetchPatientData,
 }) => {
+  console.log(diagnosisData);
   const [selectedTreatments, setSelectedTreatments] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
@@ -71,18 +71,18 @@ const SelectedDiagnosisTreatementDetaiils = ({
       </Button>
       <CustomTable
         columns={treatmentColumns}
-        data={treatementsRows}
+        data={diagnosisData.flatMap((diagnosis) => diagnosis.treatments)}
         enableFilters={false}
       />
-      {drawerVisible && (
+
       
+      {drawerVisible && (
         <DiagnosisTreatmentSettingForm
           isEdit={isEdit}
           selectedTreatments={selectedTreatments}
           drawerVisible={drawerVisible}
           onClose={() => setDrawerVisible(false)}
           diagnosisData={diagnosisData}
-          patientData={patientData}
           onSave={() => fetchPatientData()}
         />
       )}
@@ -90,4 +90,4 @@ const SelectedDiagnosisTreatementDetaiils = ({
   );
 };
 
-export default SelectedDiagnosisTreatementDetaiils;
+export default TreatmentSettings;

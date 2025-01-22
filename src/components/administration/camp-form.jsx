@@ -280,6 +280,7 @@ const CampModalForm = ({
       open={show}
       onCancel={onClose}
       footer={null}
+      maskClosable={false}
     >
       <Form
         form={form}
@@ -377,9 +378,9 @@ const CampModalForm = ({
             placeholder="Select Van"
             allowClear
             options={[
-              { value: "Van 1", label: "Van 1" },
-              { value: "Van 2", label: "Van 2" },
-              { value: "Van 3", label: "Van 3" },
+              { value: "BharatBenz", label: "BharatBenz" },
+              { value: "Force", label: "Force" },
+              { value: "TATA", label: "TATA" },
             ]}
           />
         </Form.Item>

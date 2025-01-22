@@ -11,8 +11,7 @@ const DiagnosisTreatmentSettingForm = ({
   drawerVisible,
   onClose,
   diagnosisData,
-  onSave = () => {},
-  patientData,
+  onSave,
   selectedTreatments,
 }) => {
 
@@ -55,8 +54,8 @@ const DiagnosisTreatmentSettingForm = ({
       });
     } else {
       setFormState({
-        // complaints: diagnosisData?.complaints,
-        // treatments: diagnosisData?.treatmentsSuggested,
+        complaints: diagnosisData?.complaints,
+        treatments: diagnosisData?.treatmentsSuggested,
         treatmentDate: new Date().toISOString().split("T")[0],
         notes: "",
         treatmentStatus: [],
@@ -153,15 +152,15 @@ const DiagnosisTreatmentSettingForm = ({
   };
 
   return (
-    // <Drawer
-    //   title={isEdit ? "Edit Treatment" : "Add Treatment Setting"}
-    //   placement="right"
-    //   onClose={onClose}
-    //   open={drawerVisible}
-    //   width={600}
-    // >
+    <Drawer
+      title={isEdit ? "Edit Treatment" : "Add Treatment Setting"}
+      placement="right"
+      onClose={onClose}
+      open={drawerVisible}
+      width={600}
+    >
       <Form>
-        {/* <Form.Group className="py-2">
+        <Form.Group className="py-2">
           <Form.Label>Treatment Date</Form.Label>
           <Form.Control
             type="date"
@@ -217,7 +216,34 @@ const DiagnosisTreatmentSettingForm = ({
             className="w-100"
           />
         </Form.Group>
-        
+        {/* <Form.Group className="py-2">
+          <Form.Check
+            id="adult-teeth"
+            type="radio"
+            label="Adult"
+            name="dentalQuadrant"
+            checked={formState.dentalQuadrantType === "adult"}
+            onChange={() =>
+              setFormState((prev) => ({
+                ...prev,
+                dentalQuadrantType: "adult",
+              }))
+            }
+          />
+          <Form.Check
+            id="child-teeth"
+            type="radio"
+            label="Child"
+            name="dentalQuadrant"
+            checked={formState.dentalQuadrantType === "child"}
+            onChange={() =>
+              setFormState((prev) => ({
+                ...prev,
+                dentalQuadrantType: "child",
+              }))
+            }
+          />
+        </Form.Group> */}
         {diagnosisData.dentalQuadrantType === "adult" && (
           <Form.Group className="py-2">
             <TeethSelector
@@ -256,83 +282,83 @@ const DiagnosisTreatmentSettingForm = ({
             readOnly
             onChange={(e) => handleInputChange("notes", e.target.value)}
           />
-        </Form.Group> */}
+        </Form.Group>
         {/* <hr className="dark"/> */}
-          <Card>
-            <Card.Header>Treatment Setting Form</Card.Header>
-            <Card.Body>
-              <Form.Group className="py-2">
-                <Form.Label>Treatment Status</Form.Label>
-                <Select
-                  mode="multiple"
-                  value={formState.treatmentStatus}
-                  onChange={(value) =>
-                    handleInputChange2("treatmentStatus", value)
-                  }
-                  options={[
-                    { value: "Done", label: "Done" },
-                    {
-                      value: "RC Open 1st Completed",
-                      label: "RC Open 1st Completed",
-                    },
-                    { value: "RC 2nd - Completed", label: "RC 2nd - Completed" },
-                    { value: "RC 3rd - Completed", label: "RC 3rd - Completed" },
-                    { value: "Impression Taken", label: "Impression Taken" },
-                    { value: "Crown Trail Done", label: "Crown Trail Done" },
-                    { value: "Final Cementation", label: "Final Cementation" },
-                    { value: "NA", label: "NA" },
-                    { value: "OPD Done", label: "OPD Done" },
-                  ]}
-                  className="w-100"
-                />
-              </Form.Group>
+        <Card>
+          <Card.Header>Treatment Setting Form</Card.Header>
+          <Card.Body>
+            <Form.Group className="py-2">
+              <Form.Label>Treatment Status</Form.Label>
+              <Select
+                mode="multiple"
+                value={formState.treatmentStatus}
+                onChange={(value) =>
+                  handleInputChange2("treatmentStatus", value)
+                }
+                options={[
+                  { value: "Done", label: "Done" },
+                  {
+                    value: "RC Open 1st Completed",
+                    label: "RC Open 1st Completed",
+                  },
+                  { value: "RC 2nd - Completed", label: "RC 2nd - Completed" },
+                  { value: "RC 3rd - Completed", label: "RC 3rd - Completed" },
+                  { value: "Impression Taken", label: "Impression Taken" },
+                  { value: "Crown Trail Done", label: "Crown Trail Done" },
+                  { value: "Final Cementation", label: "Final Cementation" },
+                  { value: "NA", label: "NA" },
+                  { value: "OPD Done", label: "OPD Done" },
+                ]}
+                className="w-100"
+              />
+            </Form.Group>
 
-              <Form.Group className="py-2">
-                <Form.Label>Add Notes </Form.Label>
-                <Input.TextArea
-                  value={formState.notes}
-                  onChange={(e) => handleInputChange2("notes", e.target.value)}
-                />
-              </Form.Group>
+            <Form.Group className="py-2">
+              <Form.Label>Add Notes </Form.Label>
+              <Input.TextArea
+                value={formState.notes}
+                onChange={(e) => handleInputChange2("notes", e.target.value)}
+              />
+            </Form.Group>
 
-              <Form.Group className="py-2">
-                <Form.Label>Total cost</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={formState.totalAmount || ""}
-                  onChange={(e) =>
-                    handleInputChange("totalAmount", e.target.value)
-                  }
-                />
-              </Form.Group>
+            <Form.Group className="py-2">
+              <Form.Label>Total cost</Form.Label>
+              <Form.Control
+                type="number"
+                value={formState.totalAmount || ""}
+                onChange={(e) =>
+                  handleInputChange("totalAmount", e.target.value)
+                }
+              />
+            </Form.Group>
 
-              <Form.Group className="py-2">
-                <Form.Label>Paid cost</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={formState.paidAmount || ""}
-                  onChange={(e) =>
-                    handleInputChange("paidAmount", e.target.value)
-                  }
-                />
-              </Form.Group>
+            <Form.Group className="py-2">
+              <Form.Label>Paid cost</Form.Label>
+              <Form.Control
+                type="number"
+                value={formState.paidAmount || ""}
+                onChange={(e) =>
+                  handleInputChange("paidAmount", e.target.value)
+                }
+              />
+            </Form.Group>
 
-              <Form.Group className="py-2">
-                <Form.Label>Remaining cost</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={formState.remainingAmount || ""}
-                  readOnly
-                />
-              </Form.Group>
+            <Form.Group className="py-2">
+              <Form.Label>Remaining cost</Form.Label>
+              <Form.Control
+                type="number"
+                value={formState.remainingAmount || ""}
+                readOnly
+              />
+            </Form.Group>
 
-              <Button className="mt-3" onClick={handleSubmit} type="primary" loading={loading}>
-                {isEdit ? "Update treatment" : "Add"}
-              </Button>
-            </Card.Body>
-          </Card>
+            <Button className="mt-3" onClick={handleSubmit} loading={loading}>
+              {isEdit ? "Update" : "Add"}
+            </Button>
+          </Card.Body>
+        </Card>
       </Form>
-    // </Drawer>
+    </Drawer>
   );
 };
 

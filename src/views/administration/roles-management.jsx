@@ -4,6 +4,7 @@ import { Loading } from "../../components/loading";
 import CustomTable from "../../components/custom-table";
 import RoleModalForm from "../../components/administration/role-form";
 import rolePermissionService from "../../api/role-permission-service";
+import { RiAddLine } from "@remixicon/react";
 
 const Roles = () => {
   const [roles, setRoles] = useState([]);
@@ -80,8 +81,9 @@ const Roles = () => {
   return (
     <Container className="mt-4">
       <h2>Role Management</h2>
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="d-flex flex-row-reverse justify-content-between align-items-center mb-4">
         <Button variant="primary" onClick={handleCreateRole}>
+          <RiAddLine />
           Create Role
         </Button>
       </div>

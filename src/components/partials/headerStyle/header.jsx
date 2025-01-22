@@ -26,6 +26,11 @@ import user04 from "/assets/images/user/04.jpg";
 import user001 from "/assets/images/user/001.png";
 import { useAuth } from "../../../utilities/AuthProvider";
 import CampSelectionModal from "../../camp-seletion-modal";
+import SettingOffCanvas from "../../setting/SettingOffCanvas";
+
+const generatePath = (path) => {
+  return window.origin + import.meta.env.BASE_URL + path;
+};
 
 const Header = () => {
   const pageLayout = useSelector(SettingSelector.page_layout);
@@ -241,16 +246,16 @@ const Header = () => {
                            </div>
                         </Dropdown.Menu> 
                      </Dropdown>*/}
-              {/* <Nav.Item
+              <Nav.Item
                 as="li"
                 className="nav-item iq-full-screen d-none d-xl-block"
                 id="fullscreen-item"
               >
-                <a
+                {/* <a
                   href="#"
                   className="nav-link"
                   id="btnFullscreen"
-                  onClick={toggleFullScreen}
+                  onClick={()=>{}}
                 >
                   <i
                     className={`ri-fullscreen-line normal-screen ${
@@ -262,8 +267,9 @@ const Header = () => {
                       isFullScreen ? "" : " d-none"
                     }`}
                   ></i>
-                </a>
-              </Nav.Item> */}
+                </a> */}
+                <SettingOffCanvas />
+              </Nav.Item> 
               {/* <Dropdown as="li" className="nav-item">
                 <Dropdown.Toggle
                   bsPrefix=" "
@@ -519,7 +525,7 @@ const Header = () => {
                   id="notification-drop"
                 >
                   <img
-                    src={user001}
+                    src={generatePath("/assets/images/hwrf-vertical.svg")}
                     style={{
                       width: "50px",
                       height: "50px",
@@ -922,8 +928,6 @@ const Header = () => {
         </Navbar.Collapse>
       </Navbar>
       {/* </Navbar> */}
-
-     
     </>
   );
 };

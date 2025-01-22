@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Button } from "react-bootstrap";
-import Flatpickr from "react-flatpickr";
+// import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
 import Select from "react-select";
 import AppointmentForm from "../components/appointment-form";
@@ -10,10 +10,11 @@ import clinicServices from "../api/clinic-services";
 import CustomTable from "../components/custom-table";
 import { Loading } from "../components/loading";
 import DateCell from "../components/date-cell";
-import { Link } from "react-router-dom";
 import { Badge, Dropdown, Menu } from "antd";
-import { useAuth } from "../utilities/AuthProvider";
 import toast from "react-hot-toast";
+import CurrentCampDetailsHeader from "../components/camp/currentcamp-detail-header";
+import { RiAddLine, RiRefreshLine } from "@remixicon/react";
+import { transformText } from "../utilities/utility-function";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -94,7 +95,7 @@ const Appointment = () => {
     },
     {
       data: "queueType",
-      title: "Queue Type",
+      title: "Service Type",
       render: (data, row) => {
         return (
           <a href={`/patient/patient-profile/${row.patientId}`} className="">
@@ -121,7 +122,7 @@ const Appointment = () => {
               dot
               // color={statusColors[data] || "default"}
               status={statusColors[data]}
-              text={data.charAt(0).toUpperCase() + data.slice(1)} // Capitalize status
+              text={transformText(data)} // Capitalize status
             />
           </a>
         );
@@ -210,18 +211,21 @@ const Appointment = () => {
     }
   };
 
-  const fetchAppointments = async (selectedDate) => {
+  const fetchAppointments = async (selectedDate = date) => {
     try {
       setLoadingAppointments(true);
       const adjustedDate = new Date(
         selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000
       );
       const dateString = adjustedDate.toISOString().split("T")[0];
-      const response = await appointmentServices.getAppointments(dateString);
+      const response = await appointmentServices.getAppointments();
+      console.log(response);
       setAppointments(
         response?.data.sort((a, b) => a.tokenNumber - b.tokenNumber) || []
       );
-      setFilteredAppointments(response?.data.sort((a, b) => a.tokenNumber - b.tokenNumber) || []);
+      setFilteredAppointments(
+        response?.data.sort((a, b) => a.tokenNumber - b.tokenNumber) || []
+      );
     } catch (error) {
       console.error("Error fetching appointments:", error);
     } finally {
@@ -321,15 +325,27 @@ const Appointment = () => {
     }
   };
 
+  const refreshData = async () => {
+    await Promise.all([fetchAppointments(), getPatientList()]);
+    // toast.success("Data refreshed successfully!");
+  };
+
+  // useEffect(() => {
+  //   if (!show) {
+  //     const interval = setInterval(refreshData, 9000); // 3 minutes
+  //     return () => clearInterval(interval); // Clear interval on component unmount
+  //   }
+  // }, []);
+
   useEffect(() => {
-    fetchAppointments(date);
+    fetchAppointments();
     getPatientList();
     getSpecialtyDepartmentsByClinic();
   }, []);
 
-  useEffect(() => {
-    fetchAppointments(date);
-  }, [date]);
+  // useEffect(() => {
+  //   fetchAppointments(date);
+  // }, [date]);
 
   if (loading || loadingPatient || loadingAppointments) {
     return <Loading />;
@@ -337,6 +353,7 @@ const Appointment = () => {
 
   return (
     <>
+      <CurrentCampDetailsHeader />
       <Row>
         <Col>
           <Row className="align-items-center">
@@ -345,7 +362,8 @@ const Appointment = () => {
               md={6}
               className="d-flex justify-content-between align-items-center mb-3"
             >
-              <Col md={6} className="mb-3">
+              {/* Filterig the appointments by queue */}
+              {/* <Col md={6} className="mb-3">
                 <label htmlFor="appointmentDate" className="form-label">
                   Select Queue Date
                 </label>
@@ -355,26 +373,36 @@ const Appointment = () => {
                   id="appointmentDate"
                   className="inline_flatpickr w-auto"
                 />
-              </Col>
+              </Col> */}
             </Col>
 
             {/* Department Buttons */}
 
             <div className="d-flex flex-column">
-              <div className="d-flex gap-2">
+              <div className="d-flex flex-row-reverse gap-2">
                 <Button
                   variant="primary"
                   onClick={() => setShow(true)}
                   className="mb-3"
                   style={{ width: "auto" }} // Keeps the button width to content size
                 >
+                  <RiAddLine />
                   Add to Queue
                 </Button>
+                <Button
+                  variant="outline-primary"
+                  onClick={refreshData}
+                  className="mb-3"
+                  style={{ width: "auto" }}
+                >
+                  <RiRefreshLine />
+                </Button>
               </div>
-              <div className="d-flex align-items-center flex-row-reverse mb-3 gap-2">
+              <div className="d-flex align-items-center flex-row mb-3 gap-2">
+                Sort By:
                 {departmentList.map((department) => (
                   <Button
-                    size="sm"
+                    size="lg"
                     key={department.value}
                     variant={
                       selectedQueueType === department.label
@@ -386,7 +414,6 @@ const Appointment = () => {
                     {department.label}
                   </Button>
                 ))}
-                Sort By:
               </div>
             </div>
           </Row>

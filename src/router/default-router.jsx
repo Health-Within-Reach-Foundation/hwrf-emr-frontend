@@ -117,6 +117,7 @@ import EditableForm from "../views/form-templates/editableForm";
 import CampManagement from "../views/administration/campaigns";
 import FormTemplateById from "../views/form-templates/form-template-id";
 import PatientTreatment from "../views/patient-treatment";
+import CampDetails from "../views/administration/camp";
 
 export const DefaultRoute = [
   {
@@ -270,6 +271,16 @@ export const DefaultRoute = [
             requiredPermissions={["camps:write", "camps:read"]}
           >
             <CampManagement />
+          </ClinicRouteGuard>
+        ),
+      },
+      {
+        path: "/camps/:campId",
+        element: (
+          <ClinicRouteGuard
+            requiredPermissions={["camps:write", "camps:read"]}
+          >
+            <CampDetails />
           </ClinicRouteGuard>
         ),
       },

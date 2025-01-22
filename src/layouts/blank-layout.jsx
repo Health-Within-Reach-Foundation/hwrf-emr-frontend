@@ -11,7 +11,7 @@ const BlankLayout = () => {
       <div className="content-bg">
         {/* {loading ? <Loading /> : <Outlet />} */}
         <Outlet />
-        <SettingOffCanvas />
+        {/* <SettingOffCanvas /> */}
       </div>
     </>
   );

@@ -1,37 +1,43 @@
 import React, { useState } from "react";
 import { Button, Dropdown, message, Card } from "antd";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import FieldRenderer from "./FieldRenderer";
-import "./editableForm.scss";
-import DynamicForm from "./formRender";
+import FieldRenderer from "./FieldRenderer"; // Field editing component
+import DynamicForm from "./formRender"; // Form rendering component
+import "./editableForm.scss"; // Custom styles
 
 const DynamicFields = () => {
   const [fields, setFields] = useState([]);
 
+  // Add a new field
   const handleMenuClick = ({ key }) => {
     setFields((prevFields) => [
       ...prevFields,
       {
         id: `${Date.now()}`,
         type: key,
-        title: "New Field",
+        title: `New ${key.charAt(0).toUpperCase() + key.slice(1)}`, // Default title
         value: "",
         options:
-          key === "radio" || key === "checkbox" || key === "select"
+          ["radio", "checkbox", "select"].includes(key) // Add options for specific field types
             ? ["Option 1"]
             : null,
       },
     ]);
   };
 
+  // Menu items for adding fields
   const menuItems = [
     { label: "Input", key: "input" },
     { label: "Phone Number", key: "phone" },
     { label: "Mail ID", key: "mailId" },
+    { label: "Password", key: "password" },
+    { label: "Number", key: "number" },
+    { label: "Date", key: "date" },
     { label: "Radio Button", key: "radio" },
     { label: "Checkbox", key: "checkbox" },
     { label: "Select Field", key: "select" },
     { label: "Textarea", key: "textarea" },
+    { label: "File Upload", key: "file" },
   ];
 
   const menu = {
@@ -39,6 +45,7 @@ const DynamicFields = () => {
     onClick: handleMenuClick,
   };
 
+  // Update a field's configuration
   const handleFieldUpdate = (updatedField) => {
     setFields((prevFields) =>
       prevFields.map((field) =>
@@ -47,18 +54,13 @@ const DynamicFields = () => {
     );
   };
 
+  // Save JSON data
   const handleSave = () => {
-    const jsonData = fields.map(({ id, type, title, value, options }) => ({
-      id,
-      type,
-      title,
-      value,
-      options,
-    }));
-    console.log("Saved JSON:", JSON.stringify(jsonData, null, 2));
-    message.success("Data saved successfully!");
+    console.log("Saved JSON:", JSON.stringify(fields, null, 2));
+    message.success("Form saved successfully!");
   };
 
+  // Handle drag and drop
   const onDragEnd = (result) => {
     const { source, destination } = result;
     if (!destination) return;
@@ -70,106 +72,71 @@ const DynamicFields = () => {
     setFields(reorderedFields);
   };
 
+  // Delete a field
   const handleDeleteField = (id) => {
     setFields((prevFields) => prevFields.filter((field) => field.id !== id));
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        background: "#f0f2f5",
-        gap: 2,
-      }}
-    >
+    <div style={{ display: "flex", background: "#f0f2f5", gap: 2 }}>
       <Card style={{ width: "100%", padding: "20px" }}>
         <div className="d-flex flex-row-reverse">
-          <Dropdown menu={menu} trigger={["click"]} className="">
-            <Button
-              type="primary"
-              className="add-field-button"
-              style={{ marginBottom: "20px" }}
-            >
+          <Dropdown menu={menu} trigger={["click"]}>
+            <Button type="primary" style={{ marginBottom: "20px" }}>
               Add Field
             </Button>
           </Dropdown>
         </div>
+
         <div className="dynamic-fields-container">
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="fields">
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
                   {fields.map((field, index) => (
-                    <Draggable
-                      key={field.id}
-                      draggableId={field.id}
-                      index={index}
-                    >
+                    <Draggable key={field.id} draggableId={field.id} index={index}>
                       {(provided) => (
-                        // <div
-                        //   ref={provided.innerRef}
-                        //   {...provided.draggableProps}
-                        //   {...provided.dragHandleProps}
-                        //   style={{
-                        //     marginBottom: "20px",
-                        //     ...provided.draggableProps.style,
-                        //   }}
-                        // >
-                        //   <FieldRenderer
-                        //     field={field}
-                        //     onFieldUpdate={handleFieldUpdate}
-                        //   />
-                        //   <i className="ri-drag-move-2-line"></i>
-                        // </div>
                         <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           style={{
                             marginBottom: "5px",
-                            padding: "30px",
-                            border: "1px solid",
+                            padding: "20px",
+                            border: "1px solid #d9d9d9",
                             borderRadius: "8px",
-                            position: "relative", // Allow absolute positioning for drag handle
+                            position: "relative",
                             ...provided.draggableProps.style,
                           }}
                         >
+                          {/* Drag Handle */}
                           <div
                             {...provided.dragHandleProps}
                             style={{
                               position: "absolute",
-                              top: "0px", // Adjust spacing as needed
-                              right: "0px", // Align to the top-right corner
+                              top: "10px",
+                              right: "10px",
                               cursor: "grab",
-                              zIndex: 300,
-                              width: "fit-content",
                             }}
                           >
-                            <i
-                              className="ri-drag-move-2-line"
-                              style={{ fontSize: "20px", color: "#3978cd" }}
-                            ></i>
+                            <i className="ri-drag-move-2-line" style={{ fontSize: "20px", color: "#3978cd" }} />
                           </div>
-                          <FieldRenderer
-                            field={field}
-                            onFieldUpdate={handleFieldUpdate}
-                          />{" "}
-                          {/* Delete Icon */}
+
+                          {/* Render Field */}
+                          <FieldRenderer field={field} onFieldUpdate={handleFieldUpdate} />
+
+                          {/* Delete Button */}
                           <div
                             onClick={() => handleDeleteField(field.id)}
                             style={{
                               position: "absolute",
-                              bottom: "0px",
-                              right: "0px",
+                              bottom: "10px",
+                              right: "10px",
                               cursor: "pointer",
-                              zIndex: 300,
-                              fontSize: "20px",
                               color: "#ff4d4f",
-                              width: "fit-content",
                             }}
                           >
-                            <i className="ri-delete-bin-7-line"></i>{" "}
+                            <i className="ri-delete-bin-7-line" style={{ fontSize: "20px" }} />
                           </div>
-                          {/* Fixed drag handle */}
                         </div>
                       )}
                     </Draggable>
@@ -189,7 +156,12 @@ const DynamicFields = () => {
           )}
         </div>
       </Card>
-      <DynamicForm data={fields} />
+
+      {/* Preview the generated form */}
+      <DynamicForm
+        data={fields}
+        onSubmit={(formState) => console.log("Form Submitted Data --> :", formState)}
+      />
     </div>
   );
 };

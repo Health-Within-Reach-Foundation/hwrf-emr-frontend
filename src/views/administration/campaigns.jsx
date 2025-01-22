@@ -8,6 +8,8 @@ import { Loading } from "../../components/loading";
 import campManagementService from "../../api/camp-management-service";
 import clinicServices from "../../api/clinic-services";
 import CampModalForm from "../../components/administration/camp-form";
+import DateCell from "../../components/date-cell";
+import { RiAddLine, } from "@remixicon/react";
 
 const CampManagement = () => {
   const [camps, setCamps] = useState([]);
@@ -33,7 +35,7 @@ const CampManagement = () => {
     try {
       setLoading(true);
       const response = await campManagementService.getCamps(); // Replace with actual API call
-      console.log('camps: ', response.camps);
+      console.log("camps: ", response.camps);
       setCamps(response.camps || []);
       setFilteredCamps(response.camps || []);
     } catch (error) {
@@ -93,24 +95,97 @@ const CampManagement = () => {
   }
 
   const columns = [
-    { data: "name", title: "Camp Name" },
-    { data: "status", title: "Status" },
-    { data: "location", title: "Location" },
-    { data: "city", title: "City" },
+    {
+      data: "name",
+      title: "Camp Name",
+      render: (data, row) => (
+        <Button
+          variant="link"
+          size="sm"
+          href={`/camps/${row.id}`} // Dynamic campId used in the URL
+        >
+          {data}
+        </Button>
+      ),
+    },
+    {
+      data: "status",
+      title: "Status",
+      render: (data, row) => (
+        <Button
+          variant="link"
+          size="sm"
+          href={`/camps/${row.id}`} // Dynamic campId used in the URL
+        >
+          {data}
+        </Button>
+      ),
+    },
+    {
+      data: "location",
+      title: "Location",
+      render: (data, row) => (
+        <Button
+          variant="link"
+          size="sm"
+          href={`/camps/${row.id}`} // Dynamic campId used in the URL
+        >
+          {data}
+        </Button>
+      ),
+    },
+    {
+      data: "city",
+      title: "City",
+      render: (data, row) => (
+        <Button
+          variant="link"
+          size="sm"
+          href={`/camps/${row.id}`} // Dynamic campId used in the URL
+        >
+          {data}
+        </Button>
+      ),
+    },
     {
       data: "vans",
       title: "Vans",
-      render: (data) => data?.join(", ") || "",
+      render: (data, row) => (
+        <Button
+          variant="link"
+          size="sm"
+          href={`/camps/${row.id}`} // Dynamic campId used in the URL
+        >
+          {data?.join(", ") || ""}
+        </Button>
+      ),
     },
     {
       data: "startDate",
       title: "Start Date",
-      render: (data) => new Date(data).toLocaleDateString(),
+      render: (data, row) => (
+        <Button
+          variant="link"
+          size="sm"
+          href={`/camps/${row.id}`} // Dynamic campId used in the URL
+        >
+          <DateCell date={data} dateFormat="D MMM, YYYY" />
+        </Button>
+      ),
+      // render: (data) => new Date(data).toLocaleDateString(),
     },
     {
       data: "endDate",
       title: "End Date",
-      render: (data) => new Date(data).toLocaleDateString(),
+      render: (data, row) => (
+        <Button
+          variant="link"
+          size="sm"
+          href={`/camps/${row.id}`} // Dynamic campId used in the URL
+        >
+          <DateCell date={data} dateFormat="D MMM, YYYY" />
+        </Button>
+      ),
     },
     {
       title: "Manage",
@@ -223,15 +298,18 @@ const CampManagement = () => {
       <Row>
         <Col>
           <Row className="align-items-center mb-3">
-            <Col>
-              <Button onClick={() => setShowModal(true)}>Add Camp</Button>
+            <Col className="d-flex flex-row-reverse">
+              <Button onClick={() => setShowModal(true)}>
+                <RiAddLine />
+                Add Camp
+              </Button>
             </Col>
           </Row>
 
           <CustomTable
             columns={columns}
             data={filteredCamps}
-            enableFilters
+            enableFilters={false}
             filtersConfig={filterComponents}
             onApplyFilters={applyFilters}
             onResetFilters={resetFilters}

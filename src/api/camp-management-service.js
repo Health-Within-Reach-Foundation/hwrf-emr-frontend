@@ -68,8 +68,29 @@ const updateCampById = async (campId, campData) => {
   }
 };
 
+const getCampById = async (campId) => {
+  try {
+    // Make the GET request to fetch camp details by ID
+    const response = await apiClient.get(`/clinics/camps/${campId}`);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to fetch camp details"
+      );
+    } else {
+      console.error("Unexpected error:", error.message);
+      throw new Error(
+        "An unexpected error occurred while fetching camp details"
+      );
+    }
+  }
+};
+
 export default {
   getCamps,
+  getCampById,
   createCamp,
   selectCamp,
   updateCampById,

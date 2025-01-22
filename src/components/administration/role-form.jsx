@@ -96,7 +96,13 @@ const RoleModalForm = ({
   };
 
   return (
-    <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+    <Modal
+      show={showModal}
+      onHide={() => setShowModal(false)}
+      centered
+      backdrop="static"
+      keyboard={false}
+    >
       <Modal.Header closeButton>
         <Modal.Title>{currentRole ? "Edit Role" : "Create Role"}</Modal.Title>
       </Modal.Header>

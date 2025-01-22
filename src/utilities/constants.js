@@ -14,11 +14,11 @@ const adminiStartionItems = [
     name:"Roles",
     icon:"ri-user-settings-fill"
   },
-  {
-    path:"/administration/form-templates",
-    name:"Form Templates",
-    icon:"ri-user-settings-fill"
-  },
+  // {
+  //   path:"/administration/form-templates",
+  //   name:"Form Templates",
+  //   icon:"ri-user-settings-fill"
+  // },
 ];
 
 const emailItems = [

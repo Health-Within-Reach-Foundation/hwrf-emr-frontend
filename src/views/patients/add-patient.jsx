@@ -191,23 +191,6 @@ const AddPatient = () => {
                   )}
                 </Col>
                 <Col md={6} className="form-group">
-                  <Form.Label htmlFor="city" className="mb-0">
-                    Town/City:
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    className={`my-2 ${errors.city ? "is-invalid" : ""}`}
-                    id="city"
-                    placeholder="Town/City"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    disabled={loading}
-                  />
-                  {errors.city && (
-                    <div className="invalid-feedback">{errors.city}</div>
-                  )}
-                </Col>
-                <Col md={6} className="form-group">
                   <Form.Label htmlFor="add1" className="mb-0">
                     Address:
                   </Form.Label>
@@ -222,6 +205,23 @@ const AddPatient = () => {
                   />
                   {errors.add1 && (
                     <div className="invalid-feedback">{errors.add1}</div>
+                  )}
+                </Col>
+                <Col md={6} className="form-group">
+                  <Form.Label htmlFor="city" className="mb-0">
+                    Town/City:
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    className={`my-2 ${errors.city ? "is-invalid" : ""}`}
+                    id="city"
+                    placeholder="Town/City"
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    disabled={loading}
+                  />
+                  {errors.city && (
+                    <div className="invalid-feedback">{errors.city}</div>
                   )}
                 </Col>
               </Row>

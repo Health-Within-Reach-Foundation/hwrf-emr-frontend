@@ -9,6 +9,7 @@ import clinicServices from "../api/clinic-services";
 import CampModalForm from "../components/administration/camp-form";
 import DynamicForm from "./form-templates/formRender";
 import DynamicFields from "./form-templates/editableForm";
+import { RiAddLine } from "@remixicon/react";
 
 const Index = () => {
   const { user, initializeAuth, userRoles = [] } = useAuth();
@@ -101,16 +102,15 @@ const Index = () => {
     }
   };
 
-  const sortedCamps = user?.camps
-    ? [...user.camps].sort((a, b) => {
-        // Make the selected camp the first one in the list
-        return a.id === user.currentCampId
-          ? -1
-          : b.id === user.currentCampId
-          ? 1
-          : 0;
-      })
-    : [];
+  const sortedCamps = user?.camps ? user.camps : [];
+  // ? [...user.camps].sort((a, b) => {
+  //     // Make the selected camp the first one in the list
+  //     return a.id === user.currentCampId
+  //       ? -1
+  //       : b.id === user.currentCampId
+  //       ? 1
+  //       : 0;
+  //   })
 
   if (loading) {
     return <Loading />;
@@ -130,6 +130,7 @@ const Index = () => {
             }}
           >
             <Button type="primary" onClick={() => setShowCampForm(true)}>
+              <RiAddLine/>
               Create a Camp
             </Button>
           </div>

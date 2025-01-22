@@ -77,12 +77,12 @@ const SignIn = () => {
               </div>
               <button type="submit" className="btn btn-primary w-100">Sign In</button>
             </Form>
-            <div className="text-center mt-3">
+            {/* <div className="text-center mt-3">
               <span>Don't have an account? </span>
               <Link to="/auth/sign-up" className="text-decoration-none">
                 Join us now!
               </Link>
-            </div>
+            </div> */}
           </Col>
         </Row>
       </Container>

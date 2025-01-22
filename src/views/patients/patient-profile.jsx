@@ -46,9 +46,35 @@ const PatientProfile = () => {
   const [departmentList, setDepartmentList] = useState([]);
   const [checkedRow, setCheckedRow] = useState(null); // Track a single selected row
   const [categorizedDiagnoses, setCategorizedDiagnoses] = useState({});
-  const handleCheckboxChange = (record) => {
-    setCheckedRow((prev) => (prev === record.id ? null : record.id)); // Toggle or select a new row
+  const [allDiagnoses, setAllDiagnoses] = useState([]);
+  const [allTreatments, setAllTreatments] = useState([]);
+
+  // const handleCheckboxChange = (record) => {
+  //   setCheckedRow((prev) => (prev === record.id ? null : record.id)); // Toggle or select a new row
+  //   setSelectedDiagnosisRow(record);
+  // };
+
+  const handleCheckboxChange = (record, e) => {
+    console.log("e -->", e);
     setSelectedDiagnosisRow(record);
+    setCheckedRow((prev) => (prev === record.id ? null : record.id)); // Toggle selection
+    if (e?.target?.checked === false) {
+      setCheckedRow(null)
+      const treatments = patientData.diagnoses.flatMap((diagnosis) => diagnosis.treatments);
+      setAllTreatments(treatments);
+    } else {
+      if (record) {
+        // Filter treatments based on the selected diagnosis
+        const treatments = patientData.diagnoses
+          .filter((diag) => diag.id === record.id)
+          .flatMap((diag) => diag.treatments);
+        setAllTreatments(treatments); // Update filtered treatments
+      }
+      // } else {
+      //   const treatments = allDiagnoses.flatMap((diagnosis) => diagnosis.treatments);
+      //   setAllTreatments(treatments); // Show all treatments if no diagnosis is selected
+      // }
+    }
   };
 
   const dentistryColumns = [
@@ -59,7 +85,7 @@ const PatientProfile = () => {
         return (
           <Checkbox
             checked={checkedRow === record.id} // Link checkbox to the tracked row
-            onChange={() => handleCheckboxChange(record)}
+            onChange={(e) => handleCheckboxChange(record, e)}
           />
         );
       },
@@ -71,25 +97,25 @@ const PatientProfile = () => {
         return <DateCell date={new Date(data)} dateFormat="D MMM, YYYY" />;
       },
     },
-    {
-      title: "Dental Quadrant",
-      data: "selectedTeeth",
-      // render: (data) => new Date(data).toLocaleDateString(),
-      render: (data, record) => {
-        // console.log(data, row);
-        return (
-          <div
+    // {
+    //   title: "Dental Quadrant",
+    //   data: "selectedTeeth",
+    //   // render: (data) => new Date(data).toLocaleDateString(),
+    //   render: (data, record) => {
+    //     // console.log(data, row);
+    //     return (
+    //       <div
 
-          // className="cursor-pointer"
-          // onClick={() => handleSelectDiagnosisRow(record)}
-          >
-            {dentalQuadrant(data?.toString().charAt(0))}
-          </div>
-        );
-      },
-    },
+    //       // className="cursor-pointer"
+    //       // onClick={() => handleSelectDiagnosisRow(record)}
+    //       >
+    //         {dentalQuadrant(data?.toString().charAt(0))}
+    //       </div>
+    //     );
+    //   },
+    // },
     {
-      title: "Tooth",
+      title: "Tooth Number",
       data: "selectedTeeth",
       // render: (data) => new Date(data).toLocaleDateString(),
       render: (data, record) => {
@@ -99,7 +125,7 @@ const PatientProfile = () => {
           // className="cursor-pointer"
           // onClick={() => handleSelectDiagnosisRow(record)}
           >
-            {data?.toString().charAt(1)}
+            {data}
           </div>
         );
       },
@@ -116,6 +142,22 @@ const PatientProfile = () => {
           // onClick={() => handleSelectDiagnosisRow(record)}
           >
             {data?.join(", ")}
+          </div>
+        );
+      },
+    },
+    {
+      title: "Suggested Treatment",
+      data: "treatmentSuggested",
+      // render: (data) => data?.join(", "),
+      render: (data, record) => {
+        // console.log(data, row);
+        return (
+          <div
+          // className="cursor-pointer"
+          // onClick={() => handleSelectDiagnosisRow(record)}
+          >
+            {data}
           </div>
         );
       },
@@ -151,22 +193,23 @@ const PatientProfile = () => {
       setAppointments(data.appointments);
       setMedicalRecords(data.medicalRecords || []);
 
+      setAllDiagnoses(data?.diagnoses);
+
       if (data.diagnoses.length > 0) {
-        // Step 1: Extract unique treatments
-        const uniqueTreatments = new Set(
-          data.diagnoses.flatMap((diagnosis) => diagnosis.treatmentsSuggested)
+        // Transform diagnoses to replicate rows for each treatmentSuggested
+        const replicatedDiagnoses = data.diagnoses.flatMap((diagnosis) =>
+          diagnosis.treatmentsSuggested.map((treatment) => ({
+            ...diagnosis,
+            treatmentSuggested: treatment, // Include the specific treatment in each row
+          }))
         );
 
-        // Step 2: Categorize diagnoses by treatments
-        const categorizedDiagnoses = {};
-        uniqueTreatments.forEach((treatment) => {
-          categorizedDiagnoses[treatment] = data.diagnoses.filter((diagnosis) =>
-            diagnosis.treatmentsSuggested.includes(treatment)
-          );
-        });
+        setAllDiagnoses(replicatedDiagnoses); // Save the replicated data
+        setAllTreatments(
+          data?.diagnoses?.flatMap((diagnosis) => diagnosis?.treatments || [])
+        );
 
-        setCategorizedDiagnoses(categorizedDiagnoses); // Save the categorized data
-        console.log("categorizedDiagnoses: ", categorizedDiagnoses);
+        console.log("Replicated Diagnoses: ", replicatedDiagnoses);
       }
 
       setSelectedDiagnosisRow(null);
@@ -184,9 +227,9 @@ const PatientProfile = () => {
     setDrawerVisible(true);
   };
 
-  const handleSelectDiagnosisRow = (record) => {
-    setSelectedDiagnosisRow(record);
-  };
+  // const handleSelectDiagnosisRow = (record) => {
+  //   setSelectedDiagnosisRow(record);
+  // };
 
   const handleSavePatientData = async (primaryDoctor = null) => {
     // const patientBody = { patientData };
@@ -218,7 +261,9 @@ const PatientProfile = () => {
       const response = await clinicServices.getUsersByClinic();
       const formattedUsers = response.data
         .filter((eachUser) => {
-          return eachUser.specialist !== null;
+          return eachUser?.roles
+            ?.map((role) => role?.roleName)
+            ?.includes("doctor");
         })
         .map((user) => ({
           value: user.id,
@@ -304,7 +349,7 @@ const PatientProfile = () => {
                   Primary Doctor
                 </label>
                 <Select
-                  placeholder="Select staff"
+                  placeholder="Select Doctor"
                   className="w-100 mb-3"
                   options={users}
                   defaultValue={patientData?.primaryDoctor?.value}
@@ -337,47 +382,33 @@ const PatientProfile = () => {
                     >
                       Add Diagnosis
                     </Button>
-                    {Object.keys(categorizedDiagnoses).map(
-                      (eachTreatmentType) => {
-                        return (
-                          <Accordion className='mb-3' key={eachTreatmentType}>
-                            <Accordion.Item eventKey="0">
-                              <Accordion.Header>
-                                {eachTreatmentType}
-                              </Accordion.Header>
-                              <Accordion.Body>
-                                <div className="d-flex flex-column">
-                                  <CustomTable
-                                    columns={dentistryColumns}
-                                    data={
-                                      categorizedDiagnoses[eachTreatmentType]
-                                    }
-                                    enableSearch={false}
-                                    enableFilters={false}
-                                  />
-                                </div>
-                              </Accordion.Body>
-                            </Accordion.Item>
-                          </Accordion>
-                        );
-                      }
-                    )}
+
+                    <div className="d-flex flex-column">
+                      <CustomTable
+                        columns={dentistryColumns}
+                        data={allDiagnoses}
+                        // data={categorizedDiagnoses}
+                        enableSearch={false}
+                        enableFilters={false}
+                      />
+                    </div>
                   </Card.Body>
                 </Card>
-                {selectedDiagnosisRow && (
-                  <Card>
-                    <Card.Header>
-                      <h5 className="mt-4">Treatments Settings</h5>
-                    </Card.Header>
-                    <Card.Body>
-                      <SelectedDiagnosisTreatementDetaiils
-                        selectedDiagnosisRow={selectedDiagnosisRow}
-                        patientData={patientData}
-                        fetchPatientData={fetchPatientData}
-                      />
-                    </Card.Body>
-                  </Card>
-                )}
+                {/* {selectedDiagnosisRow && ( */}
+                {/* <Card>
+                  <Card.Header>
+                    <h5 className="mt-4">Treatments Settings</h5>
+                  </Card.Header>
+                  <Card.Body>
+                    <SelectedDiagnosisTreatementDetaiils
+                      treatementsRows={allTreatments}
+                      diagnosisData={selectedDiagnosisRow}
+                      patientData={patientData}
+                      fetchPatientData={fetchPatientData}
+                    />
+                  </Card.Body>
+                </Card> */}
+                {/* )} */}
               </Tab>
             )}
 
