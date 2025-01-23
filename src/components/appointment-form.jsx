@@ -74,7 +74,14 @@ const AppointmentForm = ({
   };
 
   return (
-    <Modal show={show} onHide={modalClose} centered backdrop="static" animation>
+    <Modal
+      className="queue-modal"
+      show={show}
+      onHide={modalClose}
+      centered
+      backdrop="static"
+      animation
+    >
       <Modal.Header>
         <Modal.Title>Add to queue</Modal.Title>
         <button
