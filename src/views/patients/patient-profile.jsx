@@ -27,7 +27,8 @@ import DateCell from "../../components/date-cell";
 import SelectedDiagnosisTreatementDetaiils from "../../components/patients/diagnosis-treatment";
 import BasicPatientProfile from "../../components/patients/basic-patient-profile";
 import clinicServices from "../../api/clinic-services";
-import MammoReportLexical from "../../components/mammography/mammography-additional-details";
+import MammoReportLexical from "../../components/mammography/mammography-report";
+import MammoMedicalHistory from "../../components/mammography/mammography-medical-history";
 const PatientProfile = () => {
   const { id } = useParams();
   const [patientData, setPatientData] = useState(null);
@@ -60,8 +61,10 @@ const PatientProfile = () => {
     setSelectedDiagnosisRow(record);
     setCheckedRow((prev) => (prev === record.id ? null : record.id)); // Toggle selection
     if (e?.target?.checked === false) {
-      setCheckedRow(null)
-      const treatments = patientData.diagnoses.flatMap((diagnosis) => diagnosis.treatments);
+      setCheckedRow(null);
+      const treatments = patientData.diagnoses.flatMap(
+        (diagnosis) => diagnosis.treatments
+      );
       setAllTreatments(treatments);
     } else {
       if (record) {
@@ -428,7 +431,8 @@ const PatientProfile = () => {
               .map((eachDepartment) => eachDepartment.label)
               .includes("Mammography") && (
               <Tab eventKey="mammography" title="Mammography">
-                <MammoReportLexical patient={patientData}/>
+                {/* <MammoReportLexical patient={patientData}/> */}
+                <MammoMedicalHistory patient={patientData}/>
               </Tab>
             )}
           </Tabs>
