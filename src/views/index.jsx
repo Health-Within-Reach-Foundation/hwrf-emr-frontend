@@ -23,7 +23,7 @@ const Index = () => {
   const [campDetails, setCampDetails] = useState(() => {
     const activeCamps = user?.camps?.filter((camp) => camp.status === "active");
 
-    return activeCamps.length == 0
+    return activeCamps?.length == 0
       ? null
       : activeCamps?.find((camp) => camp.id === user?.currentCampId) || null;
   });
@@ -33,9 +33,9 @@ const Index = () => {
     try {
       const response = await clinicServices.getUsersByClinic();
       const formattedUsers = response.data.map((user) => ({
-        value: user.id,
-        label: user.name,
-        phoneNumber: user.phoneNumber,
+        value: user?.id,
+        label: user?.name,
+        phoneNumber: user?.phoneNumber,
       }));
       setUsersOptions(formattedUsers);
     } catch (error) {
@@ -172,8 +172,8 @@ const Index = () => {
                           dateFormat="D MMM, YYYY"
                         />
                       </div>
-                      <h5 className="mb-1">{camp.name}</h5>
-                      <p className="text-muted">{camp.location}</p>
+                      <h5 className="mb-1">{camp?.name}</h5>
+                      <p className="text-muted">{camp?.location}</p>
                     </Card.Body>
                   </Card>
                 </div>

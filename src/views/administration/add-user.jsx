@@ -76,8 +76,8 @@ const AddUser = () => {
     const newErrors = {};
     if (!formData.roles.length)
       newErrors.roles = "At least one role is required.";
-    if (!formData.specialities.length)
-      newErrors.specialities = "At least one speciality is required.";
+    // if (!formData.specialities.length)
+    //   newErrors.specialities = "At least one speciality is required.";
     if (!formData.firstName.trim())
       newErrors.firstName = "First Name is required.";
     if (!formData.lastName.trim())
@@ -180,11 +180,11 @@ const AddUser = () => {
                     }
                     className="w-100 my-2"
                   />
-                  {errors.specialities && (
+                  {/* {errors.specialities && (
                     <Form.Text className="text-danger">
                       {errors.specialities}
                     </Form.Text>
-                  )}
+                  )} */}
                 </Form.Group>
               </Form>
             </Card.Body>

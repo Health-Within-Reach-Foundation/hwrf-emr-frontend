@@ -37,20 +37,24 @@ const DiagnosisTreatmentSettingForm = ({
         createdAt,
         updatedAt,
         treatments,
-        patientId,
         id,
+        patientId,
         additionalDetails,
         selectedTeeth,
         complaints,
         dentalQuadrant,
         xrayStatus,
         xray,
+        treatmentid,
+        settingPaidAmount,
         dentalQuadrantType,
         diagnosisId,
         ...filteredData
       } = selectedTreatments;
 
       setFormState({
+        treatmentSettingId: id,
+        settingPaidAmount,
         ...filteredData,
       });
     } else {
@@ -104,12 +108,28 @@ const DiagnosisTreatmentSettingForm = ({
     try {
       setLoading(true);
 
-      let formData = {};
+      const {
+        notes,
+        treatmentId,
+        treatmentStatus, 
+        treatmentDate,
+        settingPaidAmount,
+      } = formState;
+
+      let formData = {
+        settingNotes: notes,
+        settingTreatmentDate:treatmentDate,
+        treatmentStatus,
+        treatmentSettingId: selectedTreatments.id,
+        settingPaidAmount,
+      };
       let response;
       if (isEdit) {
+
+        console.log("*********************", formData)
         response = await patientServices.updateTreatmentById(
-          selectedTreatments.id,
-          formState
+          selectedTreatments?.treatmentId,
+          formData
         );
 
         console.log("for, state for updating treatement --> ", formState);
@@ -288,13 +308,23 @@ const DiagnosisTreatmentSettingForm = ({
               </Form.Group>
 
               <Form.Group className="py-2">
+                <Form.Label>Paid Amount</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={formState.settingPaidAmount || ""}
+                  onChange={(e) =>
+                    handleInputChange("settingPaidAmount", e.target.value)
+                  }
+                />
+              </Form.Group>
+              <Form.Group className="py-2">
                 <Form.Label>Add Notes </Form.Label>
                 <Input.TextArea
                   value={formState.notes}
                   onChange={(e) => handleInputChange2("notes", e.target.value)}
                 />
               </Form.Group>
-
+{/* 
               <Form.Group className="py-2">
                 <Form.Label>Total cost</Form.Label>
                 <Form.Control
@@ -306,16 +336,7 @@ const DiagnosisTreatmentSettingForm = ({
                 />
               </Form.Group>
 
-              <Form.Group className="py-2">
-                <Form.Label>Paid cost</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={formState.paidAmount || ""}
-                  onChange={(e) =>
-                    handleInputChange("paidAmount", e.target.value)
-                  }
-                />
-              </Form.Group>
+             
 
               <Form.Group className="py-2">
                 <Form.Label>Remaining cost</Form.Label>
@@ -324,7 +345,7 @@ const DiagnosisTreatmentSettingForm = ({
                   value={formState.remainingAmount || ""}
                   readOnly
                 />
-              </Form.Group>
+              </Form.Group> */}
 
               <Button className="mt-3" onClick={handleSubmit} type="primary" loading={loading}>
                 {isEdit ? "Update treatment" : "Add"}

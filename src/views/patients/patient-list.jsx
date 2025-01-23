@@ -107,7 +107,7 @@ const PatientList = () => {
         console.log(data, row);
         return (
           <a href={`/patient/patient-profile/${row.id}`} className="">
-            {data}
+            {"HWRF-".concat(data)}
           </a>
         );
       },

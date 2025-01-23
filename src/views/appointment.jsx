@@ -15,6 +15,7 @@ import toast from "react-hot-toast";
 import CurrentCampDetailsHeader from "../components/camp/currentcamp-detail-header";
 import { RiAddLine, RiRefreshLine } from "@remixicon/react";
 import { transformText } from "../utilities/utility-function";
+import { useAuth } from "../utilities/AuthProvider";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -28,6 +29,7 @@ const Appointment = () => {
   const [patientList, setPatientList] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
   const [selectedQueueType, setSelectedQueueType] = useState(null); // Tracks the selected department
+  const { user } = useAuth();
 
   const statusOptions = [
     { value: "registered", label: "Registered" },
@@ -43,7 +45,7 @@ const Appointment = () => {
       render: (data, row) => {
         return (
           <a href={`/patient/patient-profile/${row.patientId}`} className="">
-            {data}
+            {"HWRF-".concat(data)}
           </a>
         );
       },
@@ -380,10 +382,13 @@ const Appointment = () => {
 
             <div className="d-flex flex-column">
               <div className="d-flex flex-row-reverse gap-2">
+                
                 <Button
                   variant="primary"
                   onClick={() => setShow(true)}
+                  disabled={user?.currentCampId === null}
                   className="mb-3"
+                  title={user?.currentCampId === null ? "Please select camp!" : null}
                   style={{ width: "auto" }} // Keeps the button width to content size
                 >
                   <RiAddLine />
