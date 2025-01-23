@@ -30,8 +30,6 @@ apiClient.interceptors.response.use(
       const refreshToken = localStorage.getItem("refreshToken");
       const accessToken = localStorage.getItem("accessToken");
 
-      console.log(refreshToken, accessToken, "***************************");
-
       if (!refreshToken) {
         localStorage.removeItem("accessToken")
         localStorage.removeItem("refreshToken")

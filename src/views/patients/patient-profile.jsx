@@ -27,6 +27,7 @@ import DateCell from "../../components/date-cell";
 import SelectedDiagnosisTreatementDetaiils from "../../components/patients/diagnosis-treatment";
 import BasicPatientProfile from "../../components/patients/basic-patient-profile";
 import clinicServices from "../../api/clinic-services";
+import MammoReportLexical from "../../components/mammography/mammography-additional-details";
 const PatientProfile = () => {
   const { id } = useParams();
   const [patientData, setPatientData] = useState(null);
@@ -427,8 +428,7 @@ const PatientProfile = () => {
               .map((eachDepartment) => eachDepartment.label)
               .includes("Mammography") && (
               <Tab eventKey="mammography" title="Mammography">
-                <h5 className="mt-3">Mammography Content</h5>
-                <p>Coming soon...</p>
+                <MammoReportLexical patient={patientData}/>
               </Tab>
             )}
           </Tabs>
