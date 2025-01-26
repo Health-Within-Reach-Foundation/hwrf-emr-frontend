@@ -9,6 +9,9 @@
   padding: 8px ;
   min-height: 20px;
   height: fit-content;
+  background-color: #ffff;
+  padding-left: 90px;
+  padding-right: 90px;
   width: 100%; /* Ensure full width inside parent container */
   max-width: 100%; /* Prevent overflow */
   box-sizing: border-box; /* To handle padding properly */

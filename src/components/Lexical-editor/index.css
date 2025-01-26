@@ -8,35 +8,35 @@
 
 @import "https://fonts.googleapis.com/css?family=Reenie+Beanie";
 /* 
- body {
-   margin: 0;
-   font-family: system-ui, -apple-system, BlinkMacSystemFont, '.SFNSText-Regular',
-     sans-serif;
-   -webkit-font-smoothing: antialiased;
-   -moz-osx-font-smoothing: grayscale;
-   background: #eee;
-   padding: 0 20px;
- } */
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, '.SFNSText-Regular',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: #eee;
+    padding: 0 20px;
+  } */
 
 /* header {
-   max-width: 580px;
-   margin: auto;
-   position: relative;
-   display: flex;
-   justify-content: center;
- } */
+    max-width: 580px;
+    margin: auto;
+    position: relative;
+    display: flex;
+    justify-content: center;
+  } */
 
 /* header a {
-   max-width: 220px;
-   margin: 20px 0 0 0;
-   display: block;
- }
- 
- header img {
-   display: block;
-   height: 100%;
-   width: 100%;
- } */
+    max-width: 220px;
+    margin: 20px 0 0 0;
+    display: block;
+  }
+  
+  header img {
+    display: block;
+    height: 100%;
+    width: 100%;
+  } */
 
 header h1 {
   text-align: left;
@@ -77,7 +77,6 @@ header h1 {
   border-top-left-radius: 10px; /* Rounded top-left corner for plain text */
   border-top-right-radius: 10px; /* Rounded top-right corner for plain text */
 }
-
 
 .editor-scroller {
   min-height: 40px;
@@ -723,7 +722,7 @@ i.page-break,
   color: red;
 }
 
-.dropdown {
+.dropdown-lexical {
   z-index: 90000000;
   display: block;
   position: fixed;
@@ -735,7 +734,7 @@ i.page-break,
   background-color: #fff;
 }
 
-.dropdown .item {
+.dropdown-lexical .item {
   margin: 0 8px 0 8px;
   padding: 8px;
   color: #050505;
@@ -754,38 +753,38 @@ i.page-break,
   min-width: 100px;
 }
 
-.dropdown .item.fontsize-item,
-.dropdown .item.fontsize-item .text {
+.dropdown-lexical .item.fontsize-item,
+.dropdown-lexical .item.fontsize-item .text {
   min-width: unset;
 }
 
-.dropdown .item .active {
+.dropdown-lexical .item .active {
   display: flex;
   width: 20px;
   height: 20px;
   background-size: contain;
 }
 
-.dropdown .item:first-child {
+.dropdown-lexical .item:first-child {
   margin-top: 8px;
 }
 
-.dropdown .item:last-child {
+.dropdown-lexical .item:last-child {
   margin-bottom: 8px;
 }
 
-.dropdown .item:hover {
+.dropdown-lexical .item:hover {
   background-color: #c4c3c3;
 }
 
-.dropdown .item .text {
+.dropdown-lexical .item .text {
   display: flex;
   line-height: 20px;
   flex-grow: 1;
   min-width: 150px;
 }
 
-.dropdown .item .icon {
+.dropdown-lexical .item .icon {
   display: flex;
   width: 20px;
   height: 20px;
@@ -797,7 +796,7 @@ i.page-break,
   background-repeat: no-repeat;
 }
 
-.dropdown .divider {
+.dropdown-lexical .divider {
   width: auto;
   background-color: #eee;
   margin: 4px 8px;
@@ -1447,7 +1446,7 @@ button.action-button:disabled {
   padding: 4px;
   border-top-left-radius: 10px;
   /* border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px; */
+   border-bottom-right-radius: 10px; */
   border-top-right-radius: 10px;
   vertical-align: middle;
   border-color: #ddd;
@@ -1773,8 +1772,7 @@ button.item.dropdown-item-active i {
     visibility: hidden;
   }
 }
-.text-white-for-dark-mode
-{
+.text-white-for-dark-mode {
   color: white;
 }
 .dialog-dropdown {

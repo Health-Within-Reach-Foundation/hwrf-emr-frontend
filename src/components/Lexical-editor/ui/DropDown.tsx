@@ -392,7 +392,7 @@ function DropDownItems({
 
   return (
     <DropDownContext.Provider value={contextValue}>
-      <div className="dropdown" ref={dropDownRef} onKeyDown={handleKeyDown} onClick={onClose}>
+      <div className="dropdown-lexical" ref={dropDownRef} onKeyDown={handleKeyDown} onClick={onClose}>
         {children}
       </div>
     </DropDownContext.Provider>

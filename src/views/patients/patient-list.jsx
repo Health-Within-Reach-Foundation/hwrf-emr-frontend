@@ -32,7 +32,7 @@
 //       const response = await patientServices.getPatients();
 //       setData(response.data);
 //     } catch (error) {
-//       console.error("Error fetching patients:", error);
+//       
 //     } finally {
 //       setLoading(false);
 //     }
@@ -104,7 +104,6 @@ const PatientList = () => {
       title: "Register No",
       data: "regNo",
       render: (data, row) => {
-        console.log(data, row);
         return (
           <a href={`/patient/patient-profile/${row.id}`} className="">
             {data}
@@ -116,7 +115,7 @@ const PatientList = () => {
       title: "Name",
       data: "name",
       render: (data, row) => {
-        console.log(data, row);
+        
         return (
           <a href={`/patient/patient-profile/${row.id}`} className="">
             {data}
@@ -128,7 +127,7 @@ const PatientList = () => {
       title: "Age",
       data: "age",
       render: (data, row) => {
-        console.log(data, row);
+        
         return (
           <a href={`/patient/patient-profile/${row.id}`} className="">
             {data}
@@ -140,7 +139,7 @@ const PatientList = () => {
       title: "Gender",
       data: "sex",
       render: (data, row) => {
-        console.log(data, row);
+        
         return (
           <a href={`/patient/patient-profile/${row.id}`} className="">
             {data}
@@ -152,7 +151,7 @@ const PatientList = () => {
       title: "Mobile",
       data: "mobile",
       render: (data, row) => {
-        console.log(data, row);
+        
         return (
           <a href={`/patient/patient-profile/${row.id}`} className="">
             {data}
@@ -164,7 +163,7 @@ const PatientList = () => {
       title: "Address",
       data: "address",
       render: (data, row) => {
-        console.log(data, row);
+        
         return (
           <a href={`/patient/patient-profile/${row.id}`} className="">
             {data}
@@ -177,7 +176,7 @@ const PatientList = () => {
       title: "Register Date",
       data: "createdAt",
       render: (data, row) => {
-        console.log(data, row);
+        
         return (
           <a href={`/patient/patient-profile/${row.id}`} className="">
             <DateCell date={data} />
@@ -258,7 +257,7 @@ const PatientList = () => {
       setOriginalData(response.data);
       setFilteredData(response.data);
     } catch (error) {
-      console.error("Error fetching patients:", error);
+      
     } finally {
       setLoading(false);
     }

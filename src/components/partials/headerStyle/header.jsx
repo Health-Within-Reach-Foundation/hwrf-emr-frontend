@@ -521,7 +521,7 @@ const Header = () => {
                   as="a"
                   bsPrefix=" "
                   to="#"
-                  className="nav-link d-flex align-items-center"
+                  className="nav-link d-flex align-items-center cursor-pointer"
                   id="notification-drop"
                 >
                   <img
@@ -639,7 +639,7 @@ const Header = () => {
         </Container>
 
         {/* -- collapse -- */}
-        <Navbar.Collapse id="navbarSupportedContent">
+        <Navbar.Collapse id="navbarSupportedContent" className="">
           <Row className="flex-grow-1 pt-4 pb-4 px-2">
             <Col
               md={12}
@@ -712,7 +712,7 @@ const Header = () => {
                   </div>
                 </Dropdown.Menu>
               </Dropdown>{" "}
-              <li className="nav-item dropdown"></li>
+              {/* <li className="nav-item "></li> */}
               {/* <Nav.Item
                 className="iq-full-screen iq-full-screen2 d-block d-xl-none"
                 id="fullscreen-item"

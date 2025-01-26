@@ -432,7 +432,13 @@ const PatientProfile = () => {
               .includes("Mammography") && (
               <Tab eventKey="mammography" title="Mammography">
                 {/* <MammoReportLexical patient={patientData}/> */}
-                <MammoMedicalHistory patient={patientData}/>
+                <MammoMedicalHistory
+                  patient={patientData?.mammography}
+                  onSave={fetchPatientData}
+                  patientId={patientData?.id}
+                  readOnly={patientData?.mammography ? true : false}
+                />
+                
               </Tab>
             )}
           </Tabs>
