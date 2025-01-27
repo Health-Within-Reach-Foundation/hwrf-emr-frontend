@@ -194,6 +194,29 @@ const updateTreatmentById = async (treatementId, treatementBody) => {
   }
 };
 
+const deleteDiagnosisById = async (diagnosisId) => {
+  try {
+    const response = await apiClient.delete(
+      `patients/diagnosis/${diagnosisId}`
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      // Handle specific error responses from the API
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to delete diagnosis"
+      );
+    } else {
+      // Handle other types of errors
+      console.error("Unexpected error:", error.message);
+      throw new Error(
+        "An unexpected error occurred while deleting patient diagnosis treatement"
+      );
+    }
+  }
+};
 export default {
   addPatient,
   getPatients,
@@ -202,5 +225,6 @@ export default {
   addPatientDiagnosis,
   updatePatientDiagnosis,
   addTreatmentByDiagnosis,
-  updateTreatmentById
+  updateTreatmentById,
+  deleteDiagnosisById,
 };

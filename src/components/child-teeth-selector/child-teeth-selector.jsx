@@ -42,10 +42,27 @@ const ChildTeethSelector = ({
     setTeethState(selectedTeeth); // Sync with external state
   }, [selectedTeeth]);
 
+  // const handleSelect = (id) => {
+  //   const updatedTeeth = teethState?.includes(id)
+  //     ? teethState?.filter((tooth) => tooth !== id)
+  //     : [...teethState, id];
+
+  //   setTeethState(updatedTeeth);
+  //   if (onChange) onChange(updatedTeeth); // Notify parent about changes
+  // };
+
   const handleSelect = (id) => {
-    const updatedTeeth = teethState?.includes(id)
-      ? teethState?.filter((tooth) => tooth !== id)
-      : [...teethState, id];
+    let updatedTeeth;
+
+    if (isEdit) {
+      // Allow only one tooth selection in edit mode
+      updatedTeeth = [id];
+    } else {
+      // Toggle the selection for multiselect mode
+      updatedTeeth = teethState.includes(id)
+        ? teethState.filter((tooth) => tooth !== id)
+        : [...teethState, id];
+    }
 
     setTeethState(updatedTeeth);
     if (onChange) onChange(updatedTeeth); // Notify parent about changes
@@ -64,7 +81,7 @@ const ChildTeethSelector = ({
               style={{
                 bottom: tooth.top,
                 right: tooth.left,
-                cursor: isEdit ? "not-allowed" : "pointer",
+                // cursor: isEdit ? "not-allowed" : "pointer",
               }}
               onClick={(e) => {
                 e.preventDefault();
@@ -82,7 +99,7 @@ const ChildTeethSelector = ({
               style={{
                 top: tooth.top,
                 right: tooth.left,
-                cursor: isEdit ? "not-allowed" : "pointer",
+                // cursor: isEdit ? "not-allowed" : "pointer",
               }}
               onClick={(e) => {
                 e.preventDefault();

@@ -3,7 +3,8 @@ import { Button, Dropdown, message, Card } from "antd";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import FieldRenderer from "./FieldRenderer"; // Field editing component
 import DynamicForm from "./formRender"; // Form rendering component
-import "./editableForm.scss"; // Custom styles
+// import "./editableForm.scss"; // Custom styles
+import "./DynamicFields.module.scss";
 
 const DynamicFields = () => {
   const [fields, setFields] = useState([]);
@@ -17,10 +18,9 @@ const DynamicFields = () => {
         type: key,
         title: `New ${key.charAt(0).toUpperCase() + key.slice(1)}`, // Default title
         value: "",
-        options:
-          ["radio", "checkbox", "select"].includes(key) // Add options for specific field types
-            ? ["Option 1"]
-            : null,
+        options: ["radio", "checkbox", "select"].includes(key) // Add options for specific field types
+          ? ["Option 1"]
+          : null,
       },
     ]);
   };
@@ -78,7 +78,14 @@ const DynamicFields = () => {
   };
 
   return (
-    <div style={{ display: "flex", background: "#f0f2f5", gap: 2 }}>
+    <div
+      style={{
+        display: "flex",
+        background: "#f0f2f5",
+        gap: 2,
+        flexDirection: "column",
+      }}
+    >
       <Card style={{ width: "100%", padding: "20px" }}>
         <div className="d-flex flex-row-reverse">
           <Dropdown menu={menu} trigger={["click"]}>
@@ -94,7 +101,11 @@ const DynamicFields = () => {
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
                   {fields.map((field, index) => (
-                    <Draggable key={field.id} draggableId={field.id} index={index}>
+                    <Draggable
+                      key={field.id}
+                      draggableId={field.id}
+                      index={index}
+                    >
                       {(provided) => (
                         <div
                           ref={provided.innerRef}
@@ -118,11 +129,17 @@ const DynamicFields = () => {
                               cursor: "grab",
                             }}
                           >
-                            <i className="ri-drag-move-2-line" style={{ fontSize: "20px", color: "#3978cd" }} />
+                            <i
+                              className="ri-drag-move-2-line"
+                              style={{ fontSize: "20px", color: "#3978cd" }}
+                            />
                           </div>
 
                           {/* Render Field */}
-                          <FieldRenderer field={field} onFieldUpdate={handleFieldUpdate} />
+                          <FieldRenderer
+                            field={field}
+                            onFieldUpdate={handleFieldUpdate}
+                          />
 
                           {/* Delete Button */}
                           <div
@@ -135,7 +152,10 @@ const DynamicFields = () => {
                               color: "#ff4d4f",
                             }}
                           >
-                            <i className="ri-delete-bin-7-line" style={{ fontSize: "20px" }} />
+                            <i
+                              className="ri-delete-bin-7-line"
+                              style={{ fontSize: "20px" }}
+                            />
                           </div>
                         </div>
                       )}
@@ -160,7 +180,9 @@ const DynamicFields = () => {
       {/* Preview the generated form */}
       <DynamicForm
         data={fields}
-        onSubmit={(formState) => console.log("Form Submitted Data --> :", formState)}
+        onSubmit={(formState) =>
+          console.log("Form Submitted Data --> :", formState)
+        }
       />
     </div>
   );

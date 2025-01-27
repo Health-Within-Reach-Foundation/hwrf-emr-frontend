@@ -293,22 +293,22 @@ export const DefaultRoute = [
         ),
       },
       {
-        path: "/form-templates/:id",
+        path: "/form-templates/:formTemplateId",
         element: (
           <SuperadminRouteGuard allowedRoles={["superadmin"]}>
             <FormTemplateById />
           </SuperadminRouteGuard>
         ),
       },
-      {
-        path: "/form-templates/:id",
-        // element: <EditableForm />,
-        element: (
-          <SuperadminRouteGuard allowedRoles={["superadmin"]}>
-            <EditableForm />
-          </SuperadminRouteGuard>
-        ),
-      },
+      // {
+      //   path: "/form-templates/:id",
+      //   // element: <EditableForm />,
+      //   element: (
+      //     <SuperadminRouteGuard allowedRoles={["superadmin"]}>
+      //       <EditableForm />
+      //     </SuperadminRouteGuard>
+      //   ),
+      // },
       // {
       //   path: "/form-templates/:id",
       //   element: <EditableForm />,

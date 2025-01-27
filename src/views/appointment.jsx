@@ -16,6 +16,7 @@ import CurrentCampDetailsHeader from "../components/camp/currentcamp-detail-head
 import { RiAddLine, RiRefreshLine } from "@remixicon/react";
 import { transformText } from "../utilities/utility-function";
 import { useAuth } from "../utilities/AuthProvider";
+import campManagementService from "../api/camp-management-service";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -65,11 +66,7 @@ const Appointment = () => {
       data: "patientSex",
       title: "Sex",
       render: (data, row) => {
-        return (
-          <a href={`/patient/patient-profile/${row.patientId}`} className="">
-            {data}
-          </a>
-        );
+        return <a href={`/patient/patient-profile/${row.patientId}`}>{data}</a>;
       },
     },
     {
@@ -77,33 +74,21 @@ const Appointment = () => {
       title: "Queue Date",
       render: (data, row) => {
         // console.log(data,row);
-        return (
-          <a href={`/patient/patient-profile/${row.patientId}`} className="">
-            <DateCell date={data} />
-          </a>
-        );
+        return <a href={`/patient/patient-profile/${row.patientId}`}>{data}</a>;
       },
     },
     {
       data: "tokenNumber",
       title: "Token Number",
       render: (data, row) => {
-        return (
-          <a href={`/patient/patient-profile/${row.patientId}`} className="">
-            {data}
-          </a>
-        );
+        return <a href={`/patient/patient-profile/${row.patientId}`}>{data}</a>;
       },
     },
     {
       data: "queueType",
       title: "Service Type",
       render: (data, row) => {
-        return (
-          <a href={`/patient/patient-profile/${row.patientId}`} className="">
-            {data}
-          </a>
-        );
+        return <a href={`/patient/patient-profile/${row.patientId}`}>{data}</a>;
       },
     },
     {
@@ -116,9 +101,21 @@ const Appointment = () => {
           in: "processing",
           out: "warning",
         };
+        const status = row.status;
 
         return (
-          <a href={`/patient/patient-profile/${row.patientId}`} className="">
+          <a
+            href={`/patient/patient-profile/${row.patientId}`}
+            className={
+              row.status === "in"
+                ? "bg-info-subtle p-2 text-black"
+                : row.status === "in queue"
+                ? "bg-success-subtle p-2 text-black"
+                : row.status === "out"
+                ? "bg-warn-subtle p-2 text-black"
+                : "p-2 text-black"
+            }
+          >
             <Badge
               size="default"
               dot
@@ -144,7 +141,7 @@ const Appointment = () => {
                   style={{ display: "flex", alignItems: "center", gap: "8px" }}
                 >
                   <i className="ri-login-box-line"></i>
-                  <span>Mark as In</span>
+                  <span>In</span>
                 </div>
               ),
               onClick: () =>
@@ -159,12 +156,27 @@ const Appointment = () => {
                   style={{ display: "flex", alignItems: "center", gap: "8px" }}
                 >
                   <i className="ri-logout-box-line"></i>
-                  <span>Mark as Out</span>
+                  <span>Out</span>
                 </div>
               ),
               onClick: () =>
                 handleMarkAppointment(row.id, {
                   status: "out",
+                }),
+            },
+            {
+              key: "3",
+              label: (
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  <i class="ri-calendar-schedule-line"></i>
+                  <span>In Queue</span>
+                </div>
+              ),
+              onClick: () =>
+                handleMarkAppointment(row.id, {
+                  status: "in queue",
                 }),
             },
             // Uncomment if needed
@@ -209,7 +221,7 @@ const Appointment = () => {
       toast.error(error.message);
     } finally {
       setLoading(false);
-      fetchAppointments(date);
+      fetchAppointments();
     }
   };
 
@@ -247,18 +259,20 @@ const Appointment = () => {
     }
   };
 
-  const getSpecialtyDepartmentsByClinic = async () => {
+  const fetchCampDetails = async () => {
     try {
       setLoading(true);
-      const response = await clinicServices.getSpecialtyDepartmentsByClinic();
+      const response = await campManagementService.getCampById(
+        user.currentCampId
+      );
       setDepartmentList(
-        response.data.map((department) => ({
+        response.data.specialties.map((department) => ({
           value: department.id,
           label: department.departmentName,
         }))
       );
     } catch (error) {
-      console.error("Error fetching departments:", error);
+      console.error("Error fetching camp details:", error);
     } finally {
       setLoading(false);
     }
@@ -312,21 +326,45 @@ const Appointment = () => {
     // setShowFilters(false); // Close the filter panel after resetting
   };
 
+  // const handleQueueTypeSort = (queueType) => {
+  //   if (selectedQueueType === queueType.label) {
+  //     // If the same department button is clicked again, reset the filter
+  //     localStorage.setItem("")
+  //     setSelectedQueueType(null);
+  //     setFilteredAppointments(appointments);
+  //   } else {
+  //     // Apply the filter for the selected department
+  //     setSelectedQueueType(queueType.label);
+  //     const filtered = appointments.filter(
+  //       (appointment) => appointment.queueType === queueType.label
+  //     );
+  //     setFilteredAppointments(filtered);
+  //   }
+  // };
+
   const handleQueueTypeSort = (queueType) => {
+    const userId = user?.id; // Replace with your actual user authentication logic
+    const currentRoute = window.location.pathname; // Get current route
+    const localStorageKey = `${currentRoute}_${userId}`; // Key for localStorage
+
     if (selectedQueueType === queueType.label) {
       // If the same department button is clicked again, reset the filter
+      localStorage.removeItem(localStorageKey);
       setSelectedQueueType(null);
       setFilteredAppointments(appointments);
     } else {
       // Apply the filter for the selected department
       setSelectedQueueType(queueType.label);
+
+      // Save the sortedBy value in localStorage
+      localStorage.setItem(localStorageKey, queueType.label);
+
       const filtered = appointments.filter(
         (appointment) => appointment.queueType === queueType.label
       );
       setFilteredAppointments(filtered);
     }
   };
-
   const refreshData = async () => {
     await Promise.all([fetchAppointments(), getPatientList()]);
     // toast.success("Data refreshed successfully!");
@@ -338,11 +376,26 @@ const Appointment = () => {
   //     return () => clearInterval(interval); // Clear interval on component unmount
   //   }
   // }, []);
+  // Effect to retrieve and apply filter on component mount
+  useEffect(() => {
+    const userId = user?.id; // Replace with your actual user authentication logic
+    const currentRoute = window.location.pathname; // Get current route
+    const localStorageKey = `${currentRoute}_${userId}`; // Key for localStorage
 
+    const savedQueueType = localStorage.getItem(localStorageKey);
+    if (savedQueueType) {
+      setSelectedQueueType(savedQueueType);
+      const filtered = appointments.filter(
+        (appointment) => appointment.queueType === savedQueueType
+      );
+      setFilteredAppointments(filtered);
+    }
+  }, [appointments, user?.id]); // Dependencies for effect
   useEffect(() => {
     fetchAppointments();
     getPatientList();
-    getSpecialtyDepartmentsByClinic();
+    // getSpecialtyDepartmentsByClinic();
+    fetchCampDetails();
   }, []);
 
   // useEffect(() => {
@@ -382,13 +435,14 @@ const Appointment = () => {
 
             <div className="d-flex flex-column">
               <div className="d-flex flex-row-reverse gap-2">
-                
                 <Button
                   variant="primary"
                   onClick={() => setShow(true)}
                   disabled={user?.currentCampId === null}
                   className="mb-3"
-                  title={user?.currentCampId === null ? "Please select camp!" : null}
+                  title={
+                    user?.currentCampId === null ? "Please select camp!" : null
+                  }
                   style={{ width: "auto" }} // Keeps the button width to content size
                 >
                   <RiAddLine />

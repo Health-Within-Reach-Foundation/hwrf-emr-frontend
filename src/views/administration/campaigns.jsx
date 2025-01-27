@@ -8,8 +8,10 @@ import { Loading } from "../../components/loading";
 import campManagementService from "../../api/camp-management-service";
 import clinicServices from "../../api/clinic-services";
 import CampModalForm from "../../components/administration/camp-form";
+import { transformText } from "../../utilities/utility-function";
 import DateCell from "../../components/date-cell";
-import { RiAddLine, } from "@remixicon/react";
+import { RiAddLine } from "@remixicon/react";
+import { Badge } from "antd";
 
 const CampManagement = () => {
   const [camps, setCamps] = useState([]);
@@ -117,7 +119,7 @@ const CampManagement = () => {
           size="sm"
           href={`/camps/${row.id}`} // Dynamic campId used in the URL
         >
-          {data}
+          <Badge dot text={transformText(data)} status={data === "active" ? "success" : "error"}/>
         </Button>
       ),
     },

@@ -15,6 +15,7 @@ const inviteUser = async (userFormBody) => {
   }
 };
 
+// fetchFormtemplates by clinicId logic already maintained in the backend
 const getAllFormTemplates = async () => {
   try {
     const response = await apiClient.get(`/clinics/form-template`);
@@ -35,7 +36,30 @@ const getAllFormTemplates = async () => {
   }
 };
 
+const getFormTemplateById = async (formTemplateId) => {
+  try {
+    const response = await apiClient.get(
+      `/clinics/form-template/${formTemplateId}`
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to fetch form template"
+      );
+    } else {
+      console.error("Unexpected error:", error.message);
+      throw new Error(
+        "An unexpected error occurred while fetching form template"
+      );
+    }
+  }
+};
+
 export default {
   inviteUser,
   getAllFormTemplates,
+  getFormTemplateById,
 };

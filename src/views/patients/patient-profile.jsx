@@ -21,14 +21,21 @@ import DateCell from "../../components/date-cell";
 import SelectedDiagnosisTreatementDetaiils from "../../components/patients/diagnosis-treatment";
 import BasicPatientProfile from "../../components/patients/basic-patient-profile";
 import clinicServices from "../../api/clinic-services";
+import { transformText } from "../../utilities/utility-function";
+import { RiAddLine } from "@remixicon/react";
+import campManagementService from "../../api/camp-management-service";
+import CurrentCampDetailsHeader from "../../components/camp/currentcamp-detail-header";
 const PatientProfile = () => {
   const { id } = useParams();
   const [patientData, setPatientData] = useState(null);
   const [selectedDiagnosis, setSelectedDiagnosis] = useState(null);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  // const [loading, setLoading] = useState(true);
+  const [patientLoading, setPatientLoading] = useState(true);
+  const [usersLoading, setUsersLoading] = useState(true);
+  const [campLoading, setCampLoading] = useState(true);
+  const { user, userRoles } = useAuth();
   const [selectedDiagnosisRow, setSelectedDiagnosisRow] = useState(null);
   const [users, setUsers] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
@@ -36,6 +43,7 @@ const PatientProfile = () => {
   const [allDiagnoses, setAllDiagnoses] = useState([]);
   const [allTreatments, setAllTreatments] = useState([]);
 
+  const loading = patientLoading || usersLoading || campLoading;
   const dentistryColumns = [
     // {
     //   title: "",
@@ -53,29 +61,104 @@ const PatientProfile = () => {
       title: "Diagnosis date",
       data: "createdAt",
       render: (data, record) => {
-        return <DateCell date={new Date(data)} dateFormat="D MMM, YYYY" />;
+        const status = record?.treatment?.status;
+        return (
+          <DateCell
+            date={new Date(data)}
+            dateFormat="D MMM, YYYY"
+            className={
+              status === "started"
+                ? "bg-info-subtle p-1 text-black"
+                : status === "completed"
+                ? "bg-success-subtle p-1 text-black"
+                : ""
+            }
+          />
+        );
       },
     },
     {
       title: "Tooth Number",
       data: "selectedTeeth",
       render: (data, record) => {
-        return <div>{data}</div>;
+        const status = record?.treatment?.status;
+        return (
+          <div
+            className={
+              status === "started"
+                ? "bg-info-subtle p-1 text-black"
+                : status === "completed"
+                ? "bg-success-subtle p-1 text-black"
+                : ""
+            }
+          >
+            {data}
+          </div>
+        );
       },
     },
     {
       title: "Complaints",
       data: "complaints",
       render: (data, record) => {
-        // console.log(data, row);
-        return <div>{data?.join(", ")}</div>;
+        const status = record?.treatment?.status;
+        return (
+          <div
+            className={
+              status === "started"
+                ? "bg-info-subtle p-1 text-black"
+                : status === "completed"
+                ? "bg-success-subtle p-1 text-black"
+                : ""
+            }
+          >
+            {data?.join(", ")}
+          </div>
+        );
       },
     },
     {
       title: "Suggested Treatment",
       data: "treatmentSuggested",
       render: (data, record) => {
-        return <div>{data}</div>;
+        const status = record?.treatment?.status;
+
+        return (
+          <div
+            className={
+              status === "started"
+                ? "bg-info-subtle p-1 text-black"
+                : status === "completed"
+                ? "bg-success-subtle p-1 text-black"
+                : ""
+            }
+          >
+            {data}
+          </div>
+        );
+      },
+    },
+    {
+      title: "Treatment Progress",
+      data: "treatmentSuggested",
+      render: (data, record) => {
+        const status = record?.treatment?.status;
+
+        return (
+          <div
+            className={
+              status === "started"
+                ? "bg-info-subtle p-1 text-black"
+                : status === "completed"
+                ? "bg-success-subtle p-1 text-black"
+                : ""
+            }
+          >
+            {record.treatment === null
+              ? "Not Started"
+              : transformText(record?.treatment?.status)}
+          </div>
+        );
       },
     },
     {
@@ -97,7 +180,7 @@ const PatientProfile = () => {
 
   const fetchPatientData = async () => {
     try {
-      setLoading(true);
+      setPatientLoading(true);
       const response = await patientServices.getPatientDetailsById(
         id,
         user?.specialties[0]?.id
@@ -113,20 +196,29 @@ const PatientProfile = () => {
             treatmentSuggested: treatment, // Include the specific treatment in each row
           }))
         );
-
         setAllDiagnoses(replicatedDiagnoses); // Save the replicated data
         setAllTreatments(
           data?.diagnoses?.flatMap((diagnosis) => diagnosis?.treatments || [])
         );
         console.log("Replicated Diagnoses: ", replicatedDiagnoses);
+        if (selectedDiagnosis !== null) {
+          console.log("old", selectedDiagnosis);
+          setSelectedDiagnosis(
+            data.diagnoses.find(
+              (dignosis) => dignosis?.id === selectedDiagnosis.id
+            )
+          );
+        } else {
+          setDrawerVisible(false);
+        }
       }
 
-      setSelectedDiagnosisRow(null);
+      // setSelectedDiagnosisRow(null);
       setCheckedRow(null);
     } catch (error) {
       console.error("Error fetching patient data:", error);
     } finally {
-      setLoading(false);
+      setPatientLoading(false);
     }
   };
 
@@ -161,7 +253,7 @@ const PatientProfile = () => {
   };
 
   const getUsersbyClinic = async () => {
-    setLoading(true);
+    setUsersLoading(true);
     try {
       const response = await clinicServices.getUsersByClinic();
       const formattedUsers = response.data
@@ -178,13 +270,13 @@ const PatientProfile = () => {
       setUsers(formattedUsers);
     } catch (error) {
     } finally {
-      setLoading(false);
+      setUsersLoading(false);
     }
   };
 
   const getSpecialtyDepartmentsByClinic = async () => {
     try {
-      setLoading(true);
+      setCampLoading(true);
       const response = await clinicServices.getSpecialtyDepartmentsByClinic();
       setDepartmentList(
         response.data.map((department) => ({
@@ -195,24 +287,49 @@ const PatientProfile = () => {
     } catch (error) {
       console.error("Error fetching departments:", error);
     } finally {
-      setLoading(false);
+      setCampLoading(false);
+    }
+  };
+
+  const fetchCampDetails = async () => {
+    try {
+      setCampLoading(true);
+      const response = await campManagementService.getCampById(
+        user.currentCampId
+      );
+      setDepartmentList(
+        response.data.specialties.map((department) => ({
+          value: department.id,
+          label: department.departmentName,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching camp details:", error);
+    } finally {
+      setCampLoading(false);
     }
   };
 
   useEffect(() => {
     fetchPatientData();
     getUsersbyClinic();
-    getSpecialtyDepartmentsByClinic();
-  }, [id]);
+    if (userRoles.includes("admin")) {
+      getSpecialtyDepartmentsByClinic();
+    } else {
+      fetchCampDetails();
+    }
+  }, []);
 
-  if (loading) return <Loading />;
+  // if (patientData === null)
+  //   return <Alert variant="danger my-3">Patient not found</Alert>;
 
-  if (!patientData)
-    return <Alert variant="danger my-3">Patient not found</Alert>;
+  if (patientLoading || usersLoading || campLoading) return <Loading />;
 
   return (
     <Container>
       {/* Patient Basic Details */}
+      <CurrentCampDetailsHeader />
+
       <Row>
         <Col>
           <BasicPatientProfile
@@ -266,34 +383,35 @@ const PatientProfile = () => {
                     return labelMatch || phoneMatch;
                   }}
                 />{" "}
-                  <Card>
-                    <Card.Header>
-                      <h5 className="mt-3">Diagnoses</h5>
-                    </Card.Header>
-                    <Card.Body>
+                <Card>
+                  <Card.Header>
+                    <h5 className="mt-3">Diagnoses</h5>
+                  </Card.Header>
+                  <Card.Body>
+                    <div className="d-flex justify-content-end">
                       <Button
                         variant="primary"
                         size="sm"
                         className="my-3"
                         onClick={() => handleOpenDrawer(null, false)}
                       >
+                        <RiAddLine />
                         Add Diagnosis
                       </Button>
-
-                      <div className="d-flex flex-column">
-                        <CustomTable
-                          columns={dentistryColumns}
-                          data={allDiagnoses}
-                          // data={categorizedDiagnoses}
-                          enableSearch={false}
-                          enableFilters={false}
-                        />
-                      </div>
-                    </Card.Body>
-                  </Card>
-
-                  {/* {selectedDiagnosisRow && ( */}
-                  {/* <Card>
+                    </div>
+                    <div className="d-flex flex-column diagnoses-table">
+                      <CustomTable
+                        columns={dentistryColumns}
+                        data={allDiagnoses}
+                        // data={categorizedDiagnoses}
+                        enableSearch={false}
+                        enableFilters={false}
+                      />
+                    </div>
+                  </Card.Body>
+                </Card>
+                {/* {selectedDiagnosisRow && ( */}
+                {/* <Card>
                   <Card.Header>
                     <h5 className="mt-4">Treatments Settings</h5>
                   </Card.Header>
@@ -306,7 +424,7 @@ const PatientProfile = () => {
                     />
                   </Card.Body>
                 </Card> */}
-                  {/* )} */}
+                {/* )} */}
               </Tab>
             )}
 
@@ -315,11 +433,10 @@ const PatientProfile = () => {
               .map((eachDepartment) => eachDepartment.label)
               .includes("GP") && (
               <Tab eventKey="gp" title="GP">
-                  <h5 className="mt-3">General Practice Content</h5>
-                  <p>Coming soon...</p>
+                <h5 className="mt-3">General Practice Content</h5>
+                <p>Coming soon...</p>
               </Tab>
             )}
-
 
             {/* Mammography Tab */}
             {departmentList
@@ -330,8 +447,6 @@ const PatientProfile = () => {
                 <p>Coming soon...</p>
               </Tab>
             )}
-
-
           </Tabs>
         </Card.Body>
       </Card>

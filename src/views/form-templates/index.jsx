@@ -105,7 +105,7 @@ const FormTemplates = () => {
   }, []);
 
   const handleCardClick = (template) => {
-    navigate(`/form-templates/${template.id}`, { state: { template } });
+    navigate(`/form-templates/${template.id}`);
   };
 
   if (loading) {

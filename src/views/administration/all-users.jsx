@@ -11,6 +11,10 @@ import clinicSerivces from "../../api/clinic-services";
 import UserDrawer from "../../components/administration/user-drawer";
 import clinicServices from "../../api/clinic-services";
 import rolePermissionService from "../../api/role-permission-service";
+import { Dropdown } from "antd";
+import { RiDeleteBin4Line, RiSettings4Fill } from "@remixicon/react";
+import userServices from "../../api/user-services";
+import toast from "react-hot-toast";
 
 const AllUsers = () => {
   const [loading, setLoading] = useState(false);
@@ -19,8 +23,6 @@ const AllUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [allRoles, setAllRoles] = useState([]);
   const [allDepartments, setAllDepartments] = useState([]);
-
-
 
   const columns = [
     // { title: "ID", data: "id" },
@@ -43,17 +45,60 @@ const AllUsers = () => {
       },
     },
     { title: "Register Date", data: "createdAt" },
+    // {
+    //   data: null,
+    //   title: "View",
+    //   render: (data, row) => {
+    //     return (
+    //       // <a href={`/patient/patient-profile/${row.patientId}`} className="">
+    //       //   {data}
+    //       // </a>
+    //       <Button type="primary" size="sm" onClick={() => handleEditClick(row)}>
+    //         Manage
+    //       </Button>
+    //     );
+    //   },
+    // },
     {
       data: null,
-      title: "View",
+      title: "Action",
       render: (data, row) => {
+        // Define the menu options using the new menu structure with icons and proper alignment
+        const menu = {
+          items: [
+            {
+              key: "1",
+              label: (
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  <RiSettings4Fill />
+                  <span>Manage</span>
+                </div>
+              ),
+              onClick: () => handleEditClick(row),
+            },
+            {
+              key: "2",
+              label: (
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  <RiDeleteBin4Line />
+                  <span>Delete</span>
+                </div>
+              ),
+              onClick: () => handleDeleteUserById(row?.id),
+            },
+          ],
+        };
+
         return (
-          // <a href={`/patient/patient-profile/${row.patientId}`} className="">
-          //   {data}
-          // </a>
-          <Button type="primary" size="sm" onClick={() => handleEditClick(row)}>
-            Manage
-          </Button>
+          <Dropdown menu={menu} trigger={["click"]}>
+            <Button type="primary" size="sm">
+              Action
+            </Button>
+          </Dropdown>
         );
       },
     },
@@ -69,7 +114,7 @@ const AllUsers = () => {
     { key: "specialist", label: "Specialist" },
     { key: "gender", label: "Gender" },
   ];
-  
+
   const getSpecialtyDepartmentsByClinic = async () => {
     try {
       setLoading(true);
@@ -127,6 +172,23 @@ const AllUsers = () => {
       setLoading(false);
     }
   };
+
+  const handleDeleteUserById = async (userId) => {
+    try {
+      setLoading(true);
+      const response = await userServices.deleteUser(userId);
+
+      if (response.success) {
+        toast.success(response.message);
+      }
+    } catch (error) {
+      console.error("Error : ", error);
+    } finally {
+      setLoading(false);
+      getUsersbyClinic();
+    }
+  };
+
   const handleEditClick = (user) => {
     setSelectedUser(user);
     setOpenDrawer(true);
