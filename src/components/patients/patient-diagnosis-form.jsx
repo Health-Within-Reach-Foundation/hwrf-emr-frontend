@@ -11,6 +11,7 @@ import {
   DatePicker,
   Dropdown,
   Badge,
+  Radio,
 } from "antd";
 // import { Form } from "react-bootstrap";
 import patientServices from "../../api/patient-services";
@@ -38,6 +39,7 @@ const PatientDiagnosisForm = ({
   diagnosisData,
   onSave,
   patientData,
+  doctorsList,
 }) => {
   console.log("in the diagnosis drawer --> ", diagnosisData);
   const [loading, setLoading] = useState(false);
@@ -54,6 +56,7 @@ const PatientDiagnosisForm = ({
     selectedTeeth: [],
     adultSelectedTeeth: [],
     childSelectedTeeth: [],
+    estimatedCost: 0,
   });
 
   const [treatments, setTreatments] = useState({
@@ -68,6 +71,11 @@ const PatientDiagnosisForm = ({
         settingPaidAmount: 0,
         xrayStatus: false,
         xray: [], // Array to store uploaded files
+        treatingDoctor: {},
+        paymentMode: "offline",
+        nextDate: null,
+        onlineAmount: 0,
+        offlineAmount: 0,
       },
     ],
   });
@@ -138,6 +146,11 @@ const PatientDiagnosisForm = ({
           settingPaidAmount: 0,
           xrayStatus: false,
           xray: [],
+          treatingDoctor: {},
+          paymentMode: "offline",
+          nextDate: null,
+          onlineAmount: 0,
+          offlineAmount: 0,
         },
       ],
     }));
@@ -163,6 +176,12 @@ const PatientDiagnosisForm = ({
           0,
           prev.totalAmount - updatedPaidAmount
         );
+      }
+      if (key === "onlineAmount") {
+        updatedSettings[index]?.onlineAmount || 0;
+      }
+      if (key === "offlineAmount") {
+        updatedSettings[index]?.offlineAmount || 0;
       }
 
       return {
@@ -260,6 +279,7 @@ const PatientDiagnosisForm = ({
         xrayStatus: false,
         xray: [],
         notes: "",
+        estimatedCost: 0,
         // currentStatus: [],
         dentalQuadrantType: "adult",
         selectedTeeth: [], // Initialize selectedTeeth in newform
@@ -348,7 +368,7 @@ const PatientDiagnosisForm = ({
           value.forEach((file) => {
             formData.append("xrayFiles", file);
           });
-        } else if (Array.isArray(value)) {
+        } else if (Array.isArray(value) || typeof value === "object") {
           // Append arrays as JSON
           formData.append(key, JSON.stringify(value));
         } else {
@@ -363,6 +383,7 @@ const PatientDiagnosisForm = ({
       formData.append("diagnosisId", diagnosisData.id);
       formData.append("patientId", diagnosisData.patientId);
 
+      console.log("Form data for creating new treatment --> ", treatments);
       // Make API call
       const response = await patientServices.addTreatmentByDiagnosis(formData);
 
@@ -465,12 +486,39 @@ const PatientDiagnosisForm = ({
                   value={formState.complaints}
                   onChange={(value) => handleInputChange("complaints", value)}
                   options={[
-                    { value: "Tooth Ache", label: "Tooth Ache" },
-                    { value: "Tooth Missing", label: "Tooth Missing" },
-                    { value: "Bad Breath", label: "Bad Breath" },
-                    { value: "Caries", label: "Caries" },
-                    { value: "NA", label: "NA" },
-                    { value: "Calculus", label: "Calculus" },
+                    { label: "Bad breath", value: "Bad breath" },
+                    { label: "Tooth ache", value: "Tooth ache" },
+                    { label: "Missing tooth", value: "Missing tooth" },
+                    { label: "Food lodgement", value: "Food lodgement" },
+                    {
+                      label: "Sensitivity to cold",
+                      value: "Sensitivity to cold",
+                    },
+                    {
+                      label: "Sensitivity to sweet",
+                      value: "Sensitivity to sweet",
+                    },
+                    {
+                      label: "Pain while chewing",
+                      value: "Pain while chewing",
+                    },
+                    { label: "Fracture teeth", value: "Fracture teeth" },
+                    { label: "Carios tooth", value: "Carios tooth" },
+                    { label: "Stains", value: "Stains" },
+                    { label: "Tartar deposits", value: "Tartar deposits" },
+                    { label: "Bleeding gums", value: "Bleeding gums" },
+                    { label: "Mobile Teeth", value: "Mobile Teeth" },
+                    { label: "Swelling", value: "Swelling" },
+                    {
+                      label: "Brushing Sensation",
+                      value: "Brushing Sensation",
+                    },
+                    { label: "Ulcers in mouth", value: "Ulcers in mouth" },
+                    {
+                      label: "Reduced mouth opening",
+                      value: "Reduced mouth opening",
+                    },
+                    { label: "Malaligned teeth", value: "Malaligned teeth" },
                   ]}
                 />
               </Form.Item>
@@ -482,143 +530,145 @@ const PatientDiagnosisForm = ({
                     handleInputChange("treatmentsSuggested", value)
                   }
                   options={[
-                    { value: "Scaling-Regular", label: "Scaling-Regular" },
-                    { value: "Scaling-Complex", label: "Scaling-Complex" },
-                    { value: "RC-Simple", label: "RC-Simple" },
-                    { value: "RC-Complex", label: "RC-Complex" },
-                    { value: "Filling-Regular", label: "Filling-Regular" },
-                    { value: "Filling-Deep", label: "Filling-Deep" },
-                    { value: "Extraction-Simple", label: "Extraction-Simple" },
+                    { label: "RCT - Simple", value: "RCT - Simple" },
+                    { label: "GIC", value: "GIC" },
+                    { label: "Composite", value: "Composite" },
+                    { label: "RCT - Complex", value: "RCT - Complex" },
+                    { label: "RCT - Third molar", value: "RCT - Third molar" },
+                    { label: "GIC + dycal", value: "GIC + dycal" },
+                    { label: "Composite + GIC", value: "Composite + GIC" },
                     {
-                      value: "Extraction-Complex",
-                      label: "Extraction-Complex",
+                      label: "Composite + Ca(OH)₂",
+                      value: "Composite + Ca(OH)₂",
                     },
-                    { value: "Crown-Metal", label: "Crown-Metal" },
-                    { value: "Crown-PFM", label: "Crown-PFM" },
-                    { value: "Crown-Zirconia", label: "Crown-Zirconia" },
-                    { value: "Floride", label: "Floride" },
                     {
-                      value: "Pit Fissure Sealant",
-                      label: "Pit Fissure Sealant",
+                      label: "Composite + LC-Cal",
+                      value: "Composite + LC-Cal",
                     },
-                    { value: "Pulpectomy", label: "Pulpectomy" },
-                    { value: "OPD Done", label: "OPD Done" },
-                    { value: "OPD", label: "OPD" },
-                    { value: "Crown Cutting", label: "Crown Cutting" },
+                    { label: "RC-Cal placed", value: "RC-Cal placed" },
+                    {
+                      label: "Direct pulp capping OR DPC (dycal+temp)",
+                      value: "Direct pulp capping OR DPC (dycal+temp)",
+                    },
+                    {
+                      label: "IPC done IPC (dycal+GIC)",
+                      value: "IPC done IPC (dycal+GIC)",
+                    },
+                    { label: "Extraction", value: "Extraction" },
+                    { label: "Crown", value: "Crown" },
+                    { label: "Bridge", value: "Bridge" },
+                    { label: "Scaling", value: "Scaling" },
+                    { label: "Polishing", value: "Polishing" },
+                    { label: "Fluorid", value: "Fluorid" },
+                    {
+                      label: "Pit & fissure sealant",
+                      value: "Pit & fissure sealant",
+                    },
+                    { label: "Pulpotomy", value: "Pulpotomy" },
+                    { label: "Bleaching", value: "Bleaching" },
                   ]}
                   className="w-100"
                 />
               </Form.Item>
             </div>
-            <div className="w-100 d-flex justify-content-start gap-3">
-              <Form.Item>
-                <Checkbox
-                  checked={formState.dentalQuadrantType === "all"}
-                  onChange={() => {
-                    setFormState((prev) => ({
-                      ...prev,
-                      selectedTeeth: [],
-                      adultSelectedTeeth: [],
-                      childSelectedTeeth: [],
-                    }));
-                    handleInputChange("dentalQuadrantType", "all");
-                  }}
-                >
-                  All
-                </Checkbox>
-                <Checkbox
-                  checked={formState.dentalQuadrantType === "adult"}
-                  onChange={() =>
-                    handleInputChange("dentalQuadrantType", "adult")
-                  }
-                >
-                  Adult
-                </Checkbox>
-                <Checkbox
-                  checked={formState.dentalQuadrantType === "child"}
-                  onChange={() =>
-                    handleInputChange("dentalQuadrantType", "child")
-                  }
-                >
-                  Child
-                </Checkbox>
-              </Form.Item>
-              {formState.dentalQuadrantType === "adult" && (
-                <Form.Item>
-                  <TeethSelector
-                    isEdit={isEdit}
-                    selectedTeeth={formState.adultSelectedTeeth}
-                    onChange={(updatedTeeth) => {
-                      // handleInputChange("adultSelectedTeeth", updatedTeeth)
-                      if (isEdit) {
-                        handleInputChange("selectedTeeth", updatedTeeth);
-                      } else {
-                        handleInputChange("adultSelectedTeeth", updatedTeeth);
-                      }
-                    }}
-                  />
-                </Form.Item>
-              )}
-              {formState.dentalQuadrantType === "child" && (
-                <Form.Item>
-                  <ChildTeethSelector
-                    isEdit={isEdit}
-                    selectedTeeth={formState?.childSelectedTeeth}
-                    onChange={(updatedTeeth) => {
-                      if (isEdit) {
-                        handleInputChange("selectedTeeth", updatedTeeth);
-                      } else {
-                        handleInputChange("childSelectedTeeth", updatedTeeth);
-                      }
-                    }}
-                  />
-                </Form.Item>
-              )}
-            </div>
 
-            <div className="w-100 d-flex justify-content-between gap-3">
-              <Form.Item className="w-100">
-                <Checkbox
-                  checked={formState.xrayStatus}
-                  onChange={(e) =>
-                    handleInputChange("xrayStatus", e.target.checked)
-                  }
-                >
-                  X-ray Status
-                </Checkbox>
-              </Form.Item>
-              {formState.xrayStatus && (
-                <Form.Item label="Upload X-ray Files" className="w-100">
-                  <Upload
-                    multiple
-                    beforeUpload={(file) => {
-                      setFormState((prev) => ({
-                        ...prev,
-                        xray: [...prev.xray, file],
-                      }));
-                      return false;
-                    }}
-                    fileList={formState.xray}
-                    onRemove={(file) => {
-                      setFormState((prev) => ({
-                        ...prev,
-                        xray: prev.xray.filter((item) => item.uid !== file.uid),
-                      }));
-                    }}
-                  >
-                    <Button icon={<RiUpload2Fill />} variant="outlined">
-                      Upload
-                    </Button>
-                  </Upload>
+            <div className="w-100 d-flex flex-md-row flex-column justify-content-between gap-5">
+              <div className="d-flex flex-column">
+                <div className="w-100 d-flex">
+                  <Form.Item>
+                    <Checkbox
+                      checked={formState.dentalQuadrantType === "all"}
+                      onChange={() => {
+                        setFormState((prev) => ({
+                          ...prev,
+                          selectedTeeth: [],
+                          adultSelectedTeeth: [],
+                          childSelectedTeeth: [],
+                        }));
+                        handleInputChange("dentalQuadrantType", "all");
+                      }}
+                    >
+                      All
+                    </Checkbox>
+                    <Checkbox
+                      checked={formState.dentalQuadrantType === "adult"}
+                      onChange={() =>
+                        handleInputChange("dentalQuadrantType", "adult")
+                      }
+                    >
+                      Adult
+                    </Checkbox>
+                    <Checkbox
+                      checked={formState.dentalQuadrantType === "child"}
+                      onChange={() =>
+                        handleInputChange("dentalQuadrantType", "child")
+                      }
+                    >
+                      Child
+                    </Checkbox>
+                  </Form.Item>
+                </div>
+                <div>
+                  {formState.dentalQuadrantType === "adult" && (
+                    <Form.Item>
+                      <TeethSelector
+                        isEdit={isEdit}
+                        selectedTeeth={formState.adultSelectedTeeth}
+                        onChange={(updatedTeeth) => {
+                          // handleInputChange("adultSelectedTeeth", updatedTeeth)
+                          if (isEdit) {
+                            handleInputChange("selectedTeeth", updatedTeeth);
+                          } else {
+                            handleInputChange(
+                              "adultSelectedTeeth",
+                              updatedTeeth
+                            );
+                          }
+                        }}
+                      />
+                    </Form.Item>
+                  )}
+                  {formState.dentalQuadrantType === "child" && (
+                    <Form.Item>
+                      <ChildTeethSelector
+                        isEdit={isEdit}
+                        selectedTeeth={formState?.childSelectedTeeth}
+                        onChange={(updatedTeeth) => {
+                          if (isEdit) {
+                            handleInputChange("selectedTeeth", updatedTeeth);
+                          } else {
+                            handleInputChange(
+                              "childSelectedTeeth",
+                              updatedTeeth
+                            );
+                          }
+                        }}
+                      />
+                    </Form.Item>
+                  )}
+                </div>
+              </div>
+
+              <div className="w-100 d-flex flex-column">
+                <Form.Item label="Notes">
+                  <Input.TextArea
+                    value={formState.notes}
+                    onChange={(e) => handleInputChange("notes", e.target.value)}
+                  />
                 </Form.Item>
-              )}
+
+                <Form.Item label="Estimated Cost">
+                  <Input
+                    type="number"
+                    defaultValue={diagnosisData?.estimatedCost || 0}
+                    value={formState?.estimatedCost}
+                    onChange={(e) =>
+                      handleInputChange("estimatedCost", e.target.value)
+                    }
+                  />
+                </Form.Item>
+              </div>
             </div>
-            <Form.Item label="Notes">
-              <Input.TextArea
-                value={formState.notes}
-                onChange={(e) => handleInputChange("notes", e.target.value)}
-              />
-            </Form.Item>
           </Form>
         </Card.Body>
       </Card>
@@ -762,39 +812,146 @@ const PatientDiagnosisForm = ({
                             )
                           }
                           options={[
-                            { value: "Done", label: "Done" },
+                            { label: "OPD done", value: "OPD done" },
                             {
-                              value: "RC Open 1st Completed",
-                              label: "RC Open 1st Completed",
+                              label: "RCO done anterior (500/-)",
+                              value: "RCO done anterior (500/-)",
                             },
                             {
-                              value: "RC 2nd - Completed",
-                              label: "RC 2nd - Completed",
+                              label: "BMP done anterior (500/-)",
+                              value: "BMP done anterior (500/-)",
                             },
                             {
-                              value: "RC 3rd - Completed",
-                              label: "RC 3rd - Completed",
+                              label: "Obturation done anterior (500/-)",
+                              value: "Obturation done anterior (500/-)",
                             },
                             {
-                              value: "Impression Taken",
-                              label: "Impression Taken",
+                              label: "Single Sitting RCT - Anterior (2000/-)",
+                              value: "Single Sitting RCT - Anterior (2000/-)",
                             },
                             {
-                              value: "Crown Trail Done",
-                              label: "Crown Trail Done",
+                              label: "Single Sitting RCT - Post (2500/-)",
+                              value: "Single Sitting RCT - Post (2500/-)",
                             },
                             {
-                              value: "Final Cementation",
-                              label: "Final Cementation",
+                              label: "RCO - Posterior (600/-)",
+                              value: "RCO - Posterior (600/-)",
                             },
-                            { value: "NA", label: "NA" },
-                            { value: "OPD Done", label: "OPD Done" },
+                            {
+                              label: "BMP - Posterior (600/-)",
+                              value: "BMP - Posterior (600/-)",
+                            },
+                            {
+                              label: "Obturation + POR Posterior (600/-)",
+                              value: "Obturation + POR Posterior (600/-)",
+                            },
+                            { label: "RCO done", value: "RCO done" },
+                            { label: "BMP done", value: "BMP done" },
+                            {
+                              label: "Obturation + POR",
+                              value: "Obturation + POR",
+                            },
+                            { label: "Crown cutting", value: "Crown cutting" },
+                            {
+                              label: "Crown cementation",
+                              value: "Crown cementation",
+                            },
+                            { label: "FPD", value: "FPD" },
+                            {
+                              label: "Bridge cementation",
+                              value: "Bridge cementation",
+                            },
+                            { label: "Crown removal", value: "Crown removal" },
+                            { label: "Bridge try-in", value: "Bridge try-in" },
+                            { label: "GIC done", value: "GIC done" },
+                            {
+                              label: "Composite done",
+                              value: "Composite done",
+                            },
+                            {
+                              label: "Occlusal adjustment done",
+                              value: "Occlusal adjustment done",
+                            },
+                            {
+                              label: "Irrigation done",
+                              value: "Irrigation done",
+                            },
+                            {
+                              label: "Mobile extraction done",
+                              value: "Mobile extraction done",
+                            },
+                            {
+                              label: "Simple extraction done",
+                              value: "Simple extraction done",
+                            },
+                            {
+                              label: "Complex extraction done",
+                              value: "Complex extraction done",
+                            },
+                            {
+                              label: "Surgical extraction done",
+                              value: "Surgical extraction done",
+                            },
+                            {
+                              label: "Bond filling done",
+                              value: "Bond filling done",
+                            },
+                            { label: "Frenectomy", value: "Frenectomy" },
+                            {
+                              label: "Operculectomy done",
+                              value: "Operculectomy done",
+                            },
+                            {
+                              label: "Cusp guiding done",
+                              value: "Cusp guiding done",
+                            },
+                            {
+                              label: "Finishing + Polishing",
+                              value: "Finishing + Polishing",
+                            },
+                            {
+                              label: "Scaling + Polishing (Prophylaxis)",
+                              value: "Scaling + Polishing (Prophylaxis)",
+                            },
+                            {
+                              label: "Post n Core done",
+                              value: "Post n Core done",
+                            },
+                            {
+                              label: "Composite buildup done",
+                              value: "Composite buildup done",
+                            },
+                            { label: "POR done", value: "POR done" },
+                            {
+                              label: "Fluoride application",
+                              value: "Fluoride application",
+                            },
+                            {
+                              label: "Fluoride varnish",
+                              value: "Fluoride varnish",
+                            },
+                            {
+                              label: "Pit & fissure sealant",
+                              value: "Pit & fissure sealant",
+                            },
+                            {
+                              label: "Pulpotomy - 1st appointment",
+                              value: "Pulpotomy - 1st appointment",
+                            },
+                            {
+                              label: "Pulpotomy - 2nd appointment",
+                              value: "Pulpotomy - 2nd appointment",
+                            },
+                            {
+                              label: "Pulpotomy - 3rd appointment",
+                              value: "Pulpotomy - 3rd appointment",
+                            },
                           ]}
                           className="w-100"
                         />
                       </Form.Item>
                     </div>
-                    <div className="w-100 d-flex justify-content-between gap-3">
+                    <div className="w-100 d-flex flex-column flex-sm-row justify-content-between gap-3">
                       <Form.Item className="w-100">
                         <Checkbox
                           checked={setting.xrayStatus}
@@ -814,6 +971,7 @@ const PatientDiagnosisForm = ({
                         <Form.Item label="Upload X-ray Files" className="w-100">
                           <Upload
                             multiple
+                            accept="image/*"
                             beforeUpload={(file) => {
                               handleTreatmentSettingChange(index, "xray", [
                                 ...(setting.xray || []),
@@ -840,31 +998,147 @@ const PatientDiagnosisForm = ({
                       )}
                     </div>
                     <div className="w-100 d-flex justify-content-between gap-3">
-                      <Form.Item label="Setting Paid Amount" className="w-100">
-                        <Input
-                          type="number"
-                          value={setting?.settingPaidAmount}
-                          onChange={(e) =>
-                            handleTreatmentSettingChange(
-                              index,
-                              "settingPaidAmount",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </Form.Item>
-                      <Form.Item label="Notes" className="w-100">
-                        <Input.TextArea
-                          value={setting.notes}
-                          onChange={(e) =>
-                            handleTreatmentSettingChange(
-                              index,
-                              "notes",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </Form.Item>
+                      <div className="d-flex flex-column w-100">
+                        <Form.Item label="Payment mode">
+                          <Radio.Group
+                            value={setting?.paymentMode}
+                            onChange={(e) =>
+                              handleTreatmentSettingChange(
+                                index,
+                                "paymentMode",
+                                e.target.value
+                              )
+                            }
+                          >
+                            <Radio value="online">Online</Radio>
+                            <Radio value="offline">Offline</Radio>
+                            <Radio value="both">Both</Radio>
+                          </Radio.Group>
+                        </Form.Item>
+
+                        {setting?.paymentMode == "online" ||
+                        setting?.paymentMode == "offline" ? (
+                          <Form.Item
+                            label="Setting Paid Amount"
+                            className="w-100"
+                          >
+                            <Input
+                              type="number"
+                              value={
+                                setting?.paymentMode == "online"
+                                  ? setting?.onlineAmount
+                                  : setting.offlineAmount
+                              }
+                              onChange={(e) => {
+                                const key =
+                                  setting.paymentMode === "online"
+                                    ? "onlineAmount"
+                                    : "offlineAmount";
+                                handleTreatmentSettingChange(
+                                  index,
+                                  key,
+                                  e.target.value
+                                );
+                              }}
+                            />
+                          </Form.Item>
+                        ) : setting.paymentMode === "both" ? (
+                          <div className="d-flex flex-row gap-2">
+                            <Form.Item
+                              label="Online Paid Amount"
+                              className="w-100"
+                            >
+                              <Input
+                                type="number"
+                                value={setting?.onlineAmount}
+                                onChange={(e) =>
+                                  handleTreatmentSettingChange(
+                                    index,
+                                    "onlineAmount",
+                                    e.target.value
+                                  )
+                                }
+                              />
+                            </Form.Item>
+                            <Form.Item
+                              label="Offline Paid Amount"
+                              className="w-100"
+                            >
+                              <Input
+                                type="number"
+                                value={setting?.offlineAmount}
+                                onChange={(e) =>
+                                  handleTreatmentSettingChange(
+                                    index,
+                                    "offlineAmount",
+                                    e.target.value
+                                  )
+                                }
+                              />
+                            </Form.Item>
+                            <Form.Item
+                              label="Total Amount"
+                              className="w-100"
+                            >
+                              <Input
+                                type="number"
+                                value={Number(setting?.offlineAmount) + Number(setting?.onlineAmount)}
+                                readOnly
+                                onChange={(e) =>
+                                  handleTreatmentSettingChange(
+                                    index,
+                                    "offlineAmount",
+                                    e.target.value
+                                  )
+                                }
+                              />
+                            </Form.Item>
+                          </div>
+                        ) : null}
+                        <Form.Item label="Next follow up date" className="w-100">
+                          <DatePicker
+                            value={setting.nextDate}
+                            onChange={(value) => {
+                              console.log("value -->", value);
+                              handleTreatmentSettingChange(
+                                index,
+                                "nextDate",
+                                value
+                              );
+                            }}
+                            className="w-100"
+                          />
+                        </Form.Item>
+                      </div>
+
+                      <div className="d-flex flex-column w-100">
+                        <Form.Item label="Treating Doctor" className="w-100">
+                          <Select
+                            value={setting.treatingDoctor}
+                            onChange={(value, option) =>
+                              handleTreatmentSettingChange(
+                                index,
+                                "treatingDoctor",
+                                option
+                              )
+                            }
+                            options={doctorsList}
+                            className="w-100"
+                          />
+                        </Form.Item>
+                        <Form.Item label="Notes" className="w-100">
+                          <Input.TextArea
+                            value={setting.notes}
+                            onChange={(e) =>
+                              handleTreatmentSettingChange(
+                                index,
+                                "notes",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </Form.Item>
+                      </div>
                     </div>
                     <div className="d-flex justify-content-end">
                       <Button
@@ -905,6 +1179,7 @@ const PatientDiagnosisForm = ({
                                 isEdit={true}
                                 onClose={onClose}
                                 onSave={onSave}
+                                doctorsList={doctorsList}
                                 selectedTreatments={treatment}
                               />
                             </Accordion.Body>

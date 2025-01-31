@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
+// import { NodeGlobal  sPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -12,6 +13,9 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: "build",
       minify: true,
+    },
+    define: {
+      "process.env.IS_PREACT": JSON.stringify("true"),
     },
   };
 });

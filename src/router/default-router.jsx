@@ -118,6 +118,8 @@ import CampManagement from "../views/administration/campaigns";
 import FormTemplateById from "../views/form-templates/form-template-id";
 import PatientTreatment from "../views/patient-treatment";
 import CampDetails from "../views/administration/camp";
+import MammoReportLexical from "../components/mammography/mammography-report";
+import FilesPreview from "../components/files-preview";
 
 export const DefaultRoute = [
   {
@@ -149,7 +151,10 @@ export const DefaultRoute = [
         path: "/administration/users-list",
         element: (
           <ClinicRouteGuard
-            requiredPermissions={["administration:read", "administration:write"]}
+            requiredPermissions={[
+              "administration:read",
+              "administration:write",
+            ]}
           >
             <AllUsers />
           </ClinicRouteGuard>
@@ -159,7 +164,10 @@ export const DefaultRoute = [
         path: "/administration/users-list/:userId",
         element: (
           <ClinicRouteGuard
-            requiredPermissions={["administration:read", "administration:write"]}
+            requiredPermissions={[
+              "administration:read",
+              "administration:write",
+            ]}
           >
             <AllUsers />
           </ClinicRouteGuard>
@@ -169,7 +177,10 @@ export const DefaultRoute = [
         path: "/administration/roles",
         element: (
           <ClinicRouteGuard
-            requiredPermissions={["administration:read", "administration:write"]}
+            requiredPermissions={[
+              "administration:read",
+              "administration:write",
+            ]}
           >
             <Roles />
           </ClinicRouteGuard>
@@ -179,7 +190,10 @@ export const DefaultRoute = [
         path: "/administration/add-user",
         element: (
           <ClinicRouteGuard
-            requiredPermissions={["administration:read", "administration:write"]}
+            requiredPermissions={[
+              "administration:read",
+              "administration:write",
+            ]}
           >
             <AddUser />
           </ClinicRouteGuard>
@@ -189,7 +203,10 @@ export const DefaultRoute = [
         path: "/administration/form-templates",
         element: (
           <ClinicRouteGuard
-            requiredPermissions={["administration:read", "administration:write"]}
+            requiredPermissions={[
+              "administration:read",
+              "administration:write",
+            ]}
           >
             <FormTemplates />
           </ClinicRouteGuard>
@@ -199,7 +216,10 @@ export const DefaultRoute = [
         path: "/administration/form-templates/:formId",
         element: (
           <ClinicRouteGuard
-            requiredPermissions={["administration:read", "administration:write"]}
+            requiredPermissions={[
+              "administration:read",
+              "administration:write",
+            ]}
           >
             <FormTemplateById />
           </ClinicRouteGuard>
@@ -239,6 +259,28 @@ export const DefaultRoute = [
         ),
       },
       {
+        path: "/files",
+        // element: <PatientProfile />,
+        element: (
+          <ClinicRouteGuard
+            requiredPermissions={["patients:write", "patients:read"]}
+          >
+            <FilesPreview />
+          </ClinicRouteGuard>
+        ),
+      },
+      {
+        path: "/patient/patient-profile/:id/mammographyreport/:mammographyId",
+        // element: <PatientTreatment />,
+        element: (
+          // <ClinicRouteGuard
+          //   requiredPermissions={["patients:write", "patients:read"]}
+          // >
+          <MammoReportLexical />
+          // </ClinicRouteGuard>
+        ),
+      },
+      {
         path: "/patient/patient-profile/:id/:diagnosisId",
         // element: <PatientTreatment />,
         element: (
@@ -267,9 +309,7 @@ export const DefaultRoute = [
       {
         path: "/camps",
         element: (
-          <ClinicRouteGuard
-            requiredPermissions={["camps:write", "camps:read"]}
-          >
+          <ClinicRouteGuard requiredPermissions={["camps:write", "camps:read"]}>
             <CampManagement />
           </ClinicRouteGuard>
         ),
@@ -277,9 +317,7 @@ export const DefaultRoute = [
       {
         path: "/camps/:campId",
         element: (
-          <ClinicRouteGuard
-            requiredPermissions={["camps:write", "camps:read"]}
-          >
+          <ClinicRouteGuard requiredPermissions={["camps:write", "camps:read"]}>
             <CampDetails />
           </ClinicRouteGuard>
         ),

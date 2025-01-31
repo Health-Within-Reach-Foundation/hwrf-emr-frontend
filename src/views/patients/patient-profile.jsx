@@ -9,7 +9,7 @@ import {
   Tabs,
   Tab,
 } from "react-bootstrap";
-import { Select, Checkbox } from "antd"; // Import TreeSelect from antd
+import { Select, Checkbox, Badge } from "antd"; // Import TreeSelect from antd
 import { useParams } from "react-router-dom";
 import patientServices from "../../api/patient-services";
 import { Loading } from "../../components/loading";
@@ -25,6 +25,8 @@ import { transformText } from "../../utilities/utility-function";
 import { RiAddLine } from "@remixicon/react";
 import campManagementService from "../../api/camp-management-service";
 import CurrentCampDetailsHeader from "../../components/camp/currentcamp-detail-header";
+import MammoReportLexical from "../../components/mammography/mammography-report";
+import MammoMedicalHistory from "../../components/mammography/mammography-medical-history";
 const PatientProfile = () => {
   const { id } = useParams();
   const [patientData, setPatientData] = useState(null);
@@ -43,7 +45,34 @@ const PatientProfile = () => {
   const [allDiagnoses, setAllDiagnoses] = useState([]);
   const [allTreatments, setAllTreatments] = useState([]);
 
-  const loading = patientLoading || usersLoading || campLoading;
+  // const handleCheckboxChange = (record) => {
+  //   setCheckedRow((prev) => (prev === record.id ? null : record.id)); // Toggle or select a new row
+  //   setSelectedDiagnosisRow(record);
+  // };
+
+  const handleCheckboxChange = (record, e) => {
+    console.log("e -->", e);
+    setSelectedDiagnosisRow(record);
+    setCheckedRow((prev) => (prev === record.id ? null : record.id)); // Toggle selection
+    if (e?.target?.checked === false) {
+      setCheckedRow(null)
+      const treatments = patientData.diagnoses.flatMap((diagnosis) => diagnosis.treatments);
+      setAllTreatments(treatments);
+    } else {
+      if (record) {
+        // Filter treatments based on the selected diagnosis
+        const treatments = patientData.diagnoses
+          .filter((diag) => diag.id === record.id)
+          .flatMap((diag) => diag.treatments);
+        setAllTreatments(treatments); // Update filtered treatments
+      }
+      // } else {
+      //   const treatments = allDiagnoses.flatMap((diagnosis) => diagnosis.treatments);
+      //   setAllTreatments(treatments); // Show all treatments if no diagnosis is selected
+      // }
+    }
+  };
+
   const dentistryColumns = [
     // {
     //   title: "",
@@ -358,7 +387,7 @@ const PatientProfile = () => {
             {departmentList
               .map((eachDepartment) => eachDepartment.label)
               .includes("Dentistry") && (
-              <Tab eventKey="dentistry" title="Dentistry">
+                <Tab eventKey="dentistry" title="Dentistry" >
                 <label htmlFor="primary-doc" className="form-label">
                   Primary Doctor
                 </label>
@@ -366,7 +395,7 @@ const PatientProfile = () => {
                   placeholder="Select Doctor"
                   className="w-100 mb-3"
                   options={users}
-                  defaultValue={patientData?.primaryDoctor?.value}
+                  value={patientData?.primaryDoctor?.value}
                   onChange={(value, option) => {
                     // handleInputChange("primaryDoctor", );
                     handleSavePatientData(option);
@@ -443,8 +472,14 @@ const PatientProfile = () => {
               .map((eachDepartment) => eachDepartment.label)
               .includes("Mammography") && (
               <Tab eventKey="mammography" title="Mammography">
-                <h5 className="mt-3">Mammography Content</h5>
-                <p>Coming soon...</p>
+                {/* <MammoReportLexical patient={patientData}/> */}
+                <MammoMedicalHistory
+                  patient={patientData?.mammography}
+                  onSave={fetchPatientData}
+                  patientId={patientData?.id}
+                  readOnly={patientData?.mammography ? true : false}
+                />
+                
               </Tab>
             )}
           </Tabs>
@@ -464,6 +499,7 @@ const PatientProfile = () => {
         onClose={() => setDrawerVisible(false)}
         diagnosisData={selectedDiagnosis}
         patientData={patientData}
+        doctorsList={users}
         onSave={() => fetchPatientData()}
       />
     </Container>

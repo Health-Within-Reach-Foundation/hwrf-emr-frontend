@@ -3,7 +3,7 @@ import authServices from "./auth-services";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL, // Base API URL
-  timeout: 40000,
+  timeout: 60000,
 });
 
 // Add request interceptor
@@ -29,8 +29,6 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true; // Mark as retried
       const refreshToken = localStorage.getItem("refreshToken");
       const accessToken = localStorage.getItem("accessToken");
-
-      console.log(refreshToken, accessToken, "***************************");
 
       if (!refreshToken) {
         localStorage.removeItem("accessToken")

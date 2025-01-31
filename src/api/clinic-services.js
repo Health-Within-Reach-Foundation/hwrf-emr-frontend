@@ -6,7 +6,6 @@ const onBoardClinic = async (clinicDetails) => {
   try {
     const response = await apiClient.post("auth/onboard-clinic", clinicDetails);
     return response.data;
-    
   } catch (error) {
     // Handle specific error responses based on the API documentation
     if (error.response) {
@@ -155,6 +154,19 @@ const updateClinicById = async (clinicId, clinicBody) => {
   }
 };
 
+const getFilebyKey = async (key) => {
+  try {
+    const response = await apiClient.get(`/clinics/files?key=${key}`, {
+      responseType: "blob", // Ensure response is treated as binary
+    });
+    return response; // Return full response, including headers
+  } catch (error) {
+    console.error("Error fetching file:", error);
+    throw error; // Re-throw to handle in the component
+  }
+};
+
+
 export default {
   onBoardClinic,
   getClinics,
@@ -163,4 +175,5 @@ export default {
   getUsersByClinic,
   getSpecialtyDepartmentsByClinic,
   updateClinicById,
+  getFilebyKey,
 };
