@@ -17,6 +17,7 @@ import { RiAddLine, RiRefreshLine } from "@remixicon/react";
 import { transformText } from "../utilities/utility-function";
 import { useAuth } from "../utilities/AuthProvider";
 import campManagementService from "../api/camp-management-service";
+import { render } from "katex";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -41,26 +42,15 @@ const Appointment = () => {
 
   const columns = [
     {
-      data: "patientRegNo",
-      title: "Reg. No",
+      data: "tokenNumber",
+      title: "Token Number",
       render: (data, row) => {
-        return (
-          <a href={`/patient/patient-profile/${row.patientId}`} className="">
-            {"HWRF-".concat(data)}
-          </a>
-        );
+        return <a href={`/patient/patient-profile/${row.patientId}`}>{data}</a>;
       },
     },
     {
       data: "patientName",
       title: "Name",
-      // render: (data, row) => {
-      //   return (
-      //     <a href={`/patient/patient-profile/${row.patientId}`} className="">
-      //       {data}
-      //     </a>
-      //   );
-      // },
     },
     {
       data: "patientSex",
@@ -70,19 +60,8 @@ const Appointment = () => {
       },
     },
     {
-      data: "appointmentDate",
-      title: "Queue Date",
-      render: (data, row) => {
-        // console.log(data,row);
-        return <a href={`/patient/patient-profile/${row.patientId}`}>{data}</a>;
-      },
-    },
-    {
-      data: "tokenNumber",
-      title: "Token Number",
-      render: (data, row) => {
-        return <a href={`/patient/patient-profile/${row.patientId}`}>{data}</a>;
-      },
+      data: "patientMobile",
+      title: "Mobile No.",
     },
     {
       data: "queueType",
@@ -91,6 +70,21 @@ const Appointment = () => {
         return <a href={`/patient/patient-profile/${row.patientId}`}>{data}</a>;
       },
     },
+    {
+      data: "primaryDoctor",
+      title: "Primary Doctor",
+      render: (data, row) => {
+        return <a href={`/patient/patient-profile/${row.patientId}`}>{data}</a>;
+      },
+    },
+    // {
+    //   data: "appointmentDate",
+    //   title: "Queue Date",
+    //   render: (data, row) => {
+    //     // console.log(data,row);
+    //     return <a href={`/patient/patient-profile/${row.patientId}`}>{data}</a>;
+    //   },
+    // },
     {
       data: "status",
       title: "Status",
@@ -127,6 +121,18 @@ const Appointment = () => {
         );
       },
     },
+    // add column named last updated staus and it will be show the timestamp comming from the data key named statusUpdatedAt
+    {
+      data: "statusUpdatedAt",
+      title: "Last Updated Status",
+      render: (data, row) => {
+        return (
+          <a href={`/patient/patient-profile/${row.patientId}`}>
+            <DateCell date={data} dateFormat="MMM D, h:mm A"/>
+          </a>
+        );
+      },
+    },
     {
       data: null,
       title: "Action",
@@ -147,6 +153,8 @@ const Appointment = () => {
               onClick: () =>
                 handleMarkAppointment(row.id, {
                   status: "in",
+                  // statusUpdatedAt: new Date().toLocaleString("en-CA"),
+                  statusUpdatedAt: new Date(),
                 }),
             },
             {
@@ -162,6 +170,8 @@ const Appointment = () => {
               onClick: () =>
                 handleMarkAppointment(row.id, {
                   status: "out",
+                  // statusUpdatedAt: new Date().toLocaleString("en-CA"),
+                  statusUpdatedAt: new Date(),
                 }),
             },
             {
@@ -177,21 +187,20 @@ const Appointment = () => {
               onClick: () =>
                 handleMarkAppointment(row.id, {
                   status: "in queue",
+                  // statusUpdatedAt: new Date().toLocaleString("en-CA"),
+                  statusUpdatedAt: new Date(),
                 }),
             },
-            // Uncomment if needed
             // {
-            //   key: "3",
-            //   label: (
-            //     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            //       <i className="ri-queue-line"></i>
-            //       <span>In Queue</span>
-            //     </div>
-            //   ),
-            //   onClick: () =>
-            //     handleMarkAppointment(row.id, {
-            //       status: "in-queue",
-            //     }),
+            //   data: "patientRegNo",
+            //   title: "Reg. No",
+            //   render: (data, row) => {
+            //     return (
+            //       <a href={`/patient/patient-profile/${row.patientId}`} className="">
+            //         {"HWRF-".concat(data)}
+            //       </a>
+            //     );
+            //   },
             // },
           ],
         };

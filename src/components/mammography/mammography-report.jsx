@@ -86,20 +86,10 @@ const MammoReportLexical = () => {
                 line-height: 1.6;
                 color: #333;
               }
-              .watermark {
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%) rotate(-45deg);
-                font-size: 50px;
-                color: rgba(0, 0, 0, 0.1);
-                pointer-events: none;
-                z-index: -1;
-              }
+              
             </style>
           </head>
           <body>
-            <div class="watermark">HWRF</div>
             <div class="content">${mammoHTMLReport}</div>
           </body>
         </html>

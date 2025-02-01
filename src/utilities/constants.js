@@ -10,9 +10,9 @@ const adminiStartionItems = [
     icon: "ri-user-add-fill",
   },
   {
-    path:"/administration/roles",
-    name:"Roles",
-    icon:"ri-user-settings-fill"
+    path: "/administration/roles",
+    name: "Roles",
+    icon: "ri-user-settings-fill",
   },
   // {
   //   path:"/administration/form-templates",
@@ -302,6 +302,238 @@ const extraPagesItems = [
   },
 ];
 
+/* all options used in forms  */
+
+const complaintsOptions = [
+  { label: "Bad breath", value: "Bad breath" },
+  { label: "Tooth ache", value: "Tooth ache" },
+  { label: "Missing tooth", value: "Missing tooth" },
+  { label: "Food lodgement", value: "Food lodgement" },
+  {
+    label: "Sensitivity to cold",
+    value: "Sensitivity to cold",
+  },
+  {
+    label: "Sensitivity to sweet",
+    value: "Sensitivity to sweet",
+  },
+  {
+    label: "Pain while chewing",
+    value: "Pain while chewing",
+  },
+  { label: "Fracture teeth", value: "Fracture teeth" },
+  { label: "Carios tooth", value: "Carios tooth" },
+  { label: "Stains", value: "Stains" },
+  { label: "Tartar deposits", value: "Tartar deposits" },
+  { label: "Bleeding gums", value: "Bleeding gums" },
+  { label: "Mobile Teeth", value: "Mobile Teeth" },
+  { label: "Swelling", value: "Swelling" },
+  {
+    label: "Brushing Sensation",
+    value: "Brushing Sensation",
+  },
+  { label: "Ulcers in mouth", value: "Ulcers in mouth" },
+  {
+    label: "Reduced mouth opening",
+    value: "Reduced mouth opening",
+  },
+  { label: "Malaligned teeth", value: "Malaligned teeth" },
+];
+
+const treatmentsOptions = [
+  { label: "RCT - Simple", value: "RCT - Simple" },
+  { label: "GIC", value: "GIC" },
+  { label: "Composite", value: "Composite" },
+  { label: "RCT - Complex", value: "RCT - Complex" },
+  { label: "RCT - Third molar", value: "RCT - Third molar" },
+  // { label: "GIC + dycal", value: "GIC + dycal" },
+  // { label: "Composite + GIC", value: "Composite + GIC" },
+  // {
+  //   label: "Composite + Ca(OH)₂",
+  //   value: "Composite + Ca(OH)₂",
+  // },
+  // {
+  //   label: "Composite + LC-Cal",
+  //   value: "Composite + LC-Cal",
+  // },
+  // { label: "RC-Cal placed", value: "RC-Cal placed" },
+  {
+    label: "Direct pulp capping OR DPC (dycal+temp)",
+    value: "Direct pulp capping OR DPC (dycal+temp)",
+  },
+  {
+    label: "IPC done IPC (dycal+GIC)",
+    value: "IPC done IPC (dycal+GIC)",
+  },
+  { label: "Extraction", value: "Extraction" },
+  { label: "Crown", value: "Crown" },
+  { label: "Bridge", value: "Bridge" },
+  { label: "Scaling", value: "Scaling" },
+  { label: "Polishing", value: "Polishing" },
+  { label: "Fluorid", value: "Fluorid" },
+  {
+    label: "Pit & fissure sealant",
+    value: "Pit & fissure sealant",
+  },
+  { label: "Pulpotomy", value: "Pulpotomy" },
+  { label: "Bleaching", value: "Bleaching" },
+];
+
+const treatmentStatusOptions = [
+  { label: "OPD done", value: "OPD done" },
+  {
+    label: "RCO done anterior",
+    value: "RCO done anterior",
+  },
+  {
+    label: "BMP done anterior",
+    value: "BMP done anterior",
+  },
+  {
+    label: "Obturation done anterior",
+    value: "Obturation done anterior",
+  },
+  {
+    label: "Single Sitting RCT - Anterior",
+    value: "Single Sitting RCT - Anterior",
+  },
+  {
+    label: "Single Sitting RCT - Post",
+    value: "Single Sitting RCT - Post",
+  },
+  {
+    label: "RCO - Posterior",
+    value: "RCO - Posterior",
+  },
+  {
+    label: "BMP - Posterior",
+    value: "BMP - Posterior",
+  },
+  {
+    label: "Obturation + POR Posterior",
+    value: "Obturation + POR Posterior",
+  },
+  { label: "RCO done", value: "RCO done" },
+  { label: "BMP done", value: "BMP done" },
+  {
+    label: "Obturation + POR",
+    value: "Obturation + POR",
+  },
+  { label: "Crown cutting", value: "Crown cutting" },
+  {
+    label: "Crown cementation",
+    value: "Crown cementation",
+  },
+  { label: "FPD", value: "FPD" },
+  {
+    label: "Bridge cementation",
+    value: "Bridge cementation",
+  },
+  { label: "Crown removal", value: "Crown removal" },
+  { label: "Bridge try-in", value: "Bridge try-in" },
+  { label: "GIC done", value: "GIC done" },
+  {
+    label: "Composite done",
+    value: "Composite done",
+  },
+  {
+    label: "Occlusal adjustment done",
+    value: "Occlusal adjustment done",
+  },
+  {
+    label: "Irrigation done",
+    value: "Irrigation done",
+  },
+  {
+    label: "Mobile extraction done",
+    value: "Mobile extraction done",
+  },
+  {
+    label: "Simple extraction done",
+    value: "Simple extraction done",
+  },
+  {
+    label: "Complex extraction done",
+    value: "Complex extraction done",
+  },
+  {
+    label: "Surgical extraction done",
+    value: "Surgical extraction done",
+  },
+  {
+    label: "Bond filling done",
+    value: "Bond filling done",
+  },
+  { label: "Frenectomy", value: "Frenectomy" },
+  {
+    label: "Operculectomy done",
+    value: "Operculectomy done",
+  },
+  {
+    label: "Cusp guiding done",
+    value: "Cusp guiding done",
+  },
+  {
+    label: "Finishing + Polishing",
+    value: "Finishing + Polishing",
+  },
+  {
+    label: "Tooth Bleaching",
+    value: "Tooth Bleaching",
+  },
+  {
+    label: "Scaling + Polishing (Prophylaxis)",
+    value: "Scaling + Polishing (Prophylaxis)",
+  },
+  {
+    label: "Post n Core done",
+    value: "Post n Core done",
+  },
+  {
+    label: "Composite buildup done",
+    value: "Composite buildup done",
+  },
+  { label: "POR done", value: "POR done" },
+  {
+    label: "Fluoride application",
+    value: "Fluoride application",
+  },
+  {
+    label: "Fluoride varnish",
+    value: "Fluoride varnish",
+  },
+  {
+    label: "Pit & fissure sealant",
+    value: "Pit & fissure sealant",
+  },
+  {
+    label: "Pulpotomy - 1st appointment",
+    value: "Pulpotomy - 1st appointment",
+  },
+  {
+    label: "Pulpotomy - 2nd appointment",
+    value: "Pulpotomy - 2nd appointment",
+  },
+  {
+    label: "Pulpotomy - 3rd appointment",
+    value: "Pulpotomy - 3rd appointment",
+  },
+  { label: "GIC + dycal", value: "GIC + dycal" },
+  {
+    label: "Composite + GIC",
+    value: "Composite + GIC",
+  },
+  {
+    label: "Composite + Ca(OH)₂",
+    value: "Composite + Ca(OH)₂",
+  },
+  {
+    label: "Composite + LC-Cal",
+    value: "Composite + LC-Cal",
+  },
+  { label: "RC-Cal placed", value: "RC-Cal placed" },
+];
+/* all options used in forms  */
 export {
   emailItems,
   doctorItems,
@@ -315,4 +547,7 @@ export {
   authItems,
   extraPagesItems,
   adminiStartionItems,
+  complaintsOptions,
+  treatmentsOptions,
+  treatmentStatusOptions,
 };

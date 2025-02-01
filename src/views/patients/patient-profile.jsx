@@ -5,11 +5,10 @@ import {
   Col,
   Card,
   Button,
-  Alert,
   Tabs,
   Tab,
 } from "react-bootstrap";
-import { Select, Checkbox, Badge } from "antd"; // Import TreeSelect from antd
+import { Select  } from "antd"; // Import TreeSelect from antd
 import { useParams } from "react-router-dom";
 import patientServices from "../../api/patient-services";
 import { Loading } from "../../components/loading";
@@ -18,15 +17,14 @@ import CustomTable from "../../components/custom-table";
 import toast from "react-hot-toast";
 import PatientDiagnosisForm from "../../components/patients/patient-diagnosis-form";
 import DateCell from "../../components/date-cell";
-import SelectedDiagnosisTreatementDetaiils from "../../components/patients/diagnosis-treatment";
 import BasicPatientProfile from "../../components/patients/basic-patient-profile";
 import clinicServices from "../../api/clinic-services";
 import { transformText } from "../../utilities/utility-function";
 import { RiAddLine } from "@remixicon/react";
 import campManagementService from "../../api/camp-management-service";
 import CurrentCampDetailsHeader from "../../components/camp/currentcamp-detail-header";
-import MammoReportLexical from "../../components/mammography/mammography-report";
 import MammoMedicalHistory from "../../components/mammography/mammography-medical-history";
+
 const PatientProfile = () => {
   const { id } = useParams();
   const [patientData, setPatientData] = useState(null);

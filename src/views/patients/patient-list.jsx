@@ -104,23 +104,20 @@ const PatientList = () => {
       title: "Register No",
       data: "regNo",
       render: (data, row) => {
+        // Format the register number as HWRF/24-25/1 where 25 is the current year and 24 is the last year
+        const currentYear = new Date(row?.createdAt).getFullYear() % 100;
+        const lastYear = currentYear - 1;
+        const formattedRegNo = `HWRF/${lastYear}-${currentYear}/${data}`;
         return (
           <a href={`/patient/patient-profile/${row.id}`} className="">
-            {"HWRF-".concat(data)}
+            {formattedRegNo}
           </a>
         );
-      },
-    },
-    {
-      title: "Name",
-      data: "name",
-      render: (data, row) => {
-        
-        return (
-          <a href={`/patient/patient-profile/${row.id}`} className="">
-            {data}
-          </a>
-        );
+        // return (
+        //   <a href={`/patient/patient-profile/${row.id}`} className="">
+        //     {data}
+        //   </a>
+        // );
       },
     },
     {
@@ -167,6 +164,18 @@ const PatientList = () => {
         return (
           <a href={`/patient/patient-profile/${row.id}`} className="">
             {data}
+          </a>
+        );
+      },
+    },
+    {
+      title: "Service taken",
+      data: "serviceTaken",
+      render: (data, row) => {
+        
+        return (
+          <a href={`/patient/patient-profile/${row.id}`} className="">
+            {data.join(", ")}
           </a>
         );
       },
@@ -254,6 +263,7 @@ const PatientList = () => {
     try {
       setLoading(true);
       const response = await patientServices.getPatients();
+      console.log(response.data);
       setOriginalData(response.data);
       setFilteredData(response.data);
     } catch (error) {

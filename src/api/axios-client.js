@@ -42,7 +42,7 @@ apiClient.interceptors.response.use(
           refreshToken,
           accessToken
         );
-        if (tokens?.access?.token == null && tokens?.refresh?.token !== null) {
+        if (tokens?.access?.token == null && tokens?.refresh?.token == null) {
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
         } else {

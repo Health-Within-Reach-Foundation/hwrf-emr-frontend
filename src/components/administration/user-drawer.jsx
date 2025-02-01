@@ -38,6 +38,7 @@ const RoleSpecialtyDrawer = ({
       console.error("Error saving roles and specialties:", error);
     } finally {
       setLoading(false);
+      onSave()
     }
   };
 

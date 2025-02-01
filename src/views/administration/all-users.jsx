@@ -167,7 +167,7 @@ const AllUsers = () => {
       }));
       setUsers(formattedUsers);
     } catch (error) {
-      toast.error("Failed to fetch users. Please try again.");
+      console.error("Error fetching users:", error);
     } finally {
       setLoading(false);
     }
@@ -230,6 +230,9 @@ const AllUsers = () => {
           <UserDrawer
             open={openDrawer}
             onClose={() => setOpenDrawer(false)}
+            onSave={() => {
+              getUsersbyClinic();
+            }}
             userData={selectedUser}
             allRoles={allRoles}
             allDepartments={allDepartments}

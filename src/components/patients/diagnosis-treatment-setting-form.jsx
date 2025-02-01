@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-  Drawer,
   Input,
-  TreeSelect,
   Select,
   Button,
   Form,
@@ -13,10 +11,9 @@ import {
 } from "antd";
 import patientServices from "../../api/patient-services";
 import toast from "react-hot-toast";
-import { Card } from "react-bootstrap";
-import { transformText } from "../../utilities/utility-function";
 import { RiUpload2Fill } from "@remixicon/react";
 import dayjs from "dayjs";
+import { treatmentStatusOptions } from "../../utilities/constants";
 
 const DiagnosisTreatmentSettingForm = ({
   isEdit,
@@ -25,21 +22,15 @@ const DiagnosisTreatmentSettingForm = ({
   diagnosisData,
   onSave = () => {},
   patientData,
-  selectedTreatments,
+  selectedTreatment,
   doctorsList,
 }) => {
-  console.log("selected treatement --> ", selectedTreatments, diagnosisData);
+  console.log("selected treatement --> ", selectedTreatment, diagnosisData);
   const [loading, setLoading] = useState(false);
   const [formState, setFormState] = useState({
-    complaints: diagnosisData?.complaints,
-    treatments: diagnosisData?.treatments,
     treatmentDate: new Date().toISOString().split("T")[0],
     notes: "",
     treatmentStatus: [],
-    dentalQuadrantType: "adult",
-    selectedTeeth: [],
-    totalAmount: null,
-    paidAmount: null,
     remainingAmount: null,
     xrayStatus: false,
     xray: [], // Manage uploaded files here
@@ -49,42 +40,26 @@ const DiagnosisTreatmentSettingForm = ({
   });
 
   useEffect(() => {
-    if (isEdit && selectedTreatments) {
+    if (isEdit && selectedTreatment) {
       const {
         createdAt,
         updatedAt,
-        treatments,
         id,
-        patientId,
         additionalDetails,
-        selectedTeeth,
-        complaints,
-        dentalQuadrant,
-        xrayStatus,
         xray,
-        treatmentid,
-        settingPaidAmount,
-        dentalQuadrantType,
-        diagnosisId,
+        treatmentId,
         ...filteredData
-      } = selectedTreatments;
+      } = selectedTreatment;
 
       setFormState({
         treatmentSettingId: id,
-        settingPaidAmount,
         xray: [],
-        xrayStatus,
         ...filteredData,
       });
     } else {
       setFormState({
-        treatmentDate: new Date().toISOString().split("T")[0],
         notes: "",
         treatmentStatus: [],
-        dentalQuadrantType: "adult",
-        selectedTeeth: [],
-        totalAmount: null,
-        paidAmount: null,
         remainingAmount: null,
         xrayStatus: false,
         xray: [],
@@ -95,19 +70,22 @@ const DiagnosisTreatmentSettingForm = ({
     }
   }, [isEdit, diagnosisData]);
 
-  const handleInputChange = (key, value) => {
+  const handleAmountChange = (key, value) => {
     const sanitizedValue = Math.max(0, parseFloat(value) || 0);
 
     setFormState((prev) => {
       const updatedState = { ...prev, [key]: sanitizedValue };
 
-      if (key === "totalAmount" || key === "paidAmount") {
-        const totalAmount =
-          key === "totalAmount" ? sanitizedValue : prev.totalAmount || 0;
-        const paidAmount =
-          key === "paidAmount" ? sanitizedValue : prev.paidAmount || 0;
-        updatedState.remainingAmount = Math.max(0, totalAmount - paidAmount);
-      }
+      const totalAmount = prev.totalAmount || 0;
+      const onlineAmount =
+        key === "onlineAmount" ? sanitizedValue : prev.onlineAmount || 0;
+      const offlineAmount =
+        key === "offlineAmount" ? sanitizedValue : prev.offlineAmount || 0;
+
+      updatedState.remainingAmount = Math.max(
+        0,
+        totalAmount - (onlineAmount + offlineAmount)
+      );
 
       return updatedState;
     });
@@ -123,10 +101,8 @@ const DiagnosisTreatmentSettingForm = ({
 
       const {
         notes,
-        treatmentId,
         treatmentStatus,
         treatmentDate,
-        settingPaidAmount,
         xrayStatus,
         xray,
         treatingDoctor,
@@ -137,14 +113,26 @@ const DiagnosisTreatmentSettingForm = ({
       } = formState;
 
       let formData = new FormData();
+
+      // Object.entries(formState).forEach(([key, value]) => {
+      //   if(key === "xray" && Array.isArray(value)) {
+      //     value.forEach((file) => {
+      //       formData.append("xrayFiles", file);
+      //     });
+      //   } else if (Array.isArray(value) || typeof value === "object") {
+      //     formData.append(key, JSON.stringify(value));
+      //   } else {
+      //     formData.append(key, value);
+      //   }
+      // });
+
       formData.append("patientId", diagnosisData.patientId);
       formData.append("settingNotes", notes);
       formData.append("settingTreatmentDate", treatmentDate);
       formData.append("treatmentStatus", JSON.stringify(treatmentStatus));
-      formData.append("treatmentSettingId", selectedTreatments.id);
+      formData.append("treatmentSettingId", selectedTreatment.id);
       formData.append("xrayStatus", xrayStatus);
       formData.append("treatingDoctor", JSON.stringify(treatingDoctor));
-      formData.append("settingPaidAmount", settingPaidAmount);
       formData.append("onlineAmount", onlineAmount);
       formData.append("offlineAmount", offlineAmount);
       formData.append("paymentMode", paymentMode);
@@ -156,22 +144,10 @@ const DiagnosisTreatmentSettingForm = ({
         });
       }
 
-      // let formData = {
-      //   settingNotes: notes,
-      //   settingTreatmentDate: treatmentDate,
-      //   treatmentStatus,
-      //   treatmentSettingId: selectedTreatments.id,
-      //   settingPaidAmount,
-      //   xrayStatus,
-      //   xray,
-      //   patientId: diagnosisData.patientId,
-      // };
-
       let response;
       if (isEdit) {
-        console.log("*********************", formData);
         response = await patientServices.updateTreatmentById(
-          selectedTreatments?.treatmentId,
+          selectedTreatment?.treatmentId,
           formData
         );
 
@@ -200,14 +176,14 @@ const DiagnosisTreatmentSettingForm = ({
       }
 
       if (response?.success) {
-        toast.success(response.message || "Treatment saved successfully!");
+        toast.success(response?.message || "Treatment saved successfully!");
         // onSave();
       } else {
         toast.error(response?.message || "Failed to save Treatment.");
       }
     } catch (error) {
       console.error("Error saving diagnosis Treatment:", error);
-      toast.error("An unexpected error occurred.");
+      toast.error("Internal server error");
     } finally {
       setLoading(false);
       onSave();
@@ -222,103 +198,7 @@ const DiagnosisTreatmentSettingForm = ({
           mode="multiple"
           value={formState.treatmentStatus}
           onChange={(value) => handleInputChange2("treatmentStatus", value)}
-          options={[
-            { label: "OPD done", value: "OPD done" },
-            {
-              label: "RCO done anterior",
-              value: "RCO done anterior",
-            },
-            {
-              label: "BMP done anterior",
-              value: "BMP done anterior",
-            },
-            {
-              label: "Obturation done anterior",
-              value: "Obturation done anterior",
-            },
-            {
-              label: "Single Sitting RCT - Anterior",
-              value: "Single Sitting RCT - Anterior",
-            },
-            {
-              label: "Single Sitting RCT - Post",
-              value: "Single Sitting RCT - Post",
-            },
-            {
-              label: "RCO - Posterior",
-              value: "RCO - Posterior",
-            },
-            {
-              label: "BMP - Posterior",
-              value: "BMP - Posterior",
-            },
-            {
-              label: "Obturation + POR Posterior",
-              value: "Obturation + POR Posterior",
-            },
-            { label: "RCO done", value: "RCO done" },
-            { label: "BMP done", value: "BMP done" },
-            { label: "Obturation + POR", value: "Obturation + POR" },
-            { label: "Crown cutting", value: "Crown cutting" },
-            { label: "Crown cementation", value: "Crown cementation" },
-            { label: "FPD", value: "FPD" },
-            { label: "Bridge cementation", value: "Bridge cementation" },
-            { label: "Crown removal", value: "Crown removal" },
-            { label: "Bridge try-in", value: "Bridge try-in" },
-            { label: "GIC done", value: "GIC done" },
-            { label: "Composite done", value: "Composite done" },
-            {
-              label: "Occlusal adjustment done",
-              value: "Occlusal adjustment done",
-            },
-            { label: "Irrigation done", value: "Irrigation done" },
-            {
-              label: "Mobile extraction done",
-              value: "Mobile extraction done",
-            },
-            {
-              label: "Simple extraction done",
-              value: "Simple extraction done",
-            },
-            {
-              label: "Complex extraction done",
-              value: "Complex extraction done",
-            },
-            {
-              label: "Surgical extraction done",
-              value: "Surgical extraction done",
-            },
-            { label: "Bond filling done", value: "Bond filling done" },
-            { label: "Frenectomy", value: "Frenectomy" },
-            { label: "Operculectomy done", value: "Operculectomy done" },
-            { label: "Cusp guiding done", value: "Cusp guiding done" },
-            { label: "Finishing + Polishing", value: "Finishing + Polishing" },
-            {
-              label: "Scaling + Polishing (Prophylaxis)",
-              value: "Scaling + Polishing (Prophylaxis)",
-            },
-            { label: "Post n Core done", value: "Post n Core done" },
-            {
-              label: "Composite buildup done",
-              value: "Composite buildup done",
-            },
-            { label: "POR done", value: "POR done" },
-            { label: "Fluoride application", value: "Fluoride application" },
-            { label: "Fluoride varnish", value: "Fluoride varnish" },
-            { label: "Pit & fissure sealant", value: "Pit & fissure sealant" },
-            {
-              label: "Pulpotomy - 1st appointment",
-              value: "Pulpotomy - 1st appointment",
-            },
-            {
-              label: "Pulpotomy - 2nd appointment",
-              value: "Pulpotomy - 2nd appointment",
-            },
-            {
-              label: "Pulpotomy - 3rd appointment",
-              value: "Pulpotomy - 3rd appointment",
-            },
-          ]}
+          options={treatmentStatusOptions}
           className="w-100"
         />
       </Form.Item>
@@ -354,8 +234,8 @@ const DiagnosisTreatmentSettingForm = ({
               </Button>
             </Upload>
 
-            {selectedTreatments?.xray &&
-              selectedTreatments?.xray?.map((file) => (
+            {selectedTreatment?.xray &&
+              selectedTreatment?.xray?.map((file) => (
                 <div className="d-flex flex-col gap-2">
                   <div
                     style={{
@@ -388,8 +268,9 @@ const DiagnosisTreatmentSettingForm = ({
         <Radio.Group
           value={formState?.paymentMode}
           onChange={(e) => {
-            console.log("e target", e.target)
-            handleInputChange2("paymentMode", e.target.value)}}
+            console.log("e target", e.target);
+            handleInputChange2("paymentMode", e.target.value);
+          }}
         >
           <Radio value="online">Online</Radio>
           <Radio value="offline">Offline</Radio>
@@ -412,7 +293,7 @@ const DiagnosisTreatmentSettingForm = ({
                 formState.paymentMode === "online"
                   ? "onlineAmount"
                   : "offlineAmount";
-              handleInputChange(key, e.target.value);
+              handleAmountChange(key, e.target.value);
             }}
           />
         </Form.Item>
@@ -423,7 +304,7 @@ const DiagnosisTreatmentSettingForm = ({
               type="number"
               value={formState?.onlineAmount || ""}
               onChange={(e) =>
-                handleInputChange("onlineAmount", e.target.value)
+                handleAmountChange("onlineAmount", e.target.value)
               }
             />
           </Form.Item>
@@ -432,17 +313,17 @@ const DiagnosisTreatmentSettingForm = ({
               type="number"
               value={formState?.offlineAmount || ""}
               onChange={(e) =>
-                handleInputChange("offlineAmount", e.target.value)
+                handleAmountChange("offlineAmount", e.target.value)
               }
             />
           </Form.Item>
           <Form.Item label="Total paid">
             <Input
               type="number"
-              value={formState.onlineAmount + formState.offlineAmount}
+              value={Number(formState.onlineAmount) + Number(formState.offlineAmount)}
               readOnly
               onChange={(e) =>
-                handleInputChange("offlineAmount", e.target.value)
+                handleAmountChange("offlineAmount", e.target.value)
               }
             />
           </Form.Item>
@@ -453,7 +334,7 @@ const DiagnosisTreatmentSettingForm = ({
         <Select
           value={formState.treatingDoctor}
           onChange={(value, option) =>
-            handleInputChange("treatingDoctor", option)
+            handleInputChange2("treatingDoctor", option)
           }
           options={doctorsList}
           className="w-100"
