@@ -45,16 +45,20 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
       firstDegreeRelatives: "",
       previousCancer: "",
       previousBiopsy: "",
-      previousSurgery: "",
-      previousSurgeryDetails: "",
+      previousTreatment: "",
+      previousTreatmentDetails: "",
       pain: "",
-      painArea:"",
+      painArea: "",
       implants: "",
       screeningImage: [],
       relevantDiagnosis: "",
       relevantDiagnosisDetails: "",
       smoking: "",
       smokingDetails: { packsPerDay: null, yearsSmoked: null },
+      alcohol: "",
+      alcoholDetails: { mlPerDay: null, yearsDrank: null },
+      misheriTobacco: "",
+      misheriTobaccoDetails: { timesPerDay: null, yearsUsed: null },
       imagingStudies: { location: "", type: "", date: null },
       lump: "",
       discharge: "",
@@ -83,19 +87,23 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
       familyHistory: patient.familyHistory || defaultPatient.familyHistory,
       familyHistoryDetails:
         patient.familyHistoryDetails || defaultPatient.familyHistoryDetails,
-
       firstDegreeRelatives:
         patient.firstDegreeRelatives || defaultPatient.firstDegreeRelatives,
       previousCancer: patient.previousCancer || defaultPatient.previousCancer,
       previousBiopsy: patient.previousBiopsy || defaultPatient.previousBiopsy,
-      previousSurgery:
-        patient.previousSurgery || defaultPatient.previousSurgery,
-      previousSurgeryDetails:
-        patient.previousSurgeryDetails || defaultPatient.previousSurgeryDetails,
+      previousTreatment:
+        patient.previousTreatment || defaultPatient.previousTreatment,
+      previousTreatmentDetails:
+        patient.previousTreatmentDetails ||
+        defaultPatient.previousTreatmentDetails,
       implants: patient.implants || defaultPatient.implants,
       screeningImage: patient.screeningImage || defaultPatient.screeningImage,
       smoking: patient.smoking || defaultPatient.smoking,
       smokingDetails: patient.smokingDetails || defaultPatient.smokingDetails,
+      alcohol: patient.alcohol || defaultPatient.alcohol,
+      alcoholDetails: patient.alcoholDetails || defaultPatient.alcoholDetails,
+      Tobacco: patient.Tobacco || defaultPatient.Tobacco,
+      TobaccoDetails: patient.TobaccoDetails || defaultPatient.TobaccoDetails,
       imagingStudies: patient.imagingStudies || defaultPatient.imagingStudies,
       lump: patient.lump || defaultPatient.lump,
       discharge: patient.discharge || defaultPatient.discharge,
@@ -116,7 +124,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
         defaultPatient.nippleRetractionDetails,
       additionalInfo: patient.additionalInfo || defaultPatient.additionalInfo,
       pain: patient.pain || defaultPatient.pain,
-      painArea: patient.painArea  || defaultPatient.painArea,
+      painArea: patient.painArea || defaultPatient.painArea,
     };
   });
 
@@ -300,7 +308,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
   return (
     <div className="p-4">
       <div className="d-flex justify-content-between align-items-center">
-        <h2>Mammography Medical History</h2>
+        <h1>Mammography Medical History</h1>
         <div className="d-flex gap-2  ">
           <Link
             to={`mammographyreport/${patient?.id}`}
@@ -454,112 +462,72 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
             <Col xs={24} sm={12} xl={4}>
               <Form.Item
                 label="Family History of Breast Cancer"
-                name="familyHistory"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select an option for Family History!",
-                  },
-                ]}
-              >
-                <Radio.Group defaultValue={formState.familyHistory}>
-                  <Radio value="Yes">Yes</Radio>
-                  <Radio value="No">No</Radio>
-                </Radio.Group>
-              </Form.Item>
-
-              {formState.familyHistory === "Yes" && (
-                <Form.Item
-                  label="If Yes, Please Describe"
-                  name="familyHistoryDetails"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please provide details for Family History!",
-                    },
-                  ]}
-                >
-                  <Input.TextArea
-                    placeholder="Describe details"
-                    rows={3}
-                    defaultValue={formState.familyHistoryDetails}
-                  />
-                </Form.Item>
-              )}
-            </Col>
-            <Col xs={24} sm={12} xl={6}>
-              <Form.Item
-                label="Relevant clinical/history/Presumptive diagnosis"
-                name="relevantDiagnosis"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select an option for Clinical History!",
-                  },
-                ]}
-              >
-                <Radio.Group defaultValue={formState.relevantDiagnosis}>
-                  <Radio value="Yes">Yes</Radio>
-                  <Radio value="No">No</Radio>
-                </Radio.Group>
-              </Form.Item>
-
-              {formState.relevantDiagnosis === "Yes" && (
-                <Form.Item
-                  label="If Yes, Please Describe"
-                  name="relevantDiagnosisDetails"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please provide details for Clinical History!",
-                    },
-                  ]}
-                >
-                  <Input.TextArea
-                    placeholder="Describe Clinical history/Presumptive Diagnosis Details"
-                    rows={3}
-                    defaultValue={formState.relevantDiagnosisDetails}
-                  />
-                </Form.Item>
-              )}
-            </Col>
-            <Col xs={24} sm={12} xl={6}>
-              <Form.Item
-                label="First degree relatives with breast cancer before age 50:"
-                name="firstDegreeRelatives"
+                name="Family history of breast cancer"
                 rules={[
                   {
                     required: true,
                     message:
-                      "Please select an option for First Degree Relatives!",
+                      "Please select an option for family history of breast cancer!",
                   },
                 ]}
               >
-                <Radio.Group defaultValue={formState.firstDegreeRelatives}>
+                <Radio.Group
+                  value={formState.familyHistory}
+                  onChange={(e) =>
+                    setFormState({
+                      ...formState,
+                      familyHistory: e.target.value,
+                    })
+                  }
+                >
                   <Radio value="Yes">Yes</Radio>
                   <Radio value="No">No</Radio>
                 </Radio.Group>
               </Form.Item>
             </Col>
+            {formState.familyHistory === "Yes" && (
+              <>
+                {/* <Form.Item label="If Yes, Please Describe">
+                    <Input.TextArea
+                      value={formState.familyHistoryDetails}
+                      onChange={(e) =>
+                        setFormState({
+                          ...formState,
+                          familyHistoryDetails: e.target.value,
+                        })
+                      }
+                    />
+                  </Form.Item> */}
 
-            <Col xs={24} sm={12} xl={4}>
-              <Form.Item
-                label="Previous Breast Cancer"
-                name="previousCancer"
-                rules={[
-                  {
-                    required: true,
-                    message:
-                      "Please select an option for Previous Breast Cancer!",
-                  },
-                ]}
-              >
-                <Radio.Group defaultValue={formState.previousCancer}>
-                  <Radio value="Yes">Yes</Radio>
-                  <Radio value="No">No</Radio>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
+                {/* Show this question only when "Yes" is selected */}
+                <Col xs={36} sm={12} xl={12}>
+                  <Form.Item
+                    label="First degree relatives with breast cancer before age 50:"
+                    name="firstDegreeRelatives"
+                    rules={[
+                      {
+                        required: true,
+                        message:
+                          "Please select an option for family history of breast cancer!",
+                      },
+                    ]}
+                  >
+                    <Radio.Group
+                      value={formState.firstDegreeRelatives}
+                      onChange={(e) =>
+                        setFormState({
+                          ...formState,
+                          firstDegreeRelatives: e.target.value,
+                        })
+                      }
+                    >
+                      <Radio value="Yes">Yes</Radio>
+                      <Radio value="No">No</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                </Col>
+              </>
+            )}
 
             <Col xs={24} sm={12} xl={4}>
               <Form.Item
@@ -602,7 +570,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                           />
                         </Form.Item>
                       </Col>
-                      <Col xs={24} sm={12}>
+                      <Col xs={24} sm={12} className="mt-2">
                         <Form.Item
                           label="No. of Years Smoked"
                           name={["smokingDetails", "yearsSmoked"]}
@@ -630,8 +598,244 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 </div>
               )}
             </Col>
-          </Row>
-          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12} xl={4}>
+              <Form.Item
+                label="Alcohol History"
+                name="Alcohol"
+                rules={[
+                  { required: true, message: "Please select Alcohol History!" },
+                ]}
+              >
+                <Radio.Group
+                  value={formState.alcohol}
+                  onChange={(e) =>
+                    setFormState({ ...formState, alcohol: e.target.value })
+                  }
+                >
+                  <Radio value="Yes">Yes</Radio>
+                  <Radio value="No">No</Radio>
+                </Radio.Group>
+              </Form.Item>
+
+              {formState.alcohol === "Yes" && (
+                <div>
+                  <Form.Item label="If Yes, Please fill" required>
+                    <Row gutter={[16, 16]}>
+                      <Col xs={24} sm={12}>
+                        <Form.Item
+                          label="ML/Day"
+                          name={["alcoholDetails", "mlPerDay"]}
+                          rules={[
+                            { required: true, message: "Please enter ML/Day!" },
+                            {
+                              type: "number",
+                              min: 1,
+                              message: "Must be at least 1 ML/day!",
+                            },
+                          ]}
+                          style={{ marginBottom: 0 }}
+                        >
+                          <InputNumber
+                            placeholder="ML/day"
+                            style={{ width: "100%" }}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col xs={24} sm={12} className="mt-2">
+                        <Form.Item
+                          label="No. of Years Consumed"
+                          name={["alcoholDetails", "yearsConsumed"]}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please enter Years Consumed!",
+                            },
+                            {
+                              type: "number",
+                              min: 1,
+                              message: "Must be at least 1 year!",
+                            },
+                          ]}
+                          style={{ marginBottom: 0 }}
+                        >
+                          <InputNumber
+                            placeholder="years"
+                            style={{ width: "100%" }}
+                          />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </Form.Item>
+                </div>
+              )}
+            </Col>
+            <Col xs={24} sm={12} xl={4}>
+              <Form.Item
+                label="Misheri/Tobacco History"
+                name="misheriTobacco"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select Misheri/Tobacco History!",
+                  },
+                ]}
+              >
+                <Radio.Group defaultValue={formState.misheriTobacco}>
+                  <Radio value="Yes">Yes</Radio>
+                  <Radio value="No">No</Radio>
+                </Radio.Group>
+              </Form.Item>
+
+              {formState.misheriTobacco === "Yes" && (
+                <div>
+                  <Form.Item label="If Yes, Please fill" required>
+                    <Row gutter={[16, 16]}>
+                      <Col xs={24} sm={12}>
+                        <Form.Item
+                          label="Times/Day"
+                          name={["misheriTobaccoDetails", "timesPerDay"]}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please enter Times/Day!",
+                            },
+                            {
+                              type: "number",
+                              min: 1,
+                              message: "Must be at least 1 time/day!",
+                            },
+                          ]}
+                          style={{ marginBottom: 0 }}
+                        >
+                          <InputNumber
+                            placeholder="times/day"
+                            style={{ width: "100%" }}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col xs={24} sm={12} className="mt-2">
+                        <Form.Item
+                          label="No. of Years Used"
+                          name={["misheriTobaccoDetails", "yearsUsed"]}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please enter Years Used!",
+                            },
+                            {
+                              type: "number",
+                              min: 1,
+                              message: "Must be at least 1 year!",
+                            },
+                          ]}
+                          style={{ marginBottom: 0 }}
+                        >
+                          <InputNumber
+                            placeholder="years"
+                            style={{ width: "100%" }}
+                          />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </Form.Item>
+                </div>
+              )}
+            </Col>
+
+            <Col xs={48} sm={24} xl={12}>
+              <h3
+                className="mb-3"
+                // label="/Presumptive diagnosis"
+                // name="relevantDiagnosis"
+                // rules={[
+                //   {
+                //     required: true,
+                //     message: "Please select an option for Clinical History!",
+                //   },
+                // ]}
+              >
+                Relevant clinical history
+                {/* <Radio.Group defaultValue={formState.relevantDiagnosis}>
+                  <Radio value="Yes">Yes</Radio>
+                  <Radio value="No">No</Radio>
+                </Radio.Group> */}
+              </h3>
+
+              {/* {formState.relevantDiagnosis === "Yes" && (
+                <Form.Item
+                  label="If Yes, Please Describe"
+                  name="relevantDiagnosisDetails"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please provide details for Clinical History!",
+                    },
+                  ]}
+                >
+                  <Input.TextArea
+                    placeholder="Describe Clinical history/Presumptive Diagnosis Details"
+                    rows={3}
+                    defaultValue={formState.relevantDiagnosisDetails}
+                  />
+                </Form.Item>
+              )} */}
+            </Col>
+            {/* <Col xs={24} sm={12} xl={6}>
+              <Form.Item
+                label="First degree relatives with breast cancer before age 50:"
+                name="firstDegreeRelatives"
+                rules={[
+                  {
+                    required: true,
+                    message:
+                      "Please select an option for First Degree Relatives!",
+                  },
+                ]}
+              >
+                <Radio.Group defaultValue={formState.firstDegreeRelatives}>
+                  <Radio value="Yes">Yes</Radio>
+                  <Radio value="No">No</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Col> */}
+
+            <Col xs={24} sm={12} xl={4}>
+              <Form.Item
+                label="Previous Breast Cancer"
+                name="previousCancer"
+                rules={[
+                  {
+                    required: true,
+                    message:
+                      "Please select an option for Previous Breast Cancer!",
+                  },
+                ]}
+              >
+                <Radio.Group defaultValue={formState.previousCancer}>
+                  <Radio value="Yes">Yes</Radio>
+                  <Radio value="No">No</Radio>
+                </Radio.Group>
+              </Form.Item>
+              {formState.previousCancer === "Yes" && (
+                <Form.Item
+                  label="If Yes, Diagnoses"
+                  name="previousCancerDetails"
+                  rules={[
+                    {
+                      required: true,
+                      message:
+                        "Please provide details for Previous Breast Cancer!",
+                    },
+                  ]}
+                >
+                  <Input.TextArea
+                    placeholder="Describe details"
+                    rows={3}
+                    defaultValue={formState.previousCancerDetails}
+                  />
+                </Form.Item>
+              )}
+            </Col>
             <Col xs={24} sm={12} xl={4}>
               <Form.Item
                 label="Previous Biopsy"
@@ -649,51 +853,65 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 </Radio.Group>
               </Form.Item>
             </Col>
-
             <Col xs={24} sm={12} xl={4}>
               <Form.Item
-                label="Previous Surgery"
-                name="previousSurgery"
+                label="Previous Treatment"
+                name="previousTreatment"
                 rules={[
                   {
                     required: true,
-                    message: "Please select an option for Previous Surgery",
+                    message: "Please select an option for Previous Treatment",
                   },
                 ]}
               >
-                <Radio.Group defaultValue={formState.previousSurgery}>
+                <Radio.Group
+                  defaultValue={formState.previousTreatment}
+                  onChange={(e) =>
+                    setFormState({
+                      ...formState,
+                      previousTreatment: e.target.value,
+                    })
+                  }
+                >
                   <Radio value="Yes">Yes</Radio>
                   <Radio value="No">No</Radio>
                 </Radio.Group>
               </Form.Item>
-              {formState.previousSurgery === "Yes" && (
+
+              {formState.previousTreatment === "Yes" && (
                 <Form.Item
-                  label="If Yes, Please Describe"
-                  name="previousSurgeryDetails"
+                  label="If Yes, Please Select"
+                  name="previousTreatmentDetails"
                   rules={[
                     {
                       required: true,
-                      message: "Please provide details of previous surgery!",
+                      message: "Please select at least one treatment type!",
                     },
                   ]}
                 >
-                  <Input.TextArea
-                    placeholder="Describe previous surgery details"
-                    rows={3}
-                    defaultValue={formState.previousSurgeryDetails}
+                  <Checkbox.Group
+                    options={["Surgery", "Chemotherapy", "Radiation Therapy"]}
+                    defaultValue={formState.previousTreatmentDetails}
+                    onChange={(checkedValues) =>
+                      setFormState({
+                        ...formState,
+                        previousTreatmentDetails: checkedValues,
+                      })
+                    }
                   />
                 </Form.Item>
               )}
             </Col>
-
-            <Col xs={24} sm={12} xl={4}>
-              <Form.Item label="Implants" name="implants">
-                <Radio.Group defaultValue={formState.implants}>
-                  <Radio value="Yes">Yes</Radio>
-                  <Radio value="No">No</Radio>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
+          </Row>
+          <Col xs={24} sm={12} xl={4}>
+            <Form.Item label="Implants" name="implants">
+              <Radio.Group defaultValue={formState.implants}>
+                <Radio value="Yes">Yes</Radio>
+                <Radio value="No">No</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+          <Row gutter={[16, 16]}>
             <Col xs={24} sm={12} xl={4}>
               <Form.Item label="Imaging Studies Location">
                 <Input
@@ -825,29 +1043,48 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
         </Form.Item> */}
 
           {/* Diagnostic Section */}
-          <h3 className="mt-4 mb-3">Diagnostic</h3>
+          <h3 className="mt-4 mb-3">Physical Examination</h3>
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12} xl={4}>
-              <Form.Item label="Pain" name="pain">
+              <Form.Item
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select an option for pain!",
+                  },
+                ]}
+                label="Pain"
+                name="pain"
+              >
                 <Radio.Group defaultValue={formState.pain}>
                   <Radio value="No">No</Radio>
-                  <Radio value="Yes">Yes</Radio>
+                  <Radio value="Right">Right</Radio>
+                  <Radio value="Left">Left</Radio>
+                  <Radio value="Both">Both side</Radio>
                 </Radio.Group>
               </Form.Item>
-            </Col>
-            {formState.pain ==="Yes" && (
-              <Col xs={24} sm={12} xl={4}>
-                <Form.Item label="Pain area" name="painArea">
-                  <Radio.Group defaultValue={formState.painArea}>
-                    <Radio value="Right">Right</Radio>
-                    <Radio value="Left">Left</Radio>
-                    <Radio value="Both">Both side</Radio>
-                  </Radio.Group>
+              {formState.pain !== "No" && formState.pain !== "" && (
+                <Form.Item label="Pain Details" name="painDetails">
+                  <Input.TextArea
+                    placeholder="Enter pain details"
+                    rows={3}
+                    defaultValue={formState.painDetails}
+                  />
                 </Form.Item>
-              </Col>
-            )}
+              )}
+            </Col>
+
             <Col xs={24} sm={12} xl={4}>
-              <Form.Item label="Lump" name="lump">
+              <Form.Item
+                label="Lump"
+                name="lump"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select an option for Lump!",
+                  },
+                ]}
+              >
                 <Radio.Group defaultValue={formState.lump}>
                   <Radio value="No">No</Radio>
                   <Radio value="Right">Right</Radio>
@@ -855,10 +1092,28 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                   <Radio value="Both">Both</Radio>
                 </Radio.Group>
               </Form.Item>
+              {formState.lump !== "No" && formState.lump !== "" && (
+                <Form.Item label="Lump Details" name="lumpDetails">
+                  <Input.TextArea
+                    placeholder="Enter lump details"
+                    rows={3}
+                    defaultValue={formState.lumpDetails}
+                  />
+                </Form.Item>
+              )}
             </Col>
 
             <Col xs={24} sm={12} xl={4}>
-              <Form.Item label="Discharge" name="discharge">
+              <Form.Item
+                label="Discharge"
+                name="discharge"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select an option for Dischange!",
+                  },
+                ]}
+              >
                 <Radio.Group defaultValue={formState.discharge}>
                   <Radio value="No">No</Radio>
                   <Radio value="Right">Right</Radio>
@@ -877,44 +1132,68 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               )}
             </Col>
             <Col xs={24} sm={12} xl={4}>
-              <Form.Item label="Skin Changes" name="skinChanges">
+              <Form.Item
+                label="Skin Changes"
+                name="skinChanges"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select an option for Skin Change!",
+                  },
+                ]}
+              >
                 <Radio.Group defaultValue={formState.skinChanges}>
-                  <Radio value="Yes">Yes</Radio>
                   <Radio value="No">No</Radio>
+                  <Radio value="Right">Right</Radio>
+                  <Radio value="Left">Left</Radio>
+                  <Radio value="Both">Both</Radio>
                 </Radio.Group>
               </Form.Item>
-              {formState.skinChanges === "Yes" && (
-                <Form.Item
-                  label="Skin Changes Details"
-                  name="skinChangesDetails"
-                >
-                  <Input.TextArea
-                    placeholder="Enter skin changes details"
-                    defaultValue={formState.skinChangesDetails}
-                    rows={3}
-                  />
-                </Form.Item>
-              )}
+              {formState.skinChanges !== "No" &&
+                formState.skinChanges !== "" && (
+                  <Form.Item
+                    label="Skin Changes Details"
+                    name="skinChangesDetails"
+                  >
+                    <Input.TextArea
+                      placeholder="Enter skin changes details"
+                      defaultValue={formState.skinChangesDetails}
+                      rows={3}
+                    />
+                  </Form.Item>
+                )}
             </Col>
-            <Col xs={24} sm={12} xl={4}>
-              <Form.Item label="Nipple Retraction" name="nippleRetraction">
+            <Col xs={30} sm={14} xl={6}>
+              <Form.Item
+                label="Nipple Retraction"
+                name="nippleRetraction"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select an option for Nipple Retraction!",
+                  },
+                ]}
+              >
                 <Radio.Group defaultValue={formState.nippleRetraction}>
-                  <Radio value="Yes">Yes</Radio>
                   <Radio value="No">No</Radio>
+                  <Radio value="Right">Right</Radio>
+                  <Radio value="Left">Left</Radio>
+                  <Radio value="Both">Both</Radio>
                 </Radio.Group>
               </Form.Item>
-              {formState.nippleRetraction === "Yes" && (
-                <Form.Item
-                  label="Nipple Retraction Details"
-                  name="nippleRetractionDetails"
-                >
-                  <Input.TextArea
-                    placeholder="Enter nipple retraction details"
-                    defaultValue={formState.nippleRetractionDetails}
-                    rows={3}
-                  />
-                </Form.Item>
-              )}
+              {formState.nippleRetraction !== "No" &&
+                formState.nippleRetraction !== "" && (
+                  <Form.Item
+                    label="Nipple Retraction Details"
+                    name="nippleRetractionDetails"
+                  >
+                    <Input.TextArea
+                      placeholder="Enter nipple retraction details"
+                      defaultValue={formState.nippleRetractionDetails}
+                      rows={3}
+                    />
+                  </Form.Item>
+                )}
             </Col>
           </Row>
           {/* Additional Information */}
@@ -1019,9 +1298,9 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               </Form.Item>
             </Col>
             <Col xs={24} sm={12} xl={4}>
-              <Form.Item label="Previous Breast Cancer">
+              <Aorm.Item label="Previous Breast Cancer">
                 <Input value={formState.previousCancer} readOnly />
-              </Form.Item>
+              </Aorm.Item>
             </Col>
             <Col xs={24} sm={12} xl={4}>
               <Form.Item label="Smoking History">
@@ -1053,8 +1332,8 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               </Form.Item>
             </Col>
             <Col xs={24} sm={12} xl={4}>
-              <Form.Item label="Previous Surgery">
-                <Input value={formState.previousSurgery} readOnly />
+              <Form.Item label="Previous Treatment">
+                <Input value={formState.previousTreatment} readOnly />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12} xl={4}>
