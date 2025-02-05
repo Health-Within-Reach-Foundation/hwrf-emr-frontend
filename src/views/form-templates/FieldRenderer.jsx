@@ -21,14 +21,15 @@ const FieldRenderer = ({ field, onFieldUpdate }) => {
   return (
     <div className="field-container">
       <div className="field-title mb-2">
-        <label htmlFor="field-title">Field Title</label>
-        <Input
+        {/* <label htmlFor="field-title">Field Title</label> */}
+        {/* <Input
           value={field.title}
           onChange={handleTitleChange}
           id="field-title"
           placeholder="Field title"
           className="title-input"
-        />
+        /> */}
+        Field Title 
       </div>
 
       {

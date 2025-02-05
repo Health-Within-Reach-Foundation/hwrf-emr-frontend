@@ -1,94 +1,101 @@
 import React, { useEffect, useState } from "react";
-import { Drawer, Input, TreeSelect, Select, Button } from "antd";
-import { Card, Form } from "react-bootstrap";
+import {
+  Input,
+  Select,
+  Button,
+  Form,
+  Upload,
+  Checkbox,
+  Radio,
+  DatePicker,
+} from "antd";
 import patientServices from "../../api/patient-services";
 import toast from "react-hot-toast";
-import TeethSelector from "../adult-teeth-selector/teeth-selector";
-import ChildTeethSelector from "../child-teeth-selector/child-teeth-selector";
+import { RiUpload2Fill } from "@remixicon/react";
+import dayjs from "dayjs";
+import { treatmentStatusOptions } from "../../utilities/constants";
 
 const DiagnosisTreatmentSettingForm = ({
   isEdit,
   drawerVisible,
   onClose,
   diagnosisData,
-  onSave,
+  onSave = () => {},
   patientData,
-  selectedTreatments,
+  selectedTreatment,
+  doctorsList,
 }) => {
+  console.log("selected treatement --> ", selectedTreatment, diagnosisData);
   const [loading, setLoading] = useState(false);
   const [formState, setFormState] = useState({
-    complaints: diagnosisData?.complaints,
-    treatments: diagnosisData?.treatments,
     treatmentDate: new Date().toISOString().split("T")[0],
     notes: "",
     treatmentStatus: [],
-    dentalQuadrantType: "adult",
-    selectedTeeth: [],
-    totalAmount: null,
-    paidAmount: null,
     remainingAmount: null,
+    xrayStatus: false,
+    crownStatus: false,
+    xray: [], // Manage uploaded files here
+    treatingDoctor: {},
+    nextDate: null,
+    paymentMode: "offline",
   });
 
+  const [treatmentForm] = Form.useForm();
+
   useEffect(() => {
-    if (isEdit && selectedTreatments) {
+    if (isEdit && selectedTreatment) {
       const {
         createdAt,
         updatedAt,
-        // treatments,
-        patientId,
         id,
         additionalDetails,
-        selectedTeeth,
-        complaints,
-        dentalQuadrant,
-        xrayStatus,
         xray,
-        dentalQuadrantType,
-        diagnosisId,
+        treatmentId,
+        nextDate,
         ...filteredData
-      } = selectedTreatments;
+      } = selectedTreatment;
 
       setFormState({
+        treatmentSettingId: id,
+        xray: [],
+        nextDate: nextDate ? dayjs(nextDate) : null,
         ...filteredData,
       });
     } else {
       setFormState({
-        complaints: diagnosisData?.complaints,
-        treatments: diagnosisData?.treatmentsSuggested,
-        treatmentDate: new Date().toISOString().split("T")[0],
         notes: "",
         treatmentStatus: [],
-        dentalQuadrantType: "adult",
-        selectedTeeth: [],
-        totalAmount: null,
-        paidAmount: null,
         remainingAmount: null,
+        xrayStatus: false,
+        crownStatus: false,
+        xray: [],
+        treatingDoctor: {},
+        nextDate: null,
+        paymentMode: "",
       });
     }
   }, [isEdit, diagnosisData]);
 
-  //   useEffect(() => {
-  //     setFormState((prev) => ({
-  //       ...prev,
-  //       selectedTeeth: [],
-  //     }));
-  //   }, [formState.dentalQuadrantType]);
+  useEffect(() => {
+    treatmentForm.setFieldsValue(formState);
+  }, [formState]);
 
-  const handleInputChange = (key, value) => {
-    // Ensure that the entered value is always non-negative
+  const handleAmountChange = (key, value) => {
     const sanitizedValue = Math.max(0, parseFloat(value) || 0);
 
     setFormState((prev) => {
       const updatedState = { ...prev, [key]: sanitizedValue };
 
-      // Calculate the remaining amount dynamically
-      if (key === "totalAmount" || key === "paidAmount") {
-        const totalAmount =
-          key === "totalAmount" ? sanitizedValue : prev.totalAmount || 0;
-        const paidAmount =
-          key === "paidAmount" ? sanitizedValue : prev.paidAmount || 0;
-        updatedState.remainingAmount = Math.max(0, totalAmount - paidAmount);
-      }
+      const totalAmount = prev.totalAmount || 0;
+      const onlineAmount =
+        key === "onlineAmount" ? sanitizedValue : prev.onlineAmount || 0;
+      const offlineAmount =
+        key === "offlineAmount" ? sanitizedValue : prev.offlineAmount || 0;
+
+      updatedState.remainingAmount = Math.max(
+        0,
+        totalAmount - (onlineAmount + offlineAmount)
+      );
 
       return updatedState;
     });
@@ -102,17 +109,62 @@ const DiagnosisTreatmentSettingForm = ({
     try {
       setLoading(true);
 
-      let formData = {};
+      const {
+        notes,
+        treatmentStatus,
+        treatmentDate,
+        xrayStatus,
+        crownStatus,
+        xray,
+        treatingDoctor,
+        onlineAmount,
+        offlineAmount,
+        paymentMode,
+        nextDate,
+      } = formState;
+
+      let formData = new FormData();
+
+      // Object.entries(formState).forEach(([key, value]) => {
+      //   if(key === "xray" && Array.isArray(value)) {
+      //     value.forEach((file) => {
+      //       formData.append("xrayFiles", file);
+      //     });
+      //   } else if (Array.isArray(value) || typeof value === "object") {
+      //     formData.append(key, JSON.stringify(value));
+      //   } else {
+      //     formData.append(key, value);
+      //   }
+      // });
+
+      formData.append("patientId", diagnosisData.patientId);
+      formData.append("settingNotes", notes);
+      formData.append("settingTreatmentDate", treatmentDate);
+      formData.append("treatmentStatus", JSON.stringify(treatmentStatus));
+      formData.append("treatmentSettingId", selectedTreatment.id);
+      formData.append("xrayStatus", xrayStatus);
+      formData.append("crownStatus", crownStatus);
+      formData.append("treatingDoctor", JSON.stringify(treatingDoctor));
+      formData.append("onlineAmount", onlineAmount);
+      formData.append("offlineAmount", offlineAmount);
+      formData.append("paymentMode", paymentMode);
+      formData.append("nextDate", JSON.stringify(nextDate));
+
+      if (xray) {
+        xray.forEach((file) => {
+          formData.append("xrayFiles", file);
+        });
+      }
+
       let response;
       if (isEdit) {
         response = await patientServices.updateTreatmentById(
-          selectedTreatments.id,
-          formState
+          selectedTreatment?.treatmentId,
+          formData
         );
 
-        console.log("for, state for updating treatement --> ", formState);
+        console.log("form state for updating treatment --> ", formState);
       } else {
-        // formData.append("patientId", patientData.id);
         const {
           treatmentDate,
           treatmentStatus,
@@ -136,211 +188,264 @@ const DiagnosisTreatmentSettingForm = ({
       }
 
       if (response?.success) {
-        toast.success(response.message || "Treatment saved successfully!");
-        onSave(); // Callback after successful save
+        toast.success(response?.message || "Treatment saved successfully!");
+        // onSave();
       } else {
         toast.error(response?.message || "Failed to save Treatment.");
       }
     } catch (error) {
       console.error("Error saving diagnosis Treatment:", error);
-      toast.error("An unexpected error occurred.");
+      toast.error("Internal server error");
     } finally {
       setLoading(false);
-      onClose();
+      onSave();
     }
   };
 
+  console.log("is edit form state --.", formState);
   return (
-    <Drawer
-      title={isEdit ? "Edit Treatment" : "Add Treatment Setting"}
-      placement="right"
-      onClose={onClose}
-      open={drawerVisible}
-      width={600}
+    <Form
+      layout="vertical"
+      form={treatmentForm}
+      initialValues={formState}
+      onFinish={handleSubmit}
     >
-      <Form>
-        <Form.Group className="py-2">
-          <Form.Label>Treatment Date</Form.Label>
-          <Form.Control
-            type="date"
-            value={formState.treatmentDate}
-            defaultValue={new Date().getDate()}
-            onChange={(e) => handleInputChange("treatmentDate", e.target.value)}
-          />
-        </Form.Group>
-        <Form.Group className="py-2">
-          <Form.Label>Complaints</Form.Label>
-          <Select
-            mode="multiple"
-            disabled
-            value={diagnosisData.complaints}
-            onChange={(value) => handleInputChange("complaints", value)}
-            options={[
-              { value: "Tooth Ache", label: "Tooth Ache" },
-              { value: "Tooth Missing", label: "Tooth Missing" },
-              { value: "Bad Breath", label: "Bad Breath" },
-            ]}
-            className="w-100"
-          />
-        </Form.Group>
-        <Form.Group className="py-2">
-          <Form.Label>Treatment</Form.Label>
-          <Select
-            mode="multiple"
-            value={diagnosisData.treatmentsSuggested}
-            disabled
-            onChange={(value) => handleInputChange("treatmentsSuggested", value)}
-            options={[
-              { value: "Scaling Regular", label: "Scaling Regular" },
-              { value: "Scaling Complex", label: "Scaling Complex" },
-              { value: "RC Simple", label: "RC Simple" },
-            ]}
-            className="w-100"
-          />
-        </Form.Group>
-        {/* <Form.Group className="py-2">
-          <Form.Check
-            id="adult-teeth"
-            type="radio"
-            label="Adult"
-            name="dentalQuadrant"
-            checked={formState.dentalQuadrantType === "adult"}
-            onChange={() =>
-              setFormState((prev) => ({
-                ...prev,
-                dentalQuadrantType: "adult",
-              }))
+      <Form.Item
+        label="Treatment Status"
+        name={"treatmentStatus"}
+        required
+        rules={[{ required: true, message: "Please select treatment status" }]}
+      >
+        <Select
+          mode="multiple"
+          value={formState.treatmentStatus}
+          onChange={(value) => handleInputChange2("treatmentStatus", value)}
+          options={treatmentStatusOptions}
+          className="w-100"
+        />
+      </Form.Item>
+
+      <div className="w-100 d-flex justify-content-between gap-3">
+        <Form.Item
+          className="w-100"
+          name={"crownStatus"}
+          label="Crown Status"
+          extra="Please check the box above if the treatment status is associated with a crown."
+        >
+          <Checkbox
+            checked={formState.crownStatus}
+            onChange={(e) =>
+              handleInputChange2("crownStatus", e.target.checked)
             }
-          />
-          <Form.Check
-            id="child-teeth"
-            type="radio"
-            label="Child"
-            name="dentalQuadrant"
-            checked={formState.dentalQuadrantType === "child"}
-            onChange={() =>
-              setFormState((prev) => ({
-                ...prev,
-                dentalQuadrantType: "child",
-              }))
+          ></Checkbox>
+        </Form.Item>
+        <Form.Item className="w-100" name={"xrayStatus"} label="X-ray Status">
+          <Checkbox
+            checked={formState.xrayStatus}
+            onChange={(e) => handleInputChange2("xrayStatus", e.target.checked)}
+          ></Checkbox>
+        </Form.Item>
+
+        {formState.xrayStatus && (
+          <Form.Item label="Upload X-ray Files" className="w-100" name={"xray"}>
+            <Upload
+              multiple
+              beforeUpload={(file) => {
+                handleInputChange2("xray", [...formState.xray, file]);
+                return false; // Prevent auto-upload
+              }}
+              fileList={formState.xray}
+              onRemove={(file) => {
+                handleInputChange2(
+                  "xray",
+                  formState.xray.filter((item) => item.uid !== file.uid)
+                );
+              }}
+            >
+              <Button icon={<RiUpload2Fill />} variant="outlined">
+                Upload
+              </Button>
+            </Upload>
+
+            {selectedTreatment?.xray &&
+              selectedTreatment?.xray?.map((file) => (
+                <div className="d-flex flex-col gap-2">
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <Button
+                      type="link"
+                      style={{
+                        padding: 0,
+                        fontSize: "14px",
+                        textDecoration: "underline",
+                        color: "#1890ff",
+                      }}
+                      href={`/files?key=${file?.key}`}
+                      onClick={() => {}}
+                    >
+                      {file?.fileName || "file"}
+                    </Button>
+                  </div>
+                </div>
+              ))}
+          </Form.Item>
+        )}
+      </div>
+
+      <Form.Item
+        label="Payment mode"
+        name={"paymentMode"}
+        required
+        rules={[{ required: true, message: "Please select payment mode" }]}
+      >
+        <Radio.Group
+          value={formState?.paymentMode}
+          onChange={(e) => {
+            console.log("e target", e.target);
+            handleInputChange2("paymentMode", e.target.value);
+          }}
+        >
+          <Radio value="online">Online</Radio>
+          <Radio value="offline">Offline</Radio>
+          <Radio value="both">Both</Radio>
+        </Radio.Group>
+      </Form.Item>
+
+      {formState.paymentMode == "online" ||
+      formState.paymentMode == "offline" ? (
+        <Form.Item
+          label="Setting Paid Amount"
+          name={
+            formState.paymentMode === "online"
+              ? "onlineAmount"
+              : "offlineAmount"
+          }
+          required
+          rules={[{ required: true, message: "Please enter amount" }]}
+        >
+          <Input
+            type="number"
+            value={
+              formState.paymentMode == "online"
+                ? formState.onlineAmount
+                : formState.offlineAmount
             }
+            onChange={(e) => {
+              const key =
+                formState.paymentMode === "online"
+                  ? "onlineAmount"
+                  : "offlineAmount";
+              handleAmountChange(key, e.target.value);
+            }}
           />
-        </Form.Group> */}
-        {diagnosisData.dentalQuadrantType === "adult" && (
-          <Form.Group className="py-2">
-            <TeethSelector
-              isEdit={true}
-              selectedTeeth={[diagnosisData.selectedTeeth] || []}
-              onChange={(updatedTeeth) => {
-                console.log(updatedTeeth);
-                setFormState((prev) => ({
-                  ...prev,
-                  selectedTeeth: updatedTeeth,
-                }));
-              }}
+        </Form.Item>
+      ) : (
+        <div className="d-flex gap-3">
+          <Form.Item
+            label="Online paid"
+            name={"onlineAmount"}
+            required
+            rules={[{ required: true, message: "Please enter amount" }]}
+          >
+            <Input
+              type="number"
+              value={formState?.onlineAmount || ""}
+              onChange={(e) =>
+                handleAmountChange("onlineAmount", e.target.value)
+              }
             />
-          </Form.Group>
-        )}
-        {diagnosisData.dentalQuadrantType === "child" && (
-          <Form.Group className="py-2">
-            <ChildTeethSelector
-              isEdit={isEdit}
-              selectedTeeth={formState.selectedTeeth || []}
-              onChange={(updatedTeeth) => {
-                console.log(updatedTeeth);
-                setFormState((prev) => ({
-                  ...prev,
-                  selectedTeeth: updatedTeeth,
-                }));
-              }}
+          </Form.Item>
+          <Form.Item
+            label="Offline paid"
+            name={"offlineAmount"}
+            required
+            rules={[{ required: true, message: "Please enter amount" }]}
+          >
+            <Input
+              type="number"
+              value={formState?.offlineAmount || ""}
+              onChange={(e) =>
+                handleAmountChange("offlineAmount", e.target.value)
+              }
             />
-          </Form.Group>
-        )}
+          </Form.Item>
+          <Form.Item label="Total paid">
+            <Input
+              type="number"
+              value={
+                Number(formState.onlineAmount) + Number(formState.offlineAmount)
+              }
+              readOnly
+              onChange={() => {}}
+            />
+          </Form.Item>
+        </div>
+      )}
 
-        <Form.Group className="py-2">
-          <Form.Label>Diagnosis Notes </Form.Label>
-          <Input.TextArea
-            value={diagnosisData.notes}
-            readOnly
-            onChange={(e) => handleInputChange("notes", e.target.value)}
-          />
-        </Form.Group>
-        {/* <hr className="dark"/> */}
-        <Card>
-          <Card.Header>Treatment Setting Form</Card.Header>
-          <Card.Body>
-            <Form.Group className="py-2">
-              <Form.Label>Treatment</Form.Label>
-              <Select
-                mode="multiple"
-                value={formState.treatmentStatus}
-                onChange={(value) =>
-                  handleInputChange2("treatmentStatus", value)
-                }
-                options={[
-                  { value: "Done", label: "Done" },
-                  {
-                    value: "RC Open 1st Completed",
-                    label: "RC Open 1st Completed",
-                  },
-                  { value: "RC 2nd - Completed", label: "RC 2nd - Completed" },
-                  { value: "RC 3rd - Completed", label: "RC 3rd - Completed" },
-                  { value: "Impression Taken", label: "Impression Taken" },
-                  { value: "Crown Trail Done", label: "Crown Trail Done" },
-                  { value: "Final Cementation", label: "Final Cementation" },
-                  { value: "NA", label: "NA" },
-                  { value: "OPD Done", label: "OPD Done" },
-                ]}
-                className="w-100"
-              />
-            </Form.Group>
+      <Form.Item
+        label="Treating Doctor"
+        className="w-100"
+        name={"treatingDoctor"}
+        required
+        rules={[{ required: true, message: "Please select treating doctor" }]}
+      >
+        <Select
+          value={formState.treatingDoctor}
+          onChange={(value, option) =>
+            handleInputChange2("treatingDoctor", option)
+          }
+          options={doctorsList}
+          className="w-100"
+        />
+      </Form.Item>
 
-            <Form.Group className="py-2">
-              <Form.Label>Add Notes </Form.Label>
-              <Input.TextArea
-                value={formState.notes}
-                onChange={(e) => handleInputChange2("notes", e.target.value)}
-              />
-            </Form.Group>
+      <Form.Item label="Add Notes" name={"notes"}>
+        <Input.TextArea
+          value={formState.notes}
+          onChange={(e) => handleInputChange2("notes", e.target.value)}
+        />
+      </Form.Item>
+      <Form.Item
+        label="Next follow-up Date"
+        className="w-100"
+        name={"nextDate"}
+        required={false}
+      >
+        <DatePicker
+          defaultValue={formState?.nextDate}
+          // value={formState?.nextDate !== null ? dayjs(formState.nextDate) : null}
+          onChange={(date, dateString) =>
+            handleInputChange2("nextDate", dayjs(dateString))
+          }
+          className="w-100"
+        />
+      </Form.Item>
 
-            <Form.Group className="py-2">
-              <Form.Label>Total cost</Form.Label>
-              <Form.Control
-                type="number"
-                value={formState.totalAmount || ""}
-                onChange={(e) =>
-                  handleInputChange("totalAmount", e.target.value)
-                }
-              />
-            </Form.Group>
-
-            <Form.Group className="py-2">
-              <Form.Label>Paid cost</Form.Label>
-              <Form.Control
-                type="number"
-                value={formState.paidAmount || ""}
-                onChange={(e) =>
-                  handleInputChange("paidAmount", e.target.value)
-                }
-              />
-            </Form.Group>
-
-            <Form.Group className="py-2">
-              <Form.Label>Remaining cost</Form.Label>
-              <Form.Control
-                type="number"
-                value={formState.remainingAmount || ""}
-                readOnly
-              />
-            </Form.Group>
-
-            <Button className="mt-3" onClick={handleSubmit} loading={loading}>
-              {isEdit ? "Update" : "Add"}
-            </Button>
-          </Card.Body>
-        </Card>
-      </Form>
-    </Drawer>
+      <Form.Item className="d-flex justify-content-end">
+        <Button
+          className="rounded-0 bg-primary"
+          onClick={() => {
+            treatmentForm
+              .validateFields()
+              .then(() => {
+                handleSubmit();
+              })
+              .catch((errorInfo) => {
+                console.log("Validation failed", errorInfo);
+              });
+          }}
+          type="primary"
+          loading={loading}
+        >
+          {isEdit ? "Update treatment" : "Add"}
+        </Button>
+      </Form.Item>
+    </Form>
   );
 };
 

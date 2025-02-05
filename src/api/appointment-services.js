@@ -26,9 +26,10 @@ const bookAppointment = async (appointmentData) => {
   }
 };
 
-const getAppointments = async (appointmentDate) => {
+const getAppointments = async () => {
   try {
-    const response = await apiClient.get(`/clinics/appointments/?appointmentDate=${appointmentDate}`);
+    // const response = await apiClient.get(`/clinics/appointments/?appointmentDate=${appointmentDate}`);
+    const response = await apiClient.get(`/clinics/appointments`);
     return response.data;
   } catch (error) {
     if (error.response) {

@@ -193,14 +193,110 @@ const updateTreatmentById = async (treatementId, treatementBody) => {
     }
   }
 };
+const createMammographyDetails = async (patientId, mammographyBody) => {
+  try {
+    const response = await apiClient.post(
+      `patients/mammography/${patientId}`,
+      mammographyBody
+    );
 
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      // Handle specific error responses from the API
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to add mammography details"
+      );
+    } else {
+      // Handle other types of errors
+      console.error("Unexpected error:", error.message);
+      throw new Error(
+        "An unexpected error occurred while adding patient mammography details"
+      );
+    }
+  }
+};
+const getMammographyDetails = async (patientId) => {
+  try {
+    const response = await apiClient.get(`patients/mammography/${patientId}`);
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      // Handle specific error responses from the API
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to generate mammography report"
+      );
+    } else {
+      // Handle other types of errors
+      console.error("Unexpected error:", error.message);
+      throw new Error(
+        "An unexpected error occurred while generating patient mammography report"
+      );
+    }
+  }
+};
+const updateMammographyDetails = async (patientId, mammographyBody) => {
+  try {
+    const response = await apiClient.patch(
+      `patients/mammography/${patientId}`,
+      mammographyBody
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      // Handle specific error responses from the API
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to update mammography details"
+      );
+    } else {
+      // Handle other types of errors
+      console.error("Unexpected error:", error.message);
+      throw new Error(
+        "An unexpected error occurred while updating patient mammography details"
+      );
+    }
+  }
+};
+
+const deleteDiagnosisById = async (diagnosisId) => {
+  try {
+    const response = await apiClient.delete(
+      `patients/diagnosis/${diagnosisId}`
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      // Handle specific error responses from the API
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to delete diagnosis"
+      );
+    } else {
+      // Handle other types of errors
+      console.error("Unexpected error:", error.message);
+      throw new Error(
+        "An unexpected error occurred while deleting patient diagnosis treatement"
+      );
+    }
+  }
+};
 export default {
   addPatient,
+  createMammographyDetails,
   getPatients,
   getPatientDetailsById,
   updatePatientDetails,
   addPatientDiagnosis,
+  getMammographyDetails,
+  updateMammographyDetails,
   updatePatientDiagnosis,
   addTreatmentByDiagnosis,
-  updateTreatmentById
+  updateTreatmentById,
+  deleteDiagnosisById,
 };

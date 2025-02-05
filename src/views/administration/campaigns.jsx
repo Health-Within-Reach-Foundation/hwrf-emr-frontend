@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Button } from "react-bootstrap";
-// import DatePicker from "react-datepicker";
-// import "react-datepicker/dist/react-datepicker.css";
+import { Row, Col } from "react-bootstrap";
 import Select from "react-select";
-import CustomTable from "../../components/custom-table";
 import { Loading } from "../../components/loading";
 import campManagementService from "../../api/camp-management-service";
 import clinicServices from "../../api/clinic-services";
 import CampModalForm from "../../components/administration/camp-form";
+import DateCell from "../../components/date-cell";
+import { RiAddLine } from "@remixicon/react";
+import { Badge, Button } from "antd";
+import AntdTable from "../../components/antd-table";
+import { Link } from "react-router-dom";
 
 const CampManagement = () => {
   const [camps, setCamps] = useState([]);
@@ -15,31 +17,25 @@ const CampManagement = () => {
   const [specialtiesOptions, setSpecialtiesOptions] = useState([]);
   const [filteredCamps, setFilteredCamps] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [filters, setFilters] = useState({
-    campName: "",
-    status: "",
-    city: "",
-    dateRange: [null, null],
-  });
+  const [loading2, setLoading2] = useState(false);
+  const [campLoading, setCampLoading] = useState(false);
+
   const [showModal, setShowModal] = useState(false);
   const [selectedCamp, setSelectedCamp] = useState(null);
 
-  const statusOptions = [
-    { value: "active", label: "Active" },
-    { value: "inactive", label: "Inactive" },
-  ];
-
   const fetchCamps = async () => {
     try {
+      setCampLoading(true);
       setLoading(true);
       const response = await campManagementService.getCamps(); // Replace with actual API call
-      console.log('camps: ', response.camps);
+      console.log("camps: ", response.camps);
       setCamps(response.camps || []);
       setFilteredCamps(response.camps || []);
     } catch (error) {
       console.error("Error fetching camps:", error);
     } finally {
       setLoading(false);
+      setCampLoading(false);
     }
   };
 
@@ -61,7 +57,7 @@ const CampManagement = () => {
 
   const getSpecialtyDepartmentsByClinic = async () => {
     try {
-      setLoading(true);
+      setLoading2(true);
       const response = await clinicServices.getSpecialtyDepartmentsByClinic();
       setSpecialtiesOptions(
         response.data.map((department) => ({
@@ -72,7 +68,7 @@ const CampManagement = () => {
     } catch (error) {
       console.error("Error fetching departments:", error);
     } finally {
-      setLoading(false);
+      setLoading2(false);
     }
   };
 
@@ -88,38 +84,83 @@ const CampManagement = () => {
     getSpecialtyDepartmentsByClinic();
   }, []);
 
-  if (loading) {
+  if (loading || campLoading || loading2) {
     return <Loading />;
   }
 
-  const columns = [
-    { data: "name", title: "Camp Name" },
-    { data: "status", title: "Status" },
-    { data: "location", title: "Location" },
-    { data: "city", title: "City" },
+  const campColumns = [
     {
-      data: "vans",
+      title: "Camp Name",
+      dataIndex: "name",
+      key: "name",
+      sortable: true,
+      render: (text, record) => <Link to={`/camps/${record.id}`}>{text}</Link>,
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      sortable: true,
+      filters: [
+        { text: "Active", value: "active" },
+        { text: "Inactive", value: "inactive" },
+      ],
+      onFilter: (value, record) => record.status === value,
+      render: (text, record) => (
+        <Link to={`/camps/${record.id}`}>
+          <Badge status={text === "active" ? "success" : "error"} text={text} />
+        </Link>
+      ),
+    },
+    {
+      title: "Location",
+      dataIndex: "location",
+      key: "location",
+      sortable: true,
+      render: (text, record) => <Link to={`/camps/${record.id}`}>{text}</Link>,
+    },
+    {
+      title: "City",
+      dataIndex: "city",
+      key: "city",
+      sortable: true,
+      render: (text, record) => <Link to={`/camps/${record.id}`}>{text}</Link>,
+    },
+    {
       title: "Vans",
-      render: (data) => data?.join(", ") || "",
+      dataIndex: "vans",
+      key: "vans",
+      sortable: true,
+      render: (text, record) => (
+        <Link to={`/camps/${record.id}`}>{text?.join(", ")}</Link>
+      ),
     },
     {
-      data: "startDate",
       title: "Start Date",
-      render: (data) => new Date(data).toLocaleDateString(),
+      dataIndex: "startDate",
+      key: "startDate",
+      sortable: true,
+      render: (text, record) => <Link to={`/camps/${record.id}`}>{text}</Link>,
     },
     {
-      data: "endDate",
       title: "End Date",
-      render: (data) => new Date(data).toLocaleDateString(),
+      dataIndex: "endDate",
+      key: "endDate",
+      sortable: true,
+      render: (text, record) => <Link to={`/camps/${record.id}`}>{text}</Link>,
     },
+    // here manaeg is not link it is button so you can use button component from react-bootstrap
     {
       title: "Manage",
-      data: null,
-      render: (_, row) => (
+      dataIndex: null,
+      key: "manage",
+      render: (text, record) => (
         <Button
-          variant="outline-primary"
+          type="primary"
+          variant="outlined"
+          className="bg-primary btn-primary rounded-0"
           size="sm"
-          onClick={() => handleEditCamp(row)}
+          onClick={() => handleEditCamp(record)}
         >
           Edit
         </Button>
@@ -127,114 +168,32 @@ const CampManagement = () => {
     },
   ];
 
-  const filterComponents = [
-    {
-      key: "campName",
-      component: Select,
-      props: {
-        options: camps.map((camp) => ({ value: camp.name, label: camp.name })),
-        onChange: (selected) =>
-          setFilters((prev) => ({ ...prev, campName: selected?.value || "" })),
-      },
-    },
-    {
-      key: "status",
-      component: Select,
-      props: {
-        options: statusOptions,
-        onChange: (selected) =>
-          setFilters((prev) => ({ ...prev, status: selected?.value || "" })),
-      },
-    },
-    {
-      key: "city",
-      component: Select,
-      props: {
-        options: [...new Set(camps.map((camp) => camp.city))].map((city) => ({
-          value: city,
-          label: city,
-        })),
-        onChange: (selected) =>
-          setFilters((prev) => ({ ...prev, city: selected?.value || "" })),
-      },
-    },
-    // {
-    //   key: "dateRange",
-    //   component: ({ value, onChange }) => (
-    //     <div>
-    //       <DatePicker
-    //         selected={value[0]}
-    //         onChange={(dates) => onChange(dates)}
-    //         startDate={value[0]}
-    //         endDate={value[1]}
-    //         selectsRange
-    //         placeholderText="Select date range"
-    //       />
-    //     </div>
-    //   ),
-    //   props: {
-    //     value: filters.dateRange,
-    //     onChange: (dates) =>
-    //       setFilters((prev) => ({ ...prev, dateRange: dates })),
-    //   },
-    // },
-  ];
-
-  const applyFilters = () => {
-    let filteredData = camps;
-    if (filters.campName) {
-      filteredData = filteredData.filter(
-        (camp) => camp.name === filters.campName
-      );
-    }
-    if (filters.status) {
-      filteredData = filteredData.filter(
-        (camp) => camp.status === filters.status
-      );
-    }
-    if (filters.city) {
-      filteredData = filteredData.filter((camp) => camp.city === filters.city);
-    }
-    if (filters.dateRange[0] && filters.dateRange[1]) {
-      const [start, end] = filters.dateRange;
-      filteredData = filteredData.filter(
-        (camp) =>
-          new Date(camp.startDate) >= start && new Date(camp.endDate) <= end
-      );
-    }
-    setFilteredCamps(filteredData);
-  };
-
-  const resetFilters = () => {
-    setFilters({
-      campName: "",
-      status: "",
-      city: "",
-      dateRange: [null, null],
-    });
-    setFilteredCamps(camps);
-  };
-
-  if (loading) {
-    return <Loading />;
-  }
   return (
     <>
       <Row>
         <Col>
           <Row className="align-items-center mb-3">
-            <Col>
-              <Button onClick={() => setShowModal(true)}>Add Camp</Button>
+            <Col className="d-flex flex-row-reverse">
+              <Button onClick={() => setShowModal(true)}>
+                <RiAddLine />
+                Add Camp
+              </Button>
             </Col>
           </Row>
 
-          <CustomTable
+          {/* <CustomTable
             columns={columns}
             data={filteredCamps}
-            enableFilters
+            enableFilters={false}
             filtersConfig={filterComponents}
             onApplyFilters={applyFilters}
             onResetFilters={resetFilters}
+          /> */}
+          <AntdTable
+            columns={campColumns}
+            data={filteredCamps}
+            pageSizeOptions={[50, 100, 150, 200]}
+            defaultPageSize={50}
           />
         </Col>
       </Row>

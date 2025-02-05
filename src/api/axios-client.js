@@ -3,7 +3,7 @@ import authServices from "./auth-services";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL, // Base API URL
-  timeout: 20000,
+  timeout: 60000,
 });
 
 // Add request interceptor
@@ -31,6 +31,8 @@ apiClient.interceptors.response.use(
       const accessToken = localStorage.getItem("accessToken");
 
       if (!refreshToken) {
+        localStorage.removeItem("accessToken")
+        localStorage.removeItem("refreshToken")
         window.location.href = "/auth/sign-in"; // Redirect to login if no refresh token
         return Promise.reject(error);
       }
@@ -40,7 +42,7 @@ apiClient.interceptors.response.use(
           refreshToken,
           accessToken
         );
-        if (tokens?.access?.token == null && tokens?.refresh?.token !== null) {
+        if (tokens?.access?.token == null && tokens?.refresh?.token == null) {
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
         } else {

@@ -26,6 +26,11 @@ import user04 from "/assets/images/user/04.jpg";
 import user001 from "/assets/images/user/001.png";
 import { useAuth } from "../../../utilities/AuthProvider";
 import CampSelectionModal from "../../camp-seletion-modal";
+import SettingOffCanvas from "../../setting/SettingOffCanvas";
+
+const generatePath = (path) => {
+  return window.origin + import.meta.env.BASE_URL + path;
+};
 
 const Header = () => {
   const pageLayout = useSelector(SettingSelector.page_layout);
@@ -241,16 +246,16 @@ const Header = () => {
                            </div>
                         </Dropdown.Menu> 
                      </Dropdown>*/}
-              {/* <Nav.Item
+              <Nav.Item
                 as="li"
                 className="nav-item iq-full-screen d-none d-xl-block"
                 id="fullscreen-item"
               >
-                <a
+                {/* <a
                   href="#"
                   className="nav-link"
                   id="btnFullscreen"
-                  onClick={toggleFullScreen}
+                  onClick={()=>{}}
                 >
                   <i
                     className={`ri-fullscreen-line normal-screen ${
@@ -262,8 +267,9 @@ const Header = () => {
                       isFullScreen ? "" : " d-none"
                     }`}
                   ></i>
-                </a>
-              </Nav.Item> */}
+                </a> */}
+                {/* <SettingOffCanvas /> */}
+              </Nav.Item> 
               {/* <Dropdown as="li" className="nav-item">
                 <Dropdown.Toggle
                   bsPrefix=" "
@@ -515,11 +521,11 @@ const Header = () => {
                   as="a"
                   bsPrefix=" "
                   to="#"
-                  className="nav-link d-flex align-items-center"
+                  className="nav-link d-flex align-items-center cursor-pointer"
                   id="notification-drop"
                 >
                   <img
-                    src={user001}
+                    src={generatePath("/assets/images/hwrf-vertical.svg")}
                     style={{
                       width: "50px",
                       height: "50px",
@@ -633,7 +639,7 @@ const Header = () => {
         </Container>
 
         {/* -- collapse -- */}
-        <Navbar.Collapse id="navbarSupportedContent">
+        <Navbar.Collapse id="navbarSupportedContent" className="">
           <Row className="flex-grow-1 pt-4 pb-4 px-2">
             <Col
               md={12}
@@ -706,7 +712,7 @@ const Header = () => {
                   </div>
                 </Dropdown.Menu>
               </Dropdown>{" "}
-              <li className="nav-item dropdown"></li>
+              {/* <li className="nav-item "></li> */}
               {/* <Nav.Item
                 className="iq-full-screen iq-full-screen2 d-block d-xl-none"
                 id="fullscreen-item"
@@ -922,8 +928,6 @@ const Header = () => {
         </Navbar.Collapse>
       </Navbar>
       {/* </Navbar> */}
-
-     
     </>
   );
 };

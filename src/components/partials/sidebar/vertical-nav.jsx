@@ -11,17 +11,7 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../../utilities/AuthProvider";
 import {
-  emailItems,
-  doctorItems,
   patientItems,
-  uiElementsItems,
-  formItems,
-  formWizardItems,
-  tableItems,
-  chartItems,
-  iconItems,
-  authItems,
-  extraPagesItems,
   adminiStartionItems,
 } from "../../../utilities/constants";
 import ArrowIcon from "../../arrow-icon";
@@ -121,8 +111,8 @@ const VerticalNav = () => {
               className={`nav-item ${active === "Administration" && "active"} ${
                 location.pathname === "/administration/users-list" ||
                 location.pathname === "/administration/add-user" ||
-                location.pathname === "/administration/roles" ||
-                location.pathname === "/administration/campaigns"
+                location.pathname === "/administration/roles" 
+                // location.pathname === "/administration/campaigns"
                   ? "active"
                   : ""
               }`}
@@ -131,7 +121,7 @@ const VerticalNav = () => {
               <div className="colors">
                 <CustomToggle
                   eventKey="Administration"
-                  activeClass={patientItems.some(
+                  activeClass={adminiStartionItems.some(
                     (item) => location.pathname === item.path
                   )}
                   onClick={(activeKey) => setActiveMenu(activeKey)}
@@ -175,31 +165,7 @@ const VerticalNav = () => {
             </Accordion.Item>
           </Accordion>
         )}
-        {!userRoles.includes("superadmin") && (
-          <Nav.Item as="li">
-            <Link
-              to="/camps"
-              className={`nav-link ${
-                location.pathname === "/camps" ? "active" : ""
-              }`}
-            >
-              <OverlayTrigger
-                key={"Camps"}
-                placement={"right"}
-                overlay={<Tooltip id="Dashboard">Camps</Tooltip>}
-              >
-                <i
-                  className="ri-list-view"
-                  data-bs-toggle="tooltip"
-                  title="Camps"
-                  data-bs-placement="right"
-                ></i>
-              </OverlayTrigger>
-              <span className="item-name ">Camps </span>
-            </Link>
-          </Nav.Item>
-        )}
-        {!userRoles.includes("superadmin") && (
+          {!userRoles.includes("superadmin") && (
           <Nav.Item as="li">
             <Link
               to="/queues"
@@ -223,7 +189,32 @@ const VerticalNav = () => {
             </Link>
           </Nav.Item>
         )}
-        {userRoles.includes("superadmin") && (
+        {!userRoles.includes("superadmin") && (
+          <Nav.Item as="li">
+            <Link
+              to="/camps"
+              className={`nav-link ${
+                location.pathname === "/camps" ? "active" : ""
+              }`}
+            >
+              <OverlayTrigger
+                key={"Camps"}
+                placement={"right"}
+                overlay={<Tooltip id="Dashboard">All Camps</Tooltip>}
+              >
+                <i
+                  className="ri-list-view"
+                  data-bs-toggle="tooltip"
+                  title="Camps"
+                  data-bs-placement="right"
+                ></i>
+              </OverlayTrigger>
+              <span className="item-name ">All Camps </span>
+            </Link>
+          </Nav.Item>
+        )}
+      
+        {/* {userRoles.includes("superadmin") && (
           <Nav.Item as="li">
             <Link
               to="/form-templates"
@@ -246,7 +237,8 @@ const VerticalNav = () => {
               <span className="item-name ">Form Templates </span>
             </Link>
           </Nav.Item>
-        )}
+        )} */}
+
         {/* patients management */}
         {!userRoles.includes("superadmin") && (
           <Accordion bsPrefix="bg-none" onSelect={(e) => setActiveMenu(e)}>
@@ -318,41 +310,6 @@ const VerticalNav = () => {
             </Accordion.Item>
           </Accordion>
         )}
-
-        <li>
-          <hr className="hr-horizontal" />
-        </li>
-        <Accordion bsPrefix="bg-none" onSelect={(e) => setActiveMenu(e)}>
-          <Nav.Item as="li" className="static-item ms-2">
-            <Nav.Link className="static-item disabled text-start" tabIndex="-1">
-              <span className="default-icon">Apps</span>
-              <span className="mini-icon">-</span>
-            </Nav.Link>
-          </Nav.Item>
-
-          <Nav.Item as="li">
-            <Link
-              className={`nav-link ${
-                location.pathname === "/calendar" ? "active" : ""
-              }`}
-              to="/calendar"
-            >
-              <OverlayTrigger
-                key={"Calendar"}
-                placement={"right"}
-                overlay={<Tooltip id="Calendar">Calendar</Tooltip>}
-              >
-                <i className="ri-calendar-2-line"></i>
-              </OverlayTrigger>
-              <span className="item-name ">Calendar</span>
-            </Link>
-          </Nav.Item>
-
-        </Accordion>
-
-        <li>
-          <hr className="hr-horizontal" />
-        </li>
       </ul>
     </>
   );

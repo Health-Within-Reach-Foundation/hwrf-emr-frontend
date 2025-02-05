@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Button } from "react-bootstrap";
-import Flatpickr from "react-flatpickr";
+// import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
 import Select from "react-select";
 import AppointmentForm from "../components/appointment-form";
@@ -10,10 +10,15 @@ import clinicServices from "../api/clinic-services";
 import CustomTable from "../components/custom-table";
 import { Loading } from "../components/loading";
 import DateCell from "../components/date-cell";
-import { Link } from "react-router-dom";
 import { Badge, Dropdown, Menu } from "antd";
-import { useAuth } from "../utilities/AuthProvider";
 import toast from "react-hot-toast";
+import CurrentCampDetailsHeader from "../components/camp/currentcamp-detail-header";
+import { RiAddLine, RiRefreshLine } from "@remixicon/react";
+import { transformText } from "../utilities/utility-function";
+import { useAuth } from "../utilities/AuthProvider";
+import campManagementService from "../api/camp-management-service";
+import { Link } from "react-router-dom";
+import AntdTable from "../components/antd-table";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -27,86 +32,86 @@ const Appointment = () => {
   const [patientList, setPatientList] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
   const [selectedQueueType, setSelectedQueueType] = useState(null); // Tracks the selected department
+  const { user } = useAuth();
 
-  const statusOptions = [
-    { value: "registered", label: "Registered" },
-    { value: "in-progress", label: "In Progress" },
-    { value: "completed", label: "Completed" },
-    { value: "cancelled", label: "Cancelled" },
-  ];
-
-  const columns = [
+  const queuePatientColumns = [
     {
-      data: "patientRegNo",
-      title: "Reg. No",
-      render: (data, row) => {
-        return (
-          <a href={`/patient/patient-profile/${row.patientId}`} className="">
-            {data}
-          </a>
-        );
-      },
-    },
-    {
-      data: "patientName",
-      title: "Name",
-      // render: (data, row) => {
-      //   return (
-      //     <a href={`/patient/patient-profile/${row.patientId}`} className="">
-      //       {data}
-      //     </a>
-      //   );
-      // },
-    },
-    {
-      data: "patientSex",
-      title: "Sex",
-      render: (data, row) => {
-        return (
-          <a href={`/patient/patient-profile/${row.patientId}`} className="">
-            {data}
-          </a>
-        );
-      },
-    },
-    {
-      data: "appointmentDate",
-      title: "Queue Date",
-      render: (data, row) => {
-        // console.log(data,row);
-        return (
-          <a href={`/patient/patient-profile/${row.patientId}`} className="">
-            <DateCell date={data} />
-          </a>
-        );
-      },
-    },
-    {
-      data: "tokenNumber",
       title: "Token Number",
-      render: (data, row) => {
-        return (
-          <a href={`/patient/patient-profile/${row.patientId}`} className="">
-            {data}
-          </a>
-        );
-      },
+      dataIndex: "tokenNumber",
+      key: "tokenNumber",
+      sortable: true,
+      width: 180,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
+      ),
     },
     {
-      data: "queueType",
-      title: "Queue Type",
-      render: (data, row) => {
-        return (
-          <a href={`/patient/patient-profile/${row.patientId}`} className="">
-            {data}
-          </a>
-        );
-      },
+      title: "Name",
+      dataIndex: "patientName",
+      key: "patientName",
+      sortable: true,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
+      ),
     },
     {
-      data: "status",
+      title: "Sex",
+      dataIndex: "patientSex",
+      key: "patientSex",
+      sortable: true,
+      width: 120,
+      filters: [
+        { text: "Male", value: "male" },
+        { text: "Female", value: "female" },
+      ],
+      onFilter: (value, record) => {
+        console.log(value, record);
+        return record.patientSex === value;
+      },
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
+      ),
+    },
+    {
+      title: "Mobile No.",
+      dataIndex: "patientMobile",
+      key: "patientMobile",
+      sortable: false,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
+      ),
+    },
+    {
+      title: "Service Type",
+      dataIndex: "queueType",
+      key: "queueType",
+      sortable: true,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
+      ),
+    },
+    {
+      title: "Primary Doctor",
+      dataIndex: "primaryDoctor",
+      key: "primaryDoctor",
+      width:150,
+      sortable: true,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
+      ),
+    },
+    {
       title: "Status",
-      render: (data, row) => {
+      dataIndex: "status",
+      key: "status",
+      sortable: true,
+      filters: [
+        { text: "In Queue", value: "in queue" },
+        { text: "In", value: "in" },
+        { text: "Out", value: "out" },
+      ],
+      onFilter: (value, record) => record.status === value,
+      render: (text, record) => {
         // Define a color mapping for different statuses
         const statusColors = {
           "in queue": "success",
@@ -115,23 +120,45 @@ const Appointment = () => {
         };
 
         return (
-          <a href={`/patient/patient-profile/${row.patientId}`} className="">
+          <Link
+            to={`/patient/patient-profile/${record.patientId}`}
+            // className={
+            //   record.status === "in"
+            //     ? "bg-info-subtle p-2 text-black"
+            //     : record.status === "in queue"
+            //     ? "bg-success-subtle p-2 text-black"
+            //     : record.status === "out"
+            //     ? "bg-warn-subtle p-2 text-black"
+            //     : "p-2 text-black"
+            // }
+          >
             <Badge
               size="default"
               dot
-              // color={statusColors[data] || "default"}
-              status={statusColors[data]}
-              text={data.charAt(0).toUpperCase() + data.slice(1)} // Capitalize status
+              status={statusColors[text]}
+              text={transformText(text)} // Capitalize status
             />
+          </Link>
+        );
+      },
+    },
+    {
+      title: "Last Updated Status",
+      dataIndex: "statusUpdatedAt",
+      key: "statusUpdatedAt",
+      render: (text, record) => {
+        return (
+          <a href={`/patient/patient-profile/${record.patientId}`}>
+            <DateCell date={text} dateFormat="MMM D, h:mm A" />
           </a>
         );
       },
     },
     {
-      data: null,
       title: "Action",
-      render: (data, row) => {
-        // Define the menu options using the new menu structure with icons and proper alignment
+      dataIndex: null,
+      key: "action",
+      render: (text, record) => {
         const menu = {
           items: [
             {
@@ -141,12 +168,13 @@ const Appointment = () => {
                   style={{ display: "flex", alignItems: "center", gap: "8px" }}
                 >
                   <i className="ri-login-box-line"></i>
-                  <span>Mark as In</span>
+                  <span>In</span>
                 </div>
               ),
               onClick: () =>
-                handleMarkAppointment(row.id, {
+                handleMarkAppointment(record.id, {
                   status: "in",
+                  statusUpdatedAt: new Date(),
                 }),
             },
             {
@@ -156,28 +184,31 @@ const Appointment = () => {
                   style={{ display: "flex", alignItems: "center", gap: "8px" }}
                 >
                   <i className="ri-logout-box-line"></i>
-                  <span>Mark as Out</span>
+                  <span>Out</span>
                 </div>
               ),
               onClick: () =>
-                handleMarkAppointment(row.id, {
+                handleMarkAppointment(record.id, {
                   status: "out",
+                  statusUpdatedAt: new Date(),
                 }),
             },
-            // Uncomment if needed
-            // {
-            //   key: "3",
-            //   label: (
-            //     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            //       <i className="ri-queue-line"></i>
-            //       <span>In Queue</span>
-            //     </div>
-            //   ),
-            //   onClick: () =>
-            //     handleMarkAppointment(row.id, {
-            //       status: "in-queue",
-            //     }),
-            // },
+            {
+              key: "3",
+              label: (
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  <i class="ri-calendar-schedule-line"></i>
+                  <span>In Queue</span>
+                </div>
+              ),
+              onClick: () =>
+                handleMarkAppointment(record.id, {
+                  status: "in queue",
+                  statusUpdatedAt: new Date(),
+                }),
+            },
           ],
         };
 
@@ -206,22 +237,25 @@ const Appointment = () => {
       toast.error(error.message);
     } finally {
       setLoading(false);
-      fetchAppointments(date);
+      fetchAppointments();
     }
   };
 
-  const fetchAppointments = async (selectedDate) => {
+  const fetchAppointments = async (selectedDate = date) => {
     try {
       setLoadingAppointments(true);
       const adjustedDate = new Date(
         selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000
       );
       const dateString = adjustedDate.toISOString().split("T")[0];
-      const response = await appointmentServices.getAppointments(dateString);
+      const response = await appointmentServices.getAppointments();
+      console.log(response);
       setAppointments(
         response?.data.sort((a, b) => a.tokenNumber - b.tokenNumber) || []
       );
-      setFilteredAppointments(response?.data.sort((a, b) => a.tokenNumber - b.tokenNumber) || []);
+      setFilteredAppointments(
+        response?.data.sort((a, b) => a.tokenNumber - b.tokenNumber) || []
+      );
     } catch (error) {
       console.error("Error fetching appointments:", error);
     } finally {
@@ -241,18 +275,20 @@ const Appointment = () => {
     }
   };
 
-  const getSpecialtyDepartmentsByClinic = async () => {
+  const fetchCampDetails = async () => {
     try {
       setLoading(true);
-      const response = await clinicServices.getSpecialtyDepartmentsByClinic();
+      const response = await campManagementService.getCampById(
+        user.currentCampId
+      );
       setDepartmentList(
-        response.data.map((department) => ({
+        response.data.specialties.map((department) => ({
           value: department.id,
           label: department.departmentName,
         }))
       );
     } catch (error) {
-      console.error("Error fetching departments:", error);
+      console.error("Error fetching camp details:", error);
     } finally {
       setLoading(false);
     }
@@ -261,75 +297,72 @@ const Appointment = () => {
   // useEffect(() => {
   // }, [date]);
 
-  const filterComponents = [
-    {
-      key: "status",
-      component: Select,
-      props: {
-        options: statusOptions,
-        value: statusOptions.find((opt) => opt.value === filters.status),
-        onChange: (selected) =>
-          setFilters((prev) => ({ ...prev, status: selected?.value || "" })),
-      },
-    },
-    {
-      key: "queueType",
-      component: Select,
-      props: {
-        options: departmentList,
-        value: departmentList.find((opt) => opt.value === filters.queueType),
-        onChange: (selected) =>
-          setFilters((prev) => ({ ...prev, queueType: selected?.label || "" })),
-      },
-    },
-  ];
-
-  const applyFilters = () => {
-    let filteredData = appointments;
-    if (filters.status) {
-      filteredData = filteredData.filter(
-        (appointment) => appointment.status === filters.status
-      );
-    }
-    if (filters.queueType) {
-      filteredData = filteredData.filter(
-        (appointment) => appointment.queueType === filters.queueType
-      );
-    }
-    setFilteredAppointments(filteredData);
-    // setShowFilters(false); // Close the filter panel after applying
-  };
-
-  const resetFilters = () => {
-    setFilters({ status: "", queueType: "" });
-    setFilteredAppointments(appointments); // Reset to all appointments
-    // setShowFilters(false); // Close the filter panel after resetting
-  };
-
   const handleQueueTypeSort = (queueType) => {
+    const userId = user?.id; // Replace with your actual user authentication logic
+    const currentRoute = window.location.pathname; // Get current route
+    const localStorageKey = `${currentRoute}_${userId}`; // Key for localStorage
+
     if (selectedQueueType === queueType.label) {
       // If the same department button is clicked again, reset the filter
+      localStorage.removeItem(localStorageKey);
       setSelectedQueueType(null);
       setFilteredAppointments(appointments);
     } else {
       // Apply the filter for the selected department
       setSelectedQueueType(queueType.label);
+
+      // Save the sortedBy value in localStorage
+      localStorage.setItem(localStorageKey, queueType.label);
+
       const filtered = appointments.filter(
         (appointment) => appointment.queueType === queueType.label
       );
       setFilteredAppointments(filtered);
     }
   };
+  const refreshData = async () => {
+    await Promise.all([fetchAppointments(), getPatientList()]);
+    // toast.success("Data refreshed successfully!");
+  };
+
+  // useEffect(() => {
+  //   if (!show) {
+  //     const interval = setInterval(refreshData, 9000); // 3 minutes
+  //     return () => clearInterval(interval); // Clear interval on component unmount
+  //   }
+  // }, []);
 
   useEffect(() => {
-    fetchAppointments(date);
+    const userId = user?.id; // Replace with your actual user authentication logic
+    const currentRoute = window.location.pathname; // Get current route
+    const localStorageKey = `${currentRoute}_${userId}`; // Key for localStorage
+
+    const savedQueueType = localStorage.getItem(localStorageKey);
+    if (savedQueueType) {
+      setSelectedQueueType(savedQueueType);
+      const filtered = appointments.filter(
+        (appointment) => appointment.queueType === savedQueueType
+      );
+      setFilteredAppointments(filtered);
+    }
+  }, [appointments, user?.id]); // Dependencies for effect
+  useEffect(() => {
+    fetchAppointments();
     getPatientList();
-    getSpecialtyDepartmentsByClinic();
+    // getSpecialtyDepartmentsByClinic();
+    fetchCampDetails();
   }, []);
 
-  useEffect(() => {
-    fetchAppointments(date);
-  }, [date]);
+  const customRowClass = (record) => {
+    if (record.status === "in queue") return "row-success";
+    if (record.status === "in") return "row-info";
+    if (record.status === "out") return "row-warning";
+    return "";
+  };
+
+  // useEffect(() => {
+  //   fetchAppointments(date);
+  // }, [date]);
 
   if (loading || loadingPatient || loadingAppointments) {
     return <Loading />;
@@ -337,44 +370,41 @@ const Appointment = () => {
 
   return (
     <>
+      <CurrentCampDetailsHeader />
       <Row>
         <Col>
           <Row className="align-items-center">
-            <Col
-              xs={12}
-              md={6}
-              className="d-flex justify-content-between align-items-center mb-3"
-            >
-              <Col md={6} className="mb-3">
-                <label htmlFor="appointmentDate" className="form-label">
-                  Select Queue Date
-                </label>
-                <Flatpickr
-                  value={date}
-                  onChange={([selectedDate]) => setDate(selectedDate)}
-                  id="appointmentDate"
-                  className="inline_flatpickr w-auto"
-                />
-              </Col>
-            </Col>
-
             {/* Department Buttons */}
 
             <div className="d-flex flex-column">
-              <div className="d-flex gap-2">
+              <div className="d-flex flex-row-reverse gap-2">
                 <Button
                   variant="primary"
                   onClick={() => setShow(true)}
+                  disabled={user?.currentCampId === null}
                   className="mb-3"
+                  title={
+                    user?.currentCampId === null ? "Please select camp!" : null
+                  }
                   style={{ width: "auto" }} // Keeps the button width to content size
                 >
+                  <RiAddLine />
                   Add to Queue
                 </Button>
+                <Button
+                  variant="outline-primary"
+                  onClick={refreshData}
+                  className="mb-3"
+                  style={{ width: "auto" }}
+                >
+                  <RiRefreshLine />
+                </Button>
               </div>
-              <div className="d-flex align-items-center flex-row-reverse mb-3 gap-2">
+              <div className="d-flex align-items-center flex-row mb-3 gap-2">
+                Sort By:
                 {departmentList.map((department) => (
                   <Button
-                    size="sm"
+                    size="lg"
                     key={department.value}
                     variant={
                       selectedQueueType === department.label
@@ -386,12 +416,11 @@ const Appointment = () => {
                     {department.label}
                   </Button>
                 ))}
-                Sort By:
               </div>
             </div>
           </Row>
 
-          <CustomTable
+          {/* <CustomTable
             key={filteredAppointments.length} // Force re-render when data changes
             columns={columns}
             data={filteredAppointments}
@@ -399,7 +428,19 @@ const Appointment = () => {
             // filtersConfig={filterComponents}
             // onApplyFilters={applyFilters}
             // onResetFilters={resetFilters}
-          />
+          /> */}
+          {/* code for passing atnd table */}
+
+          <div className="antd-table-container">
+            <AntdTable
+              key={filteredAppointments.length} // Force re-render when data changes
+              columns={queuePatientColumns}
+              data={filteredAppointments}
+              pageSizeOptions={[50, 100, 150, 200]}
+              defaultPageSize={50}
+              rowClassName={customRowClass}
+            />
+          </div>
         </Col>
       </Row>
 

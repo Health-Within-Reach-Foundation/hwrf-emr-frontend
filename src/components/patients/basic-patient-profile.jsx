@@ -2,7 +2,11 @@ import { Select } from "antd";
 import React, { useState } from "react";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 
-const BasicPatientProfile = ({ patientData, handleSavePatientData, setPatientData }) => {
+const BasicPatientProfile = ({
+  patientData,
+  handleSavePatientData,
+  setPatientData,
+}) => {
   const [editingPatient, setEditingPatient] = useState(false);
   const handleInputChange = (key, value) => {
     setPatientData((prev) => ({ ...prev, [key]: value }));
@@ -11,12 +15,15 @@ const BasicPatientProfile = ({ patientData, handleSavePatientData, setPatientDat
     <Card>
       <Card.Header>
         <h4>Patient Profile</h4>
-        <Button
-          variant="primary"
-          onClick={() => setEditingPatient(!editingPatient)}
-        >
-          {editingPatient ? "Cancel Edit" : "Edit Profile"}
-        </Button>
+        <p className="fw-bold text-decoration-underline">Registration No. : {"HWRF-".concat(patientData.regNo)}</p>
+        <div className="d-flex justify-content-end">
+          <Button
+            variant="primary"
+            onClick={() => setEditingPatient(!editingPatient)}
+          >
+            {editingPatient ? "Cancel Edit" : "Edit Profile"}
+          </Button>
+        </div>
       </Card.Header>
       <Card.Body>
         <Form>

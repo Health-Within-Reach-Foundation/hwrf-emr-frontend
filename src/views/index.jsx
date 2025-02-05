@@ -9,6 +9,7 @@ import clinicServices from "../api/clinic-services";
 import CampModalForm from "../components/administration/camp-form";
 import DynamicForm from "./form-templates/formRender";
 import DynamicFields from "./form-templates/editableForm";
+import { RiAddLine } from "@remixicon/react";
 
 const Index = () => {
   const { user, initializeAuth, userRoles = [] } = useAuth();
@@ -22,7 +23,7 @@ const Index = () => {
   const [campDetails, setCampDetails] = useState(() => {
     const activeCamps = user?.camps?.filter((camp) => camp.status === "active");
 
-    return activeCamps.length == 0
+    return activeCamps?.length == 0
       ? null
       : activeCamps?.find((camp) => camp.id === user?.currentCampId) || null;
   });
@@ -32,9 +33,9 @@ const Index = () => {
     try {
       const response = await clinicServices.getUsersByClinic();
       const formattedUsers = response.data.map((user) => ({
-        value: user.id,
-        label: user.name,
-        phoneNumber: user.phoneNumber,
+        value: user?.id,
+        label: user?.name,
+        phoneNumber: user?.phoneNumber,
       }));
       setUsersOptions(formattedUsers);
     } catch (error) {
@@ -101,16 +102,15 @@ const Index = () => {
     }
   };
 
-  const sortedCamps = user?.camps
-    ? [...user.camps].sort((a, b) => {
-        // Make the selected camp the first one in the list
-        return a.id === user.currentCampId
-          ? -1
-          : b.id === user.currentCampId
-          ? 1
-          : 0;
-      })
-    : [];
+  const sortedCamps = user?.camps ? user.camps : [];
+  // ? [...user.camps].sort((a, b) => {
+  //     // Make the selected camp the first one in the list
+  //     return a.id === user.currentCampId
+  //       ? -1
+  //       : b.id === user.currentCampId
+  //       ? 1
+  //       : 0;
+  //   })
 
   if (loading) {
     return <Loading />;
@@ -130,6 +130,7 @@ const Index = () => {
             }}
           >
             <Button type="primary" onClick={() => setShowCampForm(true)}>
+              <RiAddLine/>
               Create a Camp
             </Button>
           </div>
@@ -171,8 +172,8 @@ const Index = () => {
                           dateFormat="D MMM, YYYY"
                         />
                       </div>
-                      <h5 className="mb-1">{camp.name}</h5>
-                      <p className="text-muted">{camp.location}</p>
+                      <h5 className="mb-1">{camp?.name}</h5>
+                      <p className="text-muted">{camp?.location}</p>
                     </Card.Body>
                   </Card>
                 </div>

@@ -13,6 +13,11 @@ import user1 from "/assets/images/user/1.jpg";
 import Error500 from "../extra-pages/pages-error-500";
 import toast from "react-hot-toast";
 import Error404 from "../extra-pages/pages-error-404";
+import { RiUser3Fill } from "@remixicon/react";
+
+const generatePath = (path) => {
+  return window.origin + import.meta.env.BASE_URL + path;
+};
 
 const ConfirmPassword = () => {
   const { token } = useParams();
@@ -27,6 +32,7 @@ const ConfirmPassword = () => {
   });
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   console.log(token);
   // Validate the JWT token and fetch user details
   useEffect(() => {
@@ -85,6 +91,7 @@ const ConfirmPassword = () => {
       if (response.success) {
         setLoading(false);
         toast.success(response.message);
+        setSuccessMessage(response.message)
         setSuccess(true); // Show the SuccessComponent
       } else {
         setLoading(false);
@@ -100,76 +107,57 @@ const ConfirmPassword = () => {
   if (success)
     return (
       <ConfirmEmail
-        message={"Your account has been created! You can login now "}
+        message={successMessage}
       />
     ); // Show success component
 
   return (
-    <section className="sign-in-page d-md-flex align-items-center custom-auth-height">
-      <Container className="sign-in-page-bg mt-5 mb-md-5 mb-0 p-0">
-        <Row>
-          {/* <Col md={6} className="text-center z-2">
-            <div className="sign-in-detail text-white">
-              <h4 className="mt-3 mb-0">Hi, {user?.name || "User"}!</h4>
-              <p>Set your password to access your account.</p>
-            </div>
-          </Col> */}
-          <Col md={6} className="text-center z-2">
-            <div className="sign-in-detail text-white">
-              <Link to="/" className="sign-in-logo mb-2">
-                <img src={logowhite} className="img-fluid" />
+    <section
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
+        backgroundColor: "#f8f9fa",
+      }}
+    >
+      <Container
+        style={{
+          background: "#fff",
+          padding: "2rem",
+          borderRadius: "0.5rem",
+          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+          maxWidth: "500px",
+        }}
+      >
+        <Row className="justify-content-center">
+          <Col style={{}}>
+            <div className="text-center">
+              <Link to="/">
+                <img
+                  src={generatePath("/assets/images/hwrf-vertical.svg")}
+                  alt="Logo"
+                  style={{
+                    width: "150px",
+                    marginBottom: "1rem",
+                  }}
+                />
               </Link>
-              <Carousel
-                id="carouselExampleCaptions"
-                interval={2000}
-                controls={false}
-              >
-                <Carousel.Item>
-                  <img src={login1} className="d-block w-100" alt="Slide 1" />
-                  <div className="carousel-caption-container">
-                    <h4 className="mb-1 mt-1 text-white">Manage your orders</h4>
-                    <p className="pb-5">
-                      It is a long established fact that a reader will be
-                      distracted by the readable content.
-                    </p>
-                  </div>
-                </Carousel.Item>
-                <Carousel.Item>
-                  <img src={login2} className="d-block w-100" alt="Slide 2" />
-                  <div className="carousel-caption-container">
-                    <h4 className="mb-1 mt-1 text-white">Manage your orders</h4>
-                    <p className="pb-5">
-                      It is a long established fact that a reader will be
-                      distracted by the readable content.
-                    </p>
-                  </div>
-                </Carousel.Item>
-                <Carousel.Item>
-                  <img src={login3} className="d-block w-100" alt="Slide 3" />
-                  <div className="carousel-caption-container">
-                    <h4 className="mb-1 mt-1 text-white">Manage your orders</h4>
-                    <p className="pb-5">
-                      It is a long established fact that a reader will be
-                      distracted by the readable content.
-                    </p>
-                  </div>
-                </Carousel.Item>
-              </Carousel>{" "}
+              {/* <RiUser3Fill size={30} className="rounded-circle mb-3 text-center"/> */}
             </div>
-          </Col>
-          <Col md={6} className="position-relative z-2">
-            <div className="sign-in-form d-flex flex-column justify-content-center">
-              <img
-                src={user1}
-                alt="user-image"
-                width="25%"
-                className="rounded-circle"
-              />
-              <h4 className="mt-3 mb-0">Hi, {user?.name || "User"}!</h4>
-              <p>Set your password to access your account.</p>
+            <div>
+              <h4 className="text-center mb-1">
+                Hi, {user?.name || "User"}!
+              </h4>
+              <p  className="text-center mb-1">
+                Set your password to access your account.
+              </p>
               <Form onSubmit={handleSubmit}>
-                <Form.Group className="form-group mb-3" controlId="password">
-                  <Form.Label className="mb-2">Password</Form.Label>
+                <Form.Group
+                  controlId="password"
+                  style={{ marginBottom: "1rem" }}
+                >
+                  <Form.Label>Password</Form.Label>
                   <Form.Control
                     type="password"
                     placeholder="Enter new password"
@@ -182,10 +170,10 @@ const ConfirmPassword = () => {
                   </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group
-                  className="form-group mb-3"
                   controlId="confirmPassword"
+                  style={{ marginBottom: "1.5rem" }}
                 >
-                  <Form.Label className="mb-2">Confirm Password</Form.Label>
+                  <Form.Label>Confirm Password</Form.Label>
                   <Form.Control
                     type="password"
                     placeholder="Confirm new password"
@@ -199,7 +187,12 @@ const ConfirmPassword = () => {
                 </Form.Group>
                 <Button
                   type="submit"
-                  className="btn btn-primary-subtle float-end mt-3"
+                  style={{
+                    width: "100%",
+                    backgroundColor: "#007bff",
+                    borderColor: "#007bff",
+                  }}
+                  disabled={loading}
                 >
                   Submit
                 </Button>

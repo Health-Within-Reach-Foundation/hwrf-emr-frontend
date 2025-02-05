@@ -16,6 +16,7 @@ import "./assets/scss/customizer.scss";
 
 import "./assets/custom/custom.scss";
 import "./assets/custom/_carousel.scss";
+import "./assets/scss/antd/table.scss";
 import "./assets/vendor/font-awesome/css/font-awesome.min.css";
 import "./assets/vendor/remixicon/fonts/remixicon.css";
 import "./assets/vendor/phosphor-icons/Fonts/regular/style.css";

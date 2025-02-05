@@ -4,6 +4,9 @@ import { Loading } from "../../components/loading";
 import CustomTable from "../../components/custom-table";
 import RoleModalForm from "../../components/administration/role-form";
 import rolePermissionService from "../../api/role-permission-service";
+import { RiAddLine } from "@remixicon/react";
+import { transformText } from "../../utilities/utility-function";
+import AntdTable from "../../components/antd-table";
 
 const Roles = () => {
   const [roles, setRoles] = useState([]);
@@ -12,17 +15,51 @@ const Roles = () => {
   const [loading, setLoading] = useState(false);
   const [currentRole, setCurrentRole] = useState(null); // Holds the role being edited or null for creation
 
-  const columns = [
-    { title: "Role Name", data: "roleName" },
-    { title: "Role Description", data: "roleDescription" },
+  // const columns = [
+  //   {
+  //     title: "Role Name",
+  //     data: "roleName",
+  //     render: (data) => transformText(data),
+  //   },
+  //   { title: "Role Description", data: "roleDescription" },
+  //   {
+  //     title: "Actions",
+  //     data: null,
+  //     render: (_, row) => (
+  //       <Button
+  //         variant="outline-primary"
+  //         size="sm"
+  //         onClick={() => handleEditRole(row)}
+  //       >
+  //         Edit
+  //       </Button>
+  //     ),
+  //   },
+  // ];
+
+  const roleColumns = [
+    {
+      title: "Role Name",
+      dataIndex: "roleName",
+      key: "roleName",
+      sortable:true,
+      render: (text) => transformText(text),
+    },
+    {
+      title: "Role Description",
+      dataIndex: "roleDescription",
+      sortable:true,
+      key: "roleDescription",
+    },
     {
       title: "Actions",
-      data: null,
-      render: (_, row) => (
+      dataIndex: null,
+      key: "actions",
+      render: (_, record) => (
         <Button
           variant="outline-primary"
           size="sm"
-          onClick={() => handleEditRole(row)}
+          onClick={() => handleEditRole(record)}
         >
           Edit
         </Button>
@@ -80,14 +117,16 @@ const Roles = () => {
   return (
     <Container className="mt-4">
       <h2>Role Management</h2>
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="d-flex flex-row-reverse justify-content-between align-items-center mb-4">
         <Button variant="primary" onClick={handleCreateRole}>
+          <RiAddLine />
           Create Role
         </Button>
       </div>
 
       {/* Custom Table */}
-      <CustomTable data={roles} columns={columns} enableFilters={false} />
+      {/* <CustomTable data={roles} columns={columns} enableFilters={false} /> */}
+      <AntdTable data={roles} columns={roleColumns} pageSizeOptions={[10,20,30]} defaultPageSize={10}/>
 
       {/* Create/Edit Role Modal */}
       <RoleModalForm

@@ -81,6 +81,8 @@ import adminServices from "../../api/admin-services"; // Import your API service
 import toast from "react-hot-toast";
 import { Loading } from "../../components/loading";
 import DateCell from "../../components/date-cell";
+import DynamicFields from "./editableForm";
+import DynamicForm from "./formRender";
 
 const FormTemplates = () => {
   const [templates, setTemplates] = useState([]);
@@ -103,7 +105,7 @@ const FormTemplates = () => {
   }, []);
 
   const handleCardClick = (template) => {
-    navigate(`/form-templates/${template.id}`, { state: { template } });
+    navigate(`/form-templates/${template.id}`);
   };
 
   if (loading) {
@@ -137,6 +139,8 @@ const FormTemplates = () => {
           </Col>
         ))}
       </Row>
+      <DynamicFields/>
+      {/* <DynamicForm/> */}
     </Container>
   );
 };
