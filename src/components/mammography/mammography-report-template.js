@@ -48,15 +48,6 @@ export const mammoReportDefault = (id, name, age) => {
                 type: "tab",
                 version: 1,
               },
-              {
-                detail: 2,
-                format: 0,
-                mode: "normal",
-                style: "",
-                text: "\t",
-                type: "tab",
-                version: 1,
-              },
            
   
               {
@@ -226,16 +217,6 @@ export const mammoReportDefault = (id, name, age) => {
                 type: "tab",
                 version: 1,
               },
-              {
-                detail: 2,
-                format: 0,
-                mode: "normal",
-                style: "",
-                text: "\t",
-                type: "tab",
-                version: 1,
-              },
-              
               {
                 detail: 0,
                 format: 1,

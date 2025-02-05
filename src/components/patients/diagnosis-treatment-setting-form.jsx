@@ -33,11 +33,14 @@ const DiagnosisTreatmentSettingForm = ({
     treatmentStatus: [],
     remainingAmount: null,
     xrayStatus: false,
+    crownStatus: false,
     xray: [], // Manage uploaded files here
     treatingDoctor: {},
-    nextDate: dayjs(),
+    nextDate: null,
     paymentMode: "offline",
   });
+
+  const [treatmentForm] = Form.useForm();
 
   useEffect(() => {
     if (isEdit && selectedTreatment) {
@@ -48,12 +51,14 @@ const DiagnosisTreatmentSettingForm = ({
         additionalDetails,
         xray,
         treatmentId,
+        nextDate,
         ...filteredData
       } = selectedTreatment;
 
       setFormState({
         treatmentSettingId: id,
         xray: [],
+        nextDate: nextDate ? dayjs(nextDate) : null,
         ...filteredData,
       });
     } else {
@@ -62,13 +67,18 @@ const DiagnosisTreatmentSettingForm = ({
         treatmentStatus: [],
         remainingAmount: null,
         xrayStatus: false,
+        crownStatus: false,
         xray: [],
         treatingDoctor: {},
-        nextDate: dayjs(),
+        nextDate: null,
         paymentMode: "",
       });
     }
   }, [isEdit, diagnosisData]);
+
+  useEffect(() => {
+    treatmentForm.setFieldsValue(formState);
+  }, [formState]);
 
   const handleAmountChange = (key, value) => {
     const sanitizedValue = Math.max(0, parseFloat(value) || 0);
@@ -104,6 +114,7 @@ const DiagnosisTreatmentSettingForm = ({
         treatmentStatus,
         treatmentDate,
         xrayStatus,
+        crownStatus,
         xray,
         treatingDoctor,
         onlineAmount,
@@ -132,6 +143,7 @@ const DiagnosisTreatmentSettingForm = ({
       formData.append("treatmentStatus", JSON.stringify(treatmentStatus));
       formData.append("treatmentSettingId", selectedTreatment.id);
       formData.append("xrayStatus", xrayStatus);
+      formData.append("crownStatus", crownStatus);
       formData.append("treatingDoctor", JSON.stringify(treatingDoctor));
       formData.append("onlineAmount", onlineAmount);
       formData.append("offlineAmount", offlineAmount);
@@ -192,8 +204,18 @@ const DiagnosisTreatmentSettingForm = ({
 
   console.log("is edit form state --.", formState);
   return (
-    <Form layout="vertical">
-      <Form.Item label="Treatment Status">
+    <Form
+      layout="vertical"
+      form={treatmentForm}
+      initialValues={formState}
+      onFinish={handleSubmit}
+    >
+      <Form.Item
+        label="Treatment Status"
+        name={"treatmentStatus"}
+        required
+        rules={[{ required: true, message: "Please select treatment status" }]}
+      >
         <Select
           mode="multiple"
           value={formState.treatmentStatus}
@@ -204,17 +226,28 @@ const DiagnosisTreatmentSettingForm = ({
       </Form.Item>
 
       <div className="w-100 d-flex justify-content-between gap-3">
-        <Form.Item className="w-100">
+        <Form.Item
+          className="w-100"
+          name={"crownStatus"}
+          label="Crown Status"
+          extra="Please check the box above if the treatment status is associated with a crown."
+        >
+          <Checkbox
+            checked={formState.crownStatus}
+            onChange={(e) =>
+              handleInputChange2("crownStatus", e.target.checked)
+            }
+          ></Checkbox>
+        </Form.Item>
+        <Form.Item className="w-100" name={"xrayStatus"} label="X-ray Status">
           <Checkbox
             checked={formState.xrayStatus}
             onChange={(e) => handleInputChange2("xrayStatus", e.target.checked)}
-          >
-            X-ray Status
-          </Checkbox>
+          ></Checkbox>
         </Form.Item>
 
         {formState.xrayStatus && (
-          <Form.Item label="Upload X-ray Files" className="w-100">
+          <Form.Item label="Upload X-ray Files" className="w-100" name={"xray"}>
             <Upload
               multiple
               beforeUpload={(file) => {
@@ -264,7 +297,12 @@ const DiagnosisTreatmentSettingForm = ({
         )}
       </div>
 
-      <Form.Item label="Payment mode">
+      <Form.Item
+        label="Payment mode"
+        name={"paymentMode"}
+        required
+        rules={[{ required: true, message: "Please select payment mode" }]}
+      >
         <Radio.Group
           value={formState?.paymentMode}
           onChange={(e) => {
@@ -280,7 +318,16 @@ const DiagnosisTreatmentSettingForm = ({
 
       {formState.paymentMode == "online" ||
       formState.paymentMode == "offline" ? (
-        <Form.Item label="Setting Paid Amount">
+        <Form.Item
+          label="Setting Paid Amount"
+          name={
+            formState.paymentMode === "online"
+              ? "onlineAmount"
+              : "offlineAmount"
+          }
+          required
+          rules={[{ required: true, message: "Please enter amount" }]}
+        >
           <Input
             type="number"
             value={
@@ -299,7 +346,12 @@ const DiagnosisTreatmentSettingForm = ({
         </Form.Item>
       ) : (
         <div className="d-flex gap-3">
-          <Form.Item label="Online paid">
+          <Form.Item
+            label="Online paid"
+            name={"onlineAmount"}
+            required
+            rules={[{ required: true, message: "Please enter amount" }]}
+          >
             <Input
               type="number"
               value={formState?.onlineAmount || ""}
@@ -308,7 +360,12 @@ const DiagnosisTreatmentSettingForm = ({
               }
             />
           </Form.Item>
-          <Form.Item label="Offline paid">
+          <Form.Item
+            label="Offline paid"
+            name={"offlineAmount"}
+            required
+            rules={[{ required: true, message: "Please enter amount" }]}
+          >
             <Input
               type="number"
               value={formState?.offlineAmount || ""}
@@ -320,17 +377,23 @@ const DiagnosisTreatmentSettingForm = ({
           <Form.Item label="Total paid">
             <Input
               type="number"
-              value={Number(formState.onlineAmount) + Number(formState.offlineAmount)}
-              readOnly
-              onChange={(e) =>
-                handleAmountChange("offlineAmount", e.target.value)
+              value={
+                Number(formState.onlineAmount) + Number(formState.offlineAmount)
               }
+              readOnly
+              onChange={() => {}}
             />
           </Form.Item>
         </div>
       )}
 
-      <Form.Item label="Treating Doctor" className="w-100">
+      <Form.Item
+        label="Treating Doctor"
+        className="w-100"
+        name={"treatingDoctor"}
+        required
+        rules={[{ required: true, message: "Please select treating doctor" }]}
+      >
         <Select
           value={formState.treatingDoctor}
           onChange={(value, option) =>
@@ -341,16 +404,24 @@ const DiagnosisTreatmentSettingForm = ({
         />
       </Form.Item>
 
-      <Form.Item label="Add Notes">
+      <Form.Item label="Add Notes" name={"notes"}>
         <Input.TextArea
           value={formState.notes}
           onChange={(e) => handleInputChange2("notes", e.target.value)}
         />
       </Form.Item>
-      <Form.Item label="Next follow-up Date" className="w-100">
+      <Form.Item
+        label="Next follow-up Date"
+        className="w-100"
+        name={"nextDate"}
+        required={false}
+      >
         <DatePicker
-          value={formState?.nextDate ? dayjs(formState.nextDate) : null}
-          onChange={(value) => handleInputChange2("nextDate", value)}
+          defaultValue={formState?.nextDate}
+          // value={formState?.nextDate !== null ? dayjs(formState.nextDate) : null}
+          onChange={(date, dateString) =>
+            handleInputChange2("nextDate", dayjs(dateString))
+          }
           className="w-100"
         />
       </Form.Item>
@@ -358,7 +429,16 @@ const DiagnosisTreatmentSettingForm = ({
       <Form.Item className="d-flex justify-content-end">
         <Button
           className="rounded-0 bg-primary"
-          onClick={handleSubmit}
+          onClick={() => {
+            treatmentForm
+              .validateFields()
+              .then(() => {
+                handleSubmit();
+              })
+              .catch((errorInfo) => {
+                console.log("Validation failed", errorInfo);
+              });
+          }}
           type="primary"
           loading={loading}
         >

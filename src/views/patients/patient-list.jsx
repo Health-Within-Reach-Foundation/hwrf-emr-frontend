@@ -1,91 +1,12 @@
-// import React, { Fragment, useEffect, useState } from "react";
-// import { Col, Row } from "react-bootstrap";
-// import Card from "../../components/Card";
-// import CustomTable from "../../components/custom-table";
-
-// import patientServices from "../../api/patient-services";
-// import { Loading } from "../../components/loading";
-
-// const PatientList = () => {
-//   const [data, setData] = useState([]);
-//   const [loading, setLoading] = useState(true);
-
-//   const columns = [
-//     // { title: "ID", data: "id" },
-//     { title: "Register No", data: "regNo" },
-//     { title: "Name", data: "name" },
-//     { title: "Age", data: "age" },
-//     { title: "Gender", data: "sex" },
-//     { title: "Mobile", data: "mobile" },
-//     { title: "Address", data: "address" },
-//     { title: "Register Date", data: "createdAt" },
-//   ];
-
-//   const filters = [
-//     { key: "registerDate", label: "Register Date" },
-//     { key: "gender", label: "Gender" },
-//   ];
-
-//   const getPatients = async () => {
-//     try {
-//       setLoading(true);
-//       const response = await patientServices.getPatients();
-//       setData(response.data);
-//     } catch (error) {
-//       
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     getPatients();
-//   }, []);
-
-//   if (loading) {
-//     return <Loading />;
-//   }
-
-//   return (
-//     <>
-//       <Row>
-//         <Col sm={12}>
-//           <Card>
-//             <Card.Header className="card-header-custom d-flex justify-content-between p-4 mb-0 border-bottom-0">
-//               <Card.Header.Title>
-//                 <h4 className="card-title">Patients List</h4>
-//               </Card.Header.Title>
-//             </Card.Header>
-//           </Card>
-//         </Col>
-
-//         <div>
-//           <CustomTable
-//             columns={columns}
-//             data={data}
-//             enableSearch
-//             enableFilters
-//             filtersConfig={filters}
-//           />
-//         </div>
-//       </Row>
-//     </>
-//   );
-// };
-
-// export default PatientList;
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Col, Row } from "react-bootstrap";
 import Card from "../../components/Card";
-import CustomTable from "../../components/custom-table";
 import patientServices from "../../api/patient-services";
 import { Loading } from "../../components/loading";
-import Flatpickr from "react-flatpickr";
-import Select from "react-select";
 import "flatpickr/dist/themes/material_blue.css";
-import { data } from "jquery";
 import DateCell from "../../components/date-cell";
+import Antdtable from "../../components/antd-table";
 
 const PatientList = () => {
   const [originalData, setOriginalData] = useState([]); // Original unfiltered data
@@ -96,165 +17,81 @@ const PatientList = () => {
     registerDate: null, // Filter state for register date
   });
 
-  const navigate = useNavigate();
 
-  // Table columns
-  const columns = [
+  const patientColumns = [
     {
       title: "Register No",
-      data: "regNo",
-      render: (data, row) => {
-        // Format the register number as HWRF/24-25/1 where 25 is the current year and 24 is the last year
-        const currentYear = new Date(row?.createdAt).getFullYear() % 100;
-        const lastYear = currentYear - 1;
-        const formattedRegNo = `HWRF/${lastYear}-${currentYear}/${data}`;
-        return (
-          <a href={`/patient/patient-profile/${row.id}`} className="">
-            {formattedRegNo}
-          </a>
-        );
-        // return (
-        //   <a href={`/patient/patient-profile/${row.id}`} className="">
-        //     {data}
-        //   </a>
-        // );
-      },
+      dataIndex: "regNo",
+      key: "regNo",
+      sortable: true,
+      width: 180,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
+      ),
+    },
+    // add the columns for the patient list help me fast
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      sortable: true,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
+      ),
     },
     {
       title: "Age",
-      data: "age",
-      render: (data, row) => {
-        
-        return (
-          <a href={`/patient/patient-profile/${row.id}`} className="">
-            {data}
-          </a>
-        );
-      },
+      dataIndex: "age",
+      key: "age",
+      sortable: true,
+      width: 80,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
+      ),
     },
     {
       title: "Gender",
-      data: "sex",
-      render: (data, row) => {
-        
-        return (
-          <a href={`/patient/patient-profile/${row.id}`} className="">
-            {data}
-          </a>
-        );
-      },
+      dataIndex: "sex",
+      key: "sex",
+      sortable: true,
+      width: 120,
+      filters: [
+        { text: "Male", value: "male" },
+        { text: "Female", value: "female" },
+      ],
+      onFilter: (value, record) => record.sex === value,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
+      ),
     },
     {
       title: "Mobile",
-      data: "mobile",
-      render: (data, row) => {
-        
-        return (
-          <a href={`/patient/patient-profile/${row.id}`} className="">
-            {data}
-          </a>
-        );
-      },
+      dataIndex: "mobile",
+      key: "mobile",
+      sortable: false,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
+      ),
     },
     {
       title: "Address",
-      data: "address",
-      render: (data, row) => {
-        
-        return (
-          <a href={`/patient/patient-profile/${row.id}`} className="">
-            {data}
-          </a>
-        );
-      },
-    },
-    {
-      title: "Service taken",
-      data: "serviceTaken",
-      render: (data, row) => {
-        
-        return (
-          <a href={`/patient/patient-profile/${row.id}`} className="">
-            {data.join(", ")}
-          </a>
-        );
-      },
-    },
-    // { title: "Register Date", data: "createdAt" },
-    {
-      title: "Register Date",
-      data: "createdAt",
-      render: (data, row) => {
-        
-        return (
-          <a href={`/patient/patient-profile/${row.id}`} className="">
-            <DateCell date={data} />
-          </a>
-        );
-      },
-    },
-  ];
-
-  // Filter configurations
-  const filtersConfig = [
-    {
-      key: "gender",
-      component: ({ value, onChange }) => (
-        <div className="mb-3">
-          <label className="form-label">Gender</label>
-          <Select
-            options={[
-              { value: "male", label: "Male" },
-              { value: "female", label: "Female" },
-              { value: "other", label: "Other" },
-            ]}
-            value={value}
-            onChange={onChange}
-            isClearable
-            placeholder="Select Gender"
-          />
-        </div>
+      dataIndex: "address",
+      key: "address",
+      sortable: false,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
       ),
-      props: {
-        value: filters.gender
-          ? {
-              value: filters.gender,
-              label:
-                filters.gender.charAt(0).toUpperCase() +
-                filters.gender.slice(1),
-            }
-          : null,
-        onChange: (selectedOption) =>
-          setFilters((prev) => ({
-            ...prev,
-            gender: selectedOption ? selectedOption.value : null,
-          })),
-      },
     },
     {
-      key: "registerDate",
-      component: ({ value, onChange }) => (
-        <div className="mb-3">
-          <label className="form-label">Register Date</label>
-          <Flatpickr
-            className="form-control"
-            value={value}
-            onChange={(date) => onChange(date.length ? date[0] : null)}
-            options={{
-              dateFormat: "Y-m-d",
-              enableTime: false,
-            }}
-          />
-        </div>
+      title: "Service Taken",
+      dataIndex: "serviceTaken",
+      key: "serviceTaken",
+      sortable: true,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>
+          {text?.join(", ")}
+        </Link>
       ),
-      props: {
-        value: filters.registerDate,
-        onChange: (date) =>
-          setFilters((prev) => ({
-            ...prev,
-            registerDate: date,
-          })),
-      },
     },
   ];
 
@@ -267,48 +104,15 @@ const PatientList = () => {
       setOriginalData(response.data);
       setFilteredData(response.data);
     } catch (error) {
-      
     } finally {
       setLoading(false);
     }
-  };
-
-  // Apply filters
-  const applyFilters = () => {
-    let filtered = [...originalData];
-
-    // Gender filter
-    if (filters.gender) {
-      filtered = filtered.filter(
-        (patient) => patient.sex.toLowerCase() === filters.gender.toLowerCase()
-      );
-    }
-
-    // Register date filter
-    if (filters.registerDate) {
-      const selectedDate = filters.registerDate.toISOString().split("T")[0];
-      filtered = filtered.filter((patient) =>
-        patient.createdAt.startsWith(selectedDate)
-      );
-    }
-
-    setFilteredData(filtered);
-  };
-
-  // Reset filters
-  const resetFilters = () => {
-    setFilters({ gender: null, registerDate: null });
-    setFilteredData(originalData);
   };
 
   // Initial data load
   useEffect(() => {
     getPatients();
   }, []);
-
-  const handleRowClick = (rowData) => {
-    navigate(`/patient/patient-profile/${rowData.id}`);
-  };
 
   if (loading) {
     return <Loading />;
@@ -327,15 +131,11 @@ const PatientList = () => {
       </Col>
 
       <Col sm={12}>
-        <CustomTable
-          columns={columns}
-          data={filteredData} // Use filtered data
-          enableSearch
-          enableFilters
-          filtersConfig={filtersConfig} // Pass filters configuration
-          // rowOnClick={handleRowClick} // Pass row click handler
-          onApplyFilters={applyFilters} // Pass apply filters function
-          onResetFilters={resetFilters} // Pass reset filters function
+        <Antdtable
+          columns={patientColumns}
+          data={filteredData || originalData}
+          pageSizeOptions={[50, 100, 150, 200]}
+          defaultPageSize={50}
         />
       </Col>
     </Row>

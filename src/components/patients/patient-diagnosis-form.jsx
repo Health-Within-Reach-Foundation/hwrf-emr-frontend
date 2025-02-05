@@ -70,6 +70,7 @@ const PatientDiagnosisForm = ({
         treatmentStatus: [],
         notes: "",
         xrayStatus: false,
+        crownStatus: false,
         xray: [], // Array to store uploaded files
         treatingDoctor: {},
         paymentMode: "offline",
@@ -79,6 +80,9 @@ const PatientDiagnosisForm = ({
       },
     ],
   });
+
+  const [diagnosisForm] = Form.useForm();
+  const [treatmentForm] = Form.useForm();
 
   const menu = {
     items: [
@@ -144,6 +148,7 @@ const PatientDiagnosisForm = ({
           notes: "",
           treatmentDate: dayjs(),
           xrayStatus: false,
+          crownStatus: false,
           xray: [],
           treatingDoctor: {},
           paymentMode: "offline",
@@ -281,6 +286,14 @@ const PatientDiagnosisForm = ({
       });
     }
   }, [isEdit, diagnosisData]);
+
+  useEffect(() => {
+    diagnosisForm.setFieldsValue(formState);
+  }, [formState]);
+
+  useEffect(() => {
+    treatmentForm.setFieldsValue(treatments);
+  }, [treatments]);
 
   // useEffect(() => {
   //   setFormState((prev) => ({
@@ -455,7 +468,16 @@ const PatientDiagnosisForm = ({
         <Card.Body>
           <div className="d-flex justify-content-end gap-3">
             <Button
-              onClick={handleSubmit}
+              onClick={() => {
+                diagnosisForm
+                  .validateFields()
+                  .then(() => {
+                    handleSubmit();
+                  })
+                  .catch((errorInfo) => {
+                    console.error("Validation Failed:", errorInfo);
+                  });
+              }}
               type="primary"
               className="bg-primary rounded-0"
               loading={loading}
@@ -473,9 +495,25 @@ const PatientDiagnosisForm = ({
               </Button>
             )}
           </div>
-          <Form layout="vertical" onFinish={handleSubmit}>
+          <Form
+            layout="vertical"
+            onFinish={handleSubmit}
+            initialValues={formState}
+            form={diagnosisForm}
+          >
             <div className="w-100 d-flex justify-content-between gap-3">
-              <Form.Item label="Complaints" className="w-100">
+              <Form.Item
+                label="Complaints"
+                className="w-100"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select at least one complaint",
+                  },
+                ]}
+                name={"complaints"}
+                required
+              >
                 <Select
                   mode="multiple"
                   value={formState.complaints}
@@ -483,7 +521,18 @@ const PatientDiagnosisForm = ({
                   options={complaintsOptions}
                 />
               </Form.Item>
-              <Form.Item label="Treatment" className="w-100">
+              <Form.Item
+                label="Treatment"
+                className="w-100"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select at least one treatment",
+                  },
+                ]}
+                name={"treatmentsSuggested"}
+                required
+              >
                 <Select
                   mode="multiple"
                   value={formState.treatmentsSuggested}
@@ -499,7 +548,17 @@ const PatientDiagnosisForm = ({
             <div className="w-100 d-flex flex-md-row flex-column justify-content-between gap-5">
               <div className="d-flex flex-column">
                 <div className="w-100 d-flex">
-                  <Form.Item>
+                  <Form.Item
+                    label="Qudrant type for teeth selection"
+                    required
+                    name={"dentalQuadrantType"}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select the dental quadrant type",
+                      },
+                    ]}
+                  >
                     <Checkbox
                       checked={formState.dentalQuadrantType === "all"}
                       onChange={() => {
@@ -534,12 +593,18 @@ const PatientDiagnosisForm = ({
                 </div>
                 <div>
                   {formState.dentalQuadrantType === "adult" && (
-                    <Form.Item>
+                    <Form.Item
+                      label="Select Teeth"
+                      required
+                      name={isEdit ? "selectedTeeth" : "adultSelectedTeeth"}
+                      rules={[
+                        { required: true, message: "Please select the teeth" },
+                      ]}
+                    >
                       <TeethSelector
                         isEdit={isEdit}
                         selectedTeeth={formState.adultSelectedTeeth}
                         onChange={(updatedTeeth) => {
-                          // handleInputChange("adultSelectedTeeth", updatedTeeth)
                           if (isEdit) {
                             handleInputChange("selectedTeeth", updatedTeeth);
                           } else {
@@ -553,7 +618,14 @@ const PatientDiagnosisForm = ({
                     </Form.Item>
                   )}
                   {formState.dentalQuadrantType === "child" && (
-                    <Form.Item>
+                    <Form.Item
+                      label="Select Teeth"
+                      required
+                      name={isEdit ? "selectedTeeth" : "childSelectedTeeth"}
+                      rules={[
+                        { required: true, message: "Please select the teeth" },
+                      ]}
+                    >
                       <ChildTeethSelector
                         isEdit={isEdit}
                         selectedTeeth={formState?.childSelectedTeeth}
@@ -574,6 +646,78 @@ const PatientDiagnosisForm = ({
               </div>
 
               <div className="w-100 d-flex flex-column">
+                <Form.Item
+                  className="w-100"
+                  label="X-ray Status"
+                  name={"xrayStatus"}
+                >
+                  <Checkbox
+                    checked={formState.xrayStatus}
+                    onChange={(e) =>
+                      handleInputChange("xrayStatus", e.target.checked)
+                    }
+                  >
+                    X-ray Status
+                  </Checkbox>
+                </Form.Item>
+                {diagnosisData?.xray &&
+                  diagnosisData?.xray?.map((file) => (
+                    <div className="d-flex flex-col gap-2">
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                        }}
+                      >
+                        <Button
+                          type="link"
+                          style={{
+                            padding: 0,
+                            fontSize: "14px",
+                            textDecoration: "underline",
+                            color: "#1890ff",
+                          }}
+                          href={`/files?key=${file?.key}`}
+                          onClick={() => {}}
+                        >
+                          {file?.fileName || "file"}
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                {formState.xrayStatus && (
+                  <Form.Item
+                    label="Upload X-ray Files"
+                    className="w-100"
+                    name={"xray"}
+                  >
+                    <Upload
+                      multiple
+                      accept="image/*"
+                      beforeUpload={(file) => {
+                        setFormState((prev) => ({
+                          ...prev,
+                          xray: [...prev.xray, file],
+                        }));
+                        return false;
+                      }}
+                      fileList={formState.xray}
+                      onRemove={(file) => {
+                        setFormState((prev) => ({
+                          ...prev,
+                          xray: prev.xray.filter(
+                            (item) => item.uid !== file.uid
+                          ),
+                        }));
+                      }}
+                    >
+                      <Button icon={<RiUpload2Fill />} variant="outlined">
+                        Upload
+                      </Button>
+                    </Upload>
+                  </Form.Item>
+                )}
                 <Form.Item label="Notes">
                   <Input.TextArea
                     value={formState.notes}
@@ -581,7 +725,17 @@ const PatientDiagnosisForm = ({
                   />
                 </Form.Item>
 
-                <Form.Item label="Estimated Cost">
+                <Form.Item
+                  label="Estimated Cost"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter the estimated cost",
+                    },
+                  ]}
+                  name={"estimatedCost"}
+                  required
+                >
                   <Input
                     type="number"
                     defaultValue={diagnosisData?.estimatedCost || 0}
@@ -632,10 +786,22 @@ const PatientDiagnosisForm = ({
             </div>
             <Form
               layout="vertical"
-              // onFinish={() => handleSubmitNewTreatment(index)}
+              onFinish={handleSubmit}
+              initialValues={treatments}
+              form={treatmentForm}
             >
               <div className="d-flex gap-2">
-                <Form.Item label="Total Amount">
+                <Form.Item
+                  label="Total Amount"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter the total amount",
+                    },
+                  ]}
+                  name={"totalAmount"}
+                  required
+                >
                   <Input
                     type="number"
                     defaultValue={diagnosisData?.treatment?.totalAmount || 0}
@@ -645,7 +811,17 @@ const PatientDiagnosisForm = ({
                     }
                   />
                 </Form.Item>
-                <Form.Item label="Total Paid Amount">
+                <Form.Item
+                  label="Total Paid Amount"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter the total paid amount",
+                    },
+                  ]}
+                  name={"paidAmount"}
+                  required
+                >
                   <Input
                     type="number"
                     readOnly
@@ -656,7 +832,17 @@ const PatientDiagnosisForm = ({
                     }
                   />
                 </Form.Item>
-                <Form.Item label="Remaining Amount">
+                <Form.Item
+                  label="Remaining Amount"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter the remaining amount",
+                    },
+                  ]}
+                  name={"remainingAmount"}
+                  required
+                >
                   <Input
                     type="number"
                     value={treatments.remainingAmount || 0}
@@ -708,11 +894,22 @@ const PatientDiagnosisForm = ({
                       </Button>
                     </div>
                     <div className="w-100 d-flex justify-content-between gap-3">
-                      <Form.Item label="Treatment Date" className="w-100">
+                      <Form.Item
+                        label="Treatment Date"
+                        className="w-100"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select the treatment date",
+                          },
+                        ]}
+                        // name={`treatmentDate_${index}`}
+                        name={["newTreatmentSetting", index, "treatmentDate"]}
+                        required
+                      >
                         <DatePicker
                           value={setting.treatmentDate}
                           onChange={(value) => {
-                            console.log("value -->", value);
                             handleTreatmentSettingChange(
                               index,
                               "treatmentDate",
@@ -723,7 +920,18 @@ const PatientDiagnosisForm = ({
                         />
                       </Form.Item>
 
-                      <Form.Item label="Treatment Status" className="w-100">
+                      <Form.Item
+                        label="Treatment Status"
+                        className="w-100"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select the treatment status",
+                          },
+                        ]}
+                        name={["newTreatmentSetting", index, "treatmentStatus"]}
+                        required
+                      >
                         <Select
                           mode="multiple"
                           value={setting.treatmentStatus}
@@ -740,7 +948,29 @@ const PatientDiagnosisForm = ({
                       </Form.Item>
                     </div>
                     <div className="w-100 d-flex flex-column flex-sm-row justify-content-between gap-3">
-                      <Form.Item className="w-100">
+                      <Form.Item
+                        className="w-100"
+                        name={["newTreatmentSetting", index, "crownStatus"]}
+                        label="Crown Status"
+                        extra="Please check the box above if the treatment status is associated with a crown."
+                      >
+                        <Checkbox
+                          checked={setting.crownStatus}
+                          onChange={(e) =>
+                            handleTreatmentSettingChange(
+                              index,
+                              "crownStatus",
+                              e.target.checked
+                            )
+                          }
+                        ></Checkbox>
+                      </Form.Item>
+
+                      <Form.Item
+                        className="w-100"
+                        name={["newTreatmentSetting", index, "xrayStatus"]}
+                        label="X-ray Status"
+                      >
                         <Checkbox
                           checked={setting.xrayStatus}
                           onChange={(e) =>
@@ -750,13 +980,22 @@ const PatientDiagnosisForm = ({
                               e.target.checked
                             )
                           }
-                        >
-                          X-ray Status
-                        </Checkbox>
+                        ></Checkbox>
                       </Form.Item>
 
                       {setting.xrayStatus && (
-                        <Form.Item label="Upload X-ray Files" className="w-100">
+                        <Form.Item
+                          label="Upload X-ray Files"
+                          className="w-100"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please upload the X-ray files",
+                            },
+                          ]}
+                          name={["newTreatmentSetting", index, "xray"]}
+                          required
+                        >
                           <Upload
                             multiple
                             accept="image/*"
@@ -787,7 +1026,17 @@ const PatientDiagnosisForm = ({
                     </div>
                     <div className="w-100 d-flex justify-content-between gap-3">
                       <div className="d-flex flex-column w-100">
-                        <Form.Item label="Payment mode">
+                        <Form.Item
+                          label="Payment mode"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select the payment mode",
+                            },
+                          ]}
+                          name={["newTreatmentSetting", index, "paymentMode"]}
+                          required
+                        >
                           <Radio.Group
                             value={setting?.paymentMode}
                             onChange={(e) =>
@@ -809,6 +1058,20 @@ const PatientDiagnosisForm = ({
                           <Form.Item
                             label="Setting Paid Amount"
                             className="w-100"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please enter the paid amount",
+                              },
+                            ]}
+                            name={[
+                              "newTreatmentSetting",
+                              index,
+                              setting.paymentMode === "online"
+                                ? "onlineAmount"
+                                : "offlineAmount",
+                            ]}
+                            required
                           >
                             <Input
                               type="number"
@@ -835,6 +1098,19 @@ const PatientDiagnosisForm = ({
                             <Form.Item
                               label="Online Paid Amount"
                               className="w-100"
+                              rules={[
+                                {
+                                  required: true,
+                                  message:
+                                    "Please enter the online paid amount",
+                                },
+                              ]}
+                              name={[
+                                "newTreatmentSetting",
+                                index,
+                                "onlineAmount",
+                              ]}
+                              required
                             >
                               <Input
                                 type="number"
@@ -851,6 +1127,19 @@ const PatientDiagnosisForm = ({
                             <Form.Item
                               label="Offline Paid Amount"
                               className="w-100"
+                              rules={[
+                                {
+                                  required: true,
+                                  message:
+                                    "Please enter the offline paid amount",
+                                },
+                              ]}
+                              name={[
+                                "newTreatmentSetting",
+                                index,
+                                "offlineAmount",
+                              ]}
+                              required
                             >
                               <Input
                                 type="number"
@@ -864,7 +1153,16 @@ const PatientDiagnosisForm = ({
                                 }
                               />
                             </Form.Item>
-                            <Form.Item label="Total Amount" className="w-100">
+                            <Form.Item
+                              label="Total Amount"
+                              className="w-100"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Please enter the total amount",
+                                },
+                              ]}
+                            >
                               <Input
                                 type="number"
                                 value={
@@ -872,13 +1170,7 @@ const PatientDiagnosisForm = ({
                                   Number(setting?.onlineAmount)
                                 }
                                 readOnly
-                                onChange={(e) =>
-                                  handleTreatmentSettingChange(
-                                    index,
-                                    "offlineAmount",
-                                    e.target.value
-                                  )
-                                }
+                                onChange={() => {}}
                               />
                             </Form.Item>
                           </div>
@@ -886,11 +1178,11 @@ const PatientDiagnosisForm = ({
                         <Form.Item
                           label="Next follow up date"
                           className="w-100"
+                          name={["newTreatmentSetting", index, "nextDate"]}
                         >
                           <DatePicker
                             value={setting.nextDate}
                             onChange={(value) => {
-                              console.log("value -->", value);
                               handleTreatmentSettingChange(
                                 index,
                                 "nextDate",
@@ -903,7 +1195,18 @@ const PatientDiagnosisForm = ({
                       </div>
 
                       <div className="d-flex flex-column w-100">
-                        <Form.Item label="Treating Doctor" className="w-100">
+                        <Form.Item
+                          label="Treating Doctor"
+                          className="w-100"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select the treating doctor",
+                            },
+                          ]}
+                          name={`treatingDoctor_${index}`}
+                          required
+                        >
                           <Select
                             value={setting.treatingDoctor}
                             onChange={(value, option) =>
@@ -933,9 +1236,18 @@ const PatientDiagnosisForm = ({
                     </div>
                     <div className="d-flex justify-content-end">
                       <Button
-                        onClick={() => handleSubmitNewTreatment(index)}
+                        onClick={() => {
+                          treatmentForm
+                            .validateFields()
+                            .then(() => {
+                              handleSubmitNewTreatment(index);
+                            })
+                            .catch((errorInfo) => {
+                              console.error("Validation Failed:", errorInfo);
+                            });
+                        }}
                         type="primary"
-                        className="bg-primary"
+                        className="bg-primary rounded-0"
                         loading={treatmentLoading} // Assuming loading is being managed elsewhere
                       >
                         Submit Treatment
@@ -947,10 +1259,9 @@ const PatientDiagnosisForm = ({
               {diagnosisData?.treatment ? (
                 <div className="my-1">
                   <hr />
-                  <p>Treatements Settings</p>
+                  <p>Treatments Settings</p>
                   {diagnosisData?.treatment?.treatmentSettings?.map(
                     (treatment) => {
-                      console.log(treatment);
                       return (
                         <Accordion className="my-1">
                           <Accordion.Item eventKey="0">

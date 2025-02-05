@@ -268,7 +268,7 @@ const Header = () => {
                     }`}
                   ></i>
                 </a> */}
-                <SettingOffCanvas />
+                {/* <SettingOffCanvas /> */}
               </Nav.Item> 
               {/* <Dropdown as="li" className="nav-item">
                 <Dropdown.Toggle

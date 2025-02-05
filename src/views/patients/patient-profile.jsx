@@ -1,19 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Button,
-  Tabs,
-  Tab,
-} from "react-bootstrap";
-import { Select  } from "antd"; // Import TreeSelect from antd
+import { Container, Row, Col, Card, Button, Tabs, Tab } from "react-bootstrap";
+import { Select } from "antd"; // Import TreeSelect from antd
 import { useParams } from "react-router-dom";
 import patientServices from "../../api/patient-services";
 import { Loading } from "../../components/loading";
 import { useAuth } from "../../utilities/AuthProvider";
-import CustomTable from "../../components/custom-table";
 import toast from "react-hot-toast";
 import PatientDiagnosisForm from "../../components/patients/patient-diagnosis-form";
 import DateCell from "../../components/date-cell";
@@ -24,6 +15,8 @@ import { RiAddLine } from "@remixicon/react";
 import campManagementService from "../../api/camp-management-service";
 import CurrentCampDetailsHeader from "../../components/camp/currentcamp-detail-header";
 import MammoMedicalHistory from "../../components/mammography/mammography-medical-history";
+import AntdTable from "../../components/antd-table";
+import { sort } from "@amcharts/amcharts4/.internal/core/utils/Iterator";
 
 const PatientProfile = () => {
   const { id } = useParams();
@@ -31,59 +24,15 @@ const PatientProfile = () => {
   const [selectedDiagnosis, setSelectedDiagnosis] = useState(null);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  // const [loading, setLoading] = useState(true);
   const [patientLoading, setPatientLoading] = useState(true);
   const [usersLoading, setUsersLoading] = useState(true);
   const [campLoading, setCampLoading] = useState(true);
   const { user, userRoles } = useAuth();
-  const [selectedDiagnosisRow, setSelectedDiagnosisRow] = useState(null);
   const [users, setUsers] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
-  const [checkedRow, setCheckedRow] = useState(null); // Track a single selected row
   const [allDiagnoses, setAllDiagnoses] = useState([]);
-  const [allTreatments, setAllTreatments] = useState([]);
-
-  // const handleCheckboxChange = (record) => {
-  //   setCheckedRow((prev) => (prev === record.id ? null : record.id)); // Toggle or select a new row
-  //   setSelectedDiagnosisRow(record);
-  // };
-
-  const handleCheckboxChange = (record, e) => {
-    console.log("e -->", e);
-    setSelectedDiagnosisRow(record);
-    setCheckedRow((prev) => (prev === record.id ? null : record.id)); // Toggle selection
-    if (e?.target?.checked === false) {
-      setCheckedRow(null)
-      const treatments = patientData.diagnoses.flatMap((diagnosis) => diagnosis.treatments);
-      setAllTreatments(treatments);
-    } else {
-      if (record) {
-        // Filter treatments based on the selected diagnosis
-        const treatments = patientData.diagnoses
-          .filter((diag) => diag.id === record.id)
-          .flatMap((diag) => diag.treatments);
-        setAllTreatments(treatments); // Update filtered treatments
-      }
-      // } else {
-      //   const treatments = allDiagnoses.flatMap((diagnosis) => diagnosis.treatments);
-      //   setAllTreatments(treatments); // Show all treatments if no diagnosis is selected
-      // }
-    }
-  };
 
   const dentistryColumns = [
-    // {
-    //   title: "",
-    //   data: null,
-    //   render: (data, record) => {
-    //     return (
-    //       <Checkbox
-    //         checked={checkedRow === record.id} // Link checkbox to the tracked row
-    //         onChange={(e) => handleCheckboxChange(record, e)}
-    //       />
-    //     );
-    //   },
-    // },
     {
       title: "Diagnosis date",
       data: "createdAt",
@@ -205,6 +154,70 @@ const PatientProfile = () => {
     },
   ];
 
+  const newDenistryColumns = [
+    {
+      title: "Diagnosis date",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      sortable: true,
+      render: (text) => (
+        <DateCell date={new Date(text)} dateFormat="D MMM, YYYY" />
+      ),
+    },
+    {
+      title: "Tooth Number",
+      dataIndex: "selectedTeeth",
+      width: 140,
+      key: "selectedTeeth",
+      render: (text) => text,
+    },
+    {
+      title: "Complaints",
+      dataIndex: "complaints",
+      key: "complaints",
+      sortable: true,
+      render: (text) => (
+        <span title={text?.join(", ")}>{text?.join(", ")}</span>
+      ),
+    },
+    {
+      title: "Suggested Treatment",
+      sortable: true,
+      dataIndex: "treatmentSuggested",
+      key: "treatmentSuggested",
+      render: (text) => text,
+    },
+    {
+      title: "Treatment Progress",
+      dataIndex: "treatmentStatus",
+      width: 200,
+      filters: [
+        { text: "Not Started", value: "not started" },
+        { text: "Started", value: "started" },
+        { text: "Completed", value: "completed" },
+      ],
+      onFilter: (value, record) => record.treatmentStatus === value,
+      key: "treatmentStatus",
+      render: (text, record) => {
+        return <span>{transformText(text)}</span>;
+      },
+    },
+    {
+      title: "View Diagnosis",
+      dataIndex: null,
+      key: "viewDiagnosis",
+      render: (_, record) => (
+        <Button
+          size="sm"
+          variant="primary"
+          onClick={() => handleOpenDrawer(record, true)}
+        >
+          View/Edit
+        </Button>
+      ),
+    },
+  ];
+
   const fetchPatientData = async () => {
     try {
       setPatientLoading(true);
@@ -221,12 +234,11 @@ const PatientProfile = () => {
           diagnosis.treatmentsSuggested.map((treatment) => ({
             ...diagnosis,
             treatmentSuggested: treatment, // Include the specific treatment in each row
+            treatmentStatus: diagnosis.treatment?.status,
           }))
         );
         setAllDiagnoses(replicatedDiagnoses); // Save the replicated data
-        setAllTreatments(
-          data?.diagnoses?.flatMap((diagnosis) => diagnosis?.treatments || [])
-        );
+
         console.log("Replicated Diagnoses: ", replicatedDiagnoses);
         if (selectedDiagnosis !== null) {
           console.log("old", selectedDiagnosis);
@@ -241,7 +253,6 @@ const PatientProfile = () => {
       }
 
       // setSelectedDiagnosisRow(null);
-      setCheckedRow(null);
     } catch (error) {
       console.error("Error fetching patient data:", error);
     } finally {
@@ -283,17 +294,23 @@ const PatientProfile = () => {
     setUsersLoading(true);
     try {
       const response = await clinicServices.getUsersByClinic();
-      const formattedUsers = response.data
-        .filter((eachUser) => {
-          return eachUser?.roles
-            ?.map((role) => role?.roleName)
-            ?.includes("doctor");
-        })
-        .map((user) => ({
-          value: user.id,
-          label: user.name,
-          phoneNumber: user.phoneNumber,
-        }));
+      console.log("users", response.data);
+      const filteredUsers = response.data.filter((eachUser) => {
+        const isDoctor = eachUser?.roles?.some(
+          (role) => role?.roleName === "doctor"
+        );
+        const isDentist = eachUser?.specialties?.some(
+          (specialty) => specialty?.name === "Dentist"
+        );
+        return isDoctor && isDentist;
+      });
+
+      console.log("filteredUsers", filteredUsers);
+      const formattedUsers = filteredUsers.map((user) => ({
+        value: user.id,
+        label: user.name,
+        phoneNumber: user.phoneNumber,
+      }));
       setUsers(formattedUsers);
     } catch (error) {
     } finally {
@@ -347,6 +364,20 @@ const PatientProfile = () => {
     }
   }, []);
 
+  const customRowClass = (record) => {
+    console.log("record", record);
+    if (record?.treatmentStatus === "completed") {
+      return "row-success";
+    }
+    if (record?.treatmentStatus === "started") {
+      return "row-info";
+    }
+    if (record?.treatmentStatus === "not started") {
+      return "row-warning";
+    }
+    return "";
+  };
+
   // if (patientData === null)
   //   return <Alert variant="danger my-3">Patient not found</Alert>;
 
@@ -385,7 +416,7 @@ const PatientProfile = () => {
             {departmentList
               .map((eachDepartment) => eachDepartment.label)
               .includes("Dentistry") && (
-                <Tab eventKey="dentistry" title="Dentistry" >
+              <Tab eventKey="dentistry" title="Dentistry">
                 <label htmlFor="primary-doc" className="form-label">
                   Primary Doctor
                 </label>
@@ -410,48 +441,29 @@ const PatientProfile = () => {
                     return labelMatch || phoneMatch;
                   }}
                 />{" "}
-                <Card>
-                  <Card.Header>
-                    <h5 className="mt-3">Diagnoses</h5>
-                  </Card.Header>
-                  <Card.Body>
-                    <div className="d-flex justify-content-end">
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        className="my-3"
-                        onClick={() => handleOpenDrawer(null, false)}
-                      >
-                        <RiAddLine />
-                        Add Diagnosis
-                      </Button>
-                    </div>
-                    <div className="d-flex flex-column diagnoses-table">
-                      <CustomTable
-                        columns={dentistryColumns}
-                        data={allDiagnoses}
-                        // data={categorizedDiagnoses}
-                        enableSearch={false}
-                        enableFilters={false}
-                      />
-                    </div>
-                  </Card.Body>
-                </Card>
-                {/* {selectedDiagnosisRow && ( */}
-                {/* <Card>
-                  <Card.Header>
-                    <h5 className="mt-4">Treatments Settings</h5>
-                  </Card.Header>
-                  <Card.Body>
-                    <SelectedDiagnosisTreatementDetaiils
-                      treatementsRows={allTreatments}
-                      diagnosisData={selectedDiagnosisRow}
-                      patientData={patientData}
-                      fetchPatientData={fetchPatientData}
+                <Container className="mt-3">
+                  <h5 className="mt-3">Diagnoses</h5>
+                  <div className="d-flex justify-content-end">
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="my-3"
+                      onClick={() => handleOpenDrawer(null, false)}
+                    >
+                      <RiAddLine />
+                      Add Diagnosis
+                    </Button>
+                  </div>
+                  <div className="antd-table-container">
+                    <AntdTable
+                      columns={newDenistryColumns}
+                      data={allDiagnoses}
+                      pageSizeOptions={[50, 100, 150, 200]}
+                      defaultPageSize={50}
+                      rowClassName={customRowClass}
                     />
-                  </Card.Body>
-                </Card> */}
-                {/* )} */}
+                  </div>
+                </Container>
               </Tab>
             )}
 
@@ -477,7 +489,6 @@ const PatientProfile = () => {
                   patientId={patientData?.id}
                   readOnly={patientData?.mammography ? true : false}
                 />
-                
               </Tab>
             )}
           </Tabs>

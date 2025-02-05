@@ -17,7 +17,8 @@ import { RiAddLine, RiRefreshLine } from "@remixicon/react";
 import { transformText } from "../utilities/utility-function";
 import { useAuth } from "../utilities/AuthProvider";
 import campManagementService from "../api/camp-management-service";
-import { render } from "katex";
+import { Link } from "react-router-dom";
+import AntdTable from "../components/antd-table";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -33,111 +34,131 @@ const Appointment = () => {
   const [selectedQueueType, setSelectedQueueType] = useState(null); // Tracks the selected department
   const { user } = useAuth();
 
-  const statusOptions = [
-    { value: "registered", label: "Registered" },
-    { value: "in-progress", label: "In Progress" },
-    { value: "completed", label: "Completed" },
-    { value: "cancelled", label: "Cancelled" },
-  ];
-
-  const columns = [
+  const queuePatientColumns = [
     {
-      data: "tokenNumber",
       title: "Token Number",
-      render: (data, row) => {
-        return <a href={`/patient/patient-profile/${row.patientId}`}>{data}</a>;
-      },
+      dataIndex: "tokenNumber",
+      key: "tokenNumber",
+      sortable: true,
+      width: 180,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
+      ),
     },
     {
-      data: "patientName",
       title: "Name",
+      dataIndex: "patientName",
+      key: "patientName",
+      sortable: true,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
+      ),
     },
     {
-      data: "patientSex",
       title: "Sex",
-      render: (data, row) => {
-        return <a href={`/patient/patient-profile/${row.patientId}`}>{data}</a>;
+      dataIndex: "patientSex",
+      key: "patientSex",
+      sortable: true,
+      width: 120,
+      filters: [
+        { text: "Male", value: "male" },
+        { text: "Female", value: "female" },
+      ],
+      onFilter: (value, record) => {
+        console.log(value, record);
+        return record.patientSex === value;
       },
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
+      ),
     },
     {
-      data: "patientMobile",
       title: "Mobile No.",
+      dataIndex: "patientMobile",
+      key: "patientMobile",
+      sortable: false,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
+      ),
     },
     {
-      data: "queueType",
       title: "Service Type",
-      render: (data, row) => {
-        return <a href={`/patient/patient-profile/${row.patientId}`}>{data}</a>;
-      },
+      dataIndex: "queueType",
+      key: "queueType",
+      sortable: true,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
+      ),
     },
     {
-      data: "primaryDoctor",
       title: "Primary Doctor",
-      render: (data, row) => {
-        return <a href={`/patient/patient-profile/${row.patientId}`}>{data}</a>;
-      },
+      dataIndex: "primaryDoctor",
+      key: "primaryDoctor",
+      width:150,
+      sortable: true,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
+      ),
     },
-    // {
-    //   data: "appointmentDate",
-    //   title: "Queue Date",
-    //   render: (data, row) => {
-    //     // console.log(data,row);
-    //     return <a href={`/patient/patient-profile/${row.patientId}`}>{data}</a>;
-    //   },
-    // },
     {
-      data: "status",
       title: "Status",
-      render: (data, row) => {
+      dataIndex: "status",
+      key: "status",
+      sortable: true,
+      filters: [
+        { text: "In Queue", value: "in queue" },
+        { text: "In", value: "in" },
+        { text: "Out", value: "out" },
+      ],
+      onFilter: (value, record) => record.status === value,
+      render: (text, record) => {
         // Define a color mapping for different statuses
         const statusColors = {
           "in queue": "success",
           in: "processing",
           out: "warning",
         };
-        const status = row.status;
 
         return (
-          <a
-            href={`/patient/patient-profile/${row.patientId}`}
-            className={
-              row.status === "in"
-                ? "bg-info-subtle p-2 text-black"
-                : row.status === "in queue"
-                ? "bg-success-subtle p-2 text-black"
-                : row.status === "out"
-                ? "bg-warn-subtle p-2 text-black"
-                : "p-2 text-black"
-            }
+          <Link
+            to={`/patient/patient-profile/${record.patientId}`}
+            // className={
+            //   record.status === "in"
+            //     ? "bg-info-subtle p-2 text-black"
+            //     : record.status === "in queue"
+            //     ? "bg-success-subtle p-2 text-black"
+            //     : record.status === "out"
+            //     ? "bg-warn-subtle p-2 text-black"
+            //     : "p-2 text-black"
+            // }
           >
             <Badge
               size="default"
               dot
-              // color={statusColors[data] || "default"}
-              status={statusColors[data]}
-              text={transformText(data)} // Capitalize status
+              status={statusColors[text]}
+              text={transformText(text)} // Capitalize status
             />
-          </a>
+          </Link>
         );
       },
     },
-    // add column named last updated staus and it will be show the timestamp comming from the data key named statusUpdatedAt
     {
-      data: "statusUpdatedAt",
       title: "Last Updated Status",
-      render: (data, row) => {
+      dataIndex: "statusUpdatedAt",
+      key: "statusUpdatedAt",
+      render: (text, record) => {
         return (
-          <a href={`/patient/patient-profile/${row.patientId}`}>
-            <DateCell date={data} dateFormat="MMM D, h:mm A"/>
+          <a href={`/patient/patient-profile/${record.patientId}`}>
+            <DateCell date={text} dateFormat="MMM D, h:mm A" />
           </a>
         );
       },
     },
     {
-      data: null,
       title: "Action",
-      render: (data, row) => {
-        // Define the menu options using the new menu structure with icons and proper alignment
+      dataIndex: null,
+      key: "action",
+      render: (text, record) => {
         const menu = {
           items: [
             {
@@ -151,9 +172,8 @@ const Appointment = () => {
                 </div>
               ),
               onClick: () =>
-                handleMarkAppointment(row.id, {
+                handleMarkAppointment(record.id, {
                   status: "in",
-                  // statusUpdatedAt: new Date().toLocaleString("en-CA"),
                   statusUpdatedAt: new Date(),
                 }),
             },
@@ -168,9 +188,8 @@ const Appointment = () => {
                 </div>
               ),
               onClick: () =>
-                handleMarkAppointment(row.id, {
+                handleMarkAppointment(record.id, {
                   status: "out",
-                  // statusUpdatedAt: new Date().toLocaleString("en-CA"),
                   statusUpdatedAt: new Date(),
                 }),
             },
@@ -185,23 +204,11 @@ const Appointment = () => {
                 </div>
               ),
               onClick: () =>
-                handleMarkAppointment(row.id, {
+                handleMarkAppointment(record.id, {
                   status: "in queue",
-                  // statusUpdatedAt: new Date().toLocaleString("en-CA"),
                   statusUpdatedAt: new Date(),
                 }),
             },
-            // {
-            //   data: "patientRegNo",
-            //   title: "Reg. No",
-            //   render: (data, row) => {
-            //     return (
-            //       <a href={`/patient/patient-profile/${row.patientId}`} className="">
-            //         {"HWRF-".concat(data)}
-            //       </a>
-            //     );
-            //   },
-            // },
           ],
         };
 
@@ -290,67 +297,6 @@ const Appointment = () => {
   // useEffect(() => {
   // }, [date]);
 
-  const filterComponents = [
-    {
-      key: "status",
-      component: Select,
-      props: {
-        options: statusOptions,
-        value: statusOptions.find((opt) => opt.value === filters.status),
-        onChange: (selected) =>
-          setFilters((prev) => ({ ...prev, status: selected?.value || "" })),
-      },
-    },
-    {
-      key: "queueType",
-      component: Select,
-      props: {
-        options: departmentList,
-        value: departmentList.find((opt) => opt.value === filters.queueType),
-        onChange: (selected) =>
-          setFilters((prev) => ({ ...prev, queueType: selected?.label || "" })),
-      },
-    },
-  ];
-
-  const applyFilters = () => {
-    let filteredData = appointments;
-    if (filters.status) {
-      filteredData = filteredData.filter(
-        (appointment) => appointment.status === filters.status
-      );
-    }
-    if (filters.queueType) {
-      filteredData = filteredData.filter(
-        (appointment) => appointment.queueType === filters.queueType
-      );
-    }
-    setFilteredAppointments(filteredData);
-    // setShowFilters(false); // Close the filter panel after applying
-  };
-
-  const resetFilters = () => {
-    setFilters({ status: "", queueType: "" });
-    setFilteredAppointments(appointments); // Reset to all appointments
-    // setShowFilters(false); // Close the filter panel after resetting
-  };
-
-  // const handleQueueTypeSort = (queueType) => {
-  //   if (selectedQueueType === queueType.label) {
-  //     // If the same department button is clicked again, reset the filter
-  //     localStorage.setItem("")
-  //     setSelectedQueueType(null);
-  //     setFilteredAppointments(appointments);
-  //   } else {
-  //     // Apply the filter for the selected department
-  //     setSelectedQueueType(queueType.label);
-  //     const filtered = appointments.filter(
-  //       (appointment) => appointment.queueType === queueType.label
-  //     );
-  //     setFilteredAppointments(filtered);
-  //   }
-  // };
-
   const handleQueueTypeSort = (queueType) => {
     const userId = user?.id; // Replace with your actual user authentication logic
     const currentRoute = window.location.pathname; // Get current route
@@ -385,7 +331,7 @@ const Appointment = () => {
   //     return () => clearInterval(interval); // Clear interval on component unmount
   //   }
   // }, []);
-  // Effect to retrieve and apply filter on component mount
+
   useEffect(() => {
     const userId = user?.id; // Replace with your actual user authentication logic
     const currentRoute = window.location.pathname; // Get current route
@@ -407,6 +353,13 @@ const Appointment = () => {
     fetchCampDetails();
   }, []);
 
+  const customRowClass = (record) => {
+    if (record.status === "in queue") return "row-success";
+    if (record.status === "in") return "row-info";
+    if (record.status === "out") return "row-warning";
+    return "";
+  };
+
   // useEffect(() => {
   //   fetchAppointments(date);
   // }, [date]);
@@ -421,25 +374,6 @@ const Appointment = () => {
       <Row>
         <Col>
           <Row className="align-items-center">
-            <Col
-              xs={12}
-              md={6}
-              className="d-flex justify-content-between align-items-center mb-3"
-            >
-              {/* Filterig the appointments by queue */}
-              {/* <Col md={6} className="mb-3">
-                <label htmlFor="appointmentDate" className="form-label">
-                  Select Queue Date
-                </label>
-                <Flatpickr
-                  value={date}
-                  onChange={([selectedDate]) => setDate(selectedDate)}
-                  id="appointmentDate"
-                  className="inline_flatpickr w-auto"
-                />
-              </Col> */}
-            </Col>
-
             {/* Department Buttons */}
 
             <div className="d-flex flex-column">
@@ -486,7 +420,7 @@ const Appointment = () => {
             </div>
           </Row>
 
-          <CustomTable
+          {/* <CustomTable
             key={filteredAppointments.length} // Force re-render when data changes
             columns={columns}
             data={filteredAppointments}
@@ -494,7 +428,19 @@ const Appointment = () => {
             // filtersConfig={filterComponents}
             // onApplyFilters={applyFilters}
             // onResetFilters={resetFilters}
-          />
+          /> */}
+          {/* code for passing atnd table */}
+
+          <div className="antd-table-container">
+            <AntdTable
+              key={filteredAppointments.length} // Force re-render when data changes
+              columns={queuePatientColumns}
+              data={filteredAppointments}
+              pageSizeOptions={[50, 100, 150, 200]}
+              defaultPageSize={50}
+              rowClassName={customRowClass}
+            />
+          </div>
         </Col>
       </Row>
 
