@@ -15,6 +15,14 @@ import {
   adminiStartionItems,
 } from "../../../utilities/constants";
 import ArrowIcon from "../../arrow-icon";
+import {
+  RiHome2Fill,
+  RiHome2Line,
+  RiHospitalFill,
+  RiHospitalLine,
+  RiListSettingsLine,
+  RiSettings4Line,
+} from "@remixicon/react";
 
 const VerticalNav = () => {
   const location = useLocation();
@@ -76,7 +84,8 @@ const VerticalNav = () => {
               placement={"right"}
               overlay={<Tooltip id="Dashboard">Dashboard</Tooltip>}
             >
-              <i className="ri-hospital-fill"></i>
+              {/* <i className="ri-hospital-fill"></i> */}
+              <RiHome2Line />
             </OverlayTrigger>
             <span className="item-name">Dashboard</span>
           </Link>
@@ -96,9 +105,28 @@ const VerticalNav = () => {
                 placement={"right"}
                 overlay={<Tooltip id="Dashboard">Clinics</Tooltip>}
               >
-                <i className="ri-hospital-fill"></i>
+                <RiHospitalLine />
               </OverlayTrigger>
               <span className="item-name">Clinics</span>
+            </Link>
+          </Nav.Item>
+        )}
+        {userRoles.includes("superadmin") && (
+          <Nav.Item as="li">
+            <Link
+              to="/manage-forms"
+              className={`nav-link ${
+                location.pathname === "/manage-forms" ? "active" : ""
+              }`}
+            >
+              <OverlayTrigger
+                key={"Dashboard"}
+                placement={"right"}
+                overlay={<Tooltip id="Dashboard">Manage Forms</Tooltip>}
+              >
+                <RiListSettingsLine />
+              </OverlayTrigger>
+              <span className="item-name">Manage Forms</span>
             </Link>
           </Nav.Item>
         )}
@@ -111,9 +139,9 @@ const VerticalNav = () => {
               className={`nav-item ${active === "Administration" && "active"} ${
                 location.pathname === "/administration/users-list" ||
                 location.pathname === "/administration/add-user" ||
-                location.pathname === "/administration/roles" 
-                // location.pathname === "/administration/campaigns"
-                  ? "active"
+                location.pathname === "/administration/roles"
+                  ? // location.pathname === "/administration/campaigns"
+                    "active"
                   : ""
               }`}
               onClick={() => setActive("Administration")}
@@ -165,7 +193,7 @@ const VerticalNav = () => {
             </Accordion.Item>
           </Accordion>
         )}
-          {!userRoles.includes("superadmin") && (
+        {!userRoles.includes("superadmin") && (
           <Nav.Item as="li">
             <Link
               to="/queues"
@@ -213,7 +241,7 @@ const VerticalNav = () => {
             </Link>
           </Nav.Item>
         )}
-      
+
         {/* {userRoles.includes("superadmin") && (
           <Nav.Item as="li">
             <Link

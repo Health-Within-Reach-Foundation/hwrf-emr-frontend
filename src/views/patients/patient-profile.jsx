@@ -16,7 +16,7 @@ import campManagementService from "../../api/camp-management-service";
 import CurrentCampDetailsHeader from "../../components/camp/currentcamp-detail-header";
 import MammoMedicalHistory from "../../components/mammography/mammography-medical-history";
 import AntdTable from "../../components/antd-table";
-import { sort } from "@amcharts/amcharts4/.internal/core/utils/Iterator";
+import GPMedicalRecord from "../../components/general-physician/gp-medical-record";
 
 const PatientProfile = () => {
   const { id } = useParams();
@@ -31,128 +31,7 @@ const PatientProfile = () => {
   const [users, setUsers] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
   const [allDiagnoses, setAllDiagnoses] = useState([]);
-
-  const dentistryColumns = [
-    {
-      title: "Diagnosis date",
-      data: "createdAt",
-      render: (data, record) => {
-        const status = record?.treatment?.status;
-        return (
-          <DateCell
-            date={new Date(data)}
-            dateFormat="D MMM, YYYY"
-            className={
-              status === "started"
-                ? "bg-info-subtle p-1 text-black"
-                : status === "completed"
-                ? "bg-success-subtle p-1 text-black"
-                : ""
-            }
-          />
-        );
-      },
-    },
-    {
-      title: "Tooth Number",
-      data: "selectedTeeth",
-      render: (data, record) => {
-        const status = record?.treatment?.status;
-        return (
-          <div
-            className={
-              status === "started"
-                ? "bg-info-subtle p-1 text-black"
-                : status === "completed"
-                ? "bg-success-subtle p-1 text-black"
-                : ""
-            }
-          >
-            {data}
-          </div>
-        );
-      },
-    },
-    {
-      title: "Complaints",
-      data: "complaints",
-      render: (data, record) => {
-        const status = record?.treatment?.status;
-        return (
-          <div
-            className={
-              status === "started"
-                ? "bg-info-subtle p-1 text-black"
-                : status === "completed"
-                ? "bg-success-subtle p-1 text-black"
-                : ""
-            }
-          >
-            {data?.join(", ")}
-          </div>
-        );
-      },
-    },
-    {
-      title: "Suggested Treatment",
-      data: "treatmentSuggested",
-      render: (data, record) => {
-        const status = record?.treatment?.status;
-
-        return (
-          <div
-            className={
-              status === "started"
-                ? "bg-info-subtle p-1 text-black"
-                : status === "completed"
-                ? "bg-success-subtle p-1 text-black"
-                : ""
-            }
-          >
-            {data}
-          </div>
-        );
-      },
-    },
-    {
-      title: "Treatment Progress",
-      data: "treatmentSuggested",
-      render: (data, record) => {
-        const status = record?.treatment?.status;
-
-        return (
-          <div
-            className={
-              status === "started"
-                ? "bg-info-subtle p-1 text-black"
-                : status === "completed"
-                ? "bg-success-subtle p-1 text-black"
-                : ""
-            }
-          >
-            {record.treatment === null
-              ? "Not Started"
-              : transformText(record?.treatment?.status)}
-          </div>
-        );
-      },
-    },
-    {
-      title: "View Diagnosis",
-      data: null,
-      render: (data, record) => {
-        return (
-          <Button
-            size="sm"
-            variant="primary"
-            onClick={() => handleOpenDrawer(record, true)}
-          >
-            View/Edit
-          </Button>
-        );
-      },
-    },
-  ];
+  const [activeTab, setActiveTab] = useState("dentistry");
 
   const newDenistryColumns = [
     {
@@ -378,9 +257,6 @@ const PatientProfile = () => {
     return "";
   };
 
-  // if (patientData === null)
-  //   return <Alert variant="danger my-3">Patient not found</Alert>;
-
   if (patientLoading || usersLoading || campLoading) return <Loading />;
 
   return (
@@ -406,17 +282,18 @@ const PatientProfile = () => {
         </Card.Header>
         <Card.Body>
           <Tabs
-            defaultActiveKey="dentistry"
             className="border-bottom mb-3"
             justify
             fill
             transition={true}
+            onSelect={(key) => setActiveTab(key)}
+            activeKey={activeTab}
           >
             {/* Dentistry Tab */}
             {departmentList
               .map((eachDepartment) => eachDepartment.label)
               .includes("Dentistry") && (
-              <Tab eventKey="dentistry" title="Dentistry">
+              <Tab eventKey="dentistry" title="Dentistry" >
                 <label htmlFor="primary-doc" className="form-label">
                   Primary Doctor
                 </label>
@@ -471,9 +348,14 @@ const PatientProfile = () => {
             {departmentList
               .map((eachDepartment) => eachDepartment.label)
               .includes("GP") && (
-              <Tab eventKey="gp" title="GP">
-                <h5 className="mt-3">General Practice Content</h5>
-                <p>Coming soon...</p>
+              <Tab eventKey="gp" title="GP" >
+                <>
+                  <GPMedicalRecord
+                    gpRecords={patientData?.gpRecords}
+                    patientData={patientData}
+                    onSave={fetchPatientData}
+                  />
+                </>
               </Tab>
             )}
 
@@ -495,13 +377,6 @@ const PatientProfile = () => {
         </Card.Body>
       </Card>
 
-      {/* <Row className="mt-4">
-        <Col>
-          <CustomTable columns={columns} data={appointments} />
-        </Col>
-      </Row> */}
-
-      {/* Patient Diagnosis Form Drawer */}
       <PatientDiagnosisForm
         isEdit={isEdit}
         drawerVisible={drawerVisible}

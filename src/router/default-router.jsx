@@ -112,14 +112,13 @@ import ConfirmPassword from "../views/auth/confirm-password";
 import Appointment from "../views/appointment";
 import Roles from "../views/administration/roles-management";
 import FormTemplates from "../views/form-templates";
-import PatientForm from "../views/form-templates/patientForm";
-import EditableForm from "../views/form-templates/editableForm";
 import CampManagement from "../views/administration/campaigns";
 import FormTemplateById from "../views/form-templates/form-template-id";
 import PatientTreatment from "../views/patient-treatment";
 import CampDetails from "../views/administration/camp";
 import MammoReportLexical from "../components/mammography/mammography-report";
 import FilesPreview from "../components/files-preview";
+import ManageForms from "../views/manage-forms";
 
 export const DefaultRoute = [
   {
@@ -327,6 +326,14 @@ export const DefaultRoute = [
         element: (
           <SuperadminRouteGuard allowedRoles={["superadmin"]}>
             <FormTemplates />
+          </SuperadminRouteGuard>
+        ),
+      },
+      {
+        path: "/manage-forms",
+        element: (
+          <SuperadminRouteGuard allowedRoles={["superadmin"]}>
+            <ManageForms />
           </SuperadminRouteGuard>
         ),
       },

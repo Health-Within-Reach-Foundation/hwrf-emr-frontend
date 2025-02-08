@@ -190,7 +190,10 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
     // Append each field in the form state to the FormData object
     Object.entries({ ...otherFormState, obstetricHistory }).forEach(
       ([key, value]) => {
-        if ((typeof value === "object" || Array.isArray(value)) && key !== 'lastMenstrualDate') {
+        if (
+          (typeof value === "object" || Array.isArray(value)) &&
+          key !== "lastMenstrualDate"
+        ) {
           formData.append(key, JSON.stringify(value)); // Convert objects to JSON strings
         } else {
           formData.append(key, value); // Append other fields directly
@@ -282,7 +285,10 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
         if (key === "screeningImage") {
           formData.append("screeningFile", value[0]); // Only append the first file
         }
-        if ((typeof value === "object" || Array.isArray(value)) && key !== "lastMenstrualDate") {
+        if (
+          (typeof value === "object" || Array.isArray(value)) &&
+          key !== "lastMenstrualDate"
+        ) {
           formData.append(key, JSON.stringify(value)); // Convert objects to JSON strings
         } else {
           formData.append(key, value); // Append other fields directly
@@ -1060,7 +1066,6 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                     onChange={(value) =>
                       handleFormChange({ previousTreatmentDetails: value })
                     }
-                    
                   >
                     <Checkbox value="Surgery">Surgery</Checkbox>
                     <Checkbox value="Chemotherapy">Chemotherapy</Checkbox>

@@ -952,7 +952,13 @@ const PatientDiagnosisForm = ({
                         className="w-100"
                         name={["newTreatmentSetting", index, "crownStatus"]}
                         label="Crown Status"
-                        extra="Please check the box above if the treatment status is associated with a crown."
+                        // extra="Please check the box above if the treatment status is associated with a crown."
+                        extra={
+                          <p className="text-warning">
+                            Please check the box above if the treatment status
+                            is associated with a crown.
+                          </p>
+                        }
                       >
                         <Checkbox
                           checked={setting.crownStatus}
