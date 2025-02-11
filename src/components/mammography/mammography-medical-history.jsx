@@ -595,19 +595,6 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
             </Col>
             {formState.familyHistory === "Yes" && (
               <>
-                {/* <Form.Item label="If Yes, Please Describe">
-                    <Input.TextArea
-                      value={formState.familyHistoryDetails}
-                      onChange={(e) =>
-                        setFormState({
-                          ...formState,
-                          familyHistoryDetails: e.target.value,
-                        })
-                      }
-                    />
-                  </Form.Item> */}
-
-                {/* Show this question only when "Yes" is selected */}
                 <Col xs={36} sm={12} xl={12}>
                   <Form.Item
                     label="First degree relatives with breast cancer before age 50:"
@@ -637,6 +624,19 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               </>
             )}
 
+            {formState?.familyHistory === "No" && (
+              <Col xs={24} sm={12} xl={12}>
+                <Form.Item
+                  label="If Yes, Please fill"
+                  name="familyHistoryDetails"
+                >
+                  <Input.TextArea
+                    placeholder="Enter details of any other cancer history"
+                    defaultValue={formState.familyHistoryDetails}
+                  />
+                </Form.Item>
+              </Col>
+            )}
             <Col xs={24} sm={12} xl={4}>
               <Form.Item
                 label="Smoking History"
@@ -965,11 +965,9 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 </div>
               )}
             </Col>
-
             <Col xs={48} sm={24} xl={12}>
               <h3 className="mb-3">Relevant clinical history</h3>
             </Col>
-
             <Col xs={24} sm={12} xl={4}>
               <Form.Item
                 label="Previous Breast Cancer"
@@ -1518,11 +1516,21 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               <Form.Item label="Family History of Breast Cancer">
                 <Input value={formState.familyHistory} readOnly />
               </Form.Item>
-              {formState.familyHistory === "Yes" && (
-                <Form.Item label="first degree relatives with breast cancer">
-                  <Input value={formState.firstDegreeRelatives} readOnly />
-                </Form.Item>
-              )}
+              <>
+                {formState.familyHistory === "Yes" && (
+                  <Form.Item label="first degree relatives with breast cancer">
+                    <Input value={formState.firstDegreeRelatives} readOnly />
+                  </Form.Item>
+                )}
+                {formState?.familyHistory === "No" && (
+                  <Form.Item label="Any other cancer history">
+                    <Input.TextArea
+                      value={formState.familyHistoryDetails}
+                      readOnly
+                    />
+                  </Form.Item>
+                )}
+              </>
             </Col>
             <Col xs={24} sm={12} xl={4}>
               <Form.Item label="Smoking History">

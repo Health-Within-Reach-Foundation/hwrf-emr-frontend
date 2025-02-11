@@ -11,7 +11,8 @@ import { Badge } from "antd";
 const Clinics = () => {
   const [pendingClinicsTableData, setPendingClinicsTableData] = useState([]);
   const [enrolledClinicsTableData, setEnrolledClinicsTableData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [pendingLoading, setPendingLoading] = useState(false);
+  const [enrolledLoading, setEnrolledLoading] = useState(false);
 
   const columns = [
     { title: "Clinic Name", data: "clinicName" },
@@ -93,6 +94,16 @@ const Clinics = () => {
       ),
     },
     {
+      title: "Enrolled On",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text, record) => (
+        <Link to={`/clinics/${record.id}`}>
+          {new Date(text).toLocaleString()}
+        </Link>
+      ),
+    },
+    {
       title: "Status",
       dataIndex: "status",
       key: "status",
@@ -112,66 +123,56 @@ const Clinics = () => {
         </Link>
       ),
     },
-    {
-      title: "Enrolled On",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (text, record) => (
-        <Link to={`/clinics/${record.id}`}>
-          {new Date(text).toLocaleString()}
-        </Link>
-      ),
-    },
   ];
 
-  const pendingClinicsTableRef = useRef(null);
+  // const pendingClinicsTableRef = useRef(null);
 
-  useDataTable({
-    tableRef: pendingClinicsTableRef,
-    columns: columns,
-    data: pendingClinicsTableData,
-    // isFilterColumn: true,
-  });
+  // useDataTable({
+  //   tableRef: pendingClinicsTableRef,
+  //   columns: columns,
+  //   data: pendingClinicsTableData,
+  //   // isFilterColumn: true,
+  // });
 
-  const enrolledClinicsTableRef = useRef(null);
+  // const enrolledClinicsTableRef = useRef(null);
 
-  useDataTable({
-    tableRef: enrolledClinicsTableRef,
-    columns: columns,
-    data: enrolledClinicsTableData,
-    // isFilterColumn: true,
-  });
+  // useDataTable({
+  //   tableRef: enrolledClinicsTableRef,
+  //   columns: columns,
+  //   data: enrolledClinicsTableData,
+  //   // isFilterColumn: true,
+  // });
 
   const getPendingClinics = async () => {
     try {
-      setLoading(true);
+      setPendingLoading(true);
       const response = await clinicServices.getClinics("pending");
       setPendingClinicsTableData(response.data); // Use transformed data directly
     } catch (error) {
       console.error("Error fetching clinics:", error);
     } finally {
-      setLoading(false);
+      setPendingLoading(false);
     }
   };
 
   const getEnrolledClincs = async () => {
     try {
-      setLoading(true);
+      setEnrolledLoading(true);
       const response = await clinicServices.getClinics("active");
       setEnrolledClinicsTableData(response.data); // Use transformed data directly
     } catch (error) {
       console.error("Error fetching clinics:", error);
     } finally {
-      setLoading(false);
+      setEnrolledLoading(false);
     }
   };
 
   useEffect(() => {
-    getPendingClinics();
     getEnrolledClincs();
+    getPendingClinics();
   }, []);
 
-  if (loading) {
+  if (pendingLoading || enrolledLoading) {
     return <Loading />;
   }
 

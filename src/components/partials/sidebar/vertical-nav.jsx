@@ -16,11 +16,14 @@ import {
 } from "../../../utilities/constants";
 import ArrowIcon from "../../arrow-icon";
 import {
+  RiFileList2Line,
   RiHome2Fill,
   RiHome2Line,
+  RiHomeGearLine,
   RiHospitalFill,
   RiHospitalLine,
   RiListSettingsLine,
+  RiListView,
   RiSettings4Line,
 } from "@remixicon/react";
 
@@ -161,7 +164,9 @@ const VerticalNav = () => {
                       <Tooltip id="Administration">Administration</Tooltip>
                     }
                   >
-                    <i className="ri-home-gear-line"></i>
+                    {/* <i className="ri-home-gear-line"></i>
+                     */}
+                    <RiHomeGearLine />
                   </OverlayTrigger>
                   <span className="item-name">Administration</span>
                   <ArrowIcon />
@@ -206,12 +211,13 @@ const VerticalNav = () => {
                 placement={"right"}
                 overlay={<Tooltip id="Dashboard">Queues</Tooltip>}
               >
-                <i
+                {/* <i
                   className="ri-list-view"
                   data-bs-toggle="tooltip"
                   title="Queues"
                   data-bs-placement="right"
-                ></i>
+                ></i> */}
+                <RiListView />
               </OverlayTrigger>
               <span className="item-name ">Queues </span>
             </Link>
@@ -230,12 +236,13 @@ const VerticalNav = () => {
                 placement={"right"}
                 overlay={<Tooltip id="Dashboard">All Camps</Tooltip>}
               >
-                <i
+                {/* <i
                   className="ri-list-view"
                   data-bs-toggle="tooltip"
                   title="Camps"
                   data-bs-placement="right"
-                ></i>
+                ></i> */}
+                <RiListView />
               </OverlayTrigger>
               <span className="item-name ">All Camps </span>
             </Link>
@@ -288,7 +295,7 @@ const VerticalNav = () => {
                     placement={"right"}
                     overlay={<Tooltip id="Patient">Patient</Tooltip>}
                   >
-                    <i className="icon">
+                    {/* <i className="icon">
                       <svg
                         className="icon-20"
                         width="20"
@@ -306,7 +313,8 @@ const VerticalNav = () => {
                           fill="currentColor"
                         ></path>
                       </svg>
-                    </i>
+                    </i> */}
+                    <RiFileList2Line />
                   </OverlayTrigger>
                   <span className="item-name">Patient</span>
                   <ArrowIcon />

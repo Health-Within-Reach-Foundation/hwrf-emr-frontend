@@ -284,7 +284,7 @@ const CampModalForm = ({
     >
       <Form
         form={form}
-        layout="vertical"
+        layout="horizontal"
         initialValues={{
           name: editCampData?.name || "",
           location: editCampData?.location || "",
@@ -418,7 +418,7 @@ const CampModalForm = ({
           />
         </Form.Item>
 
-        <Form.Item>
+        <Form.Item className="d-flex justify-content-end">
           <Button
             type="primary"
             onClick={handleSubmit}

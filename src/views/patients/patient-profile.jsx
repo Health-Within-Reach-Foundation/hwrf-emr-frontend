@@ -21,6 +21,11 @@ import GPMedicalRecord from "../../components/general-physician/gp-medical-recor
 const PatientProfile = () => {
   const { id } = useParams();
   const [patientData, setPatientData] = useState(null);
+  const [dentalCosting, setDentalCosting] = useState({
+    totalAmount: 0,
+    remainingAmount: 0,
+    paidAmount: 0,
+  });
   const [selectedDiagnosis, setSelectedDiagnosis] = useState(null);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -62,9 +67,13 @@ const PatientProfile = () => {
     {
       title: "Suggested Treatment",
       sortable: true,
-      dataIndex: "treatmentSuggested",
-      key: "treatmentSuggested",
-      render: (text) => text,
+      ellipsis: false,
+      dataIndex: "treatmentsSuggested",
+      width: 200,
+      key: "treatmentsSuggested",
+      render: (text) => (
+        <span title={text?.join(", ")}>{text?.join(", ")}</span>
+      ),
     },
     {
       title: "Treatment Progress",
@@ -75,16 +84,17 @@ const PatientProfile = () => {
         { text: "Started", value: "started" },
         { text: "Completed", value: "completed" },
       ],
-      onFilter: (value, record) => record.treatmentStatus === value,
+      onFilter: (value, record) => record?.treatment?.status === value,
       key: "treatmentStatus",
       render: (text, record) => {
-        return <span>{transformText(text)}</span>;
+        return <span>{transformText(record?.treatment?.status)}</span>;
       },
     },
     {
       title: "View Diagnosis",
       dataIndex: null,
       key: "viewDiagnosis",
+      // fixed: "right",
       render: (_, record) => (
         <Button
           size="sm"
@@ -105,22 +115,51 @@ const PatientProfile = () => {
         user?.specialties[0]?.id
       );
       const { data } = response;
-      console.log("patient profile data with medical records -->", data);
+      console.log("patient profile data-->", data);
       setPatientData(data);
       if (data.diagnoses.length > 0) {
+        setAllDiagnoses(data.diagnoses); // Save the original diagnoses data
         // Transform diagnoses to replicate rows for each treatmentSuggested
-        const replicatedDiagnoses = data.diagnoses.flatMap((diagnosis) =>
-          diagnosis.treatmentsSuggested.map((treatment) => ({
-            ...diagnosis,
-            treatmentSuggested: treatment, // Include the specific treatment in each row
-            treatmentStatus: diagnosis.treatment?.status,
-          }))
-        );
-        setAllDiagnoses(replicatedDiagnoses); // Save the replicated data
+        // const replicatedDiagnoses = data.diagnoses.flatMap((diagnosis) =>
+        //   diagnosis.treatmentsSuggested.map((treatment) => ({
+        //     ...diagnosis,
+        //     treatmentSuggested: treatment, // Include the specific treatment in each row
+        //     treatmentStatus: diagnosis.treatment?.status,
+        //   }))
+        // );
+        // setAllDiagnoses(replicatedDiagnoses); // Save the replicated data
 
-        console.log("Replicated Diagnoses: ", replicatedDiagnoses);
+        const totalAmount = data.diagnoses.reduce((acc, curr) => {
+          if (curr.treatment.status !== "not started") {
+            const amount = Number(curr.treatment.totalAmount);
+            return isNaN(amount) ? acc : acc + amount;
+          }
+          return acc;
+        }, 0);
+
+        const remainingAmount = data.diagnoses.reduce((acc, curr) => {
+          if (curr.treatment.status !== "not started") {
+            const amount = Number(curr.treatment.remainingAmount);
+            return isNaN(amount) ? acc : acc + amount;
+          }
+          return acc;
+        }, 0);
+
+        const paidAmount = data.diagnoses.reduce((acc, curr) => {
+          if (curr.treatment.status !== "not started") {
+            const amount = Number(curr.treatment.paidAmount);
+            return isNaN(amount) ? acc : acc + amount;
+          }
+          return acc;
+        }, 0);
+
+        setDentalCosting({
+          totalAmount,
+          remainingAmount,
+          paidAmount,
+        });
+
         if (selectedDiagnosis !== null) {
-          console.log("old", selectedDiagnosis);
           setSelectedDiagnosis(
             data.diagnoses.find(
               (dignosis) => dignosis?.id === selectedDiagnosis.id
@@ -173,7 +212,6 @@ const PatientProfile = () => {
     setUsersLoading(true);
     try {
       const response = await clinicServices.getUsersByClinic();
-      console.log("users", response.data);
       const filteredUsers = response.data.filter((eachUser) => {
         const isDoctor = eachUser?.roles?.some(
           (role) => role?.roleName === "doctor"
@@ -184,7 +222,6 @@ const PatientProfile = () => {
         return isDoctor && isDentist;
       });
 
-      console.log("filteredUsers", filteredUsers);
       const formattedUsers = filteredUsers.map((user) => ({
         value: user.id,
         label: user.name,
@@ -244,14 +281,13 @@ const PatientProfile = () => {
   }, []);
 
   const customRowClass = (record) => {
-    console.log("record", record);
-    if (record?.treatmentStatus === "completed") {
+    if (record?.treatment?.status === "completed") {
       return "row-success";
     }
-    if (record?.treatmentStatus === "started") {
+    if (record?.treatment?.status === "started") {
       return "row-info";
     }
-    if (record?.treatmentStatus === "not started") {
+    if (record?.treatment?.status === "not started") {
       return "row-warning";
     }
     return "";
@@ -293,7 +329,7 @@ const PatientProfile = () => {
             {departmentList
               .map((eachDepartment) => eachDepartment.label)
               .includes("Dentistry") && (
-              <Tab eventKey="dentistry" title="Dentistry" >
+              <Tab eventKey="dentistry" title="Dentistry">
                 <label htmlFor="primary-doc" className="form-label">
                   Primary Doctor
                 </label>
@@ -320,6 +356,10 @@ const PatientProfile = () => {
                 />{" "}
                 <Container className="mt-3">
                   <h5 className="mt-3">Diagnoses</h5>
+                  <hr />
+                  <h6>Total Amount: {dentalCosting?.totalAmount}</h6>
+                  <h6>Paid Amount: {dentalCosting?.paidAmount}</h6>
+                  <h6>Remaining Amount: {dentalCosting?.remainingAmount}</h6>
                   <div className="d-flex justify-content-end">
                     <Button
                       variant="primary"
@@ -348,7 +388,7 @@ const PatientProfile = () => {
             {departmentList
               .map((eachDepartment) => eachDepartment.label)
               .includes("GP") && (
-              <Tab eventKey="gp" title="GP" >
+              <Tab eventKey="gp" title="GP">
                 <>
                   <GPMedicalRecord
                     gpRecords={patientData?.gpRecords}
@@ -377,15 +417,17 @@ const PatientProfile = () => {
         </Card.Body>
       </Card>
 
-      <PatientDiagnosisForm
-        isEdit={isEdit}
-        drawerVisible={drawerVisible}
-        onClose={() => setDrawerVisible(false)}
-        diagnosisData={selectedDiagnosis}
-        patientData={patientData}
-        doctorsList={users}
-        onSave={() => fetchPatientData()}
-      />
+      {drawerVisible && (
+        <PatientDiagnosisForm
+          isEdit={isEdit}
+          drawerVisible={drawerVisible}
+          onClose={() => setDrawerVisible(false)}
+          diagnosisData={selectedDiagnosis}
+          patientData={patientData}
+          doctorsList={users}
+          onSave={() => fetchPatientData()}
+        />
+      )}
     </Container>
   );
 };

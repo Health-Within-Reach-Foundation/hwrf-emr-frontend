@@ -104,7 +104,7 @@ import ClinicDetails from "../views/clinics/clinic-details";
 import { ClinicRouteGuard, SuperadminRouteGuard } from "./layout-guards";
 import PatientList from "../views/patients/patient-list";
 import AddPatient from "../views/patients/add-patient";
-import EditPatient from "../views/patients/edit-patient";
+import PatientFollowUp from "../views/patients/patient-followup";
 import PatientProfile from "../views/patients/patient-profile";
 import AllUsers from "../views/administration/all-users";
 import AddUser from "../views/administration/add-user";
@@ -243,6 +243,16 @@ export const DefaultRoute = [
             requiredPermissions={["patients:write", "patients:read"]}
           >
             <AddPatient />
+          </ClinicRouteGuard>
+        ),
+      },
+      {
+        path: "/patient/follow-up",
+        element: (
+          <ClinicRouteGuard
+            requiredPermissions={["patients:write", "patients:read"]}
+          >
+            <PatientFollowUp />
           </ClinicRouteGuard>
         ),
       },

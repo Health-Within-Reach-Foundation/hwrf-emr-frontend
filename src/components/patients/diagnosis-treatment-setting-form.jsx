@@ -37,7 +37,6 @@ const DiagnosisTreatmentSettingForm = ({
     xray: [], // Manage uploaded files here
     treatingDoctor: {},
     nextDate: null,
-    paymentMode: "offline",
   });
 
   const [treatmentForm] = Form.useForm();
@@ -52,6 +51,7 @@ const DiagnosisTreatmentSettingForm = ({
         xray,
         treatmentId,
         nextDate,
+        campId,
         ...filteredData
       } = selectedTreatment;
 
@@ -71,7 +71,6 @@ const DiagnosisTreatmentSettingForm = ({
         xray: [],
         treatingDoctor: {},
         nextDate: null,
-        paymentMode: "",
       });
     }
   }, [isEdit, diagnosisData]);
@@ -119,7 +118,6 @@ const DiagnosisTreatmentSettingForm = ({
         treatingDoctor,
         onlineAmount,
         offlineAmount,
-        paymentMode,
         nextDate,
       } = formState;
 
@@ -147,7 +145,6 @@ const DiagnosisTreatmentSettingForm = ({
       formData.append("treatingDoctor", JSON.stringify(treatingDoctor));
       formData.append("onlineAmount", onlineAmount);
       formData.append("offlineAmount", offlineAmount);
-      formData.append("paymentMode", paymentMode);
       formData.append("nextDate", JSON.stringify(nextDate));
 
       if (xray) {
@@ -297,95 +294,45 @@ const DiagnosisTreatmentSettingForm = ({
         )}
       </div>
 
-      <Form.Item
-        label="Payment mode"
-        name={"paymentMode"}
-        required
-        rules={[{ required: true, message: "Please select payment mode" }]}
-      >
-        <Radio.Group
-          value={formState?.paymentMode}
-          onChange={(e) => {
-            console.log("e target", e.target);
-            handleInputChange2("paymentMode", e.target.value);
-          }}
-        >
-          <Radio value="online">Online</Radio>
-          <Radio value="offline">Offline</Radio>
-          <Radio value="both">Both</Radio>
-        </Radio.Group>
-      </Form.Item>
-
-      {formState.paymentMode == "online" ||
-      formState.paymentMode == "offline" ? (
+      <div className="d-flex gap-3">
         <Form.Item
-          label="Setting Paid Amount"
-          name={
-            formState.paymentMode === "online"
-              ? "onlineAmount"
-              : "offlineAmount"
-          }
+          label="Online paid"
+          name={"onlineAmount"}
           required
           rules={[{ required: true, message: "Please enter amount" }]}
         >
           <Input
             type="number"
-            value={
-              formState.paymentMode == "online"
-                ? formState.onlineAmount
-                : formState.offlineAmount
-            }
-            onChange={(e) => {
-              const key =
-                formState.paymentMode === "online"
-                  ? "onlineAmount"
-                  : "offlineAmount";
-              handleAmountChange(key, e.target.value);
-            }}
+            value={formState?.onlineAmount || ""}
+            onChange={(e) => handleAmountChange("onlineAmount", e.target.value)}
           />
         </Form.Item>
-      ) : (
-        <div className="d-flex gap-3">
-          <Form.Item
-            label="Online paid"
-            name={"onlineAmount"}
-            required
-            rules={[{ required: true, message: "Please enter amount" }]}
-          >
-            <Input
-              type="number"
-              value={formState?.onlineAmount || ""}
-              onChange={(e) =>
-                handleAmountChange("onlineAmount", e.target.value)
-              }
-            />
-          </Form.Item>
-          <Form.Item
-            label="Offline paid"
-            name={"offlineAmount"}
-            required
-            rules={[{ required: true, message: "Please enter amount" }]}
-          >
-            <Input
-              type="number"
-              value={formState?.offlineAmount || ""}
-              onChange={(e) =>
-                handleAmountChange("offlineAmount", e.target.value)
-              }
-            />
-          </Form.Item>
-          <Form.Item label="Total paid">
-            <Input
-              type="number"
-              value={
-                Number(formState.onlineAmount) + Number(formState.offlineAmount)
-              }
-              readOnly
-              onChange={() => {}}
-            />
-          </Form.Item>
-        </div>
-      )}
+        <Form.Item
+          label="Offline paid"
+          name={"offlineAmount"}
+          required
+          rules={[{ required: true, message: "Please enter amount" }]}
+        >
+          <Input
+            type="number"
+            value={formState?.offlineAmount || ""}
+            onChange={(e) =>
+              handleAmountChange("offlineAmount", e.target.value)
+            }
+          />
+        </Form.Item>
+        <Form.Item label="Total paid">
+          <Input
+            type="number"
+            value={
+              Number(formState.onlineAmount) + Number(formState.offlineAmount)
+            }
+            readOnly
+            disabled
+            onChange={() => {}}
+          />
+        </Form.Item>
+      </div>
 
       <Form.Item
         label="Treating Doctor"

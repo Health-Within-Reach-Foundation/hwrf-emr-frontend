@@ -26,12 +26,18 @@ const GPMedicalRecord = ({ gpRecords, patientData, onSave = () => {} }) => {
       <Drawer
         title="Add New GP Record"
         placement="right"
-        width={750} // Adjust width as needed
+        width={1000} // Adjust width as needed
         onClose={() => setShowDrawer(false)}
         open={showDrawer}
-        // destroyOnClose
         maskClosable={false}
-        bodyStyle={{ paddingBottom: 20, maxHeight: "80vh", overflowY: "auto" }}
+        styles={{
+          body: {
+            paddingBottom: 20,
+            maxHeight: "80vh",
+            overflowY: "auto",
+            scrollbarWidth: "thin",
+          },
+        }}
       >
         <GPMedicalRecordForm
           record={null}
@@ -54,7 +60,9 @@ const GPMedicalRecord = ({ gpRecords, patientData, onSave = () => {} }) => {
             header={
               <div>
                 <DateCell date={new Date(record?.createdAt)} />
-                <p>{record?.findings?.join(", ")}</p>
+                <p>
+                  {record?.complaints?.join(", ")}, {record?.otherComplaints}
+                </p>
               </div>
             }
             key={record.id}

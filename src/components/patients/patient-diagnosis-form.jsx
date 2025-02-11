@@ -73,7 +73,6 @@ const PatientDiagnosisForm = ({
         crownStatus: false,
         xray: [], // Array to store uploaded files
         treatingDoctor: {},
-        paymentMode: "offline",
         nextDate: null,
         onlineAmount: 0,
         offlineAmount: 0,
@@ -151,7 +150,6 @@ const PatientDiagnosisForm = ({
           crownStatus: false,
           xray: [],
           treatingDoctor: {},
-          paymentMode: "offline",
           nextDate: null,
           onlineAmount: 0,
           offlineAmount: 0,
@@ -161,7 +159,6 @@ const PatientDiagnosisForm = ({
   };
 
   const handleTreatmentSettingChange = (index, key, value) => {
-    console.log(index, key, value);
     setTreatments((prev) => {
       const updatedSettings = [...prev.newTreatmentSetting];
 
@@ -242,6 +239,8 @@ const PatientDiagnosisForm = ({
         additionalDetails,
         selectedTeeth,
         treatment,
+        campId,
+        treatmentStatus,
         ...filteredData
       } = diagnosisData;
       setFormState({
@@ -313,6 +312,10 @@ const PatientDiagnosisForm = ({
       // Prepare FormData object
       const formData = new FormData();
 
+      console.log(
+        "form state before making or updating diagnosis -->",
+        formState
+      );
       // Add form fields to FormData
       Object.entries(formState).forEach(([key, value]) => {
         if (key === "xray" && Array.isArray(value)) {
@@ -328,7 +331,6 @@ const PatientDiagnosisForm = ({
         }
       });
 
-      console.log("form state ************* -->", formState.selectedTeeth);
       // Make API call to save diagnosis
       let response;
       if (isEdit) {
@@ -351,7 +353,7 @@ const PatientDiagnosisForm = ({
       }
     } catch (error) {
       console.error("Error saving diagnosis:", error);
-      toast.error("An unexpected error occurred.");
+      toast.error("Internal server error!");
     } finally {
       setLoading(false);
       onSave(); // Callback after successful save
@@ -1032,155 +1034,85 @@ const PatientDiagnosisForm = ({
                     </div>
                     <div className="w-100 d-flex justify-content-between gap-3">
                       <div className="d-flex flex-column w-100">
-                        <Form.Item
-                          label="Payment mode"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Please select the payment mode",
-                            },
-                          ]}
-                          name={["newTreatmentSetting", index, "paymentMode"]}
-                          required
-                        >
-                          <Radio.Group
-                            value={setting?.paymentMode}
-                            onChange={(e) =>
-                              handleTreatmentSettingChange(
-                                index,
-                                "paymentMode",
-                                e.target.value
-                              )
-                            }
-                          >
-                            <Radio value="online">Online</Radio>
-                            <Radio value="offline">Offline</Radio>
-                            <Radio value="both">Both</Radio>
-                          </Radio.Group>
-                        </Form.Item>
-
-                        {setting?.paymentMode == "online" ||
-                        setting?.paymentMode == "offline" ? (
+                        <div className="d-flex flex-row gap-2">
                           <Form.Item
-                            label="Setting Paid Amount"
+                            label="Online Paid Amount"
                             className="w-100"
                             rules={[
                               {
                                 required: true,
-                                message: "Please enter the paid amount",
+                                message: "Please enter the online paid amount",
                               },
                             ]}
                             name={[
                               "newTreatmentSetting",
                               index,
-                              setting.paymentMode === "online"
-                                ? "onlineAmount"
-                                : "offlineAmount",
+                              "onlineAmount",
                             ]}
                             required
                           >
                             <Input
                               type="number"
-                              value={
-                                setting?.paymentMode == "online"
-                                  ? setting?.onlineAmount
-                                  : setting.offlineAmount
-                              }
-                              onChange={(e) => {
-                                const key =
-                                  setting.paymentMode === "online"
-                                    ? "onlineAmount"
-                                    : "offlineAmount";
+                              value={setting?.onlineAmount}
+                              onChange={(e) =>
                                 handleTreatmentSettingChange(
                                   index,
-                                  key,
+                                  "onlineAmount",
                                   e.target.value
-                                );
-                              }}
+                                )
+                              }
                             />
                           </Form.Item>
-                        ) : setting.paymentMode === "both" ? (
-                          <div className="d-flex flex-row gap-2">
-                            <Form.Item
-                              label="Online Paid Amount"
-                              className="w-100"
-                              rules={[
-                                {
-                                  required: true,
-                                  message:
-                                    "Please enter the online paid amount",
-                                },
-                              ]}
-                              name={[
-                                "newTreatmentSetting",
-                                index,
-                                "onlineAmount",
-                              ]}
-                              required
-                            >
-                              <Input
-                                type="number"
-                                value={setting?.onlineAmount}
-                                onChange={(e) =>
-                                  handleTreatmentSettingChange(
-                                    index,
-                                    "onlineAmount",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </Form.Item>
-                            <Form.Item
-                              label="Offline Paid Amount"
-                              className="w-100"
-                              rules={[
-                                {
-                                  required: true,
-                                  message:
-                                    "Please enter the offline paid amount",
-                                },
-                              ]}
-                              name={[
-                                "newTreatmentSetting",
-                                index,
-                                "offlineAmount",
-                              ]}
-                              required
-                            >
-                              <Input
-                                type="number"
-                                value={setting?.offlineAmount}
-                                onChange={(e) =>
-                                  handleTreatmentSettingChange(
-                                    index,
-                                    "offlineAmount",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </Form.Item>
-                            <Form.Item
-                              label="Total Amount"
-                              className="w-100"
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Please enter the total amount",
-                                },
-                              ]}
-                            >
-                              <Input
-                                type="number"
-                                value={
-                                  Number(setting?.offlineAmount) +
-                                  Number(setting?.onlineAmount)
-                                }
-                                readOnly
-                                onChange={() => {}}
-                              />
-                            </Form.Item>
-                          </div>
-                        ) : null}
+                          <Form.Item
+                            label="Offline Paid Amount"
+                            className="w-100"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please enter the offline paid amount",
+                              },
+                            ]}
+                            name={[
+                              "newTreatmentSetting",
+                              index,
+                              "offlineAmount",
+                            ]}
+                            required
+                          >
+                            <Input
+                              type="number"
+                              value={setting?.offlineAmount}
+                              onChange={(e) =>
+                                handleTreatmentSettingChange(
+                                  index,
+                                  "offlineAmount",
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            label="Total Amount"
+                            className="w-100"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please enter the total amount",
+                              },
+                            ]}
+                          >
+                            <Input
+                              type="number"
+                              value={
+                                Number(setting?.offlineAmount) +
+                                Number(setting?.onlineAmount)
+                              }
+                              readOnly
+                              onChange={() => {}}
+                            />
+                          </Form.Item>
+                        </div>
+                       
                         <Form.Item
                           label="Next follow up date"
                           className="w-100"

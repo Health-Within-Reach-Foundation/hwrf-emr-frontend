@@ -368,6 +368,21 @@ const deleteGPRecord = async (gpRecordId) => {
   }
 };
 
+const getPatientsFollowUps = async () => {
+  try {
+    const response = await apiClient.get("/patients/follow-ups");
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      throw new Error(error.response.data.message || "Failed to fetch patient follow-ups");
+    } else {
+      console.error("Unexpected error:", error.message);
+      throw new Error("An unexpected error occurred while fetching patient follow-ups");
+    }
+  }
+}
+
 export default {
   addPatient,
   createMammographyDetails,
@@ -386,4 +401,5 @@ export default {
   getGPRecordById,
   updateGPRecord,
   deleteGPRecord,
+  getPatientsFollowUps,
 };
