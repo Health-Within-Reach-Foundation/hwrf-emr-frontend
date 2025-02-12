@@ -66,17 +66,6 @@ const GPMedicalRecordForm = ({
       form.setFieldsValue({
         weight: record.weight,
         height: record.height,
-        bmi:
-          record.weight && record.height
-            ? (
-                record.weight /
-                Math.pow(
-                  parseInt(record.height) * 0.3048 +
-                    (parseFloat(record.height) % 1) * 0.0254,
-                  2
-                )
-              ).toFixed(2)
-            : null,
         sugar: record.sugar,
         bp: record.bp,
         hb: record.hb,
@@ -97,6 +86,7 @@ const GPMedicalRecordForm = ({
       });
       setOnlineAmount(record.onlineAmount || 0);
       setOfflineAmount(record.offlineAmount || 0);
+      calculateBMI(record.weight, record.height);
     }
   }, [isEdit, record, form]);
 
@@ -109,9 +99,7 @@ const GPMedicalRecordForm = ({
   // Use derived state instead of useState
   const showOtherComplaints = selectedComplaints.includes("Other complaints");
 
-  const calculateBMI = () => {
-    const weight = form.getFieldValue("weight");
-    const heightFeet = form.getFieldValue("height");
+  const calculateBMI = (weight, heightFeet) => {
     if (weight && heightFeet) {
       const heightParts = heightFeet.toString().split(".");
       const feet = parseInt(heightParts[0], 10);
@@ -206,7 +194,12 @@ const GPMedicalRecordForm = ({
             >
               <Input
                 type="number"
-                onChange={calculateBMI}
+                onChange={() =>
+                  calculateBMI(
+                    form.getFieldValue("weight"),
+                    form.getFieldValue("height")
+                  )
+                }
                 disabled={!isEditing}
               />
             </Form.Item>
@@ -216,7 +209,13 @@ const GPMedicalRecordForm = ({
               <Input
                 type="number"
                 step="0.01"
-                onChange={calculateBMI}
+                // onChange={calculateBMI}
+                onChange={() =>
+                  calculateBMI(
+                    form.getFieldValue("weight"),
+                    form.getFieldValue("height")
+                  )
+                }
                 disabled={!isEditing}
               />
             </Form.Item>
@@ -240,7 +239,7 @@ const GPMedicalRecordForm = ({
             </Form.Item>
           </Col>
           <Col xs={24} sm={12} md={8}>
-            <Form.Item label={<h6>HB (kg)</h6>} name="hb">
+            <Form.Item label={<h6>HB </h6>} name="hb">
               <Input type="number" disabled={!isEditing} />
             </Form.Item>
           </Col>

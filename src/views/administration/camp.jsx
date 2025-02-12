@@ -34,6 +34,16 @@ const CampDetails = () => {
     try {
       const response = await campManagementService.getCampById(campId);
       console.log(response);
+      response.data?.patients?.map((patient) => {
+        patient.key = patient.id;
+        return patient;
+      });
+
+      response.data?.users?.map((user) => {
+        user.key = user.id;
+        return user;
+      });
+
       setCampData(response.data);
       // setEditData(response.data); // Initialize edit form with existing data
       setEditData({
@@ -545,12 +555,11 @@ const CampAnalytics = ({ patients, analytics, serviceTabs = [] }) => {
                 Total Patients Registered:{" "}
                 <strong> {analytics?.totalPatients}</strong>
               </p> */}
-              <p className="text-decoration-underline">
+              <p className="text-decoration-underline card-title">
                 Total Patients Registered:{" "}
-                <Badge text="Total patients attended" sta />
                 <strong> {analytics?.totalAttended}</strong>
               </p>
-              {/* <p className="text-decoration-underline">
+            {/* <p className="text-decoration-underline">
                 Camp missed Patients: <strong> {analytics?.missed}</strong>
               </p> */}
             </Col>

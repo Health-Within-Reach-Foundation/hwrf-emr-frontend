@@ -3,15 +3,14 @@ import { Button, Collapse, Drawer } from "antd";
 import GPMedicalRecordForm from "./gp-record-form";
 import DateCell from "../date-cell";
 
-const { Panel } = Collapse;
-
 const GPMedicalRecord = ({ gpRecords, patientData, onSave = () => {} }) => {
   const [showDrawer, setShowDrawer] = useState(false);
   console.log("patientData", patientData);
+
   return (
     <div>
       {/* Button to open drawer for adding new record */}
-      <div className="d-flex justify-content-end my-3 ">
+      <div className="d-flex justify-content-end my-3">
         <Button
           type="primary"
           onClick={() => setShowDrawer(true)}
@@ -54,28 +53,29 @@ const GPMedicalRecord = ({ gpRecords, patientData, onSave = () => {} }) => {
           No records found!
         </h4>
       )}
-      <Collapse>
-        {gpRecords.map((record) => (
-          <Panel
-            header={
-              <div>
-                <DateCell date={new Date(record?.createdAt)} />
-                <p>
-                  {record?.complaints?.join(", ")}, {record?.otherComplaints}
-                </p>
-              </div>
-            }
-            key={record.id}
-          >
+
+      {/* Updated Collapse Component */}
+      <Collapse
+        items={gpRecords.map((record) => ({
+          key: record.id,
+          label: (
+            <div>
+              <DateCell date={new Date(record?.createdAt)} />
+              <p>
+                {record?.complaints?.join(", ")}, {record?.otherComplaints}
+              </p>
+            </div>
+          ),
+          children: (
             <GPMedicalRecordForm
               record={record}
               isEdit={true}
               key={record.id}
               onSave={onSave}
             />
-          </Panel>
-        ))}
-      </Collapse>
+          ),
+        }))}
+      />
     </div>
   );
 };

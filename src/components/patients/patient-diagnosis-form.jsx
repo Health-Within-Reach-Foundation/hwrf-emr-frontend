@@ -1,3 +1,4 @@
+// TODO:  Warning: [antd: Form.Item] A `Form.Item` with a `name` prop must have a single child element. For information on how to render more complex form items, see
 import React, { useEffect, useState } from "react";
 import {
   Drawer,
@@ -10,7 +11,6 @@ import {
   DatePicker,
   Dropdown,
   Badge,
-  Radio,
 } from "antd";
 import patientServices from "../../api/patient-services";
 import toast from "react-hot-toast";
@@ -41,9 +41,10 @@ const PatientDiagnosisForm = ({
   onSave,
   patientData,
   doctorsList,
+  options,
 }) => {
-  console.log("in the diagnosis drawer --> ", diagnosisData);
   const [loading, setLoading] = useState(false);
+
   const [treatmentLoading, setTreatmentLoading] = useState(false);
   const [formState, setFormState] = useState({
     complaints: [],
@@ -294,17 +295,6 @@ const PatientDiagnosisForm = ({
     treatmentForm.setFieldsValue(treatments);
   }, [treatments]);
 
-  // useEffect(() => {
-  //   setFormState((prev) => ({
-  //     ...prev,
-  //     selectedTeeth: [],
-  //   }));
-  // }, [formState.dentalQuadrantType]);
-
-  // const handleInputChange = (key, value) => {
-  //   setFormState((prev) => ({ ...prev, [key]: value }));
-  // };
-
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -491,7 +481,7 @@ const PatientDiagnosisForm = ({
                 onClick={handleDeleteDiagnosis}
                 variant="outlined"
                 className="btn-sm btn-primary rounded-0"
-                loading={loading}
+                disabled={loading}
               >
                 <RiDeleteBin2Line />
               </Button>
@@ -520,7 +510,7 @@ const PatientDiagnosisForm = ({
                   mode="multiple"
                   value={formState.complaints}
                   onChange={(value) => handleInputChange("complaints", value)}
-                  options={complaintsOptions}
+                  options={options?.complaintsOptions}
                 />
               </Form.Item>
               <Form.Item
@@ -541,7 +531,8 @@ const PatientDiagnosisForm = ({
                   onChange={(value) =>
                     handleInputChange("treatmentsSuggested", value)
                   }
-                  options={treatmentsOptions}
+                  // options={treatmentsOptions}
+                  options={options?.treatmentsSuggestedOptions}
                   className="w-100"
                 />
               </Form.Item>
@@ -664,7 +655,7 @@ const PatientDiagnosisForm = ({
                 </Form.Item>
                 {diagnosisData?.xray &&
                   diagnosisData?.xray?.map((file) => (
-                    <div className="d-flex flex-col gap-2">
+                    <div className="d-flex flex-col gap-2" key={file?.key}>
                       <div
                         style={{
                           display: "flex",
@@ -944,7 +935,8 @@ const PatientDiagnosisForm = ({
                               value
                             )
                           }
-                          options={treatmentStatusOptions}
+                          // options={treatmentStatusOptions}
+                          options={options?.treatmentStatusOptions}
                           className="w-100"
                         />
                       </Form.Item>
@@ -1112,7 +1104,7 @@ const PatientDiagnosisForm = ({
                             />
                           </Form.Item>
                         </div>
-                       
+
                         <Form.Item
                           label="Next follow up date"
                           className="w-100"
@@ -1194,53 +1186,52 @@ const PatientDiagnosisForm = ({
                   </div>
                 ))}
               </div>
-              {diagnosisData?.treatment ? (
-                <div className="my-1">
-                  <hr />
-                  <p>Treatments Settings</p>
-                  {diagnosisData?.treatment?.treatmentSettings?.map(
-                    (treatment) => {
-                      return (
-                        <Accordion className="my-1">
-                          <Accordion.Item eventKey="0">
-                            <Accordion.Header>
-                              <div className="d-flex flex-row gap-3">
-                                <h6>
-                                  {treatment.treatmentStatus.join(", ")} -{" "}
-                                </h6>
-                                <DateCell date={treatment.treatmentDate} /> -
-                                <p>
-                                  ₹
-                                  {Number(treatment.offlineAmount) +
-                                    Number(treatment.onlineAmount)}
-                                </p>
-                              </div>
-                            </Accordion.Header>
-                            <Accordion.Body>
-                              <DiagnosisTreatmentSettingForm
-                                diagnosisData={diagnosisData}
-                                drawerVisible={true}
-                                isEdit={true}
-                                onClose={onClose}
-                                onSave={onSave}
-                                doctorsList={doctorsList}
-                                selectedTreatment={treatment}
-                              />
-                            </Accordion.Body>
-                          </Accordion.Item>
-                        </Accordion>
-                      );
-                    }
-                  )}
-                </div>
-              ) : (
-                treatments.length <= 0 && (
-                  <div className="text-center text-danger">
-                    <p>No Treatment Found</p>
-                  </div>
-                )
-              )}
             </Form>
+            {diagnosisData?.treatment ? (
+              <div className="my-1">
+                <hr />
+                <p>Treatments Settings</p>
+                {diagnosisData?.treatment?.treatmentSettings?.map(
+                  (treatment) => {
+                    return (
+                      <Accordion className="my-1" key={treatment.id}>
+                        <Accordion.Item eventKey="0">
+                          <Accordion.Header>
+                            <div className="d-flex flex-row gap-3">
+                              <h6>{treatment.treatmentStatus.join(", ")} - </h6>
+                              <DateCell date={treatment.treatmentDate} /> -
+                              <p>
+                                ₹
+                                {Number(treatment.offlineAmount) +
+                                  Number(treatment.onlineAmount)}
+                              </p>
+                            </div>
+                          </Accordion.Header>
+                          <Accordion.Body>
+                            <DiagnosisTreatmentSettingForm
+                              diagnosisData={diagnosisData}
+                              drawerVisible={true}
+                              isEdit={true}
+                              onClose={onClose}
+                              onSave={onSave}
+                              doctorsList={doctorsList}
+                              selectedTreatment={treatment}
+                              options={options}
+                            />
+                          </Accordion.Body>
+                        </Accordion.Item>
+                      </Accordion>
+                    );
+                  }
+                )}
+              </div>
+            ) : (
+              treatments.length <= 0 && (
+                <div className="text-center text-danger">
+                  <p>No Treatment Found</p>
+                </div>
+              )
+            )}
           </Card.Body>
         </Card>
       )}

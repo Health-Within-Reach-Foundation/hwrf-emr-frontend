@@ -24,6 +24,7 @@ const DiagnosisTreatmentSettingForm = ({
   patientData,
   selectedTreatment,
   doctorsList,
+  options,
 }) => {
   console.log("selected treatement --> ", selectedTreatment, diagnosisData);
   const [loading, setLoading] = useState(false);
@@ -217,7 +218,8 @@ const DiagnosisTreatmentSettingForm = ({
           mode="multiple"
           value={formState.treatmentStatus}
           onChange={(value) => handleInputChange2("treatmentStatus", value)}
-          options={treatmentStatusOptions}
+          // options={treatmentStatusOptions}
+          options={options?.treatmentStatusOptions || []}
           className="w-100"
         />
       </Form.Item>

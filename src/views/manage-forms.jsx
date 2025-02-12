@@ -114,129 +114,211 @@ const ManageForms = () => {
     <Card title="Manage Forms">
       <div className="d-flex flex-column gap-3">
         {forms.map((form, formIndex) => (
-          <Collapse key={form.id}>
-            <Panel header={form.formName} key={form.id}>
-              {form.formFieldData.map((field, fieldIndex) => (
-                <div key={field.fieldName} style={{ marginBottom: 16 }}>
-                  <div className="w-100 d-flex justify-content-between mb-3">
-                    <h4 style={{ width: "60%" }}>
-                      {transformText(field.fieldName)} Options
-                    </h4>
-                    <Search
-                      placeholder="Search options"
-                      value={
-                        searchQueries[formIndex] &&
-                        searchQueries[formIndex][fieldIndex]
-                          ? searchQueries[formIndex][fieldIndex]
-                          : ""
-                      }
-                      enterButton={"Search"}
-                      onChange={(e) =>
-                        handleSearchChange(
-                          formIndex,
-                          fieldIndex,
-                          e.target.value
-                        )
-                      }
-                      className="w-100"
-                      style={{ width: "60%", marginBottom: 16 }}
-                    />
-                  </div>
+          // <Collapse key={form.id}>
+          //   <Panel header={form.formName} key={form.id}>
+          //     {form.formFieldData.map((field, fieldIndex) => (
+          //       <div key={field.fieldName} style={{ marginBottom: 16 }}>
+          //         <div className="w-100 d-flex justify-content-between mb-3">
+          //           <h4 style={{ width: "60%" }}>
+          //             {transformText(field.fieldName)} Options
+          //           </h4>
+          //           <Search
+          //             placeholder="Search options"
+          //             value={
+          //               searchQueries[formIndex] &&
+          //               searchQueries[formIndex][fieldIndex]
+          //                 ? searchQueries[formIndex][fieldIndex]
+          //                 : ""
+          //             }
+          //             enterButton={"Search"}
+          //             onChange={(e) =>
+          //               handleSearchChange(
+          //                 formIndex,
+          //                 fieldIndex,
+          //                 e.target.value
+          //               )
+          //             }
+          //             className="w-100"
+          //             style={{ width: "60%", marginBottom: 16 }}
+          //           />
+          //         </div>
 
-                  <div
-                    style={{
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gap: 16,
-                    }}
-                  >
-                    {getFilteredOptions(formIndex, fieldIndex).map(
-                      (option, optionIndex) => (
-                        <div
-                          key={optionIndex}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 8,
-                            border: "1px solid #d9d9d9",
-                            padding: 8,
-                            borderRadius: 4,
-                          }}
+          //         <div
+          //           style={{
+          //             display: "flex",
+          //             flexWrap: "wrap",
+          //             gap: 16,
+          //           }}
+          //         >
+          //           {getFilteredOptions(formIndex, fieldIndex).map(
+          //             (option, optionIndex) => (
+          //               <div
+          //                 key={optionIndex}
+          //                 style={{
+          //                   display: "flex",
+          //                   alignItems: "center",
+          //                   gap: 8,
+          //                   border: "1px solid #d9d9d9",
+          //                   padding: 8,
+          //                   borderRadius: 4,
+          //                 }}
+          //               >
+          //                 <TextArea
+          //                   value={option.label}
+          //                   onChange={(e) =>
+          //                     handleOptionChange(
+          //                       formIndex,
+          //                       fieldIndex,
+          //                       optionIndex,
+          //                       e.target.value
+          //                     )
+          //                   }
+          //                   rows={2}
+          //                   disabled={
+          //                     !userRoles.includes("superadmin") && option.lock
+          //                   }
+          //                   style={{ width: 200 }}
+          //                   placeholder="Option Label"
+          //                 />
+          //                 {userRoles.includes("superadmin") && (
+          //                   <Checkbox
+          //                     checked={option.lock}
+          //                     onChange={(e) => {
+          //                       const updatedForms = [...forms];
+          //                       updatedForms[formIndex].formFieldData[
+          //                         fieldIndex
+          //                       ].options[optionIndex].lock = e.target.checked;
+          //                       setForms(updatedForms);
+          //                     }}
+          //                   >
+          //                     Lock
+          //                   </Checkbox>
+          //                 )}
+          //                 <Button
+          //                   icon={<DeleteOutlined />}
+          //                   onClick={() =>
+          //                     handleDeleteOption(
+          //                       formIndex,
+          //                       fieldIndex,
+          //                       optionIndex
+          //                     )
+          //                   }
+          //                   disabled={
+          //                     (!userRoles.includes("superadmin") && option.lock) || apiCallLoading
+          //                   }
+          //                   danger
+                            
+          //                 />
+          //               </div>
+          //             )
+          //           )}
+          //         </div>
+          //         <div style={{ marginTop: 10 }}>
+          //           <Button
+          //             icon={<PlusOutlined />}
+          //             onClick={() => handleAddOption(formIndex, fieldIndex)}
+          //             type="dashed"
+          //             className="border-primary text-primary btn-outline-primary rounded-0"
+          //             disabled={apiCallLoading}
+          //           >
+          //             Add Option
+          //           </Button>
+          //           <Button
+          //             onClick={() => handleSave(formIndex, fieldIndex)}
+          //             type="primary"
+          //             className="bg-primary btn-primary rounded-0"
+          //             loading={apiCallLoading}
+          //             style={{ marginLeft: 8 }}
+          //           >
+          //             Save
+          //           </Button>
+          //         </div>
+          //       </div>
+          //     ))}
+          //   </Panel>
+          // </Collapse>
+          <Collapse key={form.id} items={[
+            {
+              key: form.id,
+              label: form.formName,
+              children: (
+                <>
+                  {form.formFieldData.map((field, fieldIndex) => (
+                    <div key={field.fieldName} style={{ marginBottom: 16 }}>
+                      <div className="w-100 d-flex justify-content-between mb-3">
+                        <h4 style={{ width: "60%" }}>{transformText(field.fieldName)} Options</h4>
+                        <Search
+                          placeholder="Search options"
+                          value={searchQueries[formIndex]?.[fieldIndex] || ""}
+                          enterButton={"Search"}
+                          onChange={(e) => handleSearchChange(formIndex, fieldIndex, e.target.value)}
+                          className="w-100"
+                          style={{ width: "60%", marginBottom: 16 }}
+                        />
+                      </div>
+          
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
+                        {getFilteredOptions(formIndex, fieldIndex).map((option, optionIndex) => (
+                          <div
+                            key={optionIndex}
+                            style={{ display: "flex", alignItems: "center", gap: 8, border: "1px solid #d9d9d9", padding: 8, borderRadius: 4 }}
+                          >
+                            <TextArea
+                              value={option.label}
+                              onChange={(e) => handleOptionChange(formIndex, fieldIndex, optionIndex, e.target.value)}
+                              rows={2}
+                              disabled={!userRoles.includes("superadmin") && option.lock}
+                              style={{ width: 200 }}
+                              placeholder="Option Label"
+                            />
+                            {userRoles.includes("superadmin") && (
+                              <Checkbox
+                                checked={option.lock}
+                                onChange={(e) => {
+                                  const updatedForms = [...forms];
+                                  updatedForms[formIndex].formFieldData[fieldIndex].options[optionIndex].lock = e.target.checked;
+                                  setForms(updatedForms);
+                                }}
+                              >
+                                Lock
+                              </Checkbox>
+                            )}
+                            <Button
+                              icon={<DeleteOutlined />}
+                              onClick={() => handleDeleteOption(formIndex, fieldIndex, optionIndex)}
+                              disabled={(!userRoles.includes("superadmin") && option.lock) || apiCallLoading}
+                              danger
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{ marginTop: 10 }}>
+                        <Button
+                          icon={<PlusOutlined />}
+                          onClick={() => handleAddOption(formIndex, fieldIndex)}
+                          type="dashed"
+                          className="border-primary text-primary btn-outline-primary rounded-0"
+                          disabled={apiCallLoading}
                         >
-                          <TextArea
-                            value={option.label}
-                            onChange={(e) =>
-                              handleOptionChange(
-                                formIndex,
-                                fieldIndex,
-                                optionIndex,
-                                e.target.value
-                              )
-                            }
-                            rows={2}
-                            disabled={
-                              !userRoles.includes("superadmin") && option.lock
-                            }
-                            style={{ width: 200 }}
-                            placeholder="Option Label"
-                          />
-                          {userRoles.includes("superadmin") && (
-                            <Checkbox
-                              checked={option.lock}
-                              onChange={(e) => {
-                                const updatedForms = [...forms];
-                                updatedForms[formIndex].formFieldData[
-                                  fieldIndex
-                                ].options[optionIndex].lock = e.target.checked;
-                                setForms(updatedForms);
-                              }}
-                            >
-                              Lock
-                            </Checkbox>
-                          )}
-                          <Button
-                            icon={<DeleteOutlined />}
-                            onClick={() =>
-                              handleDeleteOption(
-                                formIndex,
-                                fieldIndex,
-                                optionIndex
-                              )
-                            }
-                            disabled={
-                              !userRoles.includes("superadmin") && option.lock
-                            }
-                            danger
-                            loading={apiCallLoading}
-                          />
-                        </div>
-                      )
-                    )}
-                  </div>
-                  <div style={{ marginTop: 10 }}>
-                    <Button
-                      icon={<PlusOutlined />}
-                      onClick={() => handleAddOption(formIndex, fieldIndex)}
-                      type="dashed"
-                      className="border-primary text-primary btn-outline-primary rounded-0"
-                      loading={apiCallLoading}
-                    >
-                      Add Option
-                    </Button>
-                    <Button
-                      onClick={() => handleSave(formIndex, fieldIndex)}
-                      type="primary"
-                      className="bg-primary btn-primary rounded-0"
-                      loading={apiCallLoading}
-                      style={{ marginLeft: 8 }}
-                    >
-                      Save
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </Panel>
-          </Collapse>
+                          Add Option
+                        </Button>
+                        <Button
+                          onClick={() => handleSave(formIndex, fieldIndex)}
+                          type="primary"
+                          className="bg-primary btn-primary rounded-0"
+                          loading={apiCallLoading}
+                          style={{ marginLeft: 8 }}
+                        >
+                          Save
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )
+            }
+          ]}/>
+          
         ))}
       </div>
     </Card>

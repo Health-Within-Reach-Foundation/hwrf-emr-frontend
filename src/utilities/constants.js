@@ -1,4 +1,4 @@
-const adminiStartionItems = [
+const administrationItems = [
   {
     path: "/administration/users-list",
     name: "All Users",
@@ -19,6 +19,11 @@ const adminiStartionItems = [
   //   name:"Form Templates",
   //   icon:"ri-user-settings-fill"
   // },
+  {
+    path: "/administration/manage-forms",
+    name: "Manage Forms",
+    icon: "ri-list-settings-fill",
+  },
 ];
 
 const emailItems = [
@@ -551,7 +556,7 @@ export {
   iconItems,
   authItems,
   extraPagesItems,
-  adminiStartionItems,
+  administrationItems,
   complaintsOptions,
   treatmentsOptions,
   treatmentStatusOptions,

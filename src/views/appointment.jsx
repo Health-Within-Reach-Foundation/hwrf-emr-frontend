@@ -199,7 +199,7 @@ const Appointment = () => {
                 <div
                   style={{ display: "flex", alignItems: "center", gap: "8px" }}
                 >
-                  <i class="ri-calendar-schedule-line"></i>
+                  <i className="ri-calendar-schedule-line"></i>
                   <span>In Queue</span>
                 </div>
               ),
@@ -250,6 +250,11 @@ const Appointment = () => {
       const dateString = adjustedDate.toISOString().split("T")[0];
       const response = await appointmentServices.getAppointments();
       console.log(response);
+      response.data.map((appointment) => {
+        appointment.key = appointment.id;
+        return appointment;
+      });
+
       setAppointments(
         response?.data.sort((a, b) => a.tokenNumber - b.tokenNumber) || []
       );

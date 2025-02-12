@@ -72,7 +72,12 @@ const Roles = () => {
     try {
       setLoading(true);
       const response = await rolePermissionService.getRoles();
+      response.data.map((role) => {
+        role.key = role.id;
+        return role;
+      });
       setRoles(response.data);
+      
     } catch (error) {
       console.error("Error fetching roles:", error);
     } finally {
@@ -85,6 +90,7 @@ const Roles = () => {
     try {
       setLoading(true);
       const response = await rolePermissionService.getAllPermissions();
+     
       setPermissions(response.data);
     } catch (error) {
       console.error("Error fetching permissions:", error);

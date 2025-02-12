@@ -225,6 +225,16 @@ export const DefaultRoute = [
         ),
       },
       {
+        path: "/administration/manage-forms",
+        element: (
+          <ClinicRouteGuard
+            requiredPermissions={["administration:read", "administration:write"]}
+          >
+            <ManageForms />
+          </ClinicRouteGuard>
+        ),
+      },
+      {
         path: "/patient/patient-list",
         // element: <PatientList />,
         element: (

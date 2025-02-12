@@ -29,6 +29,10 @@ const CampManagement = () => {
       setLoading(true);
       const response = await campManagementService.getCamps(); // Replace with actual API call
       console.log("camps: ", response.camps);
+      response.camps.map((camp) => {
+        camp.key = camp.id;
+        return camp;
+      });
       setCamps(response.camps || []);
       setFilteredCamps(response.camps || []);
     } catch (error) {

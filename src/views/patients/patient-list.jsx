@@ -9,14 +9,12 @@ import DateCell from "../../components/date-cell";
 import Antdtable from "../../components/antd-table";
 
 const PatientList = () => {
-  const [originalData, setOriginalData] = useState([]); // Original unfiltered data
-  const [filteredData, setFilteredData] = useState([]); // Data after applying filters
+  const [patientList, setPatientList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     gender: null, // Filter state for gender
     registerDate: null, // Filter state for register date
   });
-
 
   const patientColumns = [
     {
@@ -25,11 +23,27 @@ const PatientList = () => {
       key: "regNo",
       sortable: true,
       width: 180,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
-      ),
+      render: (text, record) => {
+        if (!record?.createdAt) return `HWRF/--/ ${text}`; // Handle cases where createdAt is missing
+
+        const createdAt = new Date(record?.createdAt);
+        const year = createdAt?.getFullYear() % 100; // Get last two digits of year
+        const month = createdAt?.getMonth() + 1; // Months are zero-based in JS
+
+        let financialYear;
+        if (month > 3) {
+          financialYear = `${year}-${year + 1}`;
+        } else {
+          financialYear = `${year - 1}-${year}`;
+        }
+
+        return (
+          <Link to={`/patient/patient-profile/${record?.id}`}>
+            {`HWRF/${financialYear}/${text}`}{" "}
+          </Link>
+        );
+      },
     },
-    // add the columns for the patient list help me fast
     {
       title: "Name",
       dataIndex: "name",
@@ -101,8 +115,11 @@ const PatientList = () => {
       setLoading(true);
       const response = await patientServices.getPatients();
       console.log(response.data);
-      setOriginalData(response.data);
-      setFilteredData(response.data);
+      response.data.map((patient) => {
+        patient.key = patient.id;
+        return patient;
+      });
+      setPatientList(response.data);
     } catch (error) {
     } finally {
       setLoading(false);
@@ -133,7 +150,7 @@ const PatientList = () => {
       <Col sm={12}>
         <Antdtable
           columns={patientColumns}
-          data={filteredData || originalData}
+          data={patientList}
           pageSizeOptions={[50, 100, 150, 200]}
           defaultPageSize={50}
         />

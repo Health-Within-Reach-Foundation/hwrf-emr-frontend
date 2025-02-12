@@ -15,9 +15,7 @@ import Footer from "../components/partials/footerStyle/footer";
 import Sidebar from "../components/partials/sidebar/sidebar";
 import SettingOffCanvas from "../components/setting/SettingOffCanvas";
 
-import { Alert, Card } from "react-bootstrap";
 import { useAuth } from "../utilities/AuthProvider";
-import { Col, Row } from "antd";
 import "./camp-details-header.scss";
 
 const DefaultLayout = () => {

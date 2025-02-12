@@ -17,6 +17,7 @@ import CurrentCampDetailsHeader from "../../components/camp/currentcamp-detail-h
 import MammoMedicalHistory from "../../components/mammography/mammography-medical-history";
 import AntdTable from "../../components/antd-table";
 import GPMedicalRecord from "../../components/general-physician/gp-medical-record";
+import formFieldsServices from "../../api/form-fields.services";
 
 const PatientProfile = () => {
   const { id } = useParams();
@@ -32,11 +33,17 @@ const PatientProfile = () => {
   const [patientLoading, setPatientLoading] = useState(true);
   const [usersLoading, setUsersLoading] = useState(true);
   const [campLoading, setCampLoading] = useState(true);
+  const [optionsLoading, setOptionsLoading] = useState(true);
   const { user, userRoles } = useAuth();
   const [users, setUsers] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
   const [allDiagnoses, setAllDiagnoses] = useState([]);
   const [activeTab, setActiveTab] = useState("dentistry");
+  const [options, setOptions] = useState({
+    complaintsOptions: [],
+    treatmentsSuggestedOptions: [],
+    treatmentStatusOptions: [],
+  });
 
   const newDenistryColumns = [
     {
@@ -118,6 +125,11 @@ const PatientProfile = () => {
       console.log("patient profile data-->", data);
       setPatientData(data);
       if (data.diagnoses.length > 0) {
+        data.diagnoses.map((diagnosis) => {
+          diagnosis.key = diagnosis.id;
+          return diagnosis;
+        });
+
         setAllDiagnoses(data.diagnoses); // Save the original diagnoses data
         // Transform diagnoses to replicate rows for each treatmentSuggested
         // const replicatedDiagnoses = data.diagnoses.flatMap((diagnosis) =>
@@ -175,6 +187,41 @@ const PatientProfile = () => {
       console.error("Error fetching patient data:", error);
     } finally {
       setPatientLoading(false);
+    }
+  };
+
+  const fetchOptions = async () => {
+    try {
+      setOptionsLoading(true);
+      const response = await formFieldsServices.getAllFormFields();
+      const complaintsOptions = response?.data?.find(
+        (item) => item?.formName === "Dental Diagnosis Form"
+      );
+      const treatmentsSuggestedOptions = response?.data?.find(
+        (item) => item?.formName === "Dental Diagnosis Form"
+      );
+      const treatmentStatusOptions = response?.data?.find(
+        (item) => item?.formName === "Dental Treatment Form"
+      );
+
+      setOptions({
+        complaintsOptions:
+          complaintsOptions?.formFieldData?.find(
+            (item) => item?.fieldName === "complaints"
+          )?.options || [],
+        treatmentsSuggestedOptions:
+          treatmentsSuggestedOptions?.formFieldData?.find(
+            (item) => item?.fieldName === "treatmentSuggested"
+          )?.options || [],
+        treatmentStatusOptions:
+          treatmentStatusOptions?.formFieldData?.find(
+            (item) => item?.fieldName === "treatmentStatusOptions"
+          )?.options || [],
+      });
+    } catch (error) {
+      console.error("Error fetching form fields:", error);
+    } finally {
+      setOptionsLoading(false);
     }
   };
 
@@ -273,6 +320,7 @@ const PatientProfile = () => {
   useEffect(() => {
     fetchPatientData();
     getUsersbyClinic();
+    fetchOptions();
     if (userRoles.includes("admin")) {
       getSpecialtyDepartmentsByClinic();
     } else {
@@ -293,7 +341,8 @@ const PatientProfile = () => {
     return "";
   };
 
-  if (patientLoading || usersLoading || campLoading) return <Loading />;
+  if (patientLoading || usersLoading || campLoading || optionsLoading)
+    return <Loading />;
 
   return (
     <Container>
@@ -419,6 +468,7 @@ const PatientProfile = () => {
 
       {drawerVisible && (
         <PatientDiagnosisForm
+          key={selectedDiagnosis?.id}
           isEdit={isEdit}
           drawerVisible={drawerVisible}
           onClose={() => setDrawerVisible(false)}
@@ -426,6 +476,7 @@ const PatientProfile = () => {
           patientData={patientData}
           doctorsList={users}
           onSave={() => fetchPatientData()}
+          options={options}
         />
       )}
     </Container>

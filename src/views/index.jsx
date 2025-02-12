@@ -27,7 +27,7 @@ const Index = () => {
       ? null
       : activeCamps?.find((camp) => camp.id === user?.currentCampId) || null;
   });
-  console.log(user);
+  // console.log(user);
   const getUsersbyClinic = async () => {
     setLoading(true);
     try {
