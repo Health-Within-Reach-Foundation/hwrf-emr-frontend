@@ -225,7 +225,7 @@ const Appointment = () => {
 
   const handleMarkAppointment = async (rowId, rowBody) => {
     try {
-      const response = await appointmentServices.markAppointment(
+      const response = await appointmentServices.updateAppointment(
         rowId,
         rowBody
       );

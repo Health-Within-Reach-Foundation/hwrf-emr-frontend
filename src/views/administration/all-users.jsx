@@ -1,21 +1,17 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Row } from "react-bootstrap";
 import Card from "../../components/Card";
-import { Link } from "react-router-dom";
-
-// Images
-
-import CustomTable from "../../components/custom-table";
 import { Loading } from "../../components/loading";
 import clinicSerivces from "../../api/clinic-services";
 import UserDrawer from "../../components/administration/user-drawer";
 import clinicServices from "../../api/clinic-services";
 import rolePermissionService from "../../api/role-permission-service";
-import { Dropdown } from "antd";
+import { Dropdown, Badge } from "antd";
 import { RiDeleteBin4Line, RiSettings4Fill } from "@remixicon/react";
 import userServices from "../../api/user-services";
 import toast from "react-hot-toast";
 import AntdTable from "../../components/antd-table";
+import { transformText } from "../../utilities/utility-function";
 
 const AllUsers = () => {
   const [loading, setLoading] = useState(false);
@@ -27,7 +23,6 @@ const AllUsers = () => {
   const [allDepartments, setAllDepartments] = useState([]);
 
   const columns = [
-    // { title: "ID", data: "id" },
     { title: "Name", data: "name", key: "name" },
     { title: "Email", data: "email", key: "email" },
     { title: "Phone Number", data: "phoneNumber", key: "phoneNumber" },
@@ -39,7 +34,7 @@ const AllUsers = () => {
       render: (data, row) => {
         return <div>{data?.map((role) => role.roleName).join(", ")}</div>;
       },
-    }, // For roles, we will format in the table
+    },
     {
       title: "Department",
       data: "department",
@@ -119,9 +114,20 @@ const AllUsers = () => {
       dataIndex: "specialist",
       key: "specialist",
       sortable: true,
+      filters: [
+        { text: "Mammographer", value: "Mammographer" },
+        { text: "Dentist", value: "Dentist" },
+        { text: "GP", value: "GP" },
+      ],
+      onFilter: (value, record) =>
+        record?.specialties
+          ?.map((specialist) => specialist.name)
+          .includes(value),
       width: 120,
       render: (text, record) => (
-        <span>{record?.specialties?.map((specialist) => specialist.name).join(", ")}</span>
+        <span>
+          {record?.specialties?.map((specialist) => specialist.name).join(", ")}
+        </span>
       ),
     },
     {
@@ -132,13 +138,31 @@ const AllUsers = () => {
         <span>{text?.map((role) => role.roleName).join(", ")}</span>
       ),
     },
+    // {
+    //   title: "Department",
+    //   dataIndex: "department",
+    //   key: "department",
+    //   sortable: true,
+    //   render: (text, record) => (
+    //     <span>{text?.map((dept) => dept.departmentName).join(", ")}</span>
+    //   ),
+    // },
     {
-      title: "Department",
-      dataIndex: "department",
-      key: "department",
-      sortable: true,
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
       render: (text, record) => (
-        <span>{text?.map((dept) => dept.departmentName).join(", ")}</span>
+        <Badge
+          dot
+          status={
+            text === "active"
+              ? "success"
+              : text === "pending"
+              ? "warning"
+              : "error"
+          }
+          text={transformText(text)}
+        ></Badge>
       ),
     },
     {
@@ -146,7 +170,10 @@ const AllUsers = () => {
       dataIndex: null,
       key: "action",
       render: (text, record) => {
-        const isAdmin = record?.roles.map((role) => role.roleName).includes("admin");
+        const isAdmin = record?.roles
+          .map((role) => role.roleName)
+          .includes("admin");
+
         const menu = {
           items: [
             {
@@ -188,12 +215,6 @@ const AllUsers = () => {
     },
   ];
 
-  const filters = [
-    { key: "createdAt", label: "Register Date" },
-    { key: "specialist", label: "Specialist" },
-    { key: "gender", label: "Gender" },
-  ];
-
   const getSpecialtyDepartmentsByClinic = async () => {
     try {
       setLoading(true);
@@ -201,7 +222,7 @@ const AllUsers = () => {
       setAllDepartments(
         response.data.map((department) => ({
           value: department.id,
-          label: department.departmentName,
+          label: department.name,
         }))
       );
     } catch (error) {
@@ -243,6 +264,7 @@ const AllUsers = () => {
         phoneNumber: user.phoneNumber,
         specialist: user.specialist,
         department: user.specialties,
+        status: user.status,
         // roles: user.roles.map((role) => role.roleName).join(", "), // Combine role names
         roles: user.roles, // Combine role names
         specialties: user.specialties,
@@ -301,7 +323,7 @@ const AllUsers = () => {
           </Card>
         </Col>
 
-        <div>
+        <div className="antd-table-container">
           <AntdTable
             columns={usersColumns}
             data={users}
@@ -319,7 +341,7 @@ const AllUsers = () => {
             }}
             userData={selectedUser}
             allRoles={allRoles}
-            allDepartments={allDepartments}
+            allSpecialties={allDepartments}
           />
         )}
       </Row>

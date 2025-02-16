@@ -241,6 +241,7 @@ const PatientDiagnosisForm = ({
         selectedTeeth,
         treatment,
         campId,
+        key,
         treatmentStatus,
         ...filteredData
       } = diagnosisData;

@@ -5,7 +5,6 @@ import Card from "../../components/Card";
 import patientServices from "../../api/patient-services";
 import { Loading } from "../../components/loading";
 import "flatpickr/dist/themes/material_blue.css";
-import DateCell from "../../components/date-cell";
 import Antdtable from "../../components/antd-table";
 
 const PatientList = () => {
@@ -100,10 +99,11 @@ const PatientList = () => {
       title: "Service Taken",
       dataIndex: "serviceTaken",
       key: "serviceTaken",
+      width:150,
       sortable: true,
       render: (text, record) => (
         <Link to={`/patient/patient-profile/${record.id}`}>
-          {text?.join(", ")}
+          {text?.join(", ") || "-"}
         </Link>
       ),
     },

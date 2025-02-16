@@ -29,11 +29,13 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true; // Mark as retried
       const refreshToken = localStorage.getItem("refreshToken");
       const accessToken = localStorage.getItem("accessToken");
-
       if (!refreshToken) {
-        localStorage.removeItem("accessToken")
-        localStorage.removeItem("refreshToken")
-        window.location.href = "/auth/sign-in"; // Redirect to login if no refresh token
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        console.log("No refresh token found, redirecting to login");
+        if (originalRequest.url !== "auth/login") {
+          window.location.href = "/auth/sign-in"; // Redirect to login if no refresh token
+        }
         return Promise.reject(error);
       }
 
@@ -60,6 +62,7 @@ apiClient.interceptors.response.use(
         // Clear tokens and redirect to login if refresh fails
         // localStorage.removeItem("accessToken");
         // localStorage.removeItem("refreshToken");
+        console.log("Redirecting to login from interceptor catch");
         window.location.href = "/auth/sign-in";
         return Promise.reject(refreshError);
       }

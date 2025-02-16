@@ -12,7 +12,8 @@ const Roles = () => {
   const [roles, setRoles] = useState([]);
   const [permissions, setPermissions] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [permissionLoading, setPermissionLoading] = useState(true);
   const [currentRole, setCurrentRole] = useState(null); // Holds the role being edited or null for creation
 
   // const columns = [
@@ -42,13 +43,13 @@ const Roles = () => {
       title: "Role Name",
       dataIndex: "roleName",
       key: "roleName",
-      sortable:true,
+      sortable: true,
       render: (text) => transformText(text),
     },
     {
       title: "Role Description",
       dataIndex: "roleDescription",
-      sortable:true,
+      sortable: true,
       key: "roleDescription",
     },
     {
@@ -77,7 +78,6 @@ const Roles = () => {
         return role;
       });
       setRoles(response.data);
-      
     } catch (error) {
       console.error("Error fetching roles:", error);
     } finally {
@@ -88,14 +88,14 @@ const Roles = () => {
   // Fetch all permissions
   const getAllPermissions = async () => {
     try {
-      setLoading(true);
+      setPermissionLoading(true);
       const response = await rolePermissionService.getAllPermissions();
-     
+
       setPermissions(response.data);
     } catch (error) {
       console.error("Error fetching permissions:", error);
     } finally {
-      setLoading(false);
+      setPermissionLoading(false);
     }
   };
 
@@ -116,7 +116,7 @@ const Roles = () => {
     getAllPermissions();
   }, []);
 
-  if (loading) {
+  if (loading || permissionLoading) {
     return <Loading />;
   }
 
@@ -132,7 +132,12 @@ const Roles = () => {
 
       {/* Custom Table */}
       {/* <CustomTable data={roles} columns={columns} enableFilters={false} /> */}
-      <AntdTable data={roles} columns={roleColumns} pageSizeOptions={[10,20,30]} defaultPageSize={10}/>
+      <AntdTable
+        data={roles}
+        columns={roleColumns}
+        pageSizeOptions={[10, 20, 30]}
+        defaultPageSize={10}
+      />
 
       {/* Create/Edit Role Modal */}
       <RoleModalForm

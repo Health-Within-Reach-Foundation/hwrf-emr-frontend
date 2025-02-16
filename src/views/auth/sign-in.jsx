@@ -16,16 +16,19 @@ const SignIn = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
+    console.log(e)
     e.preventDefault();
     setError(null);
     try {
       const responseData = await login(email, password);
+      console.log(responseData)
       if (responseData.user && responseData.token) {
         toast.success("Logged in");
         navigate("/");
       }
     } catch (err) {
       setError(err.message || "Invalid credentials");
+      console.error("Sign in failed:", err.message);
       toast.error(err.message);
     }
   };

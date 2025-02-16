@@ -69,11 +69,11 @@ const patientItems = [
     name: "Add Patient",
     icon: "ri-user-add-fill",
   },
-  // {
-  //   path: "/patient/follow-up",
-  //   name: "Patient Follow-ups",
-  //   icon: "ri-calendar-todo-fill",
-  // },
+  {
+    path: "/patient/follow-up",
+    name: "Patient Follow-ups",
+    icon: "ri-calendar-todo-fill",
+  },
   // {
   //   path: "/patient/patient-profile",
   //   name: "Patient Profile",
