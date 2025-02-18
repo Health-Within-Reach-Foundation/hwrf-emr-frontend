@@ -43,7 +43,19 @@ const PatientProfile = () => {
     complaintsOptions: [],
     treatmentsSuggestedOptions: [],
     treatmentStatusOptions: [],
+    gpComplaintsOptions: [],
+    gpKCOOptions: [],
+    gpFindingOptions: [],
+    gpSystemicExaminationOptions: [],
+    gpMedicineTypeOptions: [],
+    gpMedicineOptions: [],
+    gpMedicineDoseOptions: [],
+    gpMedicineWhenOptions: [],
+    gpMedicineFrequencyOptions: [],
+    gpMedicineDurationOptions: [],
   });
+
+  const [formFields, setFormFields] = useState([]);
 
   const newDenistryColumns = [
     {
@@ -193,31 +205,87 @@ const PatientProfile = () => {
   const fetchOptions = async () => {
     try {
       setOptionsLoading(true);
-      const response = await formFieldsServices.getAllFormFields();
-      const complaintsOptions = response?.data?.find(
-        (item) => item?.formName === "Dental Diagnosis Form"
-      );
-      const treatmentsSuggestedOptions = response?.data?.find(
-        (item) => item?.formName === "Dental Diagnosis Form"
-      );
-      const treatmentStatusOptions = response?.data?.find(
-        (item) => item?.formName === "Dental Treatment Form"
-      );
+      const response = await formFieldsServices.getFormFieldOptions();
+      console.log(response);
+      setFormFields(response.data);
+      // const complaintsOptions = response?.data?.find(
+      //   (item) => item?.formName === "Dental Diagnosis Form"
+      // );
+      // const treatmentsSuggestedOptions = response?.data?.find(
+      //   (item) => item?.formName === "Dental Diagnosis Form"
+      // );
+      // const treatmentStatusOptions = response?.data?.find(
+      //   (item) => item?.formName === "Dental Treatment Form"
+      // );
 
-      setOptions({
-        complaintsOptions:
-          complaintsOptions?.formFieldData?.find(
-            (item) => item?.fieldName === "complaints"
-          )?.options || [],
-        treatmentsSuggestedOptions:
-          treatmentsSuggestedOptions?.formFieldData?.find(
-            (item) => item?.fieldName === "treatmentSuggested"
-          )?.options || [],
-        treatmentStatusOptions:
-          treatmentStatusOptions?.formFieldData?.find(
-            (item) => item?.fieldName === "treatmentStatusOptions"
-          )?.options || [],
-      });
+      // const gpFormOptions = response?.data?.find(
+      //   (item) => item?.formName === "GP Form"
+      // );
+
+      // setOptions({
+      //   complaintsOptions:
+      //     complaintsOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "complaints"
+      //     )?.options || [],
+      //   treatmentsSuggestedOptions:
+      //     treatmentsSuggestedOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "treatmentSuggested"
+      //     )?.options || [],
+      //   treatmentStatusOptions:
+      //     treatmentStatusOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "treatmentStatusOptions"
+      //     )?.options || [],
+
+      //   gpComplaintsOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "complaints"
+      //     )?.options || [],
+
+      //   gpKCOOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "kco"
+      //     )?.options || [],
+
+      //   gpFindingOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "findings"
+      //     )?.options || [],
+
+      //   gpSystemicExaminationOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "systemicExamination"
+      //     )?.options || [],
+
+      //   gpMedicineTypeOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicineType"
+      //     )?.options || [],
+
+      //   gpMedicineOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicine"
+      //     )?.options || [],
+
+      //   gpMedicineDoseOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicineDose"
+      //     )?.options || [],
+
+      //   gpMedicineWhenOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicineWhen"
+      //     )?.options || [],
+
+      //   gpMedicineFrequencyOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicineFrequency"
+      //     )?.options || [],
+
+      //   gpMedicineDurationOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicineDuration"
+      //     )?.options || [],
+      // });
     } catch (error) {
       console.error("Error fetching form fields:", error);
     } finally {
@@ -443,6 +511,10 @@ const PatientProfile = () => {
                     gpRecords={patientData?.gpRecords}
                     patientData={patientData}
                     onSave={fetchPatientData}
+                    // options={options}
+                    formFields={
+                      formFields["GP Form"] ? formFields["GP Form"] : []
+                    }
                   />
                 </>
               </Tab>
@@ -476,7 +548,8 @@ const PatientProfile = () => {
           patientData={patientData}
           doctorsList={users}
           onSave={() => fetchPatientData()}
-          options={options}
+          // options={options}
+          formFields={formFields}
         />
       )}
     </Container>

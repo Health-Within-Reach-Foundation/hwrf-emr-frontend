@@ -3,9 +3,15 @@ import { Button, Collapse, Drawer } from "antd";
 import GPMedicalRecordForm from "./gp-record-form";
 import DateCell from "../date-cell";
 
-const GPMedicalRecord = ({ gpRecords, patientData, onSave = () => {} }) => {
+const GPMedicalRecord = ({
+  gpRecords,
+  patientData,
+  onSave = () => {},
+  // options = {},
+  formFields = [],
+}) => {
   const [showDrawer, setShowDrawer] = useState(false);
-  console.log("patientData", patientData);
+  console.log("patientData and options ", patientData, formFields);
 
   return (
     <div>
@@ -44,6 +50,7 @@ const GPMedicalRecord = ({ gpRecords, patientData, onSave = () => {} }) => {
           patientData={patientData}
           onCancel={() => setShowDrawer(false)}
           onSave={onSave}
+          formFields={formFields}
         />
       </Drawer>
 
@@ -72,7 +79,8 @@ const GPMedicalRecord = ({ gpRecords, patientData, onSave = () => {} }) => {
               isEdit={true}
               key={record.id}
               onSave={onSave}
-            />
+              formFields={formFields}
+              />
           ),
         }))}
       />

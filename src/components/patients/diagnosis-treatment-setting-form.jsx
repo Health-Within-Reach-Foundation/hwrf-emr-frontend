@@ -24,7 +24,7 @@ const DiagnosisTreatmentSettingForm = ({
   patientData,
   selectedTreatment,
   doctorsList,
-  options,
+  formFields,
 }) => {
   console.log("selected treatement --> ", selectedTreatment, diagnosisData);
   const [loading, setLoading] = useState(false);
@@ -219,7 +219,12 @@ const DiagnosisTreatmentSettingForm = ({
           value={formState.treatmentStatus}
           onChange={(value) => handleInputChange2("treatmentStatus", value)}
           // options={treatmentStatusOptions}
-          options={options?.treatmentStatusOptions || []}
+          // options={options?.treatmentStatusOptions || []}
+          options={
+            formFields["Dental Treatment Form"]?.find(
+              (field) => field?.fieldName === "treatmentStatusOptions"
+            )?.options || []
+          }
           className="w-100"
         />
       </Form.Item>

@@ -12,13 +12,15 @@ import {
 import dayjs from "dayjs";
 import patientServices from "../../api/patient-services";
 import toast from "react-hot-toast";
-
+import ComplaintsInput from "./gp-complaints";
+import EditableMedicineTable from "./gp-medicine";
 const GPMedicalRecordForm = ({
   record,
   isEdit,
   onCancel = () => {},
   patientData,
   onSave = () => {},
+  formFields = [],
 }) => {
   const [form] = Form.useForm();
   const [isEditing, setIsEditing] = useState(!isEdit); // Initially editable for new records
@@ -113,13 +115,13 @@ const GPMedicalRecordForm = ({
   const onFinish = async (values) => {
     try {
       setLoading(true);
+      const { bmi, ...otherValues } = values;
+      console.log("Form values:", otherValues);
       let response;
       if (isEdit) {
-        const { bmi, ...otherValues } = values;
         response = await patientServices.updateGPRecord(record.id, otherValues);
         setIsEditing(false);
       } else {
-        const { bmi, ...otherValues } = values;
         console.log("formData going to be send -->  ", otherValues);
         response = await patientServices.createGPRecord({
           ...otherValues,
@@ -137,7 +139,7 @@ const GPMedicalRecordForm = ({
       toast.error("Internal server error.");
       console.error("Error saving GP record:", error);
     } finally {
-      onSave();
+      // onSave();
       setLoading(false);
     }
   };
@@ -189,7 +191,7 @@ const GPMedicalRecordForm = ({
           <Col xs={24} sm={12} md={8}>
             <Form.Item
               // label="Weight (kg)"
-              label={<h6>Weight (kg)</h6>}
+              label={<h6>Weight</h6>}
               name="weight"
             >
               <Input
@@ -200,12 +202,13 @@ const GPMedicalRecordForm = ({
                     form.getFieldValue("height")
                   )
                 }
+                suffix="kg"
                 disabled={!isEditing}
               />
             </Form.Item>
           </Col>
           <Col xs={24} sm={12} md={8}>
-            <Form.Item label={<h6>Height (feet)</h6>} name="height">
+            <Form.Item label={<h6>Height</h6>} name="height">
               <Input
                 type="number"
                 step="0.01"
@@ -216,13 +219,14 @@ const GPMedicalRecordForm = ({
                     form.getFieldValue("height")
                   )
                 }
+                suffix="ft"
                 disabled={!isEditing}
               />
             </Form.Item>
           </Col>
           <Col xs={24} sm={12} md={8}>
             <Form.Item label={<h6>BMI </h6>} name="bmi">
-              <Input readOnly />
+              <Input readOnly suffix="kg/m²" />
             </Form.Item>
           </Col>
         </Row>
@@ -230,24 +234,24 @@ const GPMedicalRecordForm = ({
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} md={8}>
             <Form.Item label={<h6>Sugar level</h6>} name="sugar">
-              <Input type="number" disabled={!isEditing} />
+              <Input type="number" disabled={!isEditing} suffix="mg/dl" />
             </Form.Item>
           </Col>
           <Col xs={24} sm={12} md={8}>
             <Form.Item label={<h6>BP </h6>} name="bp">
-              <Input disabled={!isEditing} />
+              <Input disabled={!isEditing} suffix="mmHg" />
             </Form.Item>
           </Col>
           <Col xs={24} sm={12} md={8}>
             <Form.Item label={<h6>HB </h6>} name="hb">
-              <Input type="number" disabled={!isEditing} />
+              <Input type="number" disabled={!isEditing} suffix="g/dl" />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={[16, 16]}>
           <Col xs={24}>
-            <Form.Item label={<h6>Complaints</h6>} name="complaints">
+            {/* <Form.Item label={<h6>Complaints</h6>} name="complaints">
               <Checkbox.Group disabled={!isEditing} className="mt-2">
                 <Row>
                   {complaintsOptions.map((option) => (
@@ -257,13 +261,25 @@ const GPMedicalRecordForm = ({
                   ))}
                 </Row>
               </Checkbox.Group>
+            </Form.Item> */}
+            <Form.Item label={<h6>Complaints</h6>} name="complaints">
+              <ComplaintsInput
+                formField={formFields?.find(
+                  (formField) => formField.fieldName === "complaints"
+                )}
+                disabled={!isEditing}
+              />
             </Form.Item>
             {showOtherComplaints && (
               <Form.Item
                 label={<h6>Other complaints</h6>}
                 name="otherComplaints"
               >
-                <Input.TextArea rows={3} disabled={!isEditing} />
+                <Input.TextArea
+                  rows={3}
+                  disabled={!isEditing}
+                  placeholder="If any other complaints please describe it"
+                />
               </Form.Item>
             )}
           </Col>
@@ -493,9 +509,23 @@ const GPMedicalRecordForm = ({
           </Col>
         </Row>
 
-        <Form.Item label={<h6>Medicine</h6>} name="medicine">
+        {/* <Form.Item label={<h6>Medicine</h6>} name="medicine">
           <Input.TextArea rows={3} disabled={!isEditing} />
-        </Form.Item>
+        </Form.Item> */}
+        <Row gutter={[16, 16]}>
+          <Form.Item
+            label={<h6>Medicine</h6>}
+            name="medicine"
+            className="overflow-hidden"
+            style={{ scrollbarWidth: "thin" }}
+          >
+            <EditableMedicineTable
+              form={form}
+              formField={formFields}
+              disabled={!isEditing}
+            />
+          </Form.Item>
+        </Row>
 
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} md={8}>

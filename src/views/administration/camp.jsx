@@ -20,9 +20,11 @@ import AntdTable from "../../components/antd-table";
 import DentistryAnalytics from "../../components/camp/dentistry-analytics";
 import MammographyAnalytics from "../../components/camp/mammography-analytics";
 import GPAnalytics from "../../components/camp/gp-analytics";
+import { useAuth } from "../../utilities/AuthProvider";
 
 const CampDetails = () => {
   const { campId } = useParams();
+  const { user, userRoles, permissions } = useAuth();
   const [campData, setCampData] = useState(null);
   const [campLoading, setCampLoading] = useState(true);
   const [serviceLoading, setServiceLoading] = useState(true);
@@ -106,6 +108,13 @@ const CampDetails = () => {
   if (!campData) {
     return <p className="text-center mt-5">No camp data found.</p>;
   }
+
+  console.log(
+    "user and user Roles from camp page --> ",
+    user,
+    userRoles,
+    permissions
+  );
 
   const {
     name,
@@ -223,9 +232,14 @@ const CampDetails = () => {
       dataIndex: "paidAmount",
       width: 150,
       key: "paidAmount",
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
-      ),
+      render: (text, record) =>
+        permissions
+          .map((permission) => permission.action)
+          .includes("camps:finance") ? (
+          <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
+        ) : (
+          <Link to={`/patient/patient-profile/${record.id}`}>-</Link>
+        ),
     },
   ];
   const newStaffColumns = [
@@ -559,7 +573,7 @@ const CampAnalytics = ({ patients, analytics, serviceTabs = [] }) => {
                 Total Patients Registered:{" "}
                 <strong> {analytics?.totalAttended}</strong>
               </p>
-            {/* <p className="text-decoration-underline">
+              {/* <p className="text-decoration-underline">
                 Camp missed Patients: <strong> {analytics?.missed}</strong>
               </p> */}
             </Col>

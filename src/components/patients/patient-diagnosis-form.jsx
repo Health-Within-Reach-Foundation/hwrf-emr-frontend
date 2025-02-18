@@ -41,7 +41,7 @@ const PatientDiagnosisForm = ({
   onSave,
   patientData,
   doctorsList,
-  options,
+  formFields,
 }) => {
   const [loading, setLoading] = useState(false);
 
@@ -199,32 +199,6 @@ const PatientDiagnosisForm = ({
       ),
     }));
   };
-
-  // const handleTreatmentChange = (index, key, value) => {
-  //   console.log(value);
-  //   setTreatments((prev) => {
-  //     const updatedTreatments = [...prev];
-  //     const treatment = updatedTreatments[index];
-  //     // Parse amounts as numbers and auto-calculate remainingAmount
-  //     if (key === "totalAmount" || key === "paidAmount") {
-  //       const updatedValue = Number(value) || 0;
-  //       treatment[key] = updatedValue;
-  //       treatment.remainingAmount =
-  //         Number(treatment.totalAmount || 0) -
-  //         Number(treatment.paidAmount || 0);
-  //     } else {
-  //       treatment[key] = value;
-  //     }
-
-  //     // Ensure remainingAmount is never negative
-  //     if (treatment.remainingAmount < 0) {
-  //       treatment.remainingAmount = 0;
-  //     }
-
-  //     updatedTreatments[index] = treatment;
-  //     return updatedTreatments;
-  //   });
-  // };
 
   useEffect(() => {
     if (isEdit && diagnosisData) {
@@ -511,7 +485,12 @@ const PatientDiagnosisForm = ({
                   mode="multiple"
                   value={formState.complaints}
                   onChange={(value) => handleInputChange("complaints", value)}
-                  options={options?.complaintsOptions}
+                  // options={options?.complaintsOptions}
+                  options={
+                    formFields["Dental Diagnosis Form"]?.find(
+                      (field) => field?.fieldName === "complaints"
+                    )?.options || []
+                  }
                 />
               </Form.Item>
               <Form.Item
@@ -533,7 +512,12 @@ const PatientDiagnosisForm = ({
                     handleInputChange("treatmentsSuggested", value)
                   }
                   // options={treatmentsOptions}
-                  options={options?.treatmentsSuggestedOptions}
+                  // options={options?.treatmentsSuggestedOptions}/
+                  options={
+                    formFields["Dental Diagnosis Form"]?.find(
+                      (field) => field?.fieldName === "treatmentSuggested"
+                    )?.options || []
+                  }
                   className="w-100"
                 />
               </Form.Item>
@@ -937,7 +921,13 @@ const PatientDiagnosisForm = ({
                             )
                           }
                           // options={treatmentStatusOptions}
-                          options={options?.treatmentStatusOptions}
+                          // options={options?.treatmentStatusOptions}
+                          options={
+                            formFields["Dental Treatment Form"]?.find(
+                              (field) =>
+                                field?.fieldName === "treatmentStatusOptions"
+                            )?.options || []
+                          }
                           className="w-100"
                         />
                       </Form.Item>
@@ -1217,7 +1207,7 @@ const PatientDiagnosisForm = ({
                               onSave={onSave}
                               doctorsList={doctorsList}
                               selectedTreatment={treatment}
-                              options={options}
+                              formFields={formFields}
                             />
                           </Accordion.Body>
                         </Accordion.Item>

@@ -51,6 +51,23 @@ const getAllFormFields = async () => {
   }
 };
 
+const getFormFieldOptions = async () => {
+  try {
+    const response = await apiClient.get(`/clinics/form-fields/options`);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to fetch form field options"
+      );
+    } else {
+      console.error("Unexpected error:", error.message);
+      throw new Error("An unexpected error occurred.");
+    }
+  }
+};
+
 const getFormFieldById = async (formFieldId) => {
   try {
     const response = await apiClient.get(`/clinics/form-fields/${formFieldId}`);
@@ -121,6 +138,26 @@ const updateFormField = async (formFieldId, formFieldDetails) => {
   }
 };
 
+const updateFormFieldsOptions = async (updateBody) => {
+  try {
+    const response = await apiClient.patch(
+      `/clinics/form-fields/options`,
+      updateBody
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to update form field options"
+      );
+    } else {
+      console.error("Unexpected error:", error.message);
+      throw new Error("An unexpected error occurred.");
+    }
+  }
+};
+
 const deleteFormField = async (formFieldId) => {
   try {
     const response = await apiClient.delete(
@@ -156,7 +193,9 @@ const deleteFormField = async (formFieldId) => {
 export default {
   createFormFields,
   getAllFormFields,
+  getFormFieldOptions,
   getFormFieldById,
   updateFormField,
+  updateFormFieldsOptions,
   deleteFormField,
 };

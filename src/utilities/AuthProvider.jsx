@@ -7,6 +7,7 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   // const [userSpecialty, setUserSpecialty] = useState(null);
   const [userRoles, setUserRoles] = useState([]);
+  const [permissions, setPermissions] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [currentCampDetails, setCurrentCampDetails] = useState(null);
@@ -15,6 +16,16 @@ const AuthProvider = ({ children }) => {
     setUser(authData.user);
     setIsAuthenticated(true);
     setUserRoles(authData.user.roles.map((role) => role.roleName));
+    const permissionsArray = authData.user.roles?.reduce((acc, role) => {
+      // Check if the role has permissions and add them to the accumulator array
+      if (role.permissions) {
+        acc.push(...role.permissions);
+      }
+      return acc;
+    }, []); 
+    
+    // Now set the permissions to the state
+    setPermissions(permissionsArray);
     setCurrentCampDetails(
       authData?.user?.camps.find(
         (eachCamp) => eachCamp.id == authData?.user.currentCampId
@@ -74,7 +85,16 @@ const AuthProvider = ({ children }) => {
       const data = await authServices.getUser();
       setUser(data.user);
       setUserRoles(data.user.roles.map((role) => role.roleName));
-
+      const permissionsArray = data.user.roles?.reduce((acc, role) => {
+        // Check if the role has permissions and add them to the accumulator array
+        if (role.permissions) {
+          acc.push(...role.permissions);
+        }
+        return acc;
+      }, []); 
+      
+      // Now set the permissions to the state
+      setPermissions(permissionsArray);
       setIsAuthenticated(true);
       if (data.user.currentCampId && data.user?.camps.length > 0) {
         setCurrentCampDetails(
@@ -90,6 +110,7 @@ const AuthProvider = ({ children }) => {
       setIsAuthenticated(false);
       setUser(null);
       setUserRoles([]);
+      setPermissions([]);
       setCurrentCampDetails(null);
       if (error.response?.status === 401 && refreshToken) {
         try {
@@ -122,6 +143,7 @@ const AuthProvider = ({ children }) => {
         logout,
         loading,
         userRoles,
+        permissions,
         initializeAuth,
         currentCampDetails,
       }}
