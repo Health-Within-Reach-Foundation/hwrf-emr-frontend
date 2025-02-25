@@ -21,23 +21,18 @@ import {
   RiHospitalLine,
   RiListSettingsLine,
   RiListView,
-  RiHealthBookLine
+  RiHealthBookLine,
 } from "@remixicon/react";
+import { permission } from "process";
+import { checkPermission } from "../../../utilities/utility-function";
 
 const VerticalNav = () => {
   const location = useLocation();
   const [activeMenu, setActiveMenu] = useState(false);
   const [active, setActive] = useState("");
-  const { userRoles } = useAuth();
+  const { userRoles, permissions } = useAuth();
 
-  console.log(
-    "location --> ",
-    location.pathname,
-    "\n active --> ",
-    active,
-    "\n active menu -->",
-    activeMenu
-  );
+  console.log(permissions);
   const CustomToggle = React.forwardRef(
     ({ children, eventKey, onClick, activeClass }, ref) => {
       console.log("activeClass", activeClass);
@@ -93,7 +88,7 @@ const VerticalNav = () => {
             className={`nav-link ${location.pathname === "/" ? "active" : ""}`}
           >
             <OverlayTrigger
-              key={"DDashboard"}
+              key={"Dashboard"}
               placement={"right"}
               overlay={<Tooltip id="Dashboard">Dashboard</Tooltip>}
             >
@@ -151,7 +146,11 @@ const VerticalNav = () => {
         )}
 
         {/* administration nav menu items */}
-        {userRoles.includes("admin") && (
+        {(checkPermission(permissions, [
+          "administration:read",
+          "administration:write",
+        ]) ||
+          userRoles?.includes("admin")) && (
           <Accordion bsPrefix="bg-none" onSelect={(e) => setActiveMenu(e)}>
             <Accordion.Item
               as="li"
@@ -214,7 +213,9 @@ const VerticalNav = () => {
             </Accordion.Item>
           </Accordion>
         )}
-        {!userRoles.includes("superadmin") && (
+        {((!userRoles?.includes("superadmin") &&
+          checkPermission(permissions, ["queues:write", "queues:read"])) ||
+          userRoles?.includes("admin")) && (
           <Nav.Item as="li">
             <Link
               to="/queues"
@@ -235,7 +236,9 @@ const VerticalNav = () => {
             </Link>
           </Nav.Item>
         )}
-        {!userRoles.includes("superadmin") && (
+        {((!userRoles?.includes("superadmin") &&
+          checkPermission(permissions, ["camps:write", "camps:read"])) ||
+          userRoles?.includes("admin")) && (
           <Nav.Item as="li">
             <Link
               to="/camps"
@@ -278,7 +281,9 @@ const VerticalNav = () => {
         )} */}
 
         {/* patients management */}
-        {!userRoles.includes("superadmin") && (
+        {((!userRoles?.includes("superadmin") &&
+          checkPermission(permissions, ["patients:write", "patients:read"])) ||
+          userRoles?.includes("admin")) && (
           <Accordion bsPrefix="bg-none" onSelect={(e) => setActiveMenu(e)}>
             <Accordion.Item
               as="li"

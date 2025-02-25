@@ -23,7 +23,6 @@ const AuthProvider = ({ children }) => {
       }
       return acc;
     }, []); 
-    
     // Now set the permissions to the state
     setPermissions(permissionsArray);
     setCurrentCampDetails(
@@ -40,7 +39,7 @@ const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const data = await authServices.login(email, password);
-      console.log(data);
+      console.log("Inside the Auth provider login function --> ",data);
       saveAuthData(data);
       setLoading(false);
       return data;
@@ -91,8 +90,8 @@ const AuthProvider = ({ children }) => {
           acc.push(...role.permissions);
         }
         return acc;
-      }, []); 
-      
+      }, []);
+
       // Now set the permissions to the state
       setPermissions(permissionsArray);
       setIsAuthenticated(true);
@@ -127,6 +126,7 @@ const AuthProvider = ({ children }) => {
       }
     } finally {
       setLoading(false);
+      console.log("called initializeAuth function");
     }
   };
 

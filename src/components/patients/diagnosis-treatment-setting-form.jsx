@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import { RiUpload2Fill } from "@remixicon/react";
 import dayjs from "dayjs";
 import { treatmentStatusOptions } from "../../utilities/constants";
+import { useAuth } from "../../utilities/AuthProvider";
 
 const DiagnosisTreatmentSettingForm = ({
   isEdit,
@@ -39,7 +40,7 @@ const DiagnosisTreatmentSettingForm = ({
     treatingDoctor: {},
     nextDate: null,
   });
-
+  const { userRoles } = useAuth();
   const [treatmentForm] = Form.useForm();
 
   useEffect(() => {
@@ -312,6 +313,9 @@ const DiagnosisTreatmentSettingForm = ({
             type="number"
             value={formState?.onlineAmount || ""}
             onChange={(e) => handleAmountChange("onlineAmount", e.target.value)}
+            disabled={dayjs(selectedTreatment.createdAt).isBefore(
+              dayjs().subtract(2, "days") && !userRoles.includes("admin")
+            )}
           />
         </Form.Item>
         <Form.Item
@@ -326,6 +330,9 @@ const DiagnosisTreatmentSettingForm = ({
             onChange={(e) =>
               handleAmountChange("offlineAmount", e.target.value)
             }
+            disabled={dayjs(selectedTreatment.createdAt).isBefore(
+              dayjs().subtract(2, "days") && !userRoles.includes("admin")
+            )}
           />
         </Form.Item>
         <Form.Item label="Total paid">

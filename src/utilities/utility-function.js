@@ -27,11 +27,10 @@ export const transformText = (text) => {
     ?.replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
 };
 
-
-export function shortenFileName(input, startLength, endLength){
+export function shortenFileName(input, startLength, endLength) {
   // If the string is shorter than the combined lengths of start and end, return the string as is
   if (input?.length <= startLength + endLength) {
-      return input;
+    return input;
   }
 
   // Get the first startLength characters and last endLength characters
@@ -42,8 +41,8 @@ export function shortenFileName(input, startLength, endLength){
   return `${start}...${end}`;
 }
 
-export function formatRegisterNumberOfPatient(patient){
-  console.log(patient)
+export function formatRegisterNumberOfPatient(patient) {
+  console.log(patient);
   const year = new Date(patient.createdAt)?.getFullYear() % 100; // Get last two digits of year
   const month = new Date(patient.createdAt)?.getMonth() + 1; // Months are zero-based in JS
   let financialYear;
@@ -67,4 +66,12 @@ export function calculateBMI(weight, heightFeet) {
     return (weight / (height * height)).toFixed(2);
   }
   return null;
+}
+
+// here perissions is array of permission associated to the user role and permission is the array which is requrired to check if any of the permission is present in the permissions array the return true else return false
+export function checkPermission(permissions, requriredPermission = []) {
+  const formattedPermission = permissions?.map(
+    (permission) => permission?.action
+  );
+  return requriredPermission?.some((p) => formattedPermission?.includes(p));
 }

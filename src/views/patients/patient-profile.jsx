@@ -18,6 +18,7 @@ import MammoMedicalHistory from "../../components/mammography/mammography-medica
 import AntdTable from "../../components/antd-table";
 import GPMedicalRecord from "../../components/general-physician/gp-medical-record";
 import formFieldsServices from "../../api/form-fields.services";
+import BackButton from "../../components/back-button";
 
 const PatientProfile = () => {
   const { id } = useParams();
@@ -206,7 +207,6 @@ const PatientProfile = () => {
     try {
       setOptionsLoading(true);
       const response = await formFieldsServices.getFormFieldOptions();
-      console.log(response);
       setFormFields(response.data);
       // const complaintsOptions = response?.data?.find(
       //   (item) => item?.formName === "Dental Diagnosis Form"
@@ -359,6 +359,14 @@ const PatientProfile = () => {
           label: department.departmentName,
         }))
       );
+      const settingActiveTab = patientData?.appointments?.find(
+        (appointment) => appointment.status === "in"
+      )?.specialtyId;
+      setActiveTab(
+        response.data.specialties
+          ?.find((department) => department.id === settingActiveTab)
+          ?.departmentName.toLowerCase() || "dentistry"
+      );
     } catch (error) {
       console.error("Error fetching departments:", error);
     } finally {
@@ -377,6 +385,14 @@ const PatientProfile = () => {
           value: department.id,
           label: department.departmentName,
         }))
+      );
+      const settingActiveTab = patientData?.appointments?.find(
+        (appointment) => appointment.status === "in"
+      )?.specialtyId;
+      setActiveTab(
+        response.data.specialties
+          ?.find((department) => department.id === settingActiveTab)
+          ?.departmentName.toLowerCase() || "dentistry"
       );
     } catch (error) {
       console.error("Error fetching camp details:", error);
@@ -415,6 +431,8 @@ const PatientProfile = () => {
   return (
     <Container>
       {/* Patient Basic Details */}
+      <BackButton />
+
       <CurrentCampDetailsHeader />
 
       <Row>

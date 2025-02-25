@@ -771,14 +771,13 @@ const PatientDiagnosisForm = ({
               <div className="d-flex gap-2">
                 <Form.Item
                   label="Total Amount"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please enter the total amount",
-                    },
-                  ]}
+                  // rules={[
+                  //   {
+                  //     required: true,
+                  //     message: "Please enter the total amount",
+                  //   },
+                  // ]}
                   name={"totalAmount"}
-                  required
                 >
                   <Input
                     type="number"
@@ -787,18 +786,18 @@ const PatientDiagnosisForm = ({
                     onChange={(e) =>
                       handleTreatmentChange("totalAmount", e.target.value)
                     }
+                    readOnly
                   />
                 </Form.Item>
                 <Form.Item
                   label="Total Paid Amount"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please enter the total paid amount",
-                    },
-                  ]}
+                  // rules={[
+                  //   {
+                  //     required: true,
+                  //     message: "Please enter the total paid amount",
+                  //   },
+                  // ]}
                   name={"paidAmount"}
-                  required
                 >
                   <Input
                     type="number"
@@ -812,14 +811,13 @@ const PatientDiagnosisForm = ({
                 </Form.Item>
                 <Form.Item
                   label="Remaining Amount"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please enter the remaining amount",
-                    },
-                  ]}
+                  // rules={[
+                  //   {
+                  //     required: true,
+                  //     message: "Please enter the remaining amount",
+                  //   },
+                  // ]}
                   name={"remainingAmount"}
-                  required
                 >
                   <Input
                     type="number"
@@ -831,7 +829,7 @@ const PatientDiagnosisForm = ({
                   />
                 </Form.Item>
 
-                <div className="d-flex align-items-center justify-content-center">
+                {/* <div className="d-flex align-items-center justify-content-center">
                   <Button
                     title="Save Amount"
                     size="medium"
@@ -846,7 +844,7 @@ const PatientDiagnosisForm = ({
                   >
                     <RiSaveFill />
                   </Button>
-                </div>
+                </div> */}
               </div>
               <div className="d-flex justify-content-end">
                 <Button
