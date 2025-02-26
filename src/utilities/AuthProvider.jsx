@@ -22,7 +22,7 @@ const AuthProvider = ({ children }) => {
         acc.push(...role.permissions);
       }
       return acc;
-    }, []); 
+    }, []);
     // Now set the permissions to the state
     setPermissions(permissionsArray);
     setCurrentCampDetails(
@@ -37,15 +37,15 @@ const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      setLoading(true);
+      // setLoading(true);
       const data = await authServices.login(email, password);
-      console.log("Inside the Auth provider login function --> ",data);
+      console.log("Inside the Auth provider login function --> ", data);
       saveAuthData(data);
-      setLoading(false);
+      // setLoading(false);
       return data;
     } catch (error) {
       console.error("Login failed:", error.message);
-      setLoading(false);
+      // setLoading(false);
       throw error;
     }
   };

@@ -139,7 +139,7 @@ const GPMedicalRecordForm = ({
       toast.error("Internal server error.");
       console.error("Error saving GP record:", error);
     } finally {
-      // onSave();
+      onSave();
       setLoading(false);
     }
   };

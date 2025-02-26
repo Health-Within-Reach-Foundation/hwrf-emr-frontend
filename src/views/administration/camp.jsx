@@ -233,8 +233,9 @@ const CampDetails = () => {
       key: "treatingDoctors",
       filters: treatingDoctorsOptions,
       onFilter: (value, record) => {
-        return Array.isArray(record?.treatingDoctors) && record.treatingDoctors.some(
-          (doctor) => doctor?.label === value
+        return (
+          Array.isArray(record?.treatingDoctors) &&
+          record.treatingDoctors.some((doctor) => doctor?.label === value)
         );
       },
       sortable: true,
@@ -623,9 +624,11 @@ const CampAnalytics = ({ patients, analytics, serviceTabs = [] }) => {
                     dentistryAnalytics={analytics?.dentistryAnalytics}
                   />
                 ) : _ === "Mammography" ? (
-                  <MammographyAnalytics />
+                  <MammographyAnalytics
+                    mammoAnalytics={analytics?.mammoAnalytics}
+                  />
                 ) : _ === "GP" ? (
-                  <GPAnalytics />
+                  <GPAnalytics gpAnalytics={analytics?.gpAnalytics} />
                 ) : (
                   `Comming Soon ...`
                 ),

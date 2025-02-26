@@ -67,9 +67,12 @@ const verifyToken = async (jwtToken) => {
 const resetPassword = async (jwtToken, password) => {
   try {
     // Call the API endpoint to reset the password
-    const response = await apiClient.post(`/auth/reset-password/?token=${jwtToken}`, {
-      password,
-    });
+    const response = await apiClient.post(
+      `/auth/reset-password/?token=${jwtToken}`,
+      {
+        password,
+      }
+    );
     return response.data;
   } catch (error) {
     const errorMessage =

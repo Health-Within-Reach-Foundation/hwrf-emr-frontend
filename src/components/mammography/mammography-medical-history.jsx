@@ -69,6 +69,8 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
       nippleRetraction: "",
       nippleRetractionDetails: "",
       additionalInfo: "",
+      onlineAmount: null,
+      offlineAmount: null,
     };
 
     // If patient is null, return the defaultPatient object
@@ -131,6 +133,8 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
       additionalInfo: patient.additionalInfo || defaultPatient.additionalInfo,
       pain: patient.pain || defaultPatient.pain,
       painDetails: patient.painDetails || defaultPatient.painDetails,
+      onlineAmount: patient.onlineAmount || defaultPatient.onlineAmount,
+      offlineAmount: patient.offlineAmount || defaultPatient,
     };
   });
 
@@ -1376,6 +1380,57 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
             />
           </Form.Item>
 
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12} xl={4}>
+              <Form.Item
+                label="Online Amount"
+                name="onlineAmount"
+                rules={[
+                  {
+                    type: "number",
+                    min: 0,
+                    message: "Must be at least 0!",
+                  },
+                ]}
+              >
+                <InputNumber
+                  placeholder="Enter amount"
+                  style={{ width: "100%" }}
+                  defaultValue={formState.onlineAmount}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} xl={4}>
+              <Form.Item
+                label="Offline Amount"
+                name="offlineAmount"
+                rules={[
+                  {
+                    type: "number",
+                    min: 0,
+                    message: "Must be at least 0!",
+                  },
+                ]}
+              >
+                <InputNumber
+                  style={{ width: "100%" }}
+                  defaultValue={formState.offlineAmount}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} xl={4}>
+              <Form.Item label="Total Amount">
+                <InputNumber
+                  style={{ width: "100%" }}
+                  readOnly
+                  value={
+                    Number(formState.onlineAmount) +
+                    Number(formState.offlineAmount)
+                  }
+                />
+              </Form.Item>
+            </Col>
+          </Row>
           {/* Submit Button */}
           <div className="d-flex justify-content-end">
             <Button
@@ -1768,9 +1823,35 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
 
           {/* Additional Information */}
           <h3 className="mt-4 mb-3">Additional Information</h3>
-          <Form.Item label="Additional Info">
-            <Input.TextArea value={formState.additionalInfo} readOnly />
-          </Form.Item>
+          <Row gutter={[16, 16]}>
+            <Form.Item label="Additional Info">
+              <Input.TextArea value={formState.additionalInfo} readOnly />
+            </Form.Item>
+          </Row>
+
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12} xl={4}>
+              <Form.Item label="Online Amount">
+                <Input value={formState.onlineAmount} readOnly />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} xl={4}>
+              <Form.Item label="Offline Amount">
+                <Input value={formState.offlineAmount} readOnly />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} xl={4}>
+              <Form.Item label="Total Amount">
+                <Input
+                  value={
+                    Number(formState.onlineAmount) +
+                    Number(formState.offlineAmount)
+                  }
+                  readOnly
+                />
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
       )}
     </div>

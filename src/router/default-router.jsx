@@ -670,7 +670,7 @@ export const BlankLayoutRouter = [
         element: <SignIn />,
       },
       {
-        path: "/auth/sign-up",
+        path: "/auth/join-us",
         element: <JoinUs />,
       },
       {
