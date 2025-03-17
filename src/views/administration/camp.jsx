@@ -20,11 +20,16 @@ import AntdTable from "../../components/antd-table";
 import DentistryAnalytics from "../../components/camp/dentistry-analytics";
 import MammographyAnalytics from "../../components/camp/mammography-analytics";
 import GPAnalytics from "../../components/camp/gp-analytics";
+import { useAuth } from "../../utilities/AuthProvider";
+import BackButton from "../../components/back-button";
 
 const CampDetails = () => {
   const { campId } = useParams();
+  const { user, userRoles, permissions } = useAuth();
   const [campData, setCampData] = useState(null);
   const [campLoading, setCampLoading] = useState(true);
+  const [usersLoading, setUsersLoading] = useState(true);
+  const [treatingDoctorsOptions, setTreatingDoctorsOptions] = useState([]);
   const [serviceLoading, setServiceLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({});
@@ -34,6 +39,16 @@ const CampDetails = () => {
     try {
       const response = await campManagementService.getCampById(campId);
       console.log(response);
+      response.data?.patients?.map((patient, index) => {
+        patient.key = index;
+        return patient;
+      });
+
+      response.data?.users?.map((user) => {
+        user.key = user.id;
+        return user;
+      });
+
       setCampData(response.data);
       // setEditData(response.data); // Initialize edit form with existing data
       setEditData({
@@ -69,6 +84,28 @@ const CampDetails = () => {
     }
   };
 
+  const getDoctors = async () => {
+    setUsersLoading(true);
+    try {
+      const response = await clinicServices.getUsersByClinic();
+      const filteredUsers = response.data.filter((eachUser) => {
+        const isDoctor = eachUser?.roles?.some(
+          (role) => role?.roleName === "doctor"
+        );
+        return isDoctor;
+      });
+
+      const formattedUsers = filteredUsers.map((user) => ({
+        value: user?.name,
+        text: user?.name,
+      }));
+      setTreatingDoctorsOptions(formattedUsers);
+    } catch (error) {
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEditData((prev) => ({
@@ -85,11 +122,12 @@ const CampDetails = () => {
   };
 
   useEffect(() => {
+    getDoctors();
     fetchCampDetails();
     getSpecialtyDepartmentsByClinic();
   }, [campId]);
 
-  if (campLoading || serviceLoading) {
+  if (campLoading || serviceLoading || usersLoading) {
     return <Loading />;
   }
 
@@ -193,6 +231,13 @@ const CampDetails = () => {
       title: "Treated doctors",
       dataIndex: "treatingDoctors",
       key: "treatingDoctors",
+      filters: treatingDoctorsOptions,
+      onFilter: (value, record) => {
+        return (
+          Array.isArray(record?.treatingDoctors) &&
+          record.treatingDoctors.some((doctor) => doctor?.label === value)
+        );
+      },
       sortable: true,
       render: (text, record) => {
         const uniqueDoctors = record?.treatingDoctors?.reduce((acc, doctor) => {
@@ -213,9 +258,14 @@ const CampDetails = () => {
       dataIndex: "paidAmount",
       width: 150,
       key: "paidAmount",
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
-      ),
+      render: (text, record) =>
+        permissions
+          .map((permission) => permission.action)
+          .includes("camps:finance") ? (
+          <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
+        ) : (
+          <Link to={`/patient/patient-profile/${record.id}`}>-</Link>
+        ),
     },
   ];
   const newStaffColumns = [
@@ -236,6 +286,7 @@ const CampDetails = () => {
   return (
     <Container className="mt-4">
       {/* Camp Details Card with Edit Option */}
+      <BackButton />
       <Row className="mb-4 w-full">
         <Col xs={12} md={12} lg={12}>
           <Accordion>
@@ -545,9 +596,8 @@ const CampAnalytics = ({ patients, analytics, serviceTabs = [] }) => {
                 Total Patients Registered:{" "}
                 <strong> {analytics?.totalPatients}</strong>
               </p> */}
-              <p className="text-decoration-underline">
+              <p className="text-decoration-underline card-title">
                 Total Patients Registered:{" "}
-                <Badge text="Total patients attended" sta />
                 <strong> {analytics?.totalAttended}</strong>
               </p>
               {/* <p className="text-decoration-underline">
@@ -574,9 +624,11 @@ const CampAnalytics = ({ patients, analytics, serviceTabs = [] }) => {
                     dentistryAnalytics={analytics?.dentistryAnalytics}
                   />
                 ) : _ === "Mammography" ? (
-                  <MammographyAnalytics />
+                  <MammographyAnalytics
+                    mammoAnalytics={analytics?.mammoAnalytics}
+                  />
                 ) : _ === "GP" ? (
-                  <GPAnalytics />
+                  <GPAnalytics gpAnalytics={analytics?.gpAnalytics} />
                 ) : (
                   `Comming Soon ...`
                 ),

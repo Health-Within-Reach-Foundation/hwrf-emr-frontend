@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Button, Modal, Form } from "react-bootstrap";
+import { Button, Modal, Form, Input, Row, Col, Checkbox } from "antd";
 import toast from "react-hot-toast";
 import rolePermissionService from "../../api/role-permission-service";
-import { Select } from "antd";
+import { transformText } from "../../utilities/utility-function";
+
+const { TextArea } = Input;
 
 const RoleModalForm = ({
   showModal,
@@ -11,163 +13,178 @@ const RoleModalForm = ({
   permissions = [],
   currentRole = null, // Receives the role being edited or null
 }) => {
-  const [roleName, setRoleName] = useState("");
-  const [roleDescription, setRoleDescription] = useState("");
-  const [selectedPermissions, setSelectedPermissions] = useState([]);
-  const [errors, setErrors] = useState({});
+  const [form] = Form.useForm(); // Ant Design's useForm hook for form management
   const [loading, setLoading] = useState(false);
-
+  console.log("userROle -->  ", currentRole);
   // Populate form fields if editing an existing role
   useEffect(() => {
     if (currentRole) {
-      setRoleName(currentRole.roleName || "");
-      setRoleDescription(currentRole.roleDescription || "");
-      setSelectedPermissions(
-        currentRole.permissions?.map((perm) => perm.id) || []
-      );
+      const selectedPermissions =
+        currentRole.permissions?.map((perm) => perm.id) || [];
+      form.setFieldsValue({
+        roleName: currentRole.roleName || "",
+        roleDescription: currentRole.roleDescription || "",
+        permissions: selectedPermissions,
+      });
     } else {
-      resetForm(); // Clear form for new role creation
+      form.resetFields(); // Clear form for new role creation
     }
-  }, [currentRole]);
-
-  const resetForm = () => {
-    setRoleName("");
-    setRoleDescription("");
-    setSelectedPermissions([]);
-    setErrors({});
-  };
+  }, [currentRole, form]);
 
   // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+  const handleSubmit = async (values) => {
+    const { roleName, roleDescription, permissions } = values;
 
     try {
       setLoading(true);
-      const payload = {
-        roleName,
-        roleDescription,
-        permissions: selectedPermissions,
-      };
+      const payload = { roleName, roleDescription, permissions };
 
       let response;
       if (currentRole) {
         // Update role
-        console.log(currentRole.id, payload);
         response = await rolePermissionService.updateRole(
           currentRole.id,
           payload
         );
       } else {
-        console.log(payload);
         // Create new role
         response = await rolePermissionService.createRole(payload);
       }
+
       if (response.success) {
         toast.success(response.message || "Role saved successfully");
       }
-      // setShowModal(false);
-      // resetForm();
-      // await getRoles(); // Refresh roles list
+      setShowModal(false);
+      await getRoles(); // Refresh roles list
     } catch (error) {
       console.error("Error saving role:", error);
       toast.error("Failed to save role. Please try again.");
     } finally {
       setLoading(false);
-      setShowModal(false);
-      resetForm();
-      await getRoles();
+      form.resetFields();
     }
   };
 
-  // Validate form
-  const validateForm = () => {
-    const errors = {};
-    if (!roleName.trim()) errors.roleName = "Role name is required.";
-    // if (!roleDescription.trim())
-    //   errors.roleDescription = "Role description is required.";
-    if (selectedPermissions.length === 0)
-      errors.selectedPermissions = "At least one permission must be selected.";
-    return errors;
-  };
+  // Group permissions by category and sort by fixed order (read, write, no access)
+  const groupedPermissions = permissions.reduce((acc, perm) => {
+    const category = perm.action.split(":")[0]; // Extract category (e.g., "administration", "camps")
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(perm);
+    return acc;
+  }, {});
+
+  // Custom sorting for each category to ensure "read", "write", and "no access" come first
+  const sortedPermissions = Object.keys(groupedPermissions).reduce(
+    (acc, category) => {
+      const sortedCategory = groupedPermissions[category].sort((a, b) => {
+        const aAction = a.action.split(":")[1]; // Get the action type (e.g., "read", "write")
+        const bAction = b.action.split(":")[1];
+
+        const order = ["read", "write", "no access"];
+        const aIndex = order.indexOf(aAction);
+        const bIndex = order.indexOf(bAction);
+
+        return aIndex - bIndex; // Sorting based on the fixed order
+      });
+
+      acc[category] = sortedCategory;
+      return acc;
+    },
+    {}
+  );
 
   return (
     <Modal
-      show={showModal}
-      onHide={() => setShowModal(false)}
+      open={showModal}
+      onCancel={() => setShowModal(false)}
       centered
-      backdrop="static"
-      keyboard={false}
+      footer={null}
+      maskClosable={false}
+      width={900}
     >
-      <Modal.Header closeButton>
-        <Modal.Title>{currentRole ? "Edit Role" : "Create Role"}</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3">
-            <Form.Label>Role Name</Form.Label>
-            <Form.Control
-              type="text"
-              value={roleName}
-              onChange={(e) => setRoleName(e.target.value)}
-              isInvalid={!!errors.roleName}
-              placeholder="Enter role name"
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.roleName}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Role Description</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={2}
-              value={roleDescription}
-              onChange={(e) => setRoleDescription(e.target.value)}
-              // isInvalid={!!errors.roleDescription}
-              placeholder="Enter role description"
-            />
-            {/* <Form.Control.Feedback type="invalid">
-              {errors.roleDescription}
-            </Form.Control.Feedback> */}
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Permissions</Form.Label>
-            <Select
-              mode="multiple"
-              allowClear
-              placeholder="Select permissions"
-              dropdownStyle={{ zIndex: 9999 }} // Fix dropdown z-index
-              style={{ width: "100%" }}
-              value={selectedPermissions}
-              onChange={(value) => setSelectedPermissions(value)}
-              options={permissions.map((perm) => ({
-                label: perm.action,
-                value: perm.id,
-              }))}
-            />
-            {errors.selectedPermissions && (
-              <div className="text-danger">{errors.selectedPermissions}</div>
-            )}
-          </Form.Group>
-          <div className="d-flex justify-content-end">
-            <Button
-              variant="secondary"
-              onClick={() => setShowModal(false)}
-              className="me-2"
-            >
-              Cancel
-            </Button>
-            <Button variant="primary" type="submit" disabled={loading}>
-              {loading ? "Saving..." : currentRole ? "Update" : "Create"}
-            </Button>
-          </div>
-        </Form>
-      </Modal.Body>
+      <h3>{currentRole ? "Edit Role" : "Create Role"}</h3>
+      <Form
+        form={form}
+        onFinish={handleSubmit}
+        layout="vertical"
+        initialValues={{
+          permissions: [], // Set initial permissions to an empty array
+        }}
+      >
+        <Form.Item
+          label="Role Name"
+          name="roleName"
+          rules={[{ required: true, message: "Role name is required." }]}
+        >
+          <Input placeholder="Enter role name" />
+        </Form.Item>
+
+        <Form.Item label="Role Description" name="roleDescription">
+          <TextArea rows={4} placeholder="Enter role description" />
+        </Form.Item>
+
+        <Form.Item
+          label="Permissions"
+          name="permissions"
+          rules={[
+            {
+              required: true,
+              message: "At least one permission must be selected.",
+            },
+          ]}
+        >
+          <Checkbox.Group className="w-100">
+            <div className="w-100">
+              {Object.keys(sortedPermissions).map((category) => (
+                <div key={category}>
+                  <h6>
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                  </h6>
+                  <Row gutter={[16, 16]} className="mb-2">
+                    {sortedPermissions[category].map((perm) => (
+                      <Col
+                        xs={24}
+                        sm={12}
+                        md={8}
+                        lg={6}
+                        key={perm.id}
+                        style={{ display: "flex", alignItems: "center" }}
+                      >
+                        <Checkbox
+                          value={perm.id}
+                          style={{ marginRight: 8 }}
+                          className="w-auto"
+                        >
+                          {transformText(perm.action.split(":")[1])}{" "}
+                        </Checkbox>
+                      </Col>
+                    ))}
+                  </Row>
+                </div>
+              ))}
+            </div>
+          </Checkbox.Group>
+        </Form.Item>
+
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            onClick={() => setShowModal(false)}
+            style={{ marginRight: "10px" }}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={loading}
+            disabled={loading}
+          >
+            {currentRole ? "Update" : "Create"}
+          </Button>
+        </div>
+      </Form>
     </Modal>
   );
 };

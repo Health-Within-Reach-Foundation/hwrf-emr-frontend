@@ -46,10 +46,13 @@ const getAppointments = async () => {
   }
 };
 
-const markAppointment = async (appointmentId, appointmentData) => {
-  console.log(appointmentData, appointmentId)
+const updateAppointment = async (appointmentId, appointmentData) => {
+  console.log(appointmentData, appointmentId);
   try {
-    const response = await apiClient.patch(`/clinics/appointments/mark/${appointmentId}`, appointmentData)
+    const response = await apiClient.patch(
+      `/clinics/appointments/${appointmentId}`,
+      appointmentData
+    );
 
     return response.data;
   } catch (error) {
@@ -63,12 +66,14 @@ const markAppointment = async (appointmentId, appointmentData) => {
     } else {
       // Handle other types of errors
       console.error("Unexpected error:", error.message);
-      throw new Error("An unexpected error occurred while updating appointment");
+      throw new Error(
+        "An unexpected error occurred while updating appointment"
+      );
     }
   }
-}
+};
 export default {
   bookAppointment,
   getAppointments,
-  markAppointment,
+  updateAppointment,
 };

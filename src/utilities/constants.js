@@ -1,4 +1,4 @@
-const adminiStartionItems = [
+const administrationItems = [
   {
     path: "/administration/users-list",
     name: "All Users",
@@ -19,6 +19,11 @@ const adminiStartionItems = [
   //   name:"Form Templates",
   //   icon:"ri-user-settings-fill"
   // },
+  {
+    path: "/administration/manage-forms",
+    name: "Manage Forms",
+    icon: "ri-list-settings-fill",
+  },
 ];
 
 const emailItems = [
@@ -63,6 +68,11 @@ const patientItems = [
     path: "/patient/add-patient",
     name: "Add Patient",
     icon: "ri-user-add-fill",
+  },
+  {
+    path: "/patient/follow-up",
+    name: "Patient Follow-ups",
+    icon: "ri-calendar-todo-fill",
   },
   // {
   //   path: "/patient/patient-profile",
@@ -533,6 +543,43 @@ const treatmentStatusOptions = [
   },
   { label: "RC-Cal placed", value: "RC-Cal placed" },
 ];
+
+const medicineDoseOptions = [
+  { label: "1 —— 0 —— 1", value: "1 —— 0 —— 1" },
+  { label: "1 —— 1 —— 1", value: "1 —— 1 —— 1" },
+  { label: "1 —— 1 —— 0", value: "1 —— 1 —— 0" },
+  { label: "1 —— 0 —— 0", value: "1 —— 0 —— 0" },
+  { label: "0 —— 1 —— 1", value: "0 —— 1 —— 1" },
+  { label: "1 —— 1 —— 0 —— 1", value: "1 —— 1 —— 0 —— 1" },
+  { label: "0 —— 1 —— 0", value: "0 —— 1 —— 0" },
+  { label: "1 —— 0 —— 1 —— 0", value: "1 —— 0 —— 1 —— 0" },
+  { label: "0 —— 0 —— 1 —— 0", value: "0 —— 0 —— 1 —— 0" },
+  { label: "1 —— 1 —— 1 —— 1", value: "1 —— 1 —— 1 —— 1" },
+  { label: "0 —— 0 —— 0 —— 1", value: "0 —— 0 —— 0 —— 1" },
+  { label: "1 —— 2 —— 1", value: "1 —— 2 —— 1" },
+  { label: "2 —— 0 —— 2", value: "2 —— 0 —— 2" },
+  { label: "0 —— 1 —— 2", value: "0 —— 1 —— 2" },
+];
+
+const medicineWhenOptions = [
+  { label: "Before Meal", value: "Before Meal" },
+  { label: "After Meal", value: "After Meal" },
+  { label: "Anytime", value: "Anytime" },
+  { label: "Before Bed", value: "Before Bed" },
+  { label: "Empty Stomach", value: "Empty Stomach" },
+  { label: "With Meal", value: "With Meal" },
+];
+
+const medicineFrequencyOptions = [
+  { label: "Once a Day", value: "Once a Day" },
+  { label: "Twice a Day", value: "Twice a Day" },
+  { label: "Thrice a Day", value: "Thrice a Day" },
+  { label: "Four Times a Day", value: "Four Times a Day" },
+  { label: "Once a Week", value: "Once a Week" },
+  { label: "Once a Month", value: "Once a Month" },
+  { label: "Once a Year", value: "Once a Year" },
+];
+
 /* all options used in forms  */
 export {
   emailItems,
@@ -546,8 +593,11 @@ export {
   iconItems,
   authItems,
   extraPagesItems,
-  adminiStartionItems,
+  administrationItems,
   complaintsOptions,
   treatmentsOptions,
   treatmentStatusOptions,
+  medicineDoseOptions,
+  medicineWhenOptions,
+  medicineFrequencyOptions,
 };

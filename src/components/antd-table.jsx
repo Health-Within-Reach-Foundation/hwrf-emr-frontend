@@ -62,6 +62,7 @@ const AntdTable = ({
         );
       }
     },
+    fixed: col.fixed ,
   }));
 
   return (

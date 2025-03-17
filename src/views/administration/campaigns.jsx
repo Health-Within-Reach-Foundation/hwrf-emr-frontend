@@ -29,6 +29,10 @@ const CampManagement = () => {
       setLoading(true);
       const response = await campManagementService.getCamps(); // Replace with actual API call
       console.log("camps: ", response.camps);
+      response.camps.map((camp) => {
+        camp.key = camp.id;
+        return camp;
+      });
       setCamps(response.camps || []);
       setFilteredCamps(response.camps || []);
     } catch (error) {
@@ -90,6 +94,14 @@ const CampManagement = () => {
 
   const campColumns = [
     {
+      title: "Start Date",
+      dataIndex: "startDate",
+      key: "startDate",
+      fixed: "left",
+      sortable: true,
+      render: (text, record) => <Link to={`/camps/${record.id}`}>{text}</Link>,
+    },
+    {
       title: "Camp Name",
       dataIndex: "name",
       key: "name",
@@ -134,20 +146,6 @@ const CampManagement = () => {
       render: (text, record) => (
         <Link to={`/camps/${record.id}`}>{text?.join(", ")}</Link>
       ),
-    },
-    {
-      title: "Start Date",
-      dataIndex: "startDate",
-      key: "startDate",
-      sortable: true,
-      render: (text, record) => <Link to={`/camps/${record.id}`}>{text}</Link>,
-    },
-    {
-      title: "End Date",
-      dataIndex: "endDate",
-      key: "endDate",
-      sortable: true,
-      render: (text, record) => <Link to={`/camps/${record.id}`}>{text}</Link>,
     },
     // here manaeg is not link it is button so you can use button component from react-bootstrap
     {

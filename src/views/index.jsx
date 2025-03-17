@@ -27,7 +27,7 @@ const Index = () => {
       ? null
       : activeCamps?.find((camp) => camp.id === user?.currentCampId) || null;
   });
-  console.log(user);
+  // console.log(user);
   const getUsersbyClinic = async () => {
     setLoading(true);
     try {
@@ -130,7 +130,7 @@ const Index = () => {
             }}
           >
             <Button type="primary" onClick={() => setShowCampForm(true)}>
-              <RiAddLine/>
+              <RiAddLine />
               Create a Camp
             </Button>
           </div>
@@ -174,6 +174,13 @@ const Index = () => {
                       </div>
                       <h5 className="mb-1">{camp?.name}</h5>
                       <p className="text-muted">{camp?.location}</p>
+                      <Button
+                        variant="link"
+                        href={`/camps/${camp.id}`}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        View more
+                      </Button>
                     </Card.Body>
                   </Card>
                 </div>
@@ -192,29 +199,20 @@ const Index = () => {
         </div>
       )}
 
-      {/* <CampSelectionModal
-        open={
-          campDetails === null &&
-          !userRoles.includes("superadmin") &&
-          !userRoles.includes("admin")
-        }
-        camps={user?.camps || []}
-        onClose={() => {}}
-        preCheckedCampId={null}
-      /> */}
-
       {showCampForm && (
         <CampModalForm
           show={showCampForm}
           onClose={() => {
-            initializeAuth();
+            // initializeAuth();
             setShowCampForm(false);
           }}
           users={usersOptions} // Pass user options here
           specialties={specialtiesOptions} // Pass specialty options here
+          onSave={() => {
+            initializeAuth();
+          }}
         />
       )}
-      {/* <DynamicFields/> */}
     </>
   );
 };

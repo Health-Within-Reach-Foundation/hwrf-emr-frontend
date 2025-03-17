@@ -312,7 +312,6 @@ export default function ImageComponent({
         DRAGSTART_COMMAND,
         (event) => {
           if (event.target === imageRef.current) {
-            // TODO This is just a temporary workaround for FF to behave like other browsers.
             // Ideally, this handles drag & drop too (and all browsers).
             event.preventDefault();
             return true;

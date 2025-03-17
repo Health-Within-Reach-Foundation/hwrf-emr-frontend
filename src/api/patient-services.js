@@ -286,6 +286,103 @@ const deleteDiagnosisById = async (diagnosisId) => {
     }
   }
 };
+
+const createGPRecord = async (gpRecordData) => {
+  try {
+    const response = await apiClient.post(`/patients/gp-records`, gpRecordData);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      throw new Error(error.response.data.message || "Failed to create GP record");
+    } else {
+      console.error("Unexpected error:", error.message);
+      throw new Error("An unexpected error occurred while creating GP record");
+    }
+  }
+};
+
+const getGPRecordsByPatient = async (patientId) => {
+  try {
+    const response = await apiClient.get(`patients/gp-records`, {
+      query: { patientId },
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to fetch GP records"
+      );
+    } else {
+      console.error("Unexpected error:", error.message);
+      throw new Error("An unexpected error occurred while fetching GP records");
+    }
+  }
+};
+
+const getGPRecordById = async (gpRecordId) => {
+  try {
+    const response = await apiClient.get(`/patients/gp-records/${gpRecordId}`);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to fetch GP record"
+      );
+    } else {
+      console.error("Unexpected error:", error.message);
+      throw new Error("An unexpected error occurred while fetching GP record");
+    }
+  }
+};
+
+const updateGPRecord = async (gpRecordId, gpRecordData) => {
+  try {
+    const response = await apiClient.patch(`/patients/gp-records/${gpRecordId}`, gpRecordData);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      throw new Error(error.response.data.message || "Failed to update GP record");
+    } else {
+      console.error("Unexpected error:", error.message);
+      throw new Error("An unexpected error occurred while updating GP record");
+    }
+  }
+};
+
+const deleteGPRecord = async (gpRecordId) => {
+  try {
+    const response = await apiClient.delete(`/patients/gp-records/${gpRecordId}`);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      throw new Error(error.response.data.message || "Failed to delete GP record");
+    } else {
+      console.error("Unexpected error:", error.message);
+      throw new Error("An unexpected error occurred while deleting GP record");
+    }
+  }
+};
+
+const getPatientsFollowUps = async () => {
+  try {
+    const response = await apiClient.get("/patients/follow-ups");
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      throw new Error(error.response.data.message || "Failed to fetch patient follow-ups");
+    } else {
+      console.error("Unexpected error:", error.message);
+      throw new Error("An unexpected error occurred while fetching patient follow-ups");
+    }
+  }
+}
+
 export default {
   addPatient,
   createMammographyDetails,
@@ -299,4 +396,10 @@ export default {
   addTreatmentByDiagnosis,
   updateTreatmentById,
   deleteDiagnosisById,
+  createGPRecord,
+  getGPRecordsByPatient,
+  getGPRecordById,
+  updateGPRecord,
+  deleteGPRecord,
+  getPatientsFollowUps,
 };

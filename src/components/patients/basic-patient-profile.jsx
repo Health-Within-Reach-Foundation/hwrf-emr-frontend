@@ -15,7 +15,7 @@ const BasicPatientProfile = ({
     <Card>
       <Card.Header>
         <h4>Patient Profile</h4>
-        <p className="fw-bold text-decoration-underline">Registration No. : {"HWRF-".concat(patientData.regNo)}</p>
+        {/* <p className="fw-bold text-decoration-underline">Registration No. : {"HWRF-".concat(patientData.regNo)}</p> */}
         <div className="d-flex justify-content-end">
           <Button
             variant="primary"

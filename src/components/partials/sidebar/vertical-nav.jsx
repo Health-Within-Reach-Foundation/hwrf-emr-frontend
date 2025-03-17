@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import {
   Accordion,
   AccordionContext,
-  Collapse,
   Nav,
   OverlayTrigger,
   Tooltip,
@@ -12,41 +11,58 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../../utilities/AuthProvider";
 import {
   patientItems,
-  adminiStartionItems,
+  administrationItems,
 } from "../../../utilities/constants";
 import ArrowIcon from "../../arrow-icon";
+import {
+  RiFileList2Line,
+  RiHome2Line,
+  RiHomeGearLine,
+  RiHospitalLine,
+  RiListSettingsLine,
+  RiListView,
+  RiHealthBookLine,
+} from "@remixicon/react";
+import { permission } from "process";
+import { checkPermission } from "../../../utilities/utility-function";
 
 const VerticalNav = () => {
   const location = useLocation();
   const [activeMenu, setActiveMenu] = useState(false);
   const [active, setActive] = useState("");
-  const { userRoles } = useAuth();
+  const { userRoles, permissions } = useAuth();
 
-  function CustomToggle({ children, eventKey, onClick, activeClass }) {
-    const { activeEventKey } = useContext(AccordionContext);
+  console.log(permissions);
+  const CustomToggle = React.forwardRef(
+    ({ children, eventKey, onClick, activeClass }, ref) => {
+      console.log("activeClass", activeClass);
 
-    const decoratedOnClick = useAccordionButton(eventKey, (active) =>
-      onClick({ state: !active, eventKey: eventKey })
-    );
+      const { activeEventKey } = useContext(AccordionContext);
 
-    const isCurrentEventKey = activeEventKey === eventKey;
+      const decoratedOnClick = useAccordionButton(eventKey, (active) =>
+        onClick({ state: !active, eventKey: eventKey })
+      );
 
-    return (
-      <Link
-        to="#"
-        aria-expanded={isCurrentEventKey ? "true" : "false"}
-        className={`nav-link ${
-          activeEventKey === active || (eventKey === active && "active")
-        } ${activeClass === true ? "active" : ""}`}
-        role="button"
-        onClick={(e) => {
-          decoratedOnClick(isCurrentEventKey);
-        }}
-      >
-        {children}
-      </Link>
-    );
-  }
+      const isCurrentEventKey = activeEventKey === eventKey;
+
+      return (
+        <Link
+          ref={ref}
+          to="#"
+          aria-expanded={isCurrentEventKey ? "true" : "false"}
+          className={`nav-link ${
+            activeEventKey === eventKey || eventKey === active ? "active" : ""
+          } ${activeClass === true ? "active" : ""}`}
+          role="button"
+          onClick={() => {
+            decoratedOnClick(isCurrentEventKey);
+          }}
+        >
+          {children}
+        </Link>
+      );
+    }
+  );
 
   return (
     <>
@@ -72,12 +88,15 @@ const VerticalNav = () => {
             className={`nav-link ${location.pathname === "/" ? "active" : ""}`}
           >
             <OverlayTrigger
-              key={"DDashboard"}
+              key={"Dashboard"}
               placement={"right"}
               overlay={<Tooltip id="Dashboard">Dashboard</Tooltip>}
             >
-              <i className="ri-hospital-fill"></i>
+              <span>
+                <RiHome2Line />
+              </span>
             </OverlayTrigger>
+
             <span className="item-name">Dashboard</span>
           </Link>
         </Nav.Item>
@@ -96,24 +115,51 @@ const VerticalNav = () => {
                 placement={"right"}
                 overlay={<Tooltip id="Dashboard">Clinics</Tooltip>}
               >
-                <i className="ri-hospital-fill"></i>
+                <span>
+                  <RiHospitalLine />
+                </span>
               </OverlayTrigger>
               <span className="item-name">Clinics</span>
             </Link>
           </Nav.Item>
         )}
+        {userRoles.includes("superadmin") && (
+          <Nav.Item as="li">
+            <Link
+              to="/manage-forms"
+              className={`nav-link ${
+                location.pathname === "/manage-forms" ? "active" : ""
+              }`}
+            >
+              <OverlayTrigger
+                key={"Dashboard"}
+                placement={"right"}
+                overlay={<Tooltip id="Dashboard">Manage Forms</Tooltip>}
+              >
+                <span>
+                  <RiListSettingsLine />
+                </span>
+              </OverlayTrigger>
+              <span className="item-name">Manage Forms</span>
+            </Link>
+          </Nav.Item>
+        )}
 
-        {/* administartion nav menu items */}
-        {userRoles.includes("admin") && (
+        {/* administration nav menu items */}
+        {(checkPermission(permissions, [
+          "administration:read",
+          "administration:write",
+        ]) ||
+          userRoles?.includes("admin")) && (
           <Accordion bsPrefix="bg-none" onSelect={(e) => setActiveMenu(e)}>
             <Accordion.Item
               as="li"
               className={`nav-item ${active === "Administration" && "active"} ${
                 location.pathname === "/administration/users-list" ||
                 location.pathname === "/administration/add-user" ||
-                location.pathname === "/administration/roles" 
-                // location.pathname === "/administration/campaigns"
-                  ? "active"
+                location.pathname === "/administration/roles"
+                  ? // location.pathname === "/administration/campaigns"
+                    "active"
                   : ""
               }`}
               onClick={() => setActive("Administration")}
@@ -121,7 +167,7 @@ const VerticalNav = () => {
               <div className="colors">
                 <CustomToggle
                   eventKey="Administration"
-                  activeClass={adminiStartionItems.some(
+                  activeClass={administrationItems.some(
                     (item) => location.pathname === item.path
                   )}
                   onClick={(activeKey) => setActiveMenu(activeKey)}
@@ -133,7 +179,9 @@ const VerticalNav = () => {
                       <Tooltip id="Administration">Administration</Tooltip>
                     }
                   >
-                    <i className="ri-home-gear-line"></i>
+                    <span>
+                      <RiHomeGearLine />
+                    </span>
                   </OverlayTrigger>
                   <span className="item-name">Administration</span>
                   <ArrowIcon />
@@ -146,7 +194,7 @@ const VerticalNav = () => {
                   id="Administration"
                 >
                   <>
-                    {adminiStartionItems.map(({ path, name, icon }) => (
+                    {administrationItems.map(({ path, name, icon }) => (
                       <li key={path}>
                         <Link
                           className={`nav-link ${
@@ -165,7 +213,9 @@ const VerticalNav = () => {
             </Accordion.Item>
           </Accordion>
         )}
-          {!userRoles.includes("superadmin") && (
+        {((!userRoles?.includes("superadmin") &&
+          checkPermission(permissions, ["queues:write", "queues:read"])) ||
+          userRoles?.includes("admin")) && (
           <Nav.Item as="li">
             <Link
               to="/queues"
@@ -178,23 +228,22 @@ const VerticalNav = () => {
                 placement={"right"}
                 overlay={<Tooltip id="Dashboard">Queues</Tooltip>}
               >
-                <i
-                  className="ri-list-view"
-                  data-bs-toggle="tooltip"
-                  title="Queues"
-                  data-bs-placement="right"
-                ></i>
+                <span>
+                  <RiHealthBookLine />
+                </span>
               </OverlayTrigger>
               <span className="item-name ">Queues </span>
             </Link>
           </Nav.Item>
         )}
-        {!userRoles.includes("superadmin") && (
+        {((!userRoles?.includes("superadmin") &&
+          checkPermission(permissions, ["camps:write", "camps:read"])) ||
+          userRoles?.includes("admin")) && (
           <Nav.Item as="li">
             <Link
               to="/camps"
               className={`nav-link ${
-                location.pathname === "/camps" ? "active" : ""
+                location.pathname.includes("/camps") ? "active" : ""
               }`}
             >
               <OverlayTrigger
@@ -202,18 +251,15 @@ const VerticalNav = () => {
                 placement={"right"}
                 overlay={<Tooltip id="Dashboard">All Camps</Tooltip>}
               >
-                <i
-                  className="ri-list-view"
-                  data-bs-toggle="tooltip"
-                  title="Camps"
-                  data-bs-placement="right"
-                ></i>
+                <span>
+                  <RiListView />
+                </span>
               </OverlayTrigger>
               <span className="item-name ">All Camps </span>
             </Link>
           </Nav.Item>
         )}
-      
+
         {/* {userRoles.includes("superadmin") && (
           <Nav.Item as="li">
             <Link
@@ -227,12 +273,7 @@ const VerticalNav = () => {
                 placement={"right"}
                 overlay={<Tooltip id="Dashboard">Form Templates</Tooltip>}
               >
-                <i
-                  className="ri-list-view"
-                  data-bs-toggle="tooltip"
-                  title="FormTempltes"
-                  data-bs-placement="right"
-                ></i>
+                <RiListView />
               </OverlayTrigger>
               <span className="item-name ">Form Templates </span>
             </Link>
@@ -240,7 +281,9 @@ const VerticalNav = () => {
         )} */}
 
         {/* patients management */}
-        {!userRoles.includes("superadmin") && (
+        {((!userRoles?.includes("superadmin") &&
+          checkPermission(permissions, ["patients:write", "patients:read"])) ||
+          userRoles?.includes("admin")) && (
           <Accordion bsPrefix="bg-none" onSelect={(e) => setActiveMenu(e)}>
             <Accordion.Item
               as="li"
@@ -250,8 +293,8 @@ const VerticalNav = () => {
               <div className="colors">
                 <CustomToggle
                   eventKey="Patient"
-                  activeClass={patientItems.some(
-                    (item) => location.pathname === item.path
+                  activeClass={patientItems.some((item) =>
+                    location.pathname.includes(item.path)
                   )}
                   onClick={(activeKey) => setActiveMenu(activeKey)}
                 >
@@ -260,25 +303,9 @@ const VerticalNav = () => {
                     placement={"right"}
                     overlay={<Tooltip id="Patient">Patient</Tooltip>}
                   >
-                    <i className="icon">
-                      <svg
-                        className="icon-20"
-                        width="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          opacity="0.4"
-                          d="M12.0865 22C11.9627 22 11.8388 21.9716 11.7271 21.9137L8.12599 20.0496C7.10415 19.5201 6.30481 18.9259 5.68063 18.2336C4.31449 16.7195 3.5544 14.776 3.54232 12.7599L3.50004 6.12426C3.495 5.35842 3.98931 4.67103 4.72826 4.41215L11.3405 2.10679C11.7331 1.96656 12.1711 1.9646 12.5707 2.09992L19.2081 4.32684C19.9511 4.57493 20.4535 5.25742 20.4575 6.02228L20.4998 12.6628C20.5129 14.676 19.779 16.6274 18.434 18.1581C17.8168 18.8602 17.0245 19.4632 16.0128 20.0025L12.4439 21.9088C12.3331 21.9686 12.2103 21.999 12.0865 22Z"
-                          fill="currentColor"
-                        ></path>
-                        <path
-                          d="M11.3194 14.3209C11.1261 14.3219 10.9328 14.2523 10.7838 14.1091L8.86695 12.2656C8.57097 11.9793 8.56795 11.5145 8.86091 11.2262C9.15387 10.9369 9.63207 10.934 9.92906 11.2193L11.3083 12.5451L14.6758 9.22479C14.9698 8.93552 15.448 8.93258 15.744 9.21793C16.041 9.50426 16.044 9.97004 15.751 10.2574L11.8519 14.1022C11.7049 14.2474 11.5127 14.3199 11.3194 14.3209Z"
-                          fill="currentColor"
-                        ></path>
-                      </svg>
-                    </i>
+                    <span>
+                      <RiFileList2Line />
+                    </span>
                   </OverlayTrigger>
                   <span className="item-name">Patient</span>
                   <ArrowIcon />

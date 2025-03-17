@@ -1,3 +1,4 @@
+// TODO:  Warning: [antd: Form.Item] A `Form.Item` with a `name` prop must have a single child element. For information on how to render more complex form items, see
 import React, { useEffect, useState } from "react";
 import {
   Drawer,
@@ -10,7 +11,6 @@ import {
   DatePicker,
   Dropdown,
   Badge,
-  Radio,
 } from "antd";
 import patientServices from "../../api/patient-services";
 import toast from "react-hot-toast";
@@ -41,9 +41,10 @@ const PatientDiagnosisForm = ({
   onSave,
   patientData,
   doctorsList,
+  formFields,
 }) => {
-  console.log("in the diagnosis drawer --> ", diagnosisData);
   const [loading, setLoading] = useState(false);
+
   const [treatmentLoading, setTreatmentLoading] = useState(false);
   const [formState, setFormState] = useState({
     complaints: [],
@@ -73,7 +74,6 @@ const PatientDiagnosisForm = ({
         crownStatus: false,
         xray: [], // Array to store uploaded files
         treatingDoctor: {},
-        paymentMode: "offline",
         nextDate: null,
         onlineAmount: 0,
         offlineAmount: 0,
@@ -151,7 +151,6 @@ const PatientDiagnosisForm = ({
           crownStatus: false,
           xray: [],
           treatingDoctor: {},
-          paymentMode: "offline",
           nextDate: null,
           onlineAmount: 0,
           offlineAmount: 0,
@@ -161,7 +160,6 @@ const PatientDiagnosisForm = ({
   };
 
   const handleTreatmentSettingChange = (index, key, value) => {
-    console.log(index, key, value);
     setTreatments((prev) => {
       const updatedSettings = [...prev.newTreatmentSetting];
 
@@ -202,32 +200,6 @@ const PatientDiagnosisForm = ({
     }));
   };
 
-  // const handleTreatmentChange = (index, key, value) => {
-  //   console.log(value);
-  //   setTreatments((prev) => {
-  //     const updatedTreatments = [...prev];
-  //     const treatment = updatedTreatments[index];
-  //     // Parse amounts as numbers and auto-calculate remainingAmount
-  //     if (key === "totalAmount" || key === "paidAmount") {
-  //       const updatedValue = Number(value) || 0;
-  //       treatment[key] = updatedValue;
-  //       treatment.remainingAmount =
-  //         Number(treatment.totalAmount || 0) -
-  //         Number(treatment.paidAmount || 0);
-  //     } else {
-  //       treatment[key] = value;
-  //     }
-
-  //     // Ensure remainingAmount is never negative
-  //     if (treatment.remainingAmount < 0) {
-  //       treatment.remainingAmount = 0;
-  //     }
-
-  //     updatedTreatments[index] = treatment;
-  //     return updatedTreatments;
-  //   });
-  // };
-
   useEffect(() => {
     if (isEdit && diagnosisData) {
       const {
@@ -242,6 +214,9 @@ const PatientDiagnosisForm = ({
         additionalDetails,
         selectedTeeth,
         treatment,
+        campId,
+        key,
+        treatmentStatus,
         ...filteredData
       } = diagnosisData;
       setFormState({
@@ -295,17 +270,6 @@ const PatientDiagnosisForm = ({
     treatmentForm.setFieldsValue(treatments);
   }, [treatments]);
 
-  // useEffect(() => {
-  //   setFormState((prev) => ({
-  //     ...prev,
-  //     selectedTeeth: [],
-  //   }));
-  // }, [formState.dentalQuadrantType]);
-
-  // const handleInputChange = (key, value) => {
-  //   setFormState((prev) => ({ ...prev, [key]: value }));
-  // };
-
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -313,6 +277,10 @@ const PatientDiagnosisForm = ({
       // Prepare FormData object
       const formData = new FormData();
 
+      console.log(
+        "form state before making or updating diagnosis -->",
+        formState
+      );
       // Add form fields to FormData
       Object.entries(formState).forEach(([key, value]) => {
         if (key === "xray" && Array.isArray(value)) {
@@ -328,7 +296,6 @@ const PatientDiagnosisForm = ({
         }
       });
 
-      console.log("form state ************* -->", formState.selectedTeeth);
       // Make API call to save diagnosis
       let response;
       if (isEdit) {
@@ -351,7 +318,7 @@ const PatientDiagnosisForm = ({
       }
     } catch (error) {
       console.error("Error saving diagnosis:", error);
-      toast.error("An unexpected error occurred.");
+      toast.error("Internal server error!");
     } finally {
       setLoading(false);
       onSave(); // Callback after successful save
@@ -489,7 +456,7 @@ const PatientDiagnosisForm = ({
                 onClick={handleDeleteDiagnosis}
                 variant="outlined"
                 className="btn-sm btn-primary rounded-0"
-                loading={loading}
+                disabled={loading}
               >
                 <RiDeleteBin2Line />
               </Button>
@@ -518,7 +485,12 @@ const PatientDiagnosisForm = ({
                   mode="multiple"
                   value={formState.complaints}
                   onChange={(value) => handleInputChange("complaints", value)}
-                  options={complaintsOptions}
+                  // options={options?.complaintsOptions}
+                  options={
+                    formFields["Dental Diagnosis Form"]?.find(
+                      (field) => field?.fieldName === "complaints"
+                    )?.options || []
+                  }
                 />
               </Form.Item>
               <Form.Item
@@ -539,7 +511,13 @@ const PatientDiagnosisForm = ({
                   onChange={(value) =>
                     handleInputChange("treatmentsSuggested", value)
                   }
-                  options={treatmentsOptions}
+                  // options={treatmentsOptions}
+                  // options={options?.treatmentsSuggestedOptions}/
+                  options={
+                    formFields["Dental Diagnosis Form"]?.find(
+                      (field) => field?.fieldName === "treatmentSuggested"
+                    )?.options || []
+                  }
                   className="w-100"
                 />
               </Form.Item>
@@ -662,7 +640,7 @@ const PatientDiagnosisForm = ({
                 </Form.Item>
                 {diagnosisData?.xray &&
                   diagnosisData?.xray?.map((file) => (
-                    <div className="d-flex flex-col gap-2">
+                    <div className="d-flex flex-col gap-2" key={file?.key}>
                       <div
                         style={{
                           display: "flex",
@@ -793,14 +771,13 @@ const PatientDiagnosisForm = ({
               <div className="d-flex gap-2">
                 <Form.Item
                   label="Total Amount"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please enter the total amount",
-                    },
-                  ]}
+                  // rules={[
+                  //   {
+                  //     required: true,
+                  //     message: "Please enter the total amount",
+                  //   },
+                  // ]}
                   name={"totalAmount"}
-                  required
                 >
                   <Input
                     type="number"
@@ -809,18 +786,18 @@ const PatientDiagnosisForm = ({
                     onChange={(e) =>
                       handleTreatmentChange("totalAmount", e.target.value)
                     }
+                    readOnly
                   />
                 </Form.Item>
                 <Form.Item
                   label="Total Paid Amount"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please enter the total paid amount",
-                    },
-                  ]}
+                  // rules={[
+                  //   {
+                  //     required: true,
+                  //     message: "Please enter the total paid amount",
+                  //   },
+                  // ]}
                   name={"paidAmount"}
-                  required
                 >
                   <Input
                     type="number"
@@ -834,14 +811,13 @@ const PatientDiagnosisForm = ({
                 </Form.Item>
                 <Form.Item
                   label="Remaining Amount"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please enter the remaining amount",
-                    },
-                  ]}
+                  // rules={[
+                  //   {
+                  //     required: true,
+                  //     message: "Please enter the remaining amount",
+                  //   },
+                  // ]}
                   name={"remainingAmount"}
-                  required
                 >
                   <Input
                     type="number"
@@ -853,7 +829,7 @@ const PatientDiagnosisForm = ({
                   />
                 </Form.Item>
 
-                <div className="d-flex align-items-center justify-content-center">
+                {/* <div className="d-flex align-items-center justify-content-center">
                   <Button
                     title="Save Amount"
                     size="medium"
@@ -868,7 +844,7 @@ const PatientDiagnosisForm = ({
                   >
                     <RiSaveFill />
                   </Button>
-                </div>
+                </div> */}
               </div>
               <div className="d-flex justify-content-end">
                 <Button
@@ -942,7 +918,14 @@ const PatientDiagnosisForm = ({
                               value
                             )
                           }
-                          options={treatmentStatusOptions}
+                          // options={treatmentStatusOptions}
+                          // options={options?.treatmentStatusOptions}
+                          options={
+                            formFields["Dental Treatment Form"]?.find(
+                              (field) =>
+                                field?.fieldName === "treatmentStatusOptions"
+                            )?.options || []
+                          }
                           className="w-100"
                         />
                       </Form.Item>
@@ -952,7 +935,13 @@ const PatientDiagnosisForm = ({
                         className="w-100"
                         name={["newTreatmentSetting", index, "crownStatus"]}
                         label="Crown Status"
-                        extra="Please check the box above if the treatment status is associated with a crown."
+                        // extra="Please check the box above if the treatment status is associated with a crown."
+                        extra={
+                          <p className="text-warning">
+                            Please check the box above if the treatment status
+                            is associated with a crown.
+                          </p>
+                        }
                       >
                         <Checkbox
                           checked={setting.crownStatus}
@@ -1026,155 +1015,85 @@ const PatientDiagnosisForm = ({
                     </div>
                     <div className="w-100 d-flex justify-content-between gap-3">
                       <div className="d-flex flex-column w-100">
-                        <Form.Item
-                          label="Payment mode"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Please select the payment mode",
-                            },
-                          ]}
-                          name={["newTreatmentSetting", index, "paymentMode"]}
-                          required
-                        >
-                          <Radio.Group
-                            value={setting?.paymentMode}
-                            onChange={(e) =>
-                              handleTreatmentSettingChange(
-                                index,
-                                "paymentMode",
-                                e.target.value
-                              )
-                            }
-                          >
-                            <Radio value="online">Online</Radio>
-                            <Radio value="offline">Offline</Radio>
-                            <Radio value="both">Both</Radio>
-                          </Radio.Group>
-                        </Form.Item>
-
-                        {setting?.paymentMode == "online" ||
-                        setting?.paymentMode == "offline" ? (
+                        <div className="d-flex flex-row gap-2">
                           <Form.Item
-                            label="Setting Paid Amount"
+                            label="Online Paid Amount"
                             className="w-100"
                             rules={[
                               {
                                 required: true,
-                                message: "Please enter the paid amount",
+                                message: "Please enter the online paid amount",
                               },
                             ]}
                             name={[
                               "newTreatmentSetting",
                               index,
-                              setting.paymentMode === "online"
-                                ? "onlineAmount"
-                                : "offlineAmount",
+                              "onlineAmount",
                             ]}
                             required
                           >
                             <Input
                               type="number"
-                              value={
-                                setting?.paymentMode == "online"
-                                  ? setting?.onlineAmount
-                                  : setting.offlineAmount
-                              }
-                              onChange={(e) => {
-                                const key =
-                                  setting.paymentMode === "online"
-                                    ? "onlineAmount"
-                                    : "offlineAmount";
+                              value={setting?.onlineAmount}
+                              onChange={(e) =>
                                 handleTreatmentSettingChange(
                                   index,
-                                  key,
+                                  "onlineAmount",
                                   e.target.value
-                                );
-                              }}
+                                )
+                              }
                             />
                           </Form.Item>
-                        ) : setting.paymentMode === "both" ? (
-                          <div className="d-flex flex-row gap-2">
-                            <Form.Item
-                              label="Online Paid Amount"
-                              className="w-100"
-                              rules={[
-                                {
-                                  required: true,
-                                  message:
-                                    "Please enter the online paid amount",
-                                },
-                              ]}
-                              name={[
-                                "newTreatmentSetting",
-                                index,
-                                "onlineAmount",
-                              ]}
-                              required
-                            >
-                              <Input
-                                type="number"
-                                value={setting?.onlineAmount}
-                                onChange={(e) =>
-                                  handleTreatmentSettingChange(
-                                    index,
-                                    "onlineAmount",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </Form.Item>
-                            <Form.Item
-                              label="Offline Paid Amount"
-                              className="w-100"
-                              rules={[
-                                {
-                                  required: true,
-                                  message:
-                                    "Please enter the offline paid amount",
-                                },
-                              ]}
-                              name={[
-                                "newTreatmentSetting",
-                                index,
-                                "offlineAmount",
-                              ]}
-                              required
-                            >
-                              <Input
-                                type="number"
-                                value={setting?.offlineAmount}
-                                onChange={(e) =>
-                                  handleTreatmentSettingChange(
-                                    index,
-                                    "offlineAmount",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </Form.Item>
-                            <Form.Item
-                              label="Total Amount"
-                              className="w-100"
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Please enter the total amount",
-                                },
-                              ]}
-                            >
-                              <Input
-                                type="number"
-                                value={
-                                  Number(setting?.offlineAmount) +
-                                  Number(setting?.onlineAmount)
-                                }
-                                readOnly
-                                onChange={() => {}}
-                              />
-                            </Form.Item>
-                          </div>
-                        ) : null}
+                          <Form.Item
+                            label="Offline Paid Amount"
+                            className="w-100"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please enter the offline paid amount",
+                              },
+                            ]}
+                            name={[
+                              "newTreatmentSetting",
+                              index,
+                              "offlineAmount",
+                            ]}
+                            required
+                          >
+                            <Input
+                              type="number"
+                              value={setting?.offlineAmount}
+                              onChange={(e) =>
+                                handleTreatmentSettingChange(
+                                  index,
+                                  "offlineAmount",
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            label="Total Amount"
+                            className="w-100"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please enter the total amount",
+                              },
+                            ]}
+                          >
+                            <Input
+                              type="number"
+                              value={
+                                Number(setting?.offlineAmount) +
+                                Number(setting?.onlineAmount)
+                              }
+                              readOnly
+                              onChange={() => {}}
+                            />
+                          </Form.Item>
+                        </div>
+
                         <Form.Item
                           label="Next follow up date"
                           className="w-100"
@@ -1256,53 +1175,52 @@ const PatientDiagnosisForm = ({
                   </div>
                 ))}
               </div>
-              {diagnosisData?.treatment ? (
-                <div className="my-1">
-                  <hr />
-                  <p>Treatments Settings</p>
-                  {diagnosisData?.treatment?.treatmentSettings?.map(
-                    (treatment) => {
-                      return (
-                        <Accordion className="my-1">
-                          <Accordion.Item eventKey="0">
-                            <Accordion.Header>
-                              <div className="d-flex flex-row gap-3">
-                                <h6>
-                                  {treatment.treatmentStatus.join(", ")} -{" "}
-                                </h6>
-                                <DateCell date={treatment.treatmentDate} /> -
-                                <p>
-                                  ₹
-                                  {Number(treatment.offlineAmount) +
-                                    Number(treatment.onlineAmount)}
-                                </p>
-                              </div>
-                            </Accordion.Header>
-                            <Accordion.Body>
-                              <DiagnosisTreatmentSettingForm
-                                diagnosisData={diagnosisData}
-                                drawerVisible={true}
-                                isEdit={true}
-                                onClose={onClose}
-                                onSave={onSave}
-                                doctorsList={doctorsList}
-                                selectedTreatment={treatment}
-                              />
-                            </Accordion.Body>
-                          </Accordion.Item>
-                        </Accordion>
-                      );
-                    }
-                  )}
-                </div>
-              ) : (
-                treatments.length <= 0 && (
-                  <div className="text-center text-danger">
-                    <p>No Treatment Found</p>
-                  </div>
-                )
-              )}
             </Form>
+            {diagnosisData?.treatment ? (
+              <div className="my-1">
+                <hr />
+                <p>Treatments Settings</p>
+                {diagnosisData?.treatment?.treatmentSettings?.map(
+                  (treatment) => {
+                    return (
+                      <Accordion className="my-1" key={treatment.id}>
+                        <Accordion.Item eventKey="0">
+                          <Accordion.Header>
+                            <div className="d-flex flex-row gap-3">
+                              <h6>{treatment.treatmentStatus.join(", ")} - </h6>
+                              <DateCell date={treatment.treatmentDate} /> -
+                              <p>
+                                ₹
+                                {Number(treatment.offlineAmount) +
+                                  Number(treatment.onlineAmount)}
+                              </p>
+                            </div>
+                          </Accordion.Header>
+                          <Accordion.Body>
+                            <DiagnosisTreatmentSettingForm
+                              diagnosisData={diagnosisData}
+                              drawerVisible={true}
+                              isEdit={true}
+                              onClose={onClose}
+                              onSave={onSave}
+                              doctorsList={doctorsList}
+                              selectedTreatment={treatment}
+                              formFields={formFields}
+                            />
+                          </Accordion.Body>
+                        </Accordion.Item>
+                      </Accordion>
+                    );
+                  }
+                )}
+              </div>
+            ) : (
+              treatments.length <= 0 && (
+                <div className="text-center text-danger">
+                  <p>No Treatment Found</p>
+                </div>
+              )
+            )}
           </Card.Body>
         </Card>
       )}

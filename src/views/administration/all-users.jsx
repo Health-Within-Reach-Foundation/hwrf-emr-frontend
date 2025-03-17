@@ -1,21 +1,17 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Row } from "react-bootstrap";
 import Card from "../../components/Card";
-import { Link } from "react-router-dom";
-
-// Images
-
-import CustomTable from "../../components/custom-table";
 import { Loading } from "../../components/loading";
 import clinicSerivces from "../../api/clinic-services";
 import UserDrawer from "../../components/administration/user-drawer";
 import clinicServices from "../../api/clinic-services";
 import rolePermissionService from "../../api/role-permission-service";
-import { Dropdown } from "antd";
+import { Dropdown, Badge } from "antd";
 import { RiDeleteBin4Line, RiSettings4Fill } from "@remixicon/react";
 import userServices from "../../api/user-services";
 import toast from "react-hot-toast";
 import AntdTable from "../../components/antd-table";
+import { transformText } from "../../utilities/utility-function";
 
 const AllUsers = () => {
   const [loading, setLoading] = useState(false);
@@ -27,45 +23,31 @@ const AllUsers = () => {
   const [allDepartments, setAllDepartments] = useState([]);
 
   const columns = [
-    // { title: "ID", data: "id" },
-    { title: "Name", data: "name" },
-    { title: "Email", data: "email" },
-    { title: "Phone Number", data: "phoneNumber" },
+    { title: "Name", data: "name", key: "name" },
+    { title: "Email", data: "email", key: "email" },
+    { title: "Phone Number", data: "phoneNumber", key: "phoneNumber" },
     { title: "Specialist", data: "specialist" },
     {
       title: "Roles",
       data: "roles",
+      key: "roles",
       render: (data, row) => {
         return <div>{data?.map((role) => role.roleName).join(", ")}</div>;
       },
-    }, // For roles, we will format in the table
+    },
     {
       title: "Department",
       data: "department",
+      key: "department",
       render: (data, row) => {
         return <div>{data?.map((dept) => dept.departmentName).join(", ")}</div>;
       },
     },
-    { title: "Register Date", data: "createdAt" },
-    // {
-    //   data: null,
-    //   title: "View",
-    //   render: (data, row) => {
-    //     return (
-    //       // <a href={`/patient/patient-profile/${row.patientId}`} className="">
-    //       //   {data}
-    //       // </a>
-    //       <Button type="primary" size="sm" onClick={() => handleEditClick(row)}>
-    //         Manage
-    //       </Button>
-    //     );
-    //   },
-    // },
+    { title: "Register Date", data: "createdAt", key: "createdAt" },
     {
       data: null,
       title: "Action",
       render: (data, row) => {
-        // Define the menu options using the new menu structure with icons and proper alignment
         const menu = {
           items: [
             {
@@ -132,6 +114,21 @@ const AllUsers = () => {
       dataIndex: "specialist",
       key: "specialist",
       sortable: true,
+      filters: [
+        { text: "Mammographer", value: "Mammographer" },
+        { text: "Dentist", value: "Dentist" },
+        { text: "GP", value: "GP" },
+      ],
+      onFilter: (value, record) =>
+        record?.specialties
+          ?.map((specialist) => specialist.name)
+          .includes(value),
+      width: 120,
+      render: (text, record) => (
+        <span>
+          {record?.specialties?.map((specialist) => specialist.name).join(", ")}
+        </span>
+      ),
     },
     {
       title: "Roles",
@@ -141,13 +138,31 @@ const AllUsers = () => {
         <span>{text?.map((role) => role.roleName).join(", ")}</span>
       ),
     },
+    // {
+    //   title: "Department",
+    //   dataIndex: "department",
+    //   key: "department",
+    //   sortable: true,
+    //   render: (text, record) => (
+    //     <span>{text?.map((dept) => dept.departmentName).join(", ")}</span>
+    //   ),
+    // },
     {
-      title: "Department",
-      dataIndex: "department",
-      key: "department",
-      sortable: true,
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
       render: (text, record) => (
-        <span>{text?.map((dept) => dept.departmentName).join(", ")}</span>
+        <Badge
+          dot
+          status={
+            text === "active"
+              ? "success"
+              : text === "pending"
+              ? "warning"
+              : "error"
+          }
+          text={transformText(text)}
+        ></Badge>
       ),
     },
     {
@@ -155,6 +170,10 @@ const AllUsers = () => {
       dataIndex: null,
       key: "action",
       render: (text, record) => {
+        const isAdmin = record?.roles
+          .map((role) => role.roleName)
+          .includes("admin");
+
         const menu = {
           items: [
             {
@@ -179,7 +198,8 @@ const AllUsers = () => {
                   <span>Delete</span>
                 </div>
               ),
-              onClick: () => handleDeleteUserById(record?.id),
+              onClick: isAdmin ? null : () => handleDeleteUserById(record?.id),
+              disabled: isAdmin,
             },
           ],
         };
@@ -195,12 +215,6 @@ const AllUsers = () => {
     },
   ];
 
-  const filters = [
-    { key: "createdAt", label: "Register Date" },
-    { key: "specialist", label: "Specialist" },
-    { key: "gender", label: "Gender" },
-  ];
-
   const getSpecialtyDepartmentsByClinic = async () => {
     try {
       setLoading(true);
@@ -208,7 +222,7 @@ const AllUsers = () => {
       setAllDepartments(
         response.data.map((department) => ({
           value: department.id,
-          label: department.departmentName,
+          label: department.name,
         }))
       );
     } catch (error) {
@@ -241,15 +255,19 @@ const AllUsers = () => {
     setUserLoading(true);
     try {
       const response = await clinicSerivces.getUsersByClinic();
+      console.log("response", response);
       const formattedUsers = response.data.map((user) => ({
+        key: user.id,
         id: user.id,
         name: user.name,
         email: user.email,
         phoneNumber: user.phoneNumber,
         specialist: user.specialist,
         department: user.specialties,
+        status: user.status,
         // roles: user.roles.map((role) => role.roleName).join(", "), // Combine role names
         roles: user.roles, // Combine role names
+        specialties: user.specialties,
         createdAt: new Date(user.createdAt).toLocaleDateString(), // Format date
       }));
       console.log("formattedUsers", formattedUsers);
@@ -305,20 +323,12 @@ const AllUsers = () => {
           </Card>
         </Col>
 
-        <div>
-          {/* <CustomTable
-            columns={columns}
-            data={users}
-            enableSearch
-            enableFilters
-            filtersConfig={filters}
-          /> */}
+        <div className="antd-table-container">
           <AntdTable
             columns={usersColumns}
             data={users}
             pageSizeOptions={[50, 100, 150, 200]}
             defaultPageSize={50}
-            
           />
         </div>
 
@@ -331,7 +341,7 @@ const AllUsers = () => {
             }}
             userData={selectedUser}
             allRoles={allRoles}
-            allDepartments={allDepartments}
+            allSpecialties={allDepartments}
           />
         )}
       </Row>

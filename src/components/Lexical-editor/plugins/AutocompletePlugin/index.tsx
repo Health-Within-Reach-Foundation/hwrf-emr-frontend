@@ -41,7 +41,6 @@
 //   .replace(/[^a-z]+/g, '')
 //   .substr(0, 5);
 
-// // TODO lookup should be custom
 // function $search(selection: null | BaseSelection): [boolean, string] {
 //   if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
 //     return [false, ''];
@@ -65,7 +64,6 @@
 //   return [true, word.reverse().join('')];
 // }
 
-// // TODO query should be custom
 // function useQuery(): (searchText: string) => SearchPromise {
 //   return useCallback((searchText: string) => {
 //     const server = new AutocompleteServer();
@@ -246,7 +244,6 @@
 //     const promise: Promise<null | string> = new Promise((resolve, reject) => {
 //       setTimeout(() => {
 //         if (isDismissed) {
-//           // TODO cache result
 //           return reject('Dismissed');
 //         }
 //         const searchTextLength = searchText.length;

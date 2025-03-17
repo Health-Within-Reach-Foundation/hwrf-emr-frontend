@@ -16,143 +16,47 @@ import campManagementService from "../../api/camp-management-service";
 import CurrentCampDetailsHeader from "../../components/camp/currentcamp-detail-header";
 import MammoMedicalHistory from "../../components/mammography/mammography-medical-history";
 import AntdTable from "../../components/antd-table";
-import { sort } from "@amcharts/amcharts4/.internal/core/utils/Iterator";
+import GPMedicalRecord from "../../components/general-physician/gp-medical-record";
+import formFieldsServices from "../../api/form-fields.services";
+import BackButton from "../../components/back-button";
 
 const PatientProfile = () => {
   const { id } = useParams();
   const [patientData, setPatientData] = useState(null);
+  const [dentalCosting, setDentalCosting] = useState({
+    totalAmount: 0,
+    remainingAmount: 0,
+    paidAmount: 0,
+  });
   const [selectedDiagnosis, setSelectedDiagnosis] = useState(null);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [patientLoading, setPatientLoading] = useState(true);
   const [usersLoading, setUsersLoading] = useState(true);
   const [campLoading, setCampLoading] = useState(true);
+  const [optionsLoading, setOptionsLoading] = useState(true);
   const { user, userRoles } = useAuth();
   const [users, setUsers] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
   const [allDiagnoses, setAllDiagnoses] = useState([]);
+  const [activeTab, setActiveTab] = useState("dentistry");
+  const [options, setOptions] = useState({
+    complaintsOptions: [],
+    treatmentsSuggestedOptions: [],
+    treatmentStatusOptions: [],
+    gpComplaintsOptions: [],
+    gpKCOOptions: [],
+    gpFindingOptions: [],
+    gpSystemicExaminationOptions: [],
+    gpMedicineTypeOptions: [],
+    gpMedicineOptions: [],
+    gpMedicineDoseOptions: [],
+    gpMedicineWhenOptions: [],
+    gpMedicineFrequencyOptions: [],
+    gpMedicineDurationOptions: [],
+  });
 
-  const dentistryColumns = [
-    {
-      title: "Diagnosis date",
-      data: "createdAt",
-      render: (data, record) => {
-        const status = record?.treatment?.status;
-        return (
-          <DateCell
-            date={new Date(data)}
-            dateFormat="D MMM, YYYY"
-            className={
-              status === "started"
-                ? "bg-info-subtle p-1 text-black"
-                : status === "completed"
-                ? "bg-success-subtle p-1 text-black"
-                : ""
-            }
-          />
-        );
-      },
-    },
-    {
-      title: "Tooth Number",
-      data: "selectedTeeth",
-      render: (data, record) => {
-        const status = record?.treatment?.status;
-        return (
-          <div
-            className={
-              status === "started"
-                ? "bg-info-subtle p-1 text-black"
-                : status === "completed"
-                ? "bg-success-subtle p-1 text-black"
-                : ""
-            }
-          >
-            {data}
-          </div>
-        );
-      },
-    },
-    {
-      title: "Complaints",
-      data: "complaints",
-      render: (data, record) => {
-        const status = record?.treatment?.status;
-        return (
-          <div
-            className={
-              status === "started"
-                ? "bg-info-subtle p-1 text-black"
-                : status === "completed"
-                ? "bg-success-subtle p-1 text-black"
-                : ""
-            }
-          >
-            {data?.join(", ")}
-          </div>
-        );
-      },
-    },
-    {
-      title: "Suggested Treatment",
-      data: "treatmentSuggested",
-      render: (data, record) => {
-        const status = record?.treatment?.status;
-
-        return (
-          <div
-            className={
-              status === "started"
-                ? "bg-info-subtle p-1 text-black"
-                : status === "completed"
-                ? "bg-success-subtle p-1 text-black"
-                : ""
-            }
-          >
-            {data}
-          </div>
-        );
-      },
-    },
-    {
-      title: "Treatment Progress",
-      data: "treatmentSuggested",
-      render: (data, record) => {
-        const status = record?.treatment?.status;
-
-        return (
-          <div
-            className={
-              status === "started"
-                ? "bg-info-subtle p-1 text-black"
-                : status === "completed"
-                ? "bg-success-subtle p-1 text-black"
-                : ""
-            }
-          >
-            {record.treatment === null
-              ? "Not Started"
-              : transformText(record?.treatment?.status)}
-          </div>
-        );
-      },
-    },
-    {
-      title: "View Diagnosis",
-      data: null,
-      render: (data, record) => {
-        return (
-          <Button
-            size="sm"
-            variant="primary"
-            onClick={() => handleOpenDrawer(record, true)}
-          >
-            View/Edit
-          </Button>
-        );
-      },
-    },
-  ];
+  const [formFields, setFormFields] = useState([]);
 
   const newDenistryColumns = [
     {
@@ -183,9 +87,13 @@ const PatientProfile = () => {
     {
       title: "Suggested Treatment",
       sortable: true,
-      dataIndex: "treatmentSuggested",
-      key: "treatmentSuggested",
-      render: (text) => text,
+      ellipsis: false,
+      dataIndex: "treatmentsSuggested",
+      width: 200,
+      key: "treatmentsSuggested",
+      render: (text) => (
+        <span title={text?.join(", ")}>{text?.join(", ")}</span>
+      ),
     },
     {
       title: "Treatment Progress",
@@ -196,16 +104,17 @@ const PatientProfile = () => {
         { text: "Started", value: "started" },
         { text: "Completed", value: "completed" },
       ],
-      onFilter: (value, record) => record.treatmentStatus === value,
+      onFilter: (value, record) => record?.treatment?.status === value,
       key: "treatmentStatus",
       render: (text, record) => {
-        return <span>{transformText(text)}</span>;
+        return <span>{transformText(record?.treatment?.status)}</span>;
       },
     },
     {
       title: "View Diagnosis",
       dataIndex: null,
       key: "viewDiagnosis",
+      // fixed: "right",
       render: (_, record) => (
         <Button
           size="sm"
@@ -226,22 +135,56 @@ const PatientProfile = () => {
         user?.specialties[0]?.id
       );
       const { data } = response;
-      console.log("patient profile data with medical records -->", data);
+      console.log("patient profile data-->", data);
       setPatientData(data);
       if (data.diagnoses.length > 0) {
-        // Transform diagnoses to replicate rows for each treatmentSuggested
-        const replicatedDiagnoses = data.diagnoses.flatMap((diagnosis) =>
-          diagnosis.treatmentsSuggested.map((treatment) => ({
-            ...diagnosis,
-            treatmentSuggested: treatment, // Include the specific treatment in each row
-            treatmentStatus: diagnosis.treatment?.status,
-          }))
-        );
-        setAllDiagnoses(replicatedDiagnoses); // Save the replicated data
+        data.diagnoses.map((diagnosis) => {
+          diagnosis.key = diagnosis.id;
+          return diagnosis;
+        });
 
-        console.log("Replicated Diagnoses: ", replicatedDiagnoses);
+        setAllDiagnoses(data.diagnoses); // Save the original diagnoses data
+        // Transform diagnoses to replicate rows for each treatmentSuggested
+        // const replicatedDiagnoses = data.diagnoses.flatMap((diagnosis) =>
+        //   diagnosis.treatmentsSuggested.map((treatment) => ({
+        //     ...diagnosis,
+        //     treatmentSuggested: treatment, // Include the specific treatment in each row
+        //     treatmentStatus: diagnosis.treatment?.status,
+        //   }))
+        // );
+        // setAllDiagnoses(replicatedDiagnoses); // Save the replicated data
+
+        const totalAmount = data.diagnoses.reduce((acc, curr) => {
+          if (curr.treatment.status !== "not started") {
+            const amount = Number(curr.treatment.totalAmount);
+            return isNaN(amount) ? acc : acc + amount;
+          }
+          return acc;
+        }, 0);
+
+        const remainingAmount = data.diagnoses.reduce((acc, curr) => {
+          if (curr.treatment.status !== "not started") {
+            const amount = Number(curr.treatment.remainingAmount);
+            return isNaN(amount) ? acc : acc + amount;
+          }
+          return acc;
+        }, 0);
+
+        const paidAmount = data.diagnoses.reduce((acc, curr) => {
+          if (curr.treatment.status !== "not started") {
+            const amount = Number(curr.treatment.paidAmount);
+            return isNaN(amount) ? acc : acc + amount;
+          }
+          return acc;
+        }, 0);
+
+        setDentalCosting({
+          totalAmount,
+          remainingAmount,
+          paidAmount,
+        });
+
         if (selectedDiagnosis !== null) {
-          console.log("old", selectedDiagnosis);
           setSelectedDiagnosis(
             data.diagnoses.find(
               (dignosis) => dignosis?.id === selectedDiagnosis.id
@@ -257,6 +200,96 @@ const PatientProfile = () => {
       console.error("Error fetching patient data:", error);
     } finally {
       setPatientLoading(false);
+    }
+  };
+
+  const fetchOptions = async () => {
+    try {
+      setOptionsLoading(true);
+      const response = await formFieldsServices.getFormFieldOptions();
+      setFormFields(response.data);
+      // const complaintsOptions = response?.data?.find(
+      //   (item) => item?.formName === "Dental Diagnosis Form"
+      // );
+      // const treatmentsSuggestedOptions = response?.data?.find(
+      //   (item) => item?.formName === "Dental Diagnosis Form"
+      // );
+      // const treatmentStatusOptions = response?.data?.find(
+      //   (item) => item?.formName === "Dental Treatment Form"
+      // );
+
+      // const gpFormOptions = response?.data?.find(
+      //   (item) => item?.formName === "GP Form"
+      // );
+
+      // setOptions({
+      //   complaintsOptions:
+      //     complaintsOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "complaints"
+      //     )?.options || [],
+      //   treatmentsSuggestedOptions:
+      //     treatmentsSuggestedOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "treatmentSuggested"
+      //     )?.options || [],
+      //   treatmentStatusOptions:
+      //     treatmentStatusOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "treatmentStatusOptions"
+      //     )?.options || [],
+
+      //   gpComplaintsOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "complaints"
+      //     )?.options || [],
+
+      //   gpKCOOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "kco"
+      //     )?.options || [],
+
+      //   gpFindingOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "findings"
+      //     )?.options || [],
+
+      //   gpSystemicExaminationOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "systemicExamination"
+      //     )?.options || [],
+
+      //   gpMedicineTypeOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicineType"
+      //     )?.options || [],
+
+      //   gpMedicineOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicine"
+      //     )?.options || [],
+
+      //   gpMedicineDoseOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicineDose"
+      //     )?.options || [],
+
+      //   gpMedicineWhenOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicineWhen"
+      //     )?.options || [],
+
+      //   gpMedicineFrequencyOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicineFrequency"
+      //     )?.options || [],
+
+      //   gpMedicineDurationOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicineDuration"
+      //     )?.options || [],
+      // });
+    } catch (error) {
+      console.error("Error fetching form fields:", error);
+    } finally {
+      setOptionsLoading(false);
     }
   };
 
@@ -294,7 +327,6 @@ const PatientProfile = () => {
     setUsersLoading(true);
     try {
       const response = await clinicServices.getUsersByClinic();
-      console.log("users", response.data);
       const filteredUsers = response.data.filter((eachUser) => {
         const isDoctor = eachUser?.roles?.some(
           (role) => role?.roleName === "doctor"
@@ -305,7 +337,6 @@ const PatientProfile = () => {
         return isDoctor && isDentist;
       });
 
-      console.log("filteredUsers", filteredUsers);
       const formattedUsers = filteredUsers.map((user) => ({
         value: user.id,
         label: user.name,
@@ -328,6 +359,14 @@ const PatientProfile = () => {
           label: department.departmentName,
         }))
       );
+      const settingActiveTab = patientData?.appointments?.find(
+        (appointment) => appointment.status === "in"
+      )?.specialtyId;
+      setActiveTab(
+        response.data.specialties
+          ?.find((department) => department.id === settingActiveTab)
+          ?.departmentName.toLowerCase() || "dentistry"
+      );
     } catch (error) {
       console.error("Error fetching departments:", error);
     } finally {
@@ -347,6 +386,14 @@ const PatientProfile = () => {
           label: department.departmentName,
         }))
       );
+      const settingActiveTab = patientData?.appointments?.find(
+        (appointment) => appointment.status === "in"
+      )?.specialtyId;
+      setActiveTab(
+        response.data.specialties
+          ?.find((department) => department.id === settingActiveTab)
+          ?.departmentName.toLowerCase() || "dentistry"
+      );
     } catch (error) {
       console.error("Error fetching camp details:", error);
     } finally {
@@ -357,6 +404,7 @@ const PatientProfile = () => {
   useEffect(() => {
     fetchPatientData();
     getUsersbyClinic();
+    fetchOptions();
     if (userRoles.includes("admin")) {
       getSpecialtyDepartmentsByClinic();
     } else {
@@ -365,27 +413,26 @@ const PatientProfile = () => {
   }, []);
 
   const customRowClass = (record) => {
-    console.log("record", record);
-    if (record?.treatmentStatus === "completed") {
+    if (record?.treatment?.status === "completed") {
       return "row-success";
     }
-    if (record?.treatmentStatus === "started") {
+    if (record?.treatment?.status === "started") {
       return "row-info";
     }
-    if (record?.treatmentStatus === "not started") {
+    if (record?.treatment?.status === "not started") {
       return "row-warning";
     }
     return "";
   };
 
-  // if (patientData === null)
-  //   return <Alert variant="danger my-3">Patient not found</Alert>;
-
-  if (patientLoading || usersLoading || campLoading) return <Loading />;
+  if (patientLoading || usersLoading || campLoading || optionsLoading)
+    return <Loading />;
 
   return (
     <Container>
       {/* Patient Basic Details */}
+      <BackButton />
+
       <CurrentCampDetailsHeader />
 
       <Row>
@@ -406,11 +453,12 @@ const PatientProfile = () => {
         </Card.Header>
         <Card.Body>
           <Tabs
-            defaultActiveKey="dentistry"
             className="border-bottom mb-3"
             justify
             fill
             transition={true}
+            onSelect={(key) => setActiveTab(key)}
+            activeKey={activeTab}
           >
             {/* Dentistry Tab */}
             {departmentList
@@ -443,6 +491,10 @@ const PatientProfile = () => {
                 />{" "}
                 <Container className="mt-3">
                   <h5 className="mt-3">Diagnoses</h5>
+                  <hr />
+                  <h6>Total Amount: {dentalCosting?.totalAmount}</h6>
+                  <h6>Paid Amount: {dentalCosting?.paidAmount}</h6>
+                  <h6>Remaining Amount: {dentalCosting?.remainingAmount}</h6>
                   <div className="d-flex justify-content-end">
                     <Button
                       variant="primary"
@@ -472,8 +524,17 @@ const PatientProfile = () => {
               .map((eachDepartment) => eachDepartment.label)
               .includes("GP") && (
               <Tab eventKey="gp" title="GP">
-                <h5 className="mt-3">General Practice Content</h5>
-                <p>Coming soon...</p>
+                <>
+                  <GPMedicalRecord
+                    gpRecords={patientData?.gpRecords}
+                    patientData={patientData}
+                    onSave={fetchPatientData}
+                    // options={options}
+                    formFields={
+                      formFields["GP Form"] ? formFields["GP Form"] : []
+                    }
+                  />
+                </>
               </Tab>
             )}
 
@@ -495,22 +556,20 @@ const PatientProfile = () => {
         </Card.Body>
       </Card>
 
-      {/* <Row className="mt-4">
-        <Col>
-          <CustomTable columns={columns} data={appointments} />
-        </Col>
-      </Row> */}
-
-      {/* Patient Diagnosis Form Drawer */}
-      <PatientDiagnosisForm
-        isEdit={isEdit}
-        drawerVisible={drawerVisible}
-        onClose={() => setDrawerVisible(false)}
-        diagnosisData={selectedDiagnosis}
-        patientData={patientData}
-        doctorsList={users}
-        onSave={() => fetchPatientData()}
-      />
+      {drawerVisible && (
+        <PatientDiagnosisForm
+          key={selectedDiagnosis?.id}
+          isEdit={isEdit}
+          drawerVisible={drawerVisible}
+          onClose={() => setDrawerVisible(false)}
+          diagnosisData={selectedDiagnosis}
+          patientData={patientData}
+          doctorsList={users}
+          onSave={() => fetchPatientData()}
+          // options={options}
+          formFields={formFields}
+        />
+      )}
     </Container>
   );
 };
