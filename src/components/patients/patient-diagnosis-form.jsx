@@ -47,6 +47,7 @@ const PatientDiagnosisForm = ({
 
   const [treatmentLoading, setTreatmentLoading] = useState(false);
   const [formState, setFormState] = useState({
+    diagnosisDate: dayjs(),
     complaints: [],
     treatmentsSuggested: [],
     // dentalQuadrant: [],
@@ -217,10 +218,12 @@ const PatientDiagnosisForm = ({
         campId,
         key,
         treatmentStatus,
+        diagnosisDate,
         ...filteredData
       } = diagnosisData;
       setFormState({
         ...filteredData,
+        diagnosisDate: diagnosisDate ? dayjs(diagnosisDate) : null,
         xray: [],
         selectedTeeth: selectedTeeth === null ? [] : [selectedTeeth],
         childSelectedTeeth:
@@ -245,6 +248,7 @@ const PatientDiagnosisForm = ({
       });
     } else {
       setFormState({
+        diagnosisDate: dayjs(),
         complaints: [],
         treatmentsSuggested: [],
         childSelectedTeeth: [],
@@ -291,6 +295,8 @@ const PatientDiagnosisForm = ({
         } else if (Array.isArray(value)) {
           // Append arrays as JSON
           formData.append(key, JSON.stringify(value));
+        } else if (key === "diagnosisDate") {
+          formData.append(key, dayjs(value).format("YYYY-MM-DD"));
         } else {
           formData.append(key, value);
         }
@@ -343,6 +349,12 @@ const PatientDiagnosisForm = ({
           value.forEach((file) => {
             formData.append("xrayFiles", file);
           });
+        } else if (key === "treatmentDate" || key === "nextDate") {
+          if (value) {
+            formData.append(key, dayjs(value).format("YYYY-MM-DD"));
+          } else {
+            formData.append(key, value);
+          }
         } else if (Array.isArray(value) || typeof value === "object") {
           // Append arrays as JSON
           formData.append(key, JSON.stringify(value));
@@ -469,6 +481,27 @@ const PatientDiagnosisForm = ({
             form={diagnosisForm}
           >
             <div className="w-100 d-flex justify-content-between gap-3">
+              <Form.Item
+                label="Diagnosis Date"
+                className="w-100"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the diagnosis date",
+                  },
+                ]}
+                name="diagnosisDate"
+                required
+              >
+                <DatePicker
+                  format={"YYYY-MM-DD"}
+                  value={formState.diagnosisDate}
+                  onChange={(value) => {
+                    handleInputChange("diagnosisDate", value);
+                  }}
+                  className="w-100"
+                />
+              </Form.Item>
               <Form.Item
                 label="Complaints"
                 className="w-100"

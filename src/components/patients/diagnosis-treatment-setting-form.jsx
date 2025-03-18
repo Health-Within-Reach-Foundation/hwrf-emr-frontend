@@ -147,7 +147,10 @@ const DiagnosisTreatmentSettingForm = ({
       formData.append("treatingDoctor", JSON.stringify(treatingDoctor));
       formData.append("onlineAmount", onlineAmount);
       formData.append("offlineAmount", offlineAmount);
-      formData.append("nextDate", JSON.stringify(nextDate));
+      formData.append(
+        "nextDate",
+        nextDate ? dayjs(nextDate).format("YYYY-MM-DD") : null
+      );
 
       if (xray) {
         xray.forEach((file) => {
