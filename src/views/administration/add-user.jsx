@@ -503,9 +503,10 @@ const AddUser = () => {
 
                 <Form.Item className="d-flex justify-content-end">
                 <Button
-                  type="primary"
+                // classNames="bg-primary"
+                  // type="primary"
                   htmlType="submit"
-                  className="mt-3 btn-primary rounded-0"
+                 className="bg-primary" type="primary"
                   // onclick={() => handleSubmit(form.getFieldsValue())}
                 >
                   Send Invitation

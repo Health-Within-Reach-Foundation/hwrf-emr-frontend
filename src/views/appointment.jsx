@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 // import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
 import Select from "react-select";
@@ -10,7 +10,7 @@ import clinicServices from "../api/clinic-services";
 import CustomTable from "../components/custom-table";
 import { Loading } from "../components/loading";
 import DateCell from "../components/date-cell";
-import { Badge, Dropdown, Menu } from "antd";
+import { Badge, Button, Dropdown, Menu } from "antd";
 import toast from "react-hot-toast";
 import CurrentCampDetailsHeader from "../components/camp/currentcamp-detail-header";
 import { RiAddLine, RiRefreshLine } from "@remixicon/react";
@@ -214,7 +214,7 @@ const Appointment = () => {
 
         return (
           <Dropdown menu={menu} trigger={["click"]}>
-            <Button type="primary" size="sm">
+            <Button className="bg-primary" type="primary" size="sm">
               Action
             </Button>
           </Dropdown>
@@ -384,10 +384,11 @@ const Appointment = () => {
             <div className="d-flex flex-column">
               <div className="d-flex flex-row-reverse gap-2">
                 <Button
+                className="bg-primary" type="primary"
                   variant="primary"
                   onClick={() => setShow(true)}
                   disabled={user?.currentCampId === null}
-                  className="mb-3"
+              
                   title={
                     user?.currentCampId === null ? "Please select camp!" : null
                   }
@@ -397,9 +398,10 @@ const Appointment = () => {
                   Add to Queue
                 </Button>
                 <Button
+                className="bg-primary" type="primary"
                   variant="outline-primary"
                   onClick={refreshData}
-                  className="mb-3"
+                  // className="mb-3"
                   style={{ width: "auto" }}
                 >
                   <RiRefreshLine />
@@ -409,17 +411,19 @@ const Appointment = () => {
                 Sort By:
                 {departmentList.map((department) => (
                   <Button
-                    size="lg"
-                    key={department.value}
-                    variant={
-                      selectedQueueType === department.label
-                        ? "primary" // Highlight the selected button
-                        : "outline-primary"
-                    }
-                    onClick={() => handleQueueTypeSort(department)}
-                  >
-                    {department.label}
-                  </Button>
+               
+                  key={department.value}
+                  size="lg"
+                  onClick={() => handleQueueTypeSort(department)}
+                  style={{
+                    backgroundColor:
+                      selectedQueueType === department.label ? "#0a58b8" : "transparent",
+                    color: selectedQueueType === department.label ? "#fff" : "#0a58b8",
+                    border: "1px solid #0a58b8",
+                  }}
+                >
+                  {department.label}
+                </Button>
                 ))}
               </div>
             </div>

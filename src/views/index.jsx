@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Button } from "react-bootstrap";
+import { Button } from "antd";
 import Card from "../components/Card";
 import DateCell from "../components/date-cell";
 import { useAuth } from "../utilities/AuthProvider";
@@ -129,7 +129,7 @@ const Index = () => {
               justifySelf: "end",
             }}
           >
-            <Button type="primary" onClick={() => setShowCampForm(true)}>
+            <Button className="bg-primary" type="primary" onClick={() => setShowCampForm(true)}>
               <RiAddLine />
               Create a Camp
             </Button>
