@@ -177,6 +177,7 @@ const RoleModalForm = ({
           </Button>
           <Button
             type="primary"
+            className="bg-primary" 
             htmlType="submit"
             loading={loading}
             disabled={loading}

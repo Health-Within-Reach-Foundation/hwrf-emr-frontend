@@ -51,6 +51,7 @@ const SelectedDiagnosisTreatementDetaiils = ({
       render: (_, record) => (
         <Button
           size="sm"
+          
           variant="warning"
           onClick={() => handleOpenDrawer(record, true)}
         >

@@ -458,7 +458,7 @@ const PatientDiagnosisForm = ({
                   });
               }}
               type="primary"
-              className="bg-primary rounded-0"
+              className="bg-primary"
               loading={loading}
             >
               {isEdit ? "Update Diagnosis" : "Submit Diagnosis"}
@@ -754,6 +754,7 @@ const PatientDiagnosisForm = ({
                     onChange={(e) =>
                       handleInputChange("estimatedCost", e.target.value)
                     }
+                    onWheel={(e) => e.target.blur()}
                   />
                 </Form.Item>
               </div>
@@ -819,6 +820,7 @@ const PatientDiagnosisForm = ({
                     onChange={(e) =>
                       handleTreatmentChange("totalAmount", e.target.value)
                     }
+                    onWheel={(e) => e.target.blur()}
                     readOnly
                   />
                 </Form.Item>
@@ -840,6 +842,7 @@ const PatientDiagnosisForm = ({
                     onChange={(e) =>
                       handleTreatmentChange("paidAmount", e.target.value)
                     }
+                    onWheel={(e) => e.target.blur()}
                   />
                 </Form.Item>
                 <Form.Item
@@ -858,6 +861,8 @@ const PatientDiagnosisForm = ({
                     defaultValue={
                       diagnosisData?.treatment?.remainingAmount || 0
                     }
+                    onWheel={(e) => e.target.blur()}
+
                     readOnly
                   />
                 </Form.Item>
@@ -1075,6 +1080,7 @@ const PatientDiagnosisForm = ({
                                   e.target.value
                                 )
                               }
+                    onWheel={(e) => e.target.blur()}
                             />
                           </Form.Item>
                           <Form.Item
@@ -1103,6 +1109,8 @@ const PatientDiagnosisForm = ({
                                   e.target.value
                                 )
                               }
+                    onWheel={(e) => e.target.blur()}
+
                             />
                           </Form.Item>
                           <Form.Item
@@ -1199,7 +1207,7 @@ const PatientDiagnosisForm = ({
                             });
                         }}
                         type="primary"
-                        className="bg-primary rounded-0"
+                        className="bg-primary "
                         loading={treatmentLoading} // Assuming loading is being managed elsewhere
                       >
                         Submit Treatment

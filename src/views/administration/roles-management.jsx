@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Button } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { Loading } from "../../components/loading";
 import CustomTable from "../../components/custom-table";
 import RoleModalForm from "../../components/administration/role-form";
@@ -7,6 +7,7 @@ import rolePermissionService from "../../api/role-permission-service";
 import { RiAddLine } from "@remixicon/react";
 import { transformText } from "../../utilities/utility-function";
 import AntdTable from "../../components/antd-table";
+import { Button } from "antd";
 
 const Roles = () => {
   const [roles, setRoles] = useState([]);
@@ -124,7 +125,7 @@ const Roles = () => {
     <Container className="mt-4">
       <h2>Role Management</h2>
       <div className="d-flex flex-row-reverse justify-content-between align-items-center mb-4">
-        <Button variant="primary" onClick={handleCreateRole}>
+        <Button  className="bg-primary" type="primary" variant="primary" onClick={handleCreateRole}>
           <RiAddLine />
           Create Role
         </Button>

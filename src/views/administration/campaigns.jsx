@@ -156,7 +156,7 @@ const CampManagement = () => {
         <Button
           type="primary"
           variant="outlined"
-          className="bg-primary btn-primary rounded-0"
+          className="bg-primary"
           size="sm"
           onClick={() => handleEditCamp(record)}
         >
@@ -172,7 +172,7 @@ const CampManagement = () => {
         <Col>
           <Row className="align-items-center mb-3">
             <Col className="d-flex flex-row-reverse">
-              <Button onClick={() => setShowModal(true)}>
+              <Button className="bg-primary" type="primary" onClick={() => setShowModal(true)}>
                 <RiAddLine />
                 Add Camp
               </Button>

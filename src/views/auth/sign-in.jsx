@@ -154,12 +154,13 @@ const SignIn = () => {
               <Form.Item
                 label="Email Address"
                 name="email"
+                className="email_address"
                 rules={[
                   { required: true, message: "Please enter your email" },
                   { type: "email", message: "Enter a valid email" },
                 ]}
               >
-                <Input placeholder="Enter email" />
+                <Input className="ant-input" placeholder="Enter email" />
               </Form.Item>
 
               <Form.Item

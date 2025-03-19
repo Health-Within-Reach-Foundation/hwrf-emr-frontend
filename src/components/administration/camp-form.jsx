@@ -206,6 +206,7 @@ const CampModalForm = ({
 
         <Form.Item className="d-flex justify-content-end">
           <Button
+          className="bg-primary"
             type="primary"
             onClick={handleSubmit}
             style={{ marginRight: 8 }}

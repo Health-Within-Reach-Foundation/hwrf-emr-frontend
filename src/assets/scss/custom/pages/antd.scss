@@ -1,0 +1,17 @@
+.queue-modal {
+  .modal-body {
+    form {
+      div {
+        .col-2 {
+          text-align: center !important;
+        }
+      }
+    }
+  }
+  .modal-footer {
+    .btn-secondary {
+      background-color: transparent;
+      color: #0a58b8;
+    }
+  }
+}
