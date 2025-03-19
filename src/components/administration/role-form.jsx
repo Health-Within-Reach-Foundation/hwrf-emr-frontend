@@ -172,6 +172,7 @@ const RoleModalForm = ({
           <Button
             onClick={() => setShowModal(false)}
             style={{ marginRight: "10px" }}
+            className="border-primary text-primary"
           >
             Cancel
           </Button>

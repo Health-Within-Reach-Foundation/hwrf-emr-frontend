@@ -172,9 +172,12 @@ const CampManagement = () => {
         <Col>
           <Row className="align-items-center mb-3">
             <Col className="d-flex flex-row-reverse">
-              <Button className="bg-primary" type="primary" onClick={() => setShowModal(true)}>
+              <Button className="bg-primary" type="primary" onClick={() => {
+                  setSelectedCamp(null);
+                  setShowModal(true)
+                  }}>
                 <RiAddLine />
-                Add Camp
+                Create Camp
               </Button>
             </Col>
           </Row>
