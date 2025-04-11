@@ -81,7 +81,7 @@ const PatientList = () => {
       title: "Mobile",
       dataIndex: "mobile",
       key: "mobile",
-      sortable: false,
+      sortable: true,
       render: (text, record) => (
         <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
       ),

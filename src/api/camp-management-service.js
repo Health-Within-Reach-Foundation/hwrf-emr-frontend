@@ -88,10 +88,30 @@ const getCampById = async (campId) => {
   }
 };
 
+const getCampsAnalytics = async () => {
+  try {
+    const response = await apiClient.get("/clinics/camps/analytics");
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to fetch camps analytics"
+      );
+    } else {
+      console.error("Unexpected error:", error.message);
+      throw new Error(
+        "An unexpected error occurred while fetching camps analytics"
+      );
+    }
+  }
+}
+
 export default {
   getCamps,
   getCampById,
   createCamp,
   selectCamp,
   updateCampById,
+  getCampsAnalytics
 };

@@ -82,6 +82,7 @@ const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const data = await authServices.getUser();
+      console.log("Inside the Auth provider initializeAuth function --> ", data);
       setUser(data.user);
       setUserRoles(data.user.roles.map((role) => role.roleName));
       const permissionsArray = data.user.roles?.reduce((acc, role) => {
@@ -105,7 +106,7 @@ const AuthProvider = ({ children }) => {
         setCurrentCampDetails(null);
       }
     } catch (error) {
-      console.error("Failed to restore user:", error.message);
+      console.error("Failed to restore user:", error);
       setIsAuthenticated(false);
       setUser(null);
       setUserRoles([]);

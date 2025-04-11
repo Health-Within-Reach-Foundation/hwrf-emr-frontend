@@ -13,7 +13,7 @@ const BackButton = () => {
       onClick={() => navigate(-1)}
       className="bg-primary-subtle flex w-20 items-center gap-2"
     >
-      <RiArrowLeftLine />
+      <RiArrowLeftLine size={15}/>
       Back
     </Button>
   );
