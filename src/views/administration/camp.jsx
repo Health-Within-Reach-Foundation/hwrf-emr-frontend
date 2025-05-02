@@ -182,29 +182,6 @@ const CampDetails = () => {
       ),
     },
     {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
-      width: 80,
-      sortable: true,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
-      ),
-    },
-    {
-      title: "Sex",
-      dataIndex: "sex",
-      key: "sex",
-      filters: [
-        { text: "Male", value: "male" },
-        { text: "Female", value: "female" },
-      ],
-      onFilter: (value, record) => record.sex === value,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
-      ),
-    },
-    {
       title: "Service Taken",
       dataIndex: "serviceTaken",
       key: "serviceTaken",
@@ -218,12 +195,44 @@ const CampDetails = () => {
         <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
       ),
     },
-
+    {
+      title: "Collected Amount",
+      dataIndex: "collectedAmount",
+      width: 150,
+      key: "collectedAmount",
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>
+          {text?.offlineAmount + text?.onlineAmount}
+        </Link>
+      ),
+    },
+    {
+      title: "Cash",
+      dataIndex: "collectedAmount",
+      width: 150,
+      key: "collectedAmount",
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>
+          {text?.offlineAmount}
+        </Link>
+      ),
+    },
+    {
+      title: "Online Amount",
+      dataIndex: "collectedAmount",
+      width: 150,
+      key: "collectedAmount",
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>
+          {text?.onlineAmount}
+        </Link>
+      ),
+    },
     {
       title: "Treated doctors",
       dataIndex: "treatingDoctors",
       key: "treatingDoctors",
-      width:200,
+      width: 200,
       filters: treatingDoctorsOptions,
       onFilter: (value, record) => {
         return (
@@ -407,7 +416,6 @@ const CampDetails = () => {
                       <div className="d-flex justify-content-end">
                         <Button
                           variant="outlined"
-
                           onClick={() => setIsEditing(false)}
                           className="me-2"
                         >

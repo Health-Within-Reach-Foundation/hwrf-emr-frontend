@@ -16,6 +16,7 @@ import React, { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import toast from "react-hot-toast";
 import patientServices from "../../api/patient-services";
+import DeletePopover from "../delete-trigger-button";
 // import ImageEditor from "./image-editor";
 
 const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
@@ -340,6 +341,20 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
     }
   };
 
+  const handleDelete = async (patientId) => {
+    try {
+      const response = await patientServices.deleteMammographyDetailsById(
+        patientId
+      );
+      if (response) {
+        toast.success("Record deleted successfully!");
+        await onSave(); // Refresh the data after deletion
+      }
+    } catch (error) {
+      console.error("Error deleting record:", error);
+    }
+  };
+
   useEffect(() => {
     form.setFieldsValue(formState);
   }, [formState]);
@@ -387,6 +402,20 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
             >
               {editMode ? "Cancel" : "Edit"}
             </Button>
+          )}
+
+          {readOnly && (
+            <DeletePopover
+              size="large"
+              title={"Delete Record?"}
+              description={"Are you sure you want to delete this record?"}
+              onDelete={() => {
+                // Add your delete logic here
+                handleDelete(patientId);
+              }}
+              isDeleteAction={true}
+              // children={"Hello"}
+            />
           )}
         </div>
       </div>

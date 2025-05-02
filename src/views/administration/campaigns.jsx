@@ -33,7 +33,6 @@ const CampManagement = () => {
       setCampLoading(true);
       setLoading(true);
       const response = await campManagementService.getCamps(); // Replace with actual API call
-      console.log("camps: ", response.camps);
       response.camps.map((camp) => {
         camp.key = camp.id;
         return camp;
@@ -81,17 +80,17 @@ const CampManagement = () => {
     }
   };
 
-  // const getCampsAnalytics = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await campManagementService.getCampsAnalytics();
-  //     console.log("Camps Analytics: ", response);
-  //   } catch (error) {
-  //     console.error("Error fetching camps analytics:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const getCampsAnalytics = async () => {
+    try {
+      setLoading(true);
+      const response = await campManagementService.getCampsAnalytics();
+      console.log("Camps Analytics: ", response);
+    } catch (error) {
+      console.error("Error fetching camps analytics:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Handle editing an existing role
   const handleEditCamp = (camp) => {

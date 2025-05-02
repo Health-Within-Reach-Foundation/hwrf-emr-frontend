@@ -115,7 +115,7 @@ const SignIn = () => {
     try {
       setLoading(true);
       const { email, password } = values;
-      const responseData = await login(email, password);
+      const responseData = await login(email.toLowerCase(), password);
       if (responseData.user && responseData.token) {
         toast.success("Logged in");
         navigate("/");
