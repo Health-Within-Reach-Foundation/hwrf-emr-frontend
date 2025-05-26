@@ -341,7 +341,7 @@ const VerticalNav = () => {
           </Accordion>
         )}
          {((!userRoles?.includes("superadmin") &&
-          checkPermission(permissions, ["finance:write", "finance:read"])) ||
+          checkPermission(permissions, ["camps:finance"])) ||
           userRoles?.includes("admin")) && (
           <Nav.Item as="li">
             <Link
@@ -353,7 +353,7 @@ const VerticalNav = () => {
               <OverlayTrigger
                 key={"Finance"}
                 placement={"right"}
-                overlay={<Tooltip id="Dashboard">Finance</Tooltip>}
+                overlay={<Tooltip id="Finance">Finance</Tooltip>}
               >
                 <span>
                   {/* <RiMoneyDollarCircleLine /> */}
