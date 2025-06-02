@@ -16,6 +16,7 @@ import { getCampsAnalytics } from "../api/camp-management-service";
 import { useAuth } from "../utilities/AuthProvider";
 import { checkPermission } from "../utilities/utility-function";
 import AccessDenied from "./extra-pages/access-denied";
+import toast from "react-hot-toast";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -64,7 +65,7 @@ const DoctorCollection = () => {
 
   const fetchData = async () => {
     if (!startDate || !endDate) {
-      alert("Please select both start and end dates");
+      toast.error("Please select both start and end dates");
       return;
     }
     setLoading(true);
@@ -115,7 +116,7 @@ const DoctorCollection = () => {
       setMammoDoctors(formattedMammo);
       setSummary(data);
     } catch (error) {
-      alert(`Failed to fetch data: ${error.message}`);
+      toast.error(`Failed to fetch data: ${error?.message}`);
     } finally {
       setLoading(false);
     }
