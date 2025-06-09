@@ -48,7 +48,10 @@ const DoctorCollection = () => {
   const [gpDoctors, setGpDoctors] = useState([]);
   const [mammoDoctors, setMammoDoctors] = useState([]);
   const [summary, setSummary] = useState(null);
+  const [campTable, setCampTable] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  console.log("DoctorCollection component rendered", campTable);
 
   const { userRoles, permissions } = useAuth();
 
@@ -71,9 +74,18 @@ const DoctorCollection = () => {
     setLoading(true);
     try {
       const response = await getCampsAnalytics(startDate, endDate);
+      console.log("Camps Analytics Response:", response);
       if (!response.success)
         throw new Error(response.message || "Unknown error");
       const data = response.data;
+
+      const campTable = data.campsTable || [];
+      setCampTable(campTable);
+      if (campTable.length === 0) {
+        toast.error("No camps found for the selected date range");
+        setLoading(false);
+        return;
+      }
 
       // Dentistry doctor-wise
       const dentistryDoctorWise = data.dentistryAnalytics?.doctorWiseData || {};
@@ -247,45 +259,117 @@ const DoctorCollection = () => {
         </Card.Body>
       </Card>
 
-      {/* Overall Summary */}
-      {summary && (
-        <Row className="mb-4 g-3">
-          <Col md={3} xs={6}>
-            <SummaryCard
-              title="Total Camps"
-              value={summary.totalCamps}
-              color="text-primary"
-              icon={<i className="bi bi-flag-fill" />}
-            />
-          </Col>
-          <Col md={3} xs={6}>
-            <SummaryCard
-              title="Registered Patients"
-              value={summary.totalRegisteredPatients}
-              color="text-info"
-              icon={<i className="bi bi-person-lines-fill" />}
-            />
-          </Col>
-          <Col md={3} xs={6}>
-            <SummaryCard
-              title="Attended"
-              value={summary.totalAttended}
-              color="text-success"
-              icon={<i className="bi bi-person-check-fill" />}
-            />
-          </Col>
-          <Col md={3} xs={6}>
-            <SummaryCard
-              title="Total Earnings"
-              value={`₹${summary.totalEarnings?.toLocaleString()}`}
-              color="text-dark"
-              icon={<i className="bi bi-currency-rupee" />}
-            />
-          </Col>
-        </Row>
-      )}
+      
+        {summary && (
+          <Row className="mb-4 g-3">
+            <Col md={3} xs={6}>
+          <SummaryCard
+            title="Total Camps"
+            value={summary.totalCamps}
+            color="text-primary"
+            icon={<i className="bi bi-flag-fill" />}
+          />
+            </Col>
+            <Col md={3} xs={6}>
+          <SummaryCard
+            title="Registered Patients"
+            value={summary.totalRegisteredPatients}
+            color="text-info"
+            icon={<i className="bi bi-person-lines-fill" />}
+          />
+            </Col>
+            <Col md={3} xs={6}>
+          <SummaryCard
+            title="Attended"
+            value={summary.totalAttended}
+            color="text-success"
+            icon={<i className="bi bi-person-check-fill" />}
+          />
+            </Col>
+            <Col md={3} xs={6}>
+          <SummaryCard
+            title="Total Earnings"
+            value={`₹${summary.totalEarnings?.toLocaleString()}`}
+            color="text-dark"
+            icon={<i className="bi bi-currency-rupee" />}
+          />
+            </Col>
+          </Row>
+        )}
 
-      {/* Loading Spinner */}
+        {/* Camps Collection Table */}
+        {campTable && campTable.length > 0 && (
+          <Card className="mb-4 shadow-sm border-0">
+            <Card.Header className="bg-primary text-white d-flex align-items-center">
+              <i className="bi bi-calendar2-week-fill me-2" />
+              <span className="fw-semibold">Camp-wise Collection</span>
+            </Card.Header>
+            <div className="table-responsive">
+              <Table bordered hover size="sm" className="align-middle mb-0">
+                <thead className="table-primary">
+                  <tr>
+                    <th>Date</th>
+                    <th>Camp Name</th>
+                    <th>Total Patients</th>
+                    <th>Online <span className="text-success">(₹)</span></th>
+                    <th>Offline <span className="text-warning">(₹)</span></th>
+                    <th>Crown <span className="text-info">(₹)</span></th>
+                    <th>Total <span className="text-dark">(₹)</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {campTable.map((row, idx) => (
+                    <tr key={idx}>
+                      <td>
+                        <span className="badge bg-light text-dark border px-2 py-1">
+                          {row.date}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="fw-semibold">{row.campName}</span>
+                      </td>
+                      <td>
+                        <span className="badge bg-secondary">{row.totalPatients}</span>
+                      </td>
+                      <td className="text-success fw-semibold">
+                        ₹{row.onlineEarnings?.toLocaleString()}
+                      </td>
+                      <td className="text-warning fw-semibold">
+                        ₹{row.offlineEarnings?.toLocaleString()}
+                      </td>
+                      <td className="text-info fw-semibold">
+                        ₹{row.crownEarnings?.toLocaleString()}
+                      </td>
+                      <td className="fw-bold text-dark">
+                        ₹{row.totalEarnings?.toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                  <tr className="table-secondary fw-bold">
+                    <td colSpan={2} className="text-end">Total</td>
+                    <td>
+                      <span className="badge bg-secondary">
+                        {campTable.reduce((sum, r) => sum + (r.totalPatients || 0), 0)}
+                      </span>
+                    </td>
+                    <td className="text-success">
+                      ₹{campTable.reduce((sum, r) => sum + (r.onlineEarnings || 0), 0).toLocaleString()}
+                    </td>
+                    <td className="text-warning">
+                      ₹{campTable.reduce((sum, r) => sum + (r.offlineEarnings || 0), 0).toLocaleString()}
+                    </td>
+                    <td className="text-info">
+                      ₹{campTable.reduce((sum, r) => sum + (r.crownEarnings || 0), 0).toLocaleString()}
+                    </td>
+                    <td className="text-dark">
+                      ₹{campTable.reduce((sum, r) => sum + (r.totalEarnings || 0), 0).toLocaleString()}
+                    </td>
+                  </tr>
+                </tbody>
+              </Table>
+            </div>
+          </Card>
+        )}
       {loading && (
         <div className="d-flex justify-content-center align-items-center my-5">
           <Spinner animation="border" variant="primary" />
