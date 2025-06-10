@@ -331,7 +331,7 @@ export const DefaultRoute = [
         // element: <Appointment />,
         element: (
           <ClinicRouteGuard
-            requiredPermissions={["camps:finance"]}
+            requiredPermissions={["administration:finance"]}
           >
             <Finance />
           </ClinicRouteGuard>

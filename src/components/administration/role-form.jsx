@@ -118,7 +118,7 @@ const RoleModalForm = ({
           name="roleName"
           rules={[{ required: true, message: "Role name is required." }]}
         >
-          <Input placeholder="Enter role name" />
+          <Input placeholder="Enter role name" disabled />
         </Form.Item>
 
         <Form.Item label="Role Description" name="roleDescription">
@@ -178,7 +178,7 @@ const RoleModalForm = ({
           </Button>
           <Button
             type="primary"
-            className="bg-primary" 
+            className="bg-primary"
             htmlType="submit"
             loading={loading}
             disabled={loading}

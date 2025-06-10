@@ -55,7 +55,7 @@ const DoctorCollection = () => {
   if (
     !userRoles?.includes("admin") &&
     (userRoles?.includes("superadmin") ||
-      !checkPermission(permissions, ["camps:finance"]))
+      !checkPermission(permissions, ["administration:finance"]))
   ) {
     // Show Access Denied page
     <AccessDenied />;

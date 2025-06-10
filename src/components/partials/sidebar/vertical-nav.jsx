@@ -341,7 +341,7 @@ const VerticalNav = () => {
           </Accordion>
         )}
          {((!userRoles?.includes("superadmin") &&
-          checkPermission(permissions, ["camps:finance"])) ||
+          checkPermission(permissions, ["administration:finance"])) ||
           userRoles?.includes("admin")) && (
           <Nav.Item as="li">
             <Link
