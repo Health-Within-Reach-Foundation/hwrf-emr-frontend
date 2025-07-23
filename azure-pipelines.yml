@@ -20,8 +20,6 @@ pool:
   vmImage: $(vmImageName)
 
 stages:
-
-stages:
   - stage: DockerBuildAndPush
     displayName: Build & Push Docker Image for Production
     condition: or(eq(variables['Build.SourceBranchName'], 'veer-dev'), and(contains(variables['system.pullRequest.targetBranch'], 'veer-dev'), eq(variables['Build.Reason'], 'PullRequest')))
