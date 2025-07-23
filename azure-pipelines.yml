@@ -1,0 +1,51 @@
+
+
+trigger:
+  branches:
+    include:
+      - veer-dev
+
+pr:
+  branches:
+    include:
+      - veer-dev
+
+variables:
+  - name: npm_config_cache
+    value: $(Pipeline.Workspace)/.npm
+  - name: vmImageName
+    value: 'ubuntu-latest'
+
+pool:
+  vmImage: $(vmImageName)
+
+stages:
+
+stages:
+  - stage: DockerBuildAndPush
+    displayName: Build & Push Docker Image for Production
+    condition: or(eq(variables['Build.SourceBranchName'], 'veer-dev'), and(contains(variables['system.pullRequest.targetBranch'], 'veer-dev'), eq(variables['Build.Reason'], 'PullRequest')))
+    variables:
+      - group: hwrf-frontend-prod-variable-group
+    jobs:
+      - job: DockerJob
+        displayName: 'Docker Build and Push'
+        steps:
+          - task: Docker@2
+            displayName: 'Build and Push Docker Image'
+            inputs:
+              containerRegistry: '$(ACR_SERVICE_CONNECTION)'
+              repository: '$(CONTAINER_REG_REPO_NAME)'
+              command: 'buildAndPush'
+              Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+              buildContext: '$(Build.SourcesDirectory)'
+              tags: |
+                latest
+                production-$(Build.BuildId)
+          - task: AzureWebAppContainer@1
+            displayName: "Deploy to Azure Web App for Containers (Production)"
+            inputs:
+              azureSubscription: $(AZURE_SERVICE_CONNECTION_PRODUCTION)
+              appName: $(HWRF_PROD_WEBAPP_NAME)
+              resourceGroupName: $(HWRF_PROD_RESOURCE_GROUP)
+              imageName: $(ACR_NAME).azurecr.io/$(CONTAINER_REG_REPO_NAME):latest
