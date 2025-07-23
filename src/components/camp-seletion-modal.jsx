@@ -7,7 +7,6 @@ import { useAuth } from "../utilities/AuthProvider";
 const CampSelectionModal = ({ open, camps, onClose, preCheckedCampId }) => {
   const [selectedCampId, setSelectedCampId] = useState(preCheckedCampId);
   const [loading, setLoading] = useState(false);
-  const { initializeAuth } = useAuth();
     console.log(camps, preCheckedCampId);
   // Handle camp selection
   const handleSelect = async () => {
@@ -17,7 +16,6 @@ const CampSelectionModal = ({ open, camps, onClose, preCheckedCampId }) => {
       const response = await campManagementService.selectCamp(selectedCamp.id);
 
       if (response.success) {
-        await initializeAuth();
       }
       setLoading(false);
     }

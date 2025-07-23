@@ -231,7 +231,7 @@ const ColorCustomizer = memo((props) => {
               value={
                 colorValue.colors["--{{prefix}}info"]
                   ? colorValue.colors["--{{prefix}}info"]
-                  : "#08B1BA"
+                  : "#000000"
               }
             />
           </div>

@@ -14,15 +14,21 @@ import Header from "../components/partials/headerStyle/header";
 import Footer from "../components/partials/footerStyle/footer";
 import Sidebar from "../components/partials/sidebar/sidebar";
 import SettingOffCanvas from "../components/setting/SettingOffCanvas";
-import { Loading } from "../components/loading";
+
+import { useAuth } from "../utilities/AuthProvider";
+import "./camp-details-header.scss";
 
 const DefaultLayout = () => {
   const pageLayout = useSelector(SettingSelector.page_layout);
+  const { user, userRoles, currentCampDetails } = useAuth();
+
   return (
     <>
       <div className="wrapper">
         <Sidebar />
         <main className="main-content content-page ">
+          {/* Show warning if currentCampId is not available */}
+          
           <div className="position-relative">
             {/* --Nav Start-- */}
             <Header />
@@ -36,7 +42,7 @@ const DefaultLayout = () => {
           <Footer />
         </main>
       </div>
-      <SettingOffCanvas />
+      {/* <SettingOffCanvas /> */}
     </>
   );
 };

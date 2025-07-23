@@ -1,43 +1,132 @@
-// import React, { Fragment, useEffect, useState } from "react";
+// import React, { useEffect, useState } from "react";
+// import { Link, useNavigate } from "react-router-dom";
 // import { Col, Row } from "react-bootstrap";
 // import Card from "../../components/Card";
-// import CustomTable from "../../components/custom-table";
-
 // import patientServices from "../../api/patient-services";
 // import { Loading } from "../../components/loading";
+// import "flatpickr/dist/themes/material_blue.css";
+// import Antdtable from "../../components/antd-table";
 
 // const PatientList = () => {
-//   const [data, setData] = useState([]);
+//   const [patientList, setPatientList] = useState([]);
 //   const [loading, setLoading] = useState(true);
+//   const [filters, setFilters] = useState({
+//     gender: null, // Filter state for gender
+//     registerDate: null, // Filter state for register date
+//   });
 
-//   const columns = [
-//     // { title: "ID", data: "id" },
-//     { title: "Register No", data: "regNo" },
-//     { title: "Name", data: "name" },
-//     { title: "Age", data: "age" },
-//     { title: "Gender", data: "sex" },
-//     { title: "Mobile", data: "mobile" },
-//     { title: "Address", data: "address" },
-//     { title: "Register Date", data: "createdAt" },
+//   const patientColumns = [
+//     {
+//       title: "Register No",
+//       dataIndex: "regNo",
+//       key: "regNo",
+//       sortable: true,
+//       width: 180,
+//       render: (text, record) => {
+//         if (!record?.createdAt) return `HWRF/--/ ${text}`; // Handle cases where createdAt is missing
+
+//         const createdAt = new Date(record?.createdAt);
+//         const year = createdAt?.getFullYear() % 100; // Get last two digits of year
+//         const month = createdAt?.getMonth() + 1; // Months are zero-based in JS
+
+//         let financialYear;
+//         if (month > 3) {
+//           financialYear = `${year}-${year + 1}`;
+//         } else {
+//           financialYear = `${year - 1}-${year}`;
+//         }
+
+//         return (
+//           <Link to={`/patient/patient-profile/${record?.id}`}>
+//             {`HWRF/${financialYear}/${text}`}{" "}
+//           </Link>
+//         );
+//       },
+//     },
+//     {
+//       title: "Name",
+//       dataIndex: "name",
+//       key: "name",
+//       sortable: true,
+//       render: (text, record) => (
+//         <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
+//       ),
+//     },
+//     {
+//       title: "Age",
+//       dataIndex: "age",
+//       key: "age",
+//       sortable: true,
+//       width: 80,
+//       render: (text, record) => (
+//         <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
+//       ),
+//     },
+//     {
+//       title: "Gender",
+//       dataIndex: "sex",
+//       key: "sex",
+//       sortable: true,
+//       width: 120,
+//       filters: [
+//         { text: "Male", value: "male" },
+//         { text: "Female", value: "female" },
+//       ],
+//       onFilter: (value, record) => record.sex === value,
+//       render: (text, record) => (
+//         <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
+//       ),
+//     },
+//     {
+//       title: "Mobile",
+//       dataIndex: "mobile",
+//       key: "mobile",
+//       sortable: true,
+//       render: (text, record) => (
+//         <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
+//       ),
+//     },
+//     {
+//       title: "Address",
+//       dataIndex: "address",
+//       key: "address",
+//       sortable: false,
+//       render: (text, record) => (
+//         <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
+//       ),
+//     },
+//     {
+//       title: "Service Taken",
+//       dataIndex: "serviceTaken",
+//       key: "serviceTaken",
+//       width:150,
+//       sortable: true,
+//       render: (text, record) => (
+//         <Link to={`/patient/patient-profile/${record.id}`}>
+//           {text?.join(", ") || "-"}
+//         </Link>
+//       ),
+//     },
 //   ];
 
-//   const filters = [
-//     { key: "registerDate", label: "Register Date" },
-//     { key: "gender", label: "Gender" },
-//   ];
-
+//   // Fetch initial data
 //   const getPatients = async () => {
 //     try {
 //       setLoading(true);
 //       const response = await patientServices.getPatients();
-//       setData(response.data);
+//       console.log(response.data);
+//       response.data.map((patient) => {
+//         patient.key = patient.id;
+//         return patient;
+//       });
+//       setPatientList(response.data);
 //     } catch (error) {
-//       console.error("Error fetching patients:", error);
 //     } finally {
 //       setLoading(false);
 //     }
 //   };
 
+//   // Initial data load
 //   useEffect(() => {
 //     getPatients();
 //   }, []);
@@ -47,189 +136,210 @@
 //   }
 
 //   return (
-//     <>
-//       <Row>
-//         <Col sm={12}>
-//           <Card>
-//             <Card.Header className="card-header-custom d-flex justify-content-between p-4 mb-0 border-bottom-0">
-//               <Card.Header.Title>
-//                 <h4 className="card-title">Patients List</h4>
-//               </Card.Header.Title>
-//             </Card.Header>
-//           </Card>
-//         </Col>
+//     <Row>
+//       <Col sm={12}>
+//         <Card>
+//           <Card.Header className="card-header-custom d-flex justify-content-between p-4 mb-0 border-bottom-0">
+//             <Card.Header.Title>
+//               <h4 className="card-title">Patients List</h4>
+//             </Card.Header.Title>
+//           </Card.Header>
+//         </Card>
+//       </Col>
 
-//         <div>
-//           <CustomTable
-//             columns={columns}
-//             data={data}
-//             enableSearch
-//             enableFilters
-//             filtersConfig={filters}
-//           />
-//         </div>
-//       </Row>
-//     </>
+//       <Col sm={12}>
+//         <Antdtable
+//           columns={patientColumns}
+//           data={patientList}
+//           pageSizeOptions={[50, 100, 150, 200]}
+//           defaultPageSize={50}
+//         />
+//       </Col>
+//     </Row>
 //   );
 // };
 
 // export default PatientList;
+
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Col, Row } from "react-bootstrap";
 import Card from "../../components/Card";
-import CustomTable from "../../components/custom-table";
 import patientServices from "../../api/patient-services";
 import { Loading } from "../../components/loading";
-import Flatpickr from "react-flatpickr";
-import Select from "react-select";
 import "flatpickr/dist/themes/material_blue.css";
-import { data } from "jquery";
-import DateCell from "../../components/date-cell";
+import Antdtable from "../../components/antd-table";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import { Button } from "antd";
+import { RiFileExcel2Line } from "@remixicon/react";
+import { useAuth } from "../../utilities/AuthProvider";
 
 const PatientList = () => {
-  const [originalData, setOriginalData] = useState([]); // Original unfiltered data
-  const [filteredData, setFilteredData] = useState([]); // Data after applying filters
+  const [patientList, setPatientList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({
-    gender: null, // Filter state for gender
-    registerDate: null, // Filter state for register date
-  });
+  const { userRoles, permissions } = useAuth();
 
-  const navigate = useNavigate();
+  function getFormattedRegNo(patient) {
+    if (!patient?.createdAt) return `HWRF/--/ ${patient.regNo}`;
+    const createdAt = new Date(patient.createdAt);
+    const year = createdAt.getFullYear() % 100;
+    const month = createdAt.getMonth() + 1;
+    let financialYear;
+    if (month > 3) {
+      financialYear = `${year}-${year + 1}`;
+    } else {
+      financialYear = `${year - 1}-${year}`;
+    }
+    return `HWRF/${financialYear}/${patient.regNo}`;
+  }
 
-  // Table columns
-  const columns = [
-    { title: "Register No", data: "regNo" },
-    { title: "Name", data: "name" },
-    { title: "Age", data: "age" },
-    { title: "Gender", data: "sex" },
-    { title: "Mobile", data: "mobile" },
-    { title: "Address", data: "address" },
-    // { title: "Register Date", data: "createdAt" },
+  const patientColumns = [
     {
-      title: "Register Date",
-      data: "createdAt",
-      render: (data) => {
-        console.log("data -->", data);
-        return <DateCell date={data} />;
+      title: "Register No",
+      dataIndex: "regNo",
+      key: "regNo",
+      sortable: true,
+      width: 180,
+      render: (text, record) => {
+        if (!record?.createdAt) return `HWRF/--/ ${text}`;
+        const createdAt = new Date(record?.createdAt);
+        const year = createdAt.getFullYear() % 100;
+        const month = createdAt.getMonth() + 1;
+        let financialYear;
+        if (month > 3) {
+          financialYear = `${year}-${year + 1}`;
+        } else {
+          financialYear = `${year - 1}-${year}`;
+        }
+        return (
+          <Link to={`/patient/patient-profile/${record?.id}`}>
+            {`HWRF/${financialYear}/${text}`}
+          </Link>
+        );
       },
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      sortable: true,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
+      ),
+    },
+    {
+      title: "Age",
+      dataIndex: "age",
+      key: "age",
+      sortable: true,
+      width: 80,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
+      ),
+    },
+    {
+      title: "Gender",
+      dataIndex: "sex",
+      key: "sex",
+      sortable: true,
+      width: 120,
+      filters: [
+        { text: "Male", value: "male" },
+        { text: "Female", value: "female" },
+      ],
+      onFilter: (value, record) => record.sex === value,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
+      ),
+    },
+    {
+      title: "Mobile",
+      dataIndex: "mobile",
+      key: "mobile",
+      sortable: true,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
+      ),
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+      sortable: false,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
+      ),
+    },
+    {
+      title: "Service Taken",
+      dataIndex: "serviceTaken",
+      key: "serviceTaken",
+      width: 150,
+      sortable: true,
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>
+          {text?.join(", ") || "-"}
+        </Link>
+      ),
     },
   ];
 
-  // Filter configurations
-  const filtersConfig = [
-    {
-      key: "gender",
-      component: ({ value, onChange }) => (
-        <div className="mb-3">
-          <label className="form-label">Gender</label>
-          <Select
-            options={[
-              { value: "male", label: "Male" },
-              { value: "female", label: "Female" },
-              { value: "other", label: "Other" },
-            ]}
-            value={value}
-            onChange={onChange}
-            isClearable
-            placeholder="Select Gender"
-          />
-        </div>
-      ),
-      props: {
-        value: filters.gender
-          ? {
-              value: filters.gender,
-              label:
-                filters.gender.charAt(0).toUpperCase() +
-                filters.gender.slice(1),
-            }
-          : null,
-        onChange: (selectedOption) =>
-          setFilters((prev) => ({
-            ...prev,
-            gender: selectedOption ? selectedOption.value : null,
-          })),
-      },
-    },
-    {
-      key: "registerDate",
-      component: ({ value, onChange }) => (
-        <div className="mb-3">
-          <label className="form-label">Register Date</label>
-          <Flatpickr
-            className="form-control"
-            value={value}
-            onChange={(date) => onChange(date.length ? date[0] : null)}
-            options={{
-              dateFormat: "Y-m-d",
-              enableTime: false,
-            }}
-          />
-        </div>
-      ),
-      props: {
-        value: filters.registerDate,
-        onChange: (date) =>
-          setFilters((prev) => ({
-            ...prev,
-            registerDate: date,
-          })),
-      },
-    },
-  ];
+  // Helper: flatten data for export
+  function getFlatData(data) {
+    return data.map((item) => ({
+      "Register No": getFormattedRegNo(item), // use formatted reg no!
+      Name: item.name,
+      Age: item.age,
+      Gender: item.sex,
+      Mobile: item.mobile,
+      Address: item.address,
+      "Service Taken": item.serviceTaken?.join(", ") || "-",
+    }));
+  }
+
+  // Export to Excel
+  const exportToExcel = () => {
+    const flatData = getFlatData(patientList);
+    const worksheet = XLSX.utils.json_to_sheet(flatData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Patients");
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, "patients.xlsx");
+  };
+
+  // Export to CSV
+  const exportToCSV = () => {
+    const flatData = getFlatData(patientList);
+    const worksheet = XLSX.utils.json_to_sheet(flatData);
+    const csv = XLSX.utils.sheet_to_csv(worksheet);
+    const blob = new Blob([csv], { type: "text/csv" });
+    saveAs(blob, "patients.csv");
+  };
 
   // Fetch initial data
   const getPatients = async () => {
     try {
       setLoading(true);
       const response = await patientServices.getPatients();
-      setOriginalData(response.data);
-      setFilteredData(response.data);
+      response.data.forEach((patient) => {
+        patient.key = patient.id;
+      });
+      setPatientList(response.data);
     } catch (error) {
-      console.error("Error fetching patients:", error);
+      // Handle error if needed
     } finally {
       setLoading(false);
     }
   };
 
-  // Apply filters
-  const applyFilters = () => {
-    let filtered = [...originalData];
-
-    // Gender filter
-    if (filters.gender) {
-      filtered = filtered.filter(
-        (patient) => patient.sex.toLowerCase() === filters.gender.toLowerCase()
-      );
-    }
-
-    // Register date filter
-    if (filters.registerDate) {
-      const selectedDate = filters.registerDate.toISOString().split("T")[0];
-      filtered = filtered.filter((patient) =>
-        patient.createdAt.startsWith(selectedDate)
-      );
-    }
-
-    setFilteredData(filtered);
-  };
-
-  // Reset filters
-  const resetFilters = () => {
-    setFilters({ gender: null, registerDate: null });
-    setFilteredData(originalData);
-  };
-
-  // Initial data load
   useEffect(() => {
     getPatients();
   }, []);
-
-  const handleRowClick = (rowData) => {
-    navigate(`/patient/patient-profile/${rowData.id}`);
-  };
 
   if (loading) {
     return <Loading />;
@@ -244,19 +354,28 @@ const PatientList = () => {
               <h4 className="card-title">Patients List</h4>
             </Card.Header.Title>
           </Card.Header>
+          {userRoles.includes("admin") && (
+            <div style={{ margin: "16px 0 0 16px" }}>
+              <Button
+                className="bg-primary"
+                type="primary"
+                variant="primary"
+                onClick={exportToExcel}
+                style={{ width: "auto" }} // Keeps the button width to content size
+              >
+                <RiFileExcel2Line className="h-3 w-4 me-2" />
+                Export to Excel
+              </Button>
+            </div>
+          )}
         </Card>
       </Col>
-
       <Col sm={12}>
-        <CustomTable
-          columns={columns}
-          data={filteredData} // Use filtered data
-          enableSearch
-          enableFilters
-          filtersConfig={filtersConfig} // Pass filters configuration
-          rowOnClick={handleRowClick} // Pass row click handler
-          onApplyFilters={applyFilters} // Pass apply filters function
-          onResetFilters={resetFilters} // Pass reset filters function
+        <Antdtable
+          columns={patientColumns}
+          data={patientList}
+          pageSizeOptions={[50, 100, 150, 200]}
+          defaultPageSize={50}
         />
       </Col>
     </Row>

@@ -1,0 +1,80 @@
+/* Mentions Menu Container */
+.typeahead-popover.mentions-menu {
+    position: absolute;
+    z-index: 1000;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    min-width: 200px;
+    max-width: 300px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 0;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  
+    transition: top 0.2s, bottom 0.2s; /* Smooth transition */
+  }
+  
+  /* Loading State */
+  .mentions-menu-loading {
+    padding: 10px;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+  }
+  
+  /* Empty Suggestions State */
+  .mentions-menu-empty {
+    padding: 10px;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+    font-style: italic;
+  }
+  
+  /* List Container */
+  .typeahead-popover.mentions-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Individual Mention Item */
+  .typeahead-popover.mentions-menu .item {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #333;
+    transition: background-color 0.2s;
+  }
+  
+  /* Hover and Selected State */
+  .typeahead-popover.mentions-menu .item:hover,
+  .typeahead-popover.mentions-menu .item.selected {
+    background-color: #f0f4ff;
+    color: #2561c2;
+  }
+  
+  /* Mention Icon (if applicable) */
+  .typeahead-popover.mentions-menu .item .icon {
+    width: 16px;
+    height: 16px;
+    background-color: #3978cd;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  
+  /* Mention Text */
+  .typeahead-popover.mentions-menu .item .text {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  

@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Button } from "react-bootstrap";
-// import DatePicker from "react-datepicker";
-// import "react-datepicker/dist/react-datepicker.css";
+import { Row, Col } from "react-bootstrap";
 import Select from "react-select";
-import CustomTable from "../../components/custom-table";
 import { Loading } from "../../components/loading";
 import campManagementService from "../../api/camp-management-service";
 import clinicServices from "../../api/clinic-services";
 import CampModalForm from "../../components/administration/camp-form";
+import DateCell from "../../components/date-cell";
+import { RiAddLine } from "@remixicon/react";
+import { Badge, Button, Tooltip, Tabs } from "antd";
+import AntdTable from "../../components/antd-table";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../utilities/AuthProvider";
+
+const { TabPane } = Tabs;
 
 const CampManagement = () => {
   const [camps, setCamps] = useState([]);
@@ -15,29 +20,30 @@ const CampManagement = () => {
   const [specialtiesOptions, setSpecialtiesOptions] = useState([]);
   const [filteredCamps, setFilteredCamps] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [filters, setFilters] = useState({
-    campName: "",
-    status: "",
-    city: "",
-    dateRange: [null, null],
-  });
-  const [showModal, setShowModal] = useState(false);
+  const [loading2, setLoading2] = useState(false);
+  const [campLoading, setCampLoading] = useState(false);
 
-  const statusOptions = [
-    { value: "active", label: "Active" },
-    { value: "inactive", label: "Inactive" },
-  ];
+  const [showModal, setShowModal] = useState(false);
+  const [selectedCamp, setSelectedCamp] = useState(null);
+
+  const { userRoles } = useAuth();
 
   const fetchCamps = async () => {
     try {
+      setCampLoading(true);
       setLoading(true);
       const response = await campManagementService.getCamps(); // Replace with actual API call
+      response.camps.map((camp) => {
+        camp.key = camp.id;
+        return camp;
+      });
       setCamps(response.camps || []);
       setFilteredCamps(response.camps || []);
     } catch (error) {
       console.error("Error fetching camps:", error);
     } finally {
       setLoading(false);
+      setCampLoading(false);
     }
   };
 
@@ -59,7 +65,7 @@ const CampManagement = () => {
 
   const getSpecialtyDepartmentsByClinic = async () => {
     try {
-      setLoading(true);
+      setLoading2(true);
       const response = await clinicServices.getSpecialtyDepartmentsByClinic();
       setSpecialtiesOptions(
         response.data.map((department) => ({
@@ -70,163 +76,239 @@ const CampManagement = () => {
     } catch (error) {
       console.error("Error fetching departments:", error);
     } finally {
+      setLoading2(false);
+    }
+  };
+
+  const getCampsAnalytics = async () => {
+    try {
+      setLoading(true);
+      const response = await campManagementService.getCampsAnalytics();
+      console.log("Camps Analytics: ", response);
+    } catch (error) {
+      console.error("Error fetching camps analytics:", error);
+    } finally {
       setLoading(false);
     }
+  };
+
+  // Handle editing an existing role
+  const handleEditCamp = (camp) => {
+    setSelectedCamp(camp); // Set the current role for editing
+    setShowModal(true);
   };
 
   useEffect(() => {
     fetchCamps();
     getUsersbyClinic();
     getSpecialtyDepartmentsByClinic();
+    // getCampsAnalytics();
   }, []);
 
-  if (loading) {
+  if (loading || campLoading || loading2) {
     return <Loading />;
   }
 
-  const columns = [
-    { data: "name", title: "Camp Name" },
-    { data: "status", title: "Status" },
-    { data: "address", title: "Address" },
-    { data: "city", title: "City" },
-    { data: "state", title: "State" },
+  // const handleVerticalTabChange = (key) => {
+  //   if (key === "allCamps") {
+  //     setFilteredCamps(camps);
+  //   } else if (key === "currentMonthCamps") {
+  //     const currentMonth = new Date().getMonth();
+  //     console.log("currentMonth: ", currentMonth);
+  //     const filtered = camps.filter(
+  //       (camp) => new Date(camp.startDate).getMonth() === currentMonth
+  //     );
+  //     setFilteredCamps(filtered);
+  //   }
+  // };
+
+  // const handleHorizontalTabChange = (key) => {
+  //   if (key === "campsOverview") {
+  //     // Implement logic for Camps Overview
+  //   } else if (key === "revenueAnalysis") {
+  //     // Implement logic for Revenue Analysis
+  //   }
+  // };
+
+  const campColumns = [
     {
-      data: "startDate",
       title: "Start Date",
-      render: (data) => new Date(data).toLocaleDateString(),
+      dataIndex: "startDate",
+      key: "startDate",
+      fixed: "left",
+      sortable: true,
+      render: (text, record) => <Link to={`/camps/${record.id}`}>{text}</Link>,
     },
     {
-      data: "endDate",
-      title: "End Date",
-      render: (data) => new Date(data).toLocaleDateString(),
+      title: "Camp Name",
+      dataIndex: "name",
+      key: "name",
+      sortable: true,
+      render: (text, record) => <Link to={`/camps/${record.id}`}>{text}</Link>,
     },
     {
-      title: "Actions",
-      data: "id",
-      render: (data) =>
-        // `<a href="/camp/details/${data}" class="btn btn-primary btn-sm">View</a>`,
-        `<a href="#" class="btn btn-primary btn-sm">View</a>`,
-    },
-  ];
-
-  const filterComponents = [
-    {
-      key: "campName",
-      component: Select,
-      props: {
-        options: camps.map((camp) => ({ value: camp.name, label: camp.name })),
-        onChange: (selected) =>
-          setFilters((prev) => ({ ...prev, campName: selected?.value || "" })),
-      },
-    },
-    {
+      title: "Status",
+      dataIndex: "status",
       key: "status",
-      component: Select,
-      props: {
-        options: statusOptions,
-        onChange: (selected) =>
-          setFilters((prev) => ({ ...prev, status: selected?.value || "" })),
-      },
+      sortable: true,
+      filters: [
+        { text: "Active", value: "active" },
+        { text: "Inactive", value: "inactive" },
+      ],
+      onFilter: (value, record) => record.status === value,
+      render: (text, record) => (
+        <Link to={`/camps/${record.id}`}>
+          <Badge status={text === "active" ? "success" : "error"} text={text} />
+        </Link>
+      ),
     },
     {
+      title: "Location",
+      dataIndex: "location",
+      key: "location",
+      sortable: true,
+      render: (text, record) => <Link to={`/camps/${record.id}`}>{text}</Link>,
+    },
+    {
+      title: "City",
+      dataIndex: "city",
       key: "city",
-      component: Select,
-      props: {
-        options: [...new Set(camps.map((camp) => camp.city))].map((city) => ({
-          value: city,
-          label: city,
-        })),
-        onChange: (selected) =>
-          setFilters((prev) => ({ ...prev, city: selected?.value || "" })),
+      sortable: true,
+      render: (text, record) => <Link to={`/camps/${record.id}`}>{text}</Link>,
+    },
+    {
+      title: "Vans",
+      dataIndex: "vans",
+      filters: [
+        { text: "BharatBenz", value: "BharatBenz" },
+        { text: "Force", value: "Force" },
+        { text: "TATA", value: "TATA" },
+      ],
+      onFilter: (value, record) => record.vans.includes(value),
+      key: "vans",
+      sortable: true,
+      render: (text, record) => (
+        <Link to={`/camps/${record.id}`}>{text?.join(", ")}</Link>
+      ),
+    },
+    // here manaeg is not link it is button so you can use button component from react-bootstrap
+    {
+      title: "Manage",
+      dataIndex: null,
+      key: "manage",
+      render: (text, record) => {
+        const showWarning =
+          new Date(record.startDate) < new Date() - 7 * 24 * 60 * 60 * 1000 &&
+          !userRoles.includes("admin");
+
+        return (
+          <Tooltip
+            zIndex={1000}
+            title={
+              showWarning
+                ? "Permission denied, You can only edit camps that are created today or within 7 days, To edit contact admin "
+                : "Edit Camp"
+            }
+            placement="top"
+            color="#0a58b8"
+          >
+            <Button
+              type="primary"
+              variant="outlined"
+              className="bg-primary"
+              size="sm"
+              onClick={() => handleEditCamp(record)}
+              disabled={
+                new Date(record.startDate) <
+                  new Date() - 7 * 24 * 60 * 60 * 1000 &&
+                !userRoles.includes("admin")
+              }
+            >
+              Edit
+            </Button>
+          </Tooltip>
+        );
       },
     },
-    // {
-    //   key: "dateRange",
-    //   component: ({ value, onChange }) => (
-    //     <div>
-    //       <DatePicker
-    //         selected={value[0]}
-    //         onChange={(dates) => onChange(dates)}
-    //         startDate={value[0]}
-    //         endDate={value[1]}
-    //         selectsRange
-    //         placeholderText="Select date range"
-    //       />
-    //     </div>
-    //   ),
-    //   props: {
-    //     value: filters.dateRange,
-    //     onChange: (dates) =>
-    //       setFilters((prev) => ({ ...prev, dateRange: dates })),
-    //   },
-    // },
   ];
 
-  const applyFilters = () => {
-    let filteredData = camps;
-    if (filters.campName) {
-      filteredData = filteredData.filter(
-        (camp) => camp.name === filters.campName
-      );
-    }
-    if (filters.status) {
-      filteredData = filteredData.filter(
-        (camp) => camp.status === filters.status
-      );
-    }
-    if (filters.city) {
-      filteredData = filteredData.filter((camp) => camp.city === filters.city);
-    }
-    if (filters.dateRange[0] && filters.dateRange[1]) {
-      const [start, end] = filters.dateRange;
-      filteredData = filteredData.filter(
-        (camp) =>
-          new Date(camp.startDate) >= start && new Date(camp.endDate) <= end
-      );
-    }
-    setFilteredCamps(filteredData);
-  };
-
-  const resetFilters = () => {
-    setFilters({
-      campName: "",
-      status: "",
-      city: "",
-      dateRange: [null, null],
-    });
-    setFilteredCamps(camps);
-  };
-
-  if (loading) {
-    return <Loading />;
-  }
   return (
     <>
       <Row>
         <Col>
           <Row className="align-items-center mb-3">
-            <Col>
-              <Button onClick={() => setShowModal(true)}>Add Camp</Button>
+            <Col className="d-flex flex-row-reverse">
+              <Button
+                className="bg-primary"
+                type="primary"
+                onClick={() => {
+                  setSelectedCamp(null);
+                  setShowModal(true);
+                }}
+              >
+                <RiAddLine />
+                Create Camp
+              </Button>
             </Col>
           </Row>
-
-          <CustomTable
-            columns={columns}
+          {/* <Tabs
+            defaultActiveKey="allCamps"
+            tabPosition="left"
+            onChange={handleVerticalTabChange}
+          >
+            <TabPane tab="All Camps" key="allCamps">
+              <Tabs
+                defaultActiveKey="campsOverview"
+                onChange={handleHorizontalTabChange}
+              >
+                <TabPane tab="Camps Overview" key="campsOverview">
+                  <AntdTable
+                    columns={campColumns}
+                    data={filteredCamps}
+                    pageSizeOptions={[50, 100, 150, 200]}
+                    defaultPageSize={50}
+                  />
+                </TabPane>
+                <TabPane tab="Revenue Analysis" key="revenueAnalysis">
+                </TabPane>
+              </Tabs>
+            </TabPane>
+            <TabPane tab="Current Month Camps" key="currentMonthCamps">
+              <Tabs
+                defaultActiveKey="campsOverview"
+                onChange={handleHorizontalTabChange}
+              >
+                <TabPane tab="Camps Overview" key="campsOverview">
+                  <AntdTable
+                    columns={campColumns}
+                    data={filteredCamps}
+                    pageSizeOptions={[50, 100, 150, 200]}
+                    defaultPageSize={50}
+                  />
+                </TabPane>
+                <TabPane tab="Revenue Analysis" key="revenueAnalysis">
+                  <div>Camp Revenue will come here</div>
+                </TabPane>
+              </Tabs>
+            </TabPane>
+          </Tabs> */}
+          <AntdTable
+            columns={campColumns}
             data={filteredCamps}
-            enableFilters
-            filtersConfig={filterComponents}
-            onApplyFilters={applyFilters}
-            onResetFilters={resetFilters}
+            pageSizeOptions={[50, 100, 150, 200]}
+            defaultPageSize={50}
           />
         </Col>
       </Row>
 
       {showModal && (
         <CampModalForm
+          editCampData={selectedCamp}
           show={showModal}
           onClose={() => setShowModal(false)}
           users={usersOptions} // Pass user options here
           specialties={specialtiesOptions} // Pass specialty options here
+          onSave={() => fetchCamps()}
         />
       )}
     </>

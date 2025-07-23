@@ -47,19 +47,33 @@ const SuperadminRouteGuard = ({ allowedRoles, children }) => {
   return children;
 };
 
-const ClinicRouteGuard = ({ allowedRoles, children }) => {
+const ClinicRouteGuard = ({ requiredPermissions, children }) => {
   const { user, userRoles } = useAuth();
 
+  // Redirect to sign-in if the user is not logged in
   if (!user) {
     return <Navigate to="/auth/sign-in" replace />;
   }
 
-  const hasAccess = allowedRoles.some((role) => userRoles.includes(role));
+  // Check if the user is an admin (admin has full access)
+  const isAdmin = userRoles.some((role) => role === "admin");
+  if (isAdmin) {
+    return children; // Admins bypass all permission checks
+  }
 
+  // Check if any role has the required permissions
+  const hasAccess = user?.roles?.some((role) =>
+    role.permissions.some((permission) =>
+      requiredPermissions.includes(permission.action)
+    )
+  );
+
+  // Deny access if no matching permissions are found
   if (!hasAccess) {
     return <AccessDenied />;
   }
-  console.log("returning the outlet");
+
+  // Allow access if the user has at least one required permission
   return children;
 };
 

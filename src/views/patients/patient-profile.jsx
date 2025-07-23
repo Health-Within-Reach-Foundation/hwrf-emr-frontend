@@ -1,57 +1,128 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Table,
-  Button,
-  Form,
-  Modal,
-  Alert,
-} from "react-bootstrap";
-import { Drawer, Input, TreeSelect } from "antd"; // Import TreeSelect from antd
-import Select from "react-select";
+import { Container, Row, Col, Card, Tabs, Tab } from "react-bootstrap";
+import { Button, Select } from "antd"; // Import TreeSelect from antd
 import { useParams } from "react-router-dom";
 import patientServices from "../../api/patient-services";
 import { Loading } from "../../components/loading";
 import { useAuth } from "../../utilities/AuthProvider";
-import CustomTable from "../../components/custom-table";
+import toast from "react-hot-toast";
+import PatientDiagnosisForm from "../../components/patients/patient-diagnosis-form";
+import DateCell from "../../components/date-cell";
+import BasicPatientProfile from "../../components/patients/basic-patient-profile";
+import clinicServices from "../../api/clinic-services";
+import { transformText } from "../../utilities/utility-function";
+import { RiAddLine } from "@remixicon/react";
+import campManagementService from "../../api/camp-management-service";
+import CurrentCampDetailsHeader from "../../components/camp/currentcamp-detail-header";
+import MammoMedicalHistory from "../../components/mammography/mammography-medical-history";
+import AntdTable from "../../components/antd-table";
+import GPMedicalRecord from "../../components/general-physician/gp-medical-record";
+import formFieldsServices from "../../api/form-fields.services";
+import BackButton from "../../components/back-button";
 
 const PatientProfile = () => {
   const { id } = useParams();
   const [patientData, setPatientData] = useState(null);
-  const [appointments, setAppointments] = useState([]);
-  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [dentalCosting, setDentalCosting] = useState({
+    totalAmount: 0,
+    remainingAmount: 0,
+    paidAmount: 0,
+  });
+  const [selectedDiagnosis, setSelectedDiagnosis] = useState(null);
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const [medicalRecords, setMedicalRecords] = useState([]);
-  const [recordForm, setRecordForm] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
-  const [editingPatient, setEditingPatient] = useState(false);
+  const [patientLoading, setPatientLoading] = useState(true);
+  const [usersLoading, setUsersLoading] = useState(true);
+  const [campLoading, setCampLoading] = useState(true);
+  const [optionsLoading, setOptionsLoading] = useState(true);
+  const { user, userRoles } = useAuth();
+  const [users, setUsers] = useState([]);
+  const [departmentList, setDepartmentList] = useState([]);
+  const [allDiagnoses, setAllDiagnoses] = useState([]);
+  const [activeTab, setActiveTab] = useState("dentistry");
+  const [options, setOptions] = useState({
+    complaintsOptions: [],
+    treatmentsSuggestedOptions: [],
+    treatmentStatusOptions: [],
+    gpComplaintsOptions: [],
+    gpKCOOptions: [],
+    gpFindingOptions: [],
+    gpSystemicExaminationOptions: [],
+    gpMedicineTypeOptions: [],
+    gpMedicineOptions: [],
+    gpMedicineDoseOptions: [],
+    gpMedicineWhenOptions: [],
+    gpMedicineFrequencyOptions: [],
+    gpMedicineDurationOptions: [],
+  });
 
-  // Define columns for CustomTable
-  const columns = [
+  const [formFields, setFormFields] = useState([]);
+
+  const newDenistryColumns = [
     {
-      title: "Appointment Date",
-      data: "appointmentDate",
-      render: (data) => new Date(data).toLocaleDateString(),
+      title: "Diagnosis date",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      sortable: true,
+      render: (text) => (
+        <DateCell date={new Date(text)} dateFormat="D MMM, YYYY" />
+      ),
     },
     {
-      title: "Status",
-      data: "status",
-      render: (data) => data.charAt(0).toUpperCase() + data.slice(1), // Capitalize first letter
+      title: "Tooth Number",
+      dataIndex: "selectedTeeth",
+      width: 140,
+      key: "selectedTeeth",
+      render: (text) => text,
     },
     {
-      title: "Actions",
-      data: null,
+      title: "Complaints",
+      dataIndex: "complaints",
+      key: "complaints",
+      sortable: true,
+      render: (text) => (
+        <span title={text?.join(", ")}>{text?.join(", ")}</span>
+      ),
+    },
+    {
+      title: "Suggested Treatment",
+      sortable: true,
+      ellipsis: false,
+      dataIndex: "treatmentsSuggested",
+      width: 200,
+      key: "treatmentsSuggested",
+      render: (text) => (
+        <span title={text?.join(", ")}>{text?.join(", ")}</span>
+      ),
+    },
+    {
+      title: "Treatment Progress",
+      dataIndex: "treatmentStatus",
+      width: 200,
+      filters: [
+        { text: "Not Started", value: "not started" },
+        { text: "Started", value: "started" },
+        { text: "Completed", value: "completed" },
+      ],
+      onFilter: (value, record) => record?.treatment?.status === value,
+      key: "treatmentStatus",
+      render: (text, record) => {
+        return <span>{transformText(record?.treatment?.status)}</span>;
+      },
+    },
+    {
+      title: "View Diagnosis",
+      dataIndex: null,
+      key: "viewDiagnosis",
+      // fixed: "right",
       render: (_, record) => (
         <Button
+        className="bg-primary" type="primary"
+          size="sm"
           variant="primary"
-          onClick={() => handleOpenDrawer(record, hasMedicalRecord(record))}
+          onClick={() => handleOpenDrawer(record, true)}
         >
-          {hasMedicalRecord(record) ? "Edit Record" : "Add Record"}
+          View/Edit
         </Button>
       ),
     },
@@ -59,362 +130,448 @@ const PatientProfile = () => {
 
   const fetchPatientData = async () => {
     try {
-      setLoading(true);
+      setPatientLoading(true);
       const response = await patientServices.getPatientDetailsById(
         id,
-        user.specialties[0].id
+        user?.specialties[0]?.id
       );
       const { data } = response;
-      console.log("patient profile data with medical records -->", data);
+      console.log("patient profile data-->", data);
       setPatientData(data);
-      setAppointments(data.appointments);
-      setMedicalRecords(data.medicalRecords || []);
+      if (data.diagnoses.length > 0) {
+        data.diagnoses.map((diagnosis) => {
+          diagnosis.key = diagnosis.id;
+          return diagnosis;
+        });
+
+        setAllDiagnoses(data.diagnoses); // Save the original diagnoses data
+        // Transform diagnoses to replicate rows for each treatmentSuggested
+        // const replicatedDiagnoses = data.diagnoses.flatMap((diagnosis) =>
+        //   diagnosis.treatmentsSuggested.map((treatment) => ({
+        //     ...diagnosis,
+        //     treatmentSuggested: treatment, // Include the specific treatment in each row
+        //     treatmentStatus: diagnosis.treatment?.status,
+        //   }))
+        // );
+        // setAllDiagnoses(replicatedDiagnoses); // Save the replicated data
+
+        const totalAmount = data.diagnoses.reduce((acc, curr) => {
+          if (curr.treatment.status !== "not started") {
+            const amount = Number(curr.treatment.totalAmount);
+            return isNaN(amount) ? acc : acc + amount;
+          }
+          return acc;
+        }, 0);
+
+        const remainingAmount = data.diagnoses.reduce((acc, curr) => {
+          if (curr.treatment.status !== "not started") {
+            const amount = Number(curr.treatment.remainingAmount);
+            return isNaN(amount) ? acc : acc + amount;
+          }
+          return acc;
+        }, 0);
+
+        const paidAmount = data.diagnoses.reduce((acc, curr) => {
+          if (curr.treatment.status !== "not started") {
+            const amount = Number(curr.treatment.paidAmount);
+            return isNaN(amount) ? acc : acc + amount;
+          }
+          return acc;
+        }, 0);
+
+        setDentalCosting({
+          totalAmount,
+          remainingAmount,
+          paidAmount,
+        });
+
+        if (selectedDiagnosis !== null) {
+          setSelectedDiagnosis(
+            data.diagnoses.find(
+              (dignosis) => dignosis?.id === selectedDiagnosis.id
+            )
+          );
+        } else {
+          setDrawerVisible(false);
+        }
+      }
+
+      // setSelectedDiagnosisRow(null);
     } catch (error) {
       console.error("Error fetching patient data:", error);
     } finally {
-      setLoading(false);
+      setPatientLoading(false);
     }
   };
 
-  const handleOpenDrawer = (appointment, isEditMode) => {
-    setSelectedAppointment(appointment);
-    setIsEdit(isEditMode);
-    if (isEditMode) {
-      const record = medicalRecords.find(
-        (rec) => rec.appointmentId === appointment.id
-      );
-      setRecordForm(record || createEmptyRecord());
-    } else {
-      setRecordForm(createEmptyRecord());
+  const fetchOptions = async () => {
+    try {
+      setOptionsLoading(true);
+      const response = await formFieldsServices.getFormFieldOptions();
+      setFormFields(response.data);
+      // const complaintsOptions = response?.data?.find(
+      //   (item) => item?.formName === "Dental Diagnosis Form"
+      // );
+      // const treatmentsSuggestedOptions = response?.data?.find(
+      //   (item) => item?.formName === "Dental Diagnosis Form"
+      // );
+      // const treatmentStatusOptions = response?.data?.find(
+      //   (item) => item?.formName === "Dental Treatment Form"
+      // );
+
+      // const gpFormOptions = response?.data?.find(
+      //   (item) => item?.formName === "GP Form"
+      // );
+
+      // setOptions({
+      //   complaintsOptions:
+      //     complaintsOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "complaints"
+      //     )?.options || [],
+      //   treatmentsSuggestedOptions:
+      //     treatmentsSuggestedOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "treatmentSuggested"
+      //     )?.options || [],
+      //   treatmentStatusOptions:
+      //     treatmentStatusOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "treatmentStatusOptions"
+      //     )?.options || [],
+
+      //   gpComplaintsOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "complaints"
+      //     )?.options || [],
+
+      //   gpKCOOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "kco"
+      //     )?.options || [],
+
+      //   gpFindingOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "findings"
+      //     )?.options || [],
+
+      //   gpSystemicExaminationOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "systemicExamination"
+      //     )?.options || [],
+
+      //   gpMedicineTypeOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicineType"
+      //     )?.options || [],
+
+      //   gpMedicineOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicine"
+      //     )?.options || [],
+
+      //   gpMedicineDoseOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicineDose"
+      //     )?.options || [],
+
+      //   gpMedicineWhenOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicineWhen"
+      //     )?.options || [],
+
+      //   gpMedicineFrequencyOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicineFrequency"
+      //     )?.options || [],
+
+      //   gpMedicineDurationOptions:
+      //     gpFormOptions?.formFieldData?.find(
+      //       (item) => item?.fieldName === "medicineDuration"
+      //     )?.options || [],
+      // });
+    } catch (error) {
+      console.error("Error fetching form fields:", error);
+    } finally {
+      setOptionsLoading(false);
     }
+  };
+
+  const handleOpenDrawer = (diagnosis, editMode) => {
+    setIsEdit(editMode);
+    setSelectedDiagnosis(editMode ? diagnosis : null);
     setDrawerVisible(true);
   };
 
-  const handleSaveRecord = async () => {
+  const handleSavePatientData = async (primaryDoctor = null) => {
+    const patientBody = {
+      name: patientData.name,
+      address: patientData.address,
+      age: patientData.age,
+      sex: patientData.sex,
+      mobile: patientData.mobileNumber,
+    };
+    if (primaryDoctor) {
+      patientBody.primaryDoctor = primaryDoctor;
+    }
     try {
-      setLoading(true);
-      // Logic for saving record
-      fetchPatientData();
-      setDrawerVisible(false);
+      const response = await patientServices.updatePatientDetails(
+        id,
+        patientBody
+      );
+      if (response.success) {
+        toast.success(response.message);
+      }
     } catch (error) {
-      console.error("Error saving record:", error);
-    } finally {
-      setLoading(false);
+      toast.error("Error while updating patient !");
     }
   };
 
-  const createEmptyRecord = () => ({
-    complaints: [],
-    treatment: [],
-    dentalQuadrant: [],
-    xrayStatus: false,
-    file: null,
-    status: "",
-    notes: "",
-    billing: { totalCost: 0, paid: 0, remaining: 0 },
-  });
+  const getUsersbyClinic = async () => {
+    setUsersLoading(true);
+    try {
+      const response = await clinicServices.getUsersByClinic();
+      const filteredUsers = response.data.filter((eachUser) => {
+        const isDoctor = eachUser?.roles?.some(
+          (role) => role?.roleName === "doctor"
+        );
+        const isDentist = eachUser?.specialties?.some(
+          (specialty) => specialty?.name === "Dentist"
+        );
+        return isDoctor && isDentist;
+      });
 
-  const hasMedicalRecord = (appointment) =>
-    medicalRecords.some((rec) => rec.appointmentId === appointment.id);
+      const formattedUsers = filteredUsers.map((user) => ({
+        value: user.id,
+        label: user.name,
+        phoneNumber: user.phoneNumber,
+      }));
+      setUsers(formattedUsers);
+    } catch (error) {
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
+  const getSpecialtyDepartmentsByClinic = async () => {
+    try {
+      setCampLoading(true);
+      const response = await clinicServices.getSpecialtyDepartmentsByClinic();
+      setDepartmentList(
+        response.data.map((department) => ({
+          value: department.id,
+          label: department.departmentName,
+        }))
+      );
+      const settingActiveTab = patientData?.appointments?.find(
+        (appointment) => appointment.status === "in"
+      )?.specialtyId;
+      setActiveTab(
+        response.data.specialties
+          ?.find((department) => department.id === settingActiveTab)
+          ?.departmentName.toLowerCase() || "dentistry"
+      );
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    } finally {
+      setCampLoading(false);
+    }
+  };
+
+  const fetchCampDetails = async () => {
+    try {
+      setCampLoading(true);
+      const response = await campManagementService.getCampById(
+        user.currentCampId
+      );
+      setDepartmentList(
+        response.data.specialties.map((department) => ({
+          value: department.id,
+          label: department.departmentName,
+        }))
+      );
+      const settingActiveTab = patientData?.appointments?.find(
+        (appointment) => appointment.status === "in"
+      )?.specialtyId;
+      setActiveTab(
+        response.data.specialties
+          ?.find((department) => department.id === settingActiveTab)
+          ?.departmentName.toLowerCase() || "dentistry"
+      );
+    } catch (error) {
+      console.error("Error fetching camp details:", error);
+    } finally {
+      setCampLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchPatientData();
-  }, [id]);
+    getUsersbyClinic();
+    fetchOptions();
+    if (userRoles.includes("admin")) {
+      getSpecialtyDepartmentsByClinic();
+    } else {
+      fetchCampDetails();
+    }
+  }, []);
 
-  if (loading) return <Loading />;
-  if (!patientData) return <Alert variant="danger">Patient not found</Alert>;
+  const customRowClass = (record) => {
+    if (record?.treatment?.status === "completed") {
+      return "row-success";
+    }
+    if (record?.treatment?.status === "started") {
+      return "row-info";
+    }
+    if (record?.treatment?.status === "not started") {
+      return "row-warning";
+    }
+    return "";
+  };
 
-  const dentalQuadrantOptions = [
-    {
-      title: "Upper Left",
-      value: "upperLeft",
-      children: Array.from({ length: 8 }, (_, i) => ({
-        title: `Tooth ${i + 1}`,
-        value: `upperLeft-tooth${i + 1}`,
-      })),
-    },
-    {
-      title: "Upper Right",
-      value: "upperRight",
-      children: Array.from({ length: 8 }, (_, i) => ({
-        title: `Tooth ${i + 1}`,
-        value: `upperRight-tooth${i + 1}`,
-      })),
-    },
-    {
-      title: "Lower Left",
-      value: "lowerLeft",
-      children: Array.from({ length: 8 }, (_, i) => ({
-        title: `Tooth ${i + 1}`,
-        value: `lowerLeft-tooth${i + 1}`,
-      })),
-    },
-    {
-      title: "Lower Right",
-      value: "lowerRight",
-      children: Array.from({ length: 8 }, (_, i) => ({
-        title: `Tooth ${i + 1}`,
-        value: `lowerRight-tooth${i + 1}`,
-      })),
-    },
-  ];
+  if (patientLoading || usersLoading || campLoading || optionsLoading)
+    return <Loading />;
 
   return (
     <Container>
+      {/* Patient Basic Details */}
+      <BackButton />
+
+      <CurrentCampDetailsHeader />
+
       <Row>
         <Col>
-          <Card>
-            <Card.Header>
-              <h4>Patient Profile</h4>
-              <Button
-                variant="primary"
-                onClick={() => setEditingPatient(!editingPatient)}
-              >
-                {editingPatient ? "Cancel Edit" : "Edit Profile"}
-              </Button>
-            </Card.Header>
-            <Card.Body>
-              <Form>
-                <Row>
-                  <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>Name</Form.Label>
-                      <Form.Control
-                        disabled={!editingPatient}
-                        value={patientData.name}
-                        onChange={(e) =>
-                          setPatientData((prev) => ({
-                            ...prev,
-                            name: e.target.value,
-                          }))
-                        }
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>Mobile</Form.Label>
-                      <Form.Control
-                        disabled={!editingPatient}
-                        value={patientData.mobile}
-                        onChange={(e) =>
-                          setPatientData((prev) => ({
-                            ...prev,
-                            mobile: e.target.value,
-                          }))
-                        }
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-                {editingPatient && (
-                  <Button className="mt-3" onClick={() => {}}>
-                    Save Details
-                  </Button>
-                )}
-              </Form>
-            </Card.Body>
-          </Card>
+          <BasicPatientProfile
+            patientData={patientData}
+            handleSavePatientData={handleSavePatientData}
+            setPatientData={setPatientData}
+          />
         </Col>
       </Row>
 
-      <Row className="mt-4">
-        <Col>
-          {/* <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {appointments.map((appt) => (
-                <tr key={appt.id}>
-                  <td>{new Date(appt.appointmentDate).toLocaleDateString()}</td>
-                  <td>{appt.status}</td>
-                  <td>
+      {/* Patient Basic Details */}
+
+      <Card>
+        <Card.Header>
+          <h4>Patient Medical Records</h4>
+        </Card.Header>
+        <Card.Body>
+          <Tabs
+            className="border-bottom mb-3"
+            justify
+            fill
+            transition={true}
+            onSelect={(key) => setActiveTab(key)}
+            activeKey={activeTab}
+          >
+            {/* Dentistry Tab */}
+            {departmentList
+              .map((eachDepartment) => eachDepartment.label)
+              .includes("Dentistry") && (
+              <Tab eventKey="dentistry" title="Dentistry">
+                <label htmlFor="primary-doc" className="form-label">
+                  Primary Doctor
+                </label>
+                <Select
+                  placeholder="Select Doctor"
+                  className="w-100 mb-3"
+                  options={users}
+                  value={patientData?.primaryDoctor?.value}
+                  onChange={(value, option) => {
+                    // handleInputChange("primaryDoctor", );
+                    handleSavePatientData(option);
+                  }}
+                  filterOption={(input, option) => {
+                    const labelMatch = option.label
+                      .toLowerCase()
+                      .includes(input.toLowerCase());
+                    const phoneMatch = option.phoneNumber
+                      ? option.phoneNumber
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      : false;
+                    return labelMatch || phoneMatch;
+                  }}
+                />{" "}
+                <Container className="mt-3">
+                  <h5 className="mt-3">Diagnoses</h5>
+                  <hr />
+                  <h6>Total Amount: {dentalCosting?.totalAmount}</h6>
+                  <h6>Paid Amount: {dentalCosting?.paidAmount}</h6>
+                  <h6>Remaining Amount: {dentalCosting?.remainingAmount}</h6>
+                  <div className="d-flex justify-content-end">
                     <Button
                       variant="primary"
-                      onClick={() =>
-                        handleOpenDrawer(
-                          appt,
-                          medicalRecords.some(
-                            (rec) => rec.appointmentId === appt.id
-                          )
-                        )
-                      }
+                      className="bg-primary" type="primary"
+                      size="sm"
+                      // className="my-3"
+                      onClick={() => handleOpenDrawer(null, false)}
                     >
-                      {medicalRecords.some(
-                        (rec) => rec.appointmentId === appt.id
-                      )
-                        ? "Edit Record"
-                        : "Add Record"}
+                      <RiAddLine />
+                      Add Diagnosis
                     </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table> */}
-          {/* Refactored Table Component */}
-          {/* <Row className="mt-4"> */}
-            {/* <Col> */}
-              <CustomTable columns={columns} data={appointments} />
-            {/* </Col> */}
-          {/* </Row> */}
-        </Col>
-      </Row>
+                  </div>
+                  <div className="antd-table-container">
+                    <AntdTable
+                      columns={newDenistryColumns}
+                      data={allDiagnoses}
+                      pageSizeOptions={[50, 100, 150, 200]}
+                      defaultPageSize={50}
+                      rowClassName={customRowClass}
+                    />
+                  </div>
+                </Container>
+              </Tab>
+            )}
 
-      <Drawer
-        title={isEdit ? "Edit Medical Record" : "Add Medical Record"}
-        placement="right"
-        onClose={() => setDrawerVisible(false)}
-        visible={drawerVisible}
-        width={600}
-      >
-        <Form>
-          <label>Patient Name </label>
-          <Input placeholder="Name of the patient" disabled />
-          <Form.Group>
-            <Form.Label>Patient Complaints</Form.Label>
-            <Select
-              isMulti
-              options={[
-                { value: "toothAche", label: "Tooth Ache" },
-                { value: "toothMissing", label: "Tooth Missing" },
-                { value: "badBreath", label: "Bad Breath" },
-              ]}
-              value={recordForm?.complaints}
-              onChange={(value) =>
-                setRecordForm((prev) => ({ ...prev, complaints: value }))
-              }
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Treatment</Form.Label>
-            <Select
-              isMulti
-              options={[
-                { value: "scalingRegular", label: "Scaling Regular" },
-                { value: "scalingComplex", label: "Scaling Complex" },
-                { value: "rcSimple", label: "RC Simple" },
-              ]}
-              value={recordForm?.treatment}
-              onChange={(value) =>
-                setRecordForm((prev) => ({ ...prev, treatment: value }))
-              }
-            />
-          </Form.Group>
+            {/* GP Tab */}
+            {departmentList
+              .map((eachDepartment) => eachDepartment.label)
+              .includes("GP") && (
+              <Tab eventKey="gp" title="GP">
+                <>
+                  <GPMedicalRecord
+                    gpRecords={patientData?.gpRecords}
+                    patientData={patientData}
+                    onSave={fetchPatientData}
+                    // options={options}
+                    formFields={
+                      formFields["GP Form"] ? formFields["GP Form"] : []
+                    }
+                  />
+                </>
+              </Tab>
+            )}
 
-          <Form.Group>
-            <Form.Label>Dental Quadrant</Form.Label>
-            <TreeSelect
-              treeData={dentalQuadrantOptions}
-              value={recordForm?.dentalQuadrant}
-              onChange={(value) =>
-                setRecordForm((prev) => ({ ...prev, dentalQuadrant: value }))
-              }
-              treeCheckable={true}
-              showCheckedStrategy={TreeSelect.SHOW_PARENT}
-              placeholder="Please select"
-              style={{ width: "100%" }}
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Check
-              type="checkbox"
-              label="X-ray Status"
-              checked={recordForm?.xrayStatus}
-              onChange={(e) =>
-                setRecordForm((prev) => ({
-                  ...prev,
-                  xrayStatus: e.target.checked,
-                }))
-              }
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>File</Form.Label>
-            <Form.Control
-              type="file"
-              onChange={(e) =>
-                setRecordForm((prev) => ({ ...prev, file: e.target.files[0] }))
-              }
-            />
-          </Form.Group>
+            {/* Mammography Tab */}
+            {departmentList
+              .map((eachDepartment) => eachDepartment.label)
+              .includes("Mammography") && (
+              <Tab eventKey="mammography" title="Mammography">
+                {/* <MammoReportLexical patient={patientData}/> */}
+                <MammoMedicalHistory
+                  patient={patientData?.mammography}
+                  onSave={fetchPatientData}
+                  patientId={patientData?.id}
+                  readOnly={patientData?.mammography ? true : false}
+                />
+              </Tab>
+            )}
+          </Tabs>
+        </Card.Body>
+      </Card>
 
-          <Form.Group>
-            <Form.Label>Current Status</Form.Label>
-            <Form.Control
-              as="select"
-              value={recordForm?.status}
-              onChange={(e) =>
-                setRecordForm((prev) => ({ ...prev, status: e.target.value }))
-              }
-            >
-              <option value="">Select Status</option>
-              <option value="completed">Completed</option>
-              <option value="pending">Pending</option>
-              <option value="cancelled">Cancelled</option>
-            </Form.Control>
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Label>Notes</Form.Label>
-            <Form.Control
-              as="textarea"
-              value={recordForm?.notes}
-              onChange={(e) =>
-                setRecordForm((prev) => ({ ...prev, notes: e.target.value }))
-              }
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Total Cost</Form.Label>
-            <Form.Control
-              type="number"
-              value={recordForm?.billing.totalCost}
-              onChange={(e) =>
-                setRecordForm((prev) => ({
-                  ...prev,
-                  billing: { ...prev.billing, totalCost: e.target.value },
-                }))
-              }
-            />
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Label>Paid</Form.Label>
-            <Form.Control
-              type="number"
-              value={recordForm?.billing.paid}
-              onChange={(e) =>
-                setRecordForm((prev) => ({
-                  ...prev,
-                  billing: { ...prev.billing, paid: e.target.value },
-                }))
-              }
-            />
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Label>Remaining</Form.Label>
-            <Form.Control
-              type="number"
-              value={recordForm?.billing.remaining}
-              onChange={(e) =>
-                setRecordForm((prev) => ({
-                  ...prev,
-                  billing: { ...prev.billing, remaining: e.target.value },
-                }))
-              }
-            />
-          </Form.Group>
-          {/* Add the rest of the form fields */}
-          <Button className="mt-3" onClick={handleSaveRecord}>
-            {isEdit ? "Update Record" : "Add Record"}
-          </Button>
-        </Form>
-      </Drawer>
+      {drawerVisible && (
+        <PatientDiagnosisForm
+          key={selectedDiagnosis?.id}
+          isEdit={isEdit}
+          drawerVisible={drawerVisible}
+          onClose={() => setDrawerVisible(false)}
+          diagnosisData={selectedDiagnosis}
+          patientData={patientData}
+          doctorsList={users}
+          onSave={() => fetchPatientData()}
+          // options={options}
+          formFields={formFields}
+        />
+      )}
     </Container>
   );
 };

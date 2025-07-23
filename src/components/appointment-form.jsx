@@ -1,78 +1,89 @@
 // import React, { useState } from "react";
-// import { Modal, Button, Row, Col, Form } from "react-bootstrap";
-// import {Select} from "antd"; // For searchable dropdowns
-// import Flatpickr from "react-flatpickr";
-// import appointmentServices from "../api/appointment-services";
+// import { Modal, Row, Col, Form } from "react-bootstrap";
+// import { Select, Checkbox, Button } from "antd"; // For searchable dropdowns and checkboxes
+// import { Link } from "react-router-dom"; // For navigation
 // import toast from "react-hot-toast";
+// import appointmentServices from "../api/appointment-services";
 
-// const AppointmentForm = ({ show, modalClose, patients, departments }) => {
-//   const [selectedPatient, setSelectedPatient] = useState({});
-//   const [selectedDepartment, setSelectedDepartment] = useState([]);
-//   const [appointmentDate, setAppointmentDate] = useState(null);
-//   const [isLoading, setIsLoading] = useState(false); // State for loading effect
+// const AppointmentForm = ({
+//   show,
+//   modalClose,
+//   patients,
+//   departments,
+//   onSave,
+// }) => {
+//   const [selectedPatient, setSelectedPatient] = useState(null);
+//   const [selectedDepartments, setSelectedDepartments] = useState([]);
+//   const [isLoading, setIsLoading] = useState(false);
 
-//   console.log("departments --> ", departments, patients);
-
-//   const handlePatientChange = (selectedOption) => {
-//     console.log(selectedOption);
-//     setSelectedPatient(selectedOption);
+//   // Patient select handler
+//   const handlePatientChange = (value) => {
+//     // Find the selected patient object based on the value
+//     const selectedOption = patients.find((patient) => patient.id === value);
+//     console.log("Selected Patient:", selectedOption);
+//     setSelectedPatient(selectedOption); // Set the selected patient
 //   };
 
-//   const handleDepartmentChange = (selectedOption) => {
-//     console.log(selectedOption);
-//     setSelectedDepartment(selectedOption);
+//   const handleDepartmentChange = (checkedValues) => {
+//     setSelectedDepartments(checkedValues);
 //   };
 
 //   const handleSave = async () => {
-//     if (!selectedPatient || !selectedDepartment || !appointmentDate) {
+//     if (!selectedPatient || !selectedDepartments.length) {
 //       toast.error("Please fill in all fields!");
 //       return;
 //     }
-//     // Convert appointmentDate to local ISO string without time information
-//     const localDate = new Date(
-//       appointmentDate.getFullYear(),
-//       appointmentDate.getMonth(),
-//       appointmentDate.getDate()
-//     ).toISOString(); // Strips the time and sends only the date
 
-//     console.log("Local appointmentDate -->", localDate);
+//     // Set today's date as appointment date
+//     const appointmentDate = new Date().toLocaleDateString("en-CA");
+
+//     // const dateString = appointmentDate.toLocaleDateString("en-CA"); // Outputs 'YYYY-MM-DD'
+
 //     const appointmentData = {
-//       patientId: selectedPatient.value,
-//       specialtyId: selectedDepartment.value,
-//       appointmentDate: localDate,
-//       status: "registered",
+//       patientId: selectedPatient.id, // Ensure correct patient ID
+//       specialties: selectedDepartments,
+//       appointmentDate,
+//       // appointmentDate: appointmentDate.toISOString().split("T")[0], // Sends only "YYYY-MM-DD"
+//       status: "in queue",
 //     };
 
 //     try {
 //       setIsLoading(true); // Start loading state
+//       console.log("Appointment Data:", appointmentData);
+//       const response = await appointmentServices.bookAppointment(
+//         appointmentData
+//       );
 
-//       // const response = await appointmentServices.bookAppointment(appointmentData);
+//       if (response?.success) {
+//         toast.success(response.message);
 
-//       // Assuming response has a success flag or appropriate structure
-//       // if (response?.success) {
-//       //   toast.success("Appointment booked successfully!");
-
-//       //   // Reset fields
-//       //   setSelectedPatient(null);
-//       //   setSelectedDepartment(null);
-//       //   setAppointmentDate(null);
-
-//       //   modalClose(); // Close the modal
-//       // } else {
-//       //   throw new Error(response?.message || "Failed to book appointment.");
-//       // }
+//         // Reset fields
+//         setSelectedPatient(null);
+//         setSelectedDepartments([]);
+//         modalClose(); // Close the modal
+//       } else {
+//         throw new Error(response?.message || "Failed to book appointment.");
+//       }
 //     } catch (error) {
 //       console.error("Error booking appointment:", error.message);
 //       toast.error(error.message || "An unexpected error occurred!");
 //     } finally {
 //       setIsLoading(false); // End loading state
+//       onSave();
 //     }
 //   };
 
 //   return (
-//     <Modal show={show} onHide={modalClose} centered backdrop="static" animation>
+//     <Modal
+//       className="queue-modal"
+//       show={show}
+//       onHide={modalClose}
+//       centered
+//       backdrop="static"
+//       animation
+//     >
 //       <Modal.Header>
-//         <Modal.Title>Add Appointment</Modal.Title>
+//         <Modal.Title>Add to queue</Modal.Title>
 //         <button
 //           type="button"
 //           className="btn-close"
@@ -92,12 +103,41 @@
 //             <Col xs={10}>
 //               <Select
 //                 placeholder="Select Patient"
-//                 value={selectedPatient}
-//                 options={patients}
-//                 onChange={handlePatientChange}
-//                 allowClear
+//                 value={selectedPatient?.id || null} // Use `value` instead of `defaultValue`
+//                 options={patients.map((patient) => ({
+//                   value: patient.id, // Ensure `id` is used as value
+//                   label: (
+//                     <div className="d-flex justify-content-between align-items-center p-2">
+//                       <span className="fw-medium">{patient.name}</span>
+//                       <span className="text-muted ms-2 fst-italic">
+//                         {patient.mobile}
+//                       </span>
+//                     </div>
+//                   ),
+//                   name: patient.name,
+//                   phoneNumber: patient.mobile,
+//                 }))}
+//                 onChange={handlePatientChange} // Correctly updates state on change
+//                 dropdownStyle={{ zIndex: 9999 }} // Fix dropdown z-index
 //                 className="w-100 my-2"
+//                 showSearch
+//                 filterOption={(input, option) => {
+//                   const labelMatch = option.name
+//                     .toLowerCase()
+//                     .includes(input.toLowerCase());
+//                   const phoneMatch = option.phoneNumber
+//                     .toLowerCase()
+//                     .includes(input.toLowerCase());
+//                   return labelMatch || phoneMatch;
+//                 }}
+//                 allowClear
 //               />
+//               {/* Link to Create Patient */}
+//               <div className="mt-2">
+//                 <Link to="/patient/add-patient" className="text-primary">
+//                   Create a new patient
+//                 </Link>
+//               </div>
 //             </Col>
 //           </Row>
 
@@ -109,35 +149,10 @@
 //               </label>
 //             </Col>
 //             <Col xs={10}>
-//               <Select
-//                 mode="multiple"
-//                 placeholder="Select departement"
-//                 value={selectedDepartment}
+//               <Checkbox.Group
 //                 options={departments}
+//                 value={selectedDepartments}
 //                 onChange={handleDepartmentChange}
-//                 allowClear
-//                 // filterOption={(input, option) =>
-//                 //   option.label.toLowerCase().includes(input.toLowerCase())
-//                 // }
-//                 className="w-100 my-2"
-//               />
-//             </Col>
-//           </Row>
-
-//           {/* Appointment Date */}
-//           <Row className="mb-3 align-items-center">
-//             <Col xs={2}>
-//               <label className="col-form-label">
-//                 <i className="ri-calendar-line"></i>
-//               </label>
-//             </Col>
-//             <Col xs={10}>
-//               <Flatpickr
-//                 options={{ minDate: "today" }}
-//                 value={appointmentDate}
-//                 onChange={(date) => setAppointmentDate(date[0])}
-//                 className="form-control"
-//                 placeholder="Select Appointment Date"
 //               />
 //             </Col>
 //           </Row>
@@ -146,21 +161,23 @@
 //       <Modal.Footer className="border-0">
 //         <Button
 //           variant="secondary"
+//           className="border-primary text-primary"
 //           onClick={() => {
 //             setSelectedPatient(null);
-//             setSelectedDepartment(null);
-//             setAppointmentDate(null);
+//             setSelectedDepartments([]);
 //             modalClose();
 //           }}
 //         >
-//           Discard Changes
+//           Cancel
 //         </Button>
 //         <Button
-//           variant="primary"
+//           className="bg-primary"
+//           type="primary"
+//           size="middle"
 //           onClick={handleSave}
 //           disabled={isLoading} // Disable button during loading
 //         >
-//           {isLoading ? "Saving..." : "Save Appointment"}
+//           {isLoading ? "Saving..." : "Save"}
 //         </Button>
 //       </Modal.Footer>
 //     </Modal>
@@ -170,183 +187,166 @@
 // export default AppointmentForm;
 
 import React, { useState } from "react";
-import { Modal, Button, Row, Col, Form } from "react-bootstrap";
-import { Select, Checkbox } from "antd"; // For searchable dropdowns and checkboxes
+import { Modal, Row, Col, Form, Select, Checkbox, Button } from "antd"; // Replaced Bootstrap components with Antd
 import { Link } from "react-router-dom"; // For navigation
-import Flatpickr from "react-flatpickr";
 import toast from "react-hot-toast";
 import appointmentServices from "../api/appointment-services";
+import { RiBuildingLine, RiGroupLine } from "@remixicon/react";
 
-const AppointmentForm = ({ show, modalClose, patients, departments }) => {
-  const [selectedPatient, setSelectedPatient] = useState(null);
-  const [selectedDepartments, setSelectedDepartments] = useState([]);
-  const [appointmentDate, setAppointmentDate] = useState(null);
+const AppointmentForm = ({
+  show,
+  modalClose,
+  patients,
+  departments,
+  onSave,
+}) => {
+  const [form] = Form.useForm(); // Antd useForm Hook
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log(
-    "patients and departments",
-    patients,
-    departments,
-    selectedPatient
-  );
-
+  // Patient select handler
   const handlePatientChange = (value) => {
-    const selectedOption = patients.find((patient) => patient.value === value);
-    setSelectedPatient(selectedOption);
+    const selectedOption = patients.find((patient) => patient.id === value);
+    console.log("Selected Patient:", selectedOption);
+    form.setFieldsValue({ patient: value }); // Sync with form state
   };
 
   const handleDepartmentChange = (checkedValues) => {
-    setSelectedDepartments(checkedValues);
+    form.setFieldsValue({ departments: checkedValues }); // Sync with form state
   };
 
   const handleSave = async () => {
-    if (!selectedPatient || !selectedDepartments.length || !appointmentDate) {
-      toast.error("Please fill in all fields!");
-      return;
-    }
-
-    const localDate = new Date(
-      appointmentDate.getFullYear(),
-      appointmentDate.getMonth(),
-      appointmentDate.getDate()
-    ).toISOString(); // Strips the time and sends only the date
-
-    const appointmentData = {
-      patientId: selectedPatient.value,
-      specialties: selectedDepartments,
-      appointmentDate: localDate,
-      status: "registered",
-    };
-
     try {
-      setIsLoading(true); // Start loading state
+      const values = await form.validateFields(); // Validate form fields before proceeding
+
+      const appointmentDate = new Date().toLocaleDateString("en-CA");
+
+      const appointmentData = {
+        patientId: values.patient, // Now directly using form state
+        specialties: values.departments,
+        appointmentDate,
+        status: "in queue",
+      };
+
+      setIsLoading(true);
       console.log("Appointment Data:", appointmentData);
+
       const response = await appointmentServices.bookAppointment(
         appointmentData
       );
 
       if (response?.success) {
-        toast.success("Appointment booked successfully!");
+        toast.success(response.message);
+        onSave();
 
-        // Reset fields
-        setSelectedPatient(null);
-        setSelectedDepartments(null);
-        setAppointmentDate(null);
-
-        modalClose(); // Close the modal
+        // Reset form and close modal
+        form.resetFields();
+        modalClose();
       } else {
         throw new Error(response?.message || "Failed to book appointment.");
       }
     } catch (error) {
-      console.error("Error booking appointment:", error.message);
-      toast.error(error.message || "An unexpected error occurred!");
+      console.error("Error booking appointment:", error);
+
+      // Handle validation error
+      if (error?.errorFields) {
+        // Extracting all validation messages
+        const validationMessages = error.errorFields
+          .map((field) => field.errors.join(", ")) // Join multiple errors if any
+          .join("\n");
+        toast.error(
+          validationMessages || "Please correct the errors in the form."
+        );
+      } else {
+        // Handle API or unexpected errors
+        toast.error(error.message || "An unexpected error occurred!");
+      }
     } finally {
-      setIsLoading(false); // End loading state
+      setIsLoading(false);
     }
   };
 
   return (
-    <Modal show={show} onHide={modalClose} centered backdrop="static" animation>
-      <Modal.Header>
-        <Modal.Title>Add Appointment</Modal.Title>
-        <button
-          type="button"
-          className="btn-close"
-          aria-label="Close"
-          onClick={modalClose}
-        ></button>
-      </Modal.Header>
-      <Modal.Body>
-        <Form>
-          {/* Select Patient */}
-          <Row className="mb-3 align-items-center">
-            <Col xs={2}>
-              <label className="col-form-label">
-                <i className="ri-group-line"></i>
-              </label>
-            </Col>
-            <Col xs={10}>
-              <Select
-                placeholder="Select Patient"
-                defaultValue="xys"
-                value={selectedPatient?.value || null} // Use selectedPatient.value or null
-                options={patients}
-                onChange={handlePatientChange}
-                dropdownStyle={{ zIndex: 9999 }} // Fix dropdown z-index
-                className="w-100 my-2"
-                showSearch
-                filterOption={(input, option) => {
-                  const labelMatch = option.label.toLowerCase().includes(input.toLowerCase());
-                  const phoneMatch = option.phoneNumber
-                    ? option.phoneNumber.toLowerCase().includes(input.toLowerCase())
-                    : false;
-                  return labelMatch || phoneMatch;
-                }}
-              />
-              {/* Link to Create Patient */}
-              <div className="mt-2">
-                <Link to="/patient/add-patient" className="text-primary">
-                  Create a new patient
-                </Link>
-              </div>
-            </Col>
-          </Row>
+    <Modal
+      className="queue-modal"
+      open={show} // Antd uses "open" instead of "show"
+      onCancel={modalClose}
+      centered
+      footer={null}
+      destroyOnClose
+    >
+      <h4>Add to Queue</h4>
 
-          {/* Select Department */}
-          <Row className="mb-3 align-items-center">
-            <Col xs={2}>
-              <label className="col-form-label">
-                <i className="ri-building-line"></i>
-              </label>
-            </Col>
-            <Col xs={10}>
-              <Checkbox.Group
-                options={departments}
-                value={selectedDepartments}
-                onChange={handleDepartmentChange}
-              />
-            </Col>
-          </Row>
+      <Form form={form} layout="vertical">
+        {/* Select Patient */}
+        <Form.Item
+          name="patient"
+          layout="horizontal"
+          label={<RiGroupLine />}
+          rules={[{ required: true, message: "Please select a patient!" }]}
+        >
+          <Select
+            placeholder="Select Patient"
+            options={patients.map((patient) => ({
+              value: patient.id,
+              label: (
+                <div className="d-flex justify-content-between align-items-center p-2">
+                  <span className="fw-medium">{patient.name}</span>
+                  <span className="text-muted ms-2 fst-italic">
+                    {patient.mobile}
+                  </span>
+                </div>
+              ),
+            }))}
+            onChange={handlePatientChange}
+            className="w-100"
+            showSearch
+            filterOption={(input, option) =>
+              option.label.props.children[0].props.children
+                .toLowerCase()
+                .includes(input.toLowerCase())
+            }
+            allowClear
+          />
+          <div className="mt-2">
+            <Link to="/patient/add-patient" className="text-primary">
+              Create a new patient
+            </Link>
+          </div>
+        </Form.Item>
 
-          {/* Appointment Date */}
-          <Row className="mb-3 align-items-center">
-            <Col xs={2}>
-              <label className="col-form-label">
-                <i className="ri-calendar-line"></i>
-              </label>
-            </Col>
-            <Col xs={10}>
-              <Flatpickr
-                options={{ minDate: "today" }}
-                value={appointmentDate}
-                onChange={(date) => setAppointmentDate(date[0])}
-                className="form-control"
-                placeholder="Select Appointment Date"
-              />
-            </Col>
-          </Row>
-        </Form>
-      </Modal.Body>
-      <Modal.Footer className="border-0">
-        <Button
-          variant="secondary"
-          onClick={() => {
-            setSelectedPatient(null);
-            setSelectedDepartments([]);
-            setAppointmentDate(null);
-            modalClose();
-          }}
+        {/* Select Department */}
+        <Form.Item
+          name="departments"
+          layout="horizontal"
+          label={<RiBuildingLine />}
+          rules={[
+            { required: true, message: "Please select at least one service!" },
+          ]}
         >
-          Cancel
-        </Button>
-        <Button
-          variant="primary"
-          onClick={handleSave}
-          disabled={isLoading} // Disable button during loading
-        >
-          {isLoading ? "Saving..." : "Save"}
-        </Button>
-      </Modal.Footer>
+          <Checkbox.Group
+            options={departments}
+            onChange={handleDepartmentChange}
+          />
+        </Form.Item>
+
+        {/* Footer Actions */}
+        <Row justify="end">
+          <Col>
+            <Button
+              onClick={() => {
+                form.resetFields();
+                modalClose();
+              }}
+              style={{ marginRight: 10 }}
+            >
+              Cancel
+            </Button>
+            <Button type="primary" onClick={handleSave} loading={isLoading}>
+              {isLoading ? "Saving..." : "Save"}
+            </Button>
+          </Col>
+        </Row>
+      </Form>
     </Modal>
   );
 };

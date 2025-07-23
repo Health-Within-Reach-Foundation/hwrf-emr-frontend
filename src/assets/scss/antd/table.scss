@@ -1,0 +1,43 @@
+
+// 🏆 Custom Table Styles
+.antd-table-container {
+  overflow-x: auto;
+  padding: 10px;
+
+  .ant-table {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  // ✅ Row Colors
+  .row-success {
+    background-color: #a8fdc6 !important; // Soft green
+  }
+
+  .row-warning {
+    background-color: #fce9ab !important; // Light warm yellow
+  }
+
+  .row-info {
+    background-color: #cfe2ff !important; // Light blue
+  }
+
+  // ✅ Column Header Styling
+  .ant-table-thead > tr > th {
+    background-color: #f0f2f5; // Light gray background
+    font-weight: 600;
+  }
+
+  // ✅ Hover Effect
+//   .ant-table-tbody > tr:hover {
+//     background-color: #f8f9fa !important; // Light hover effect
+//   }
+
+  // ✅ Truncated Cell Text for Overflowing Data
+  .truncate-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+  }
+}

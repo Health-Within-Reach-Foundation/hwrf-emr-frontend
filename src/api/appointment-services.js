@@ -26,9 +26,10 @@ const bookAppointment = async (appointmentData) => {
   }
 };
 
-const getAppointments = async (appointmentDate) => {
+const getAppointments = async () => {
   try {
-    const response = await apiClient.get(`/clinics/appointments/?appointmentDate=${appointmentDate}`);
+    // const response = await apiClient.get(`/clinics/appointments/?appointmentDate=${appointmentDate}`);
+    const response = await apiClient.get(`/clinics/appointments`);
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -44,7 +45,35 @@ const getAppointments = async (appointmentDate) => {
     }
   }
 };
+
+const updateAppointment = async (appointmentId, appointmentData) => {
+  console.log(appointmentData, appointmentId);
+  try {
+    const response = await apiClient.patch(
+      `/clinics/appointments/${appointmentId}`,
+      appointmentData
+    );
+
+    return response.data;
+  } catch (error) {
+    // Handle potential errors
+    if (error.response) {
+      // Handle specific error responses from the API
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to update appointment"
+      );
+    } else {
+      // Handle other types of errors
+      console.error("Unexpected error:", error.message);
+      throw new Error(
+        "An unexpected error occurred while updating appointment"
+      );
+    }
+  }
+};
 export default {
   bookAppointment,
-  getAppointments
+  getAppointments,
+  updateAppointment,
 };

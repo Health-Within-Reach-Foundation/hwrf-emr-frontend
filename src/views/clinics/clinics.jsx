@@ -5,11 +5,14 @@ import clinicServices from "../../api/clinic-services";
 import { Loading } from "../../components/loading";
 import { Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import AntdTable from "../../components/antd-table";
+import { Badge } from "antd";
 
 const Clinics = () => {
   const [pendingClinicsTableData, setPendingClinicsTableData] = useState([]);
   const [enrolledClinicsTableData, setEnrolledClinicsTableData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [pendingLoading, setPendingLoading] = useState(false);
+  const [enrolledLoading, setEnrolledLoading] = useState(false);
 
   const columns = [
     { title: "Clinic Name", data: "clinicName" },
@@ -33,54 +36,143 @@ const Clinics = () => {
     },
   ];
 
-  const pendingClinicsTableRef = useRef(null);
+  const newClinicColumns = [
+    {
+      title: "Clinic Name",
+      dataIndex: "clinicName",
+      key: "clinicName",
+      render: (text, record) => (
+        <Link to={`/clinics/${record.id}`}>{text}</Link>
+      ),
+    },
+    {
+      title: "Owner Name",
+      dataIndex: "ownerName",
+      key: "ownerName",
+      render: (text, record) => (
+        <Link to={`/clinics/${record.id}`}>{text}</Link>
+      ),
+    },
+    {
+      title: "City",
+      dataIndex: "city",
+      key: "city",
+      render: (text, record) => (
+        <Link to={`/clinics/${record.id}`}>{text}</Link>
+      ),
+    },
+    {
+      title: "State",
+      dataIndex: "state",
+      key: "state",
+      render: (text, record) => (
+        <Link to={`/clinics/${record.id}`}>{text}</Link>
+      ),
+    },
+    {
+      title: "Admin Contact Number",
+      dataIndex: "adminContactNumber",
+      key: "adminContactNumber",
+      render: (text, record) => (
+        <Link to={`/clinics/${record.id}`}>{text}</Link>
+      ),
+    },
+    {
+      title: "Admin Contact Email",
+      dataIndex: "adminContactEmail",
+      key: "adminContactEmail",
+      render: (text, record) => (
+        <Link to={`/clinics/${record.id}`}>{text}</Link>
+      ),
+    },
+    {
+      title: "Specialties",
+      dataIndex: "specialties",
+      key: "specialties",
+      render: (text, record) => (
+        <Link to={`/clinics/${record.id}`}>{text}</Link>
+      ),
+    },
+    {
+      title: "Enrolled On",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text, record) => (
+        <Link to={`/clinics/${record.id}`}>
+          {new Date(text).toLocaleString()}
+        </Link>
+      ),
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      fixed: "right",
+      render: (text, record) => (
+        <Link to={`/clinics/${record.id}`}>
+          <Badge
+            text={text}
+            status={
+              text === "active"
+                ? "success"
+                : text === "pending"
+                ? "processing"
+                : "default"
+            }
+          />
+        </Link>
+      ),
+    },
+  ];
 
-  useDataTable({
-    tableRef: pendingClinicsTableRef,
-    columns: columns,
-    data: pendingClinicsTableData,
-    // isFilterColumn: true,
-  });
+  // const pendingClinicsTableRef = useRef(null);
 
-  const enrolledClinicsTableRef = useRef(null);
+  // useDataTable({
+  //   tableRef: pendingClinicsTableRef,
+  //   columns: columns,
+  //   data: pendingClinicsTableData,
+  //   // isFilterColumn: true,
+  // });
 
-  useDataTable({
-    tableRef: enrolledClinicsTableRef,
-    columns: columns,
-    data: enrolledClinicsTableData,
-    // isFilterColumn: true,
-  });
+  // const enrolledClinicsTableRef = useRef(null);
+
+  // useDataTable({
+  //   tableRef: enrolledClinicsTableRef,
+  //   columns: columns,
+  //   data: enrolledClinicsTableData,
+  //   // isFilterColumn: true,
+  // });
 
   const getPendingClinics = async () => {
     try {
-      setLoading(true);
+      setPendingLoading(true);
       const response = await clinicServices.getClinics("pending");
       setPendingClinicsTableData(response.data); // Use transformed data directly
     } catch (error) {
       console.error("Error fetching clinics:", error);
     } finally {
-      setLoading(false);
+      setPendingLoading(false);
     }
   };
 
   const getEnrolledClincs = async () => {
     try {
-      setLoading(true);
+      setEnrolledLoading(true);
       const response = await clinicServices.getClinics("active");
       setEnrolledClinicsTableData(response.data); // Use transformed data directly
     } catch (error) {
       console.error("Error fetching clinics:", error);
     } finally {
-      setLoading(false);
+      setEnrolledLoading(false);
     }
   };
 
   useEffect(() => {
-    getPendingClinics();
     getEnrolledClincs();
+    getPendingClinics();
   }, []);
 
-  if (loading) {
+  if (pendingLoading || enrolledLoading) {
     return <Loading />;
   }
 
@@ -95,14 +187,12 @@ const Clinics = () => {
               </Card.Header.Title>
             </Card.Header>
             <Card.Body>
-              <p></p>
-              <div className="table-responsive custom-table-search">
-                <table
-                  ref={pendingClinicsTableRef}
-                  className="table dataTable"
-                  data-toggle="data-table"
-                ></table>{" "}
-              </div>
+              <AntdTable
+                columns={newClinicColumns}
+                data={pendingClinicsTableData}
+                pageSizeOptions={[50, 100, 150, 200]}
+                defaultPageSize={50}
+              />
             </Card.Body>
           </Card>
 
@@ -113,14 +203,12 @@ const Clinics = () => {
               </Card.Header.Title>
             </Card.Header>
             <Card.Body>
-              <p></p>
-              <div className="table-responsive custom-table-search">
-                <table
-                  ref={enrolledClinicsTableRef}
-                  className="table dataTable"
-                  data-toggle="data-table"
-                ></table>{" "}
-              </div>
+              <AntdTable
+                columns={newClinicColumns}
+                data={enrolledClinicsTableData}
+                pageSizeOptions={[50, 100, 150, 200]}
+                defaultPageSize={50}
+              />
             </Card.Body>
           </Card>
         </Col>
