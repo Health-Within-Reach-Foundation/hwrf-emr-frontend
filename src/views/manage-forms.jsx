@@ -297,7 +297,7 @@ const ManageForms = () => {
                           icon={<PlusOutlined />}
                           onClick={() => handleAddOption(formIndex, fieldIndex)}
                           type="dashed"
-                          className="border-primary text-primary btn-outline-primary rounded-0"
+                          className="border-primary text-primary btn-outline-primary"
                           disabled={apiCallLoading}
                         >
                           Add Option
@@ -305,7 +305,7 @@ const ManageForms = () => {
                         <Button
                           onClick={() => handleSave(formIndex, fieldIndex)}
                           type="primary"
-                          className="bg-primary btn-primary rounded-0"
+                          className="bg-primary"
                           loading={apiCallLoading}
                           style={{ marginLeft: 8 }}
                         >

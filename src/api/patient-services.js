@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import apiClient from "./axios-client";
 
 const addPatient = async (patientData) => {
@@ -263,6 +264,31 @@ const updateMammographyDetails = async (patientId, mammographyBody) => {
   }
 };
 
+// delete mammography details by id
+const deleteMammographyDetailsById = async (mammographyId) => {
+  try {
+    const response = await apiClient.delete(
+      `patients/mammography/${mammographyId}`
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      // Handle specific error responses from the API
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to delete mammography details"
+      );
+    } else {
+      // Handle other types of errors
+      console.error("Unexpected error:", error.message);
+      throw new Error(
+        "An unexpected error occurred while deleting patient mammography details"
+      );
+    }
+  }
+};
+
 const deleteDiagnosisById = async (diagnosisId) => {
   try {
     const response = await apiClient.delete(
@@ -294,7 +320,9 @@ const createGPRecord = async (gpRecordData) => {
   } catch (error) {
     if (error.response) {
       console.error("Error response:", error.response.data);
-      throw new Error(error.response.data.message || "Failed to create GP record");
+      throw new Error(
+        error.response.data.message || "Failed to create GP record"
+      );
     } else {
       console.error("Unexpected error:", error.message);
       throw new Error("An unexpected error occurred while creating GP record");
@@ -340,12 +368,17 @@ const getGPRecordById = async (gpRecordId) => {
 
 const updateGPRecord = async (gpRecordId, gpRecordData) => {
   try {
-    const response = await apiClient.patch(`/patients/gp-records/${gpRecordId}`, gpRecordData);
+    const response = await apiClient.patch(
+      `/patients/gp-records/${gpRecordId}`,
+      gpRecordData
+    );
     return response.data;
   } catch (error) {
     if (error.response) {
       console.error("Error response:", error.response.data);
-      throw new Error(error.response.data.message || "Failed to update GP record");
+      throw new Error(
+        error.response.data.message || "Failed to update GP record"
+      );
     } else {
       console.error("Unexpected error:", error.message);
       throw new Error("An unexpected error occurred while updating GP record");
@@ -355,13 +388,22 @@ const updateGPRecord = async (gpRecordId, gpRecordData) => {
 
 const deleteGPRecord = async (gpRecordId) => {
   try {
-    const response = await apiClient.delete(`/patients/gp-records/${gpRecordId}`);
-    return response.data;
+    const response = await apiClient.delete(
+      `/patients/gp-records/${gpRecordId}`
+    );
+    if (response.status === 200) {
+      toast.success(response.data.message || "GP record deleted successfully");
+    }
+    return response.data.success;
   } catch (error) {
     if (error.response) {
+      toast.error(error.response.data.message || "Failed to delete GP record");
       console.error("Error response:", error.response.data);
-      throw new Error(error.response.data.message || "Failed to delete GP record");
+      throw new Error(
+        error.response.data.message || "Failed to delete GP record"
+      );
     } else {
+      toast.error("An unexpected error occurred while deleting GP record");
       console.error("Unexpected error:", error.message);
       throw new Error("An unexpected error occurred while deleting GP record");
     }
@@ -375,13 +417,17 @@ const getPatientsFollowUps = async () => {
   } catch (error) {
     if (error.response) {
       console.error("Error response:", error.response.data);
-      throw new Error(error.response.data.message || "Failed to fetch patient follow-ups");
+      throw new Error(
+        error.response.data.message || "Failed to fetch patient follow-ups"
+      );
     } else {
       console.error("Unexpected error:", error.message);
-      throw new Error("An unexpected error occurred while fetching patient follow-ups");
+      throw new Error(
+        "An unexpected error occurred while fetching patient follow-ups"
+      );
     }
   }
-}
+};
 
 export default {
   addPatient,
@@ -392,6 +438,7 @@ export default {
   addPatientDiagnosis,
   getMammographyDetails,
   updateMammographyDetails,
+  deleteMammographyDetailsById,
   updatePatientDiagnosis,
   addTreatmentByDiagnosis,
   updateTreatmentById,

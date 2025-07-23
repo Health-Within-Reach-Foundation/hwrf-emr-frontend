@@ -1,16 +1,8 @@
 import { Pie, Bar } from "react-chartjs-2";
 import React, { useEffect, useState, useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Badge,
-  Button,
-  Accordion,
-} from "react-bootstrap";
-import { Form, Input, DatePicker, Select, Tabs } from "antd";
+import { Container, Row, Col, Card, Badge, Accordion } from "react-bootstrap";
+import { Form, Input, DatePicker, Select, Tabs, Button, Tooltip } from "antd";
 import campManagementService from "../../api/camp-management-service";
 import { Loading } from "../../components/loading";
 import dayjs from "dayjs";
@@ -190,29 +182,6 @@ const CampDetails = () => {
       ),
     },
     {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
-      width: 80,
-      sortable: true,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
-      ),
-    },
-    {
-      title: "Sex",
-      dataIndex: "sex",
-      key: "sex",
-      filters: [
-        { text: "Male", value: "male" },
-        { text: "Female", value: "female" },
-      ],
-      onFilter: (value, record) => record.sex === value,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
-      ),
-    },
-    {
       title: "Service Taken",
       dataIndex: "serviceTaken",
       key: "serviceTaken",
@@ -226,11 +195,44 @@ const CampDetails = () => {
         <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
       ),
     },
-
+    {
+      title: "Collected Amount",
+      dataIndex: "collectedAmount",
+      width: 150,
+      key: "collectedAmount",
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>
+          {text?.offlineAmount + text?.onlineAmount}
+        </Link>
+      ),
+    },
+    {
+      title: "Cash",
+      dataIndex: "collectedAmount",
+      width: 150,
+      key: "collectedAmount",
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>
+          {text?.offlineAmount}
+        </Link>
+      ),
+    },
+    {
+      title: "Online Amount",
+      dataIndex: "collectedAmount",
+      width: 150,
+      key: "collectedAmount",
+      render: (text, record) => (
+        <Link to={`/patient/patient-profile/${record.id}`}>
+          {text?.onlineAmount}
+        </Link>
+      ),
+    },
     {
       title: "Treated doctors",
       dataIndex: "treatingDoctors",
       key: "treatingDoctors",
+      width: 200,
       filters: treatingDoctorsOptions,
       onFilter: (value, record) => {
         return (
@@ -413,13 +415,18 @@ const CampDetails = () => {
 
                       <div className="d-flex justify-content-end">
                         <Button
-                          variant="secondary"
+                          variant="outlined"
                           onClick={() => setIsEditing(false)}
                           className="me-2"
                         >
                           Cancel
                         </Button>
-                        <Button variant="primary" onClick={handleSave}>
+                        <Button
+                          className="bg-primary"
+                          type="primary"
+                          variant="primary"
+                          onClick={handleSave}
+                        >
                           Save Changes
                         </Button>
                       </div>
@@ -464,12 +471,31 @@ const CampDetails = () => {
                         </Col>
                       </Row>
                       <div className="d-flex justify-content-end mt-3">
-                        <Button
-                          variant="outline-primary"
-                          onClick={() => setIsEditing(true)}
+                        <Tooltip
+                          zIndex={1000}
+                          title={
+                            new Date(startDate) <
+                              new Date() - 7 * 24 * 60 * 60 * 1000 &&
+                            !userRoles.includes("admin")
+                              ? "Permission denied, You can only edit camps that are created today or within 7 days, To edit contact admin "
+                              : "Edit camp details"
+                          }
+                          placement="top"
+                          color="#0a58b8"
                         >
-                          Edit Details
-                        </Button>
+                          <Button
+                            type="primary"
+                            className="bg-primary"
+                            disabled={
+                              new Date(startDate) <
+                                new Date() - 7 * 24 * 60 * 60 * 1000 &&
+                              !userRoles.includes("admin")
+                            }
+                            onClick={() => setIsEditing(true)}
+                          >
+                            Edit Details
+                          </Button>
+                        </Tooltip>
                       </div>
                     </>
                   )}

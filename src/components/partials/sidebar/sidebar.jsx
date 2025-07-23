@@ -1,3 +1,94 @@
+// import React, { useEffect } from "react";
+// import { Link, useLocation } from "react-router-dom";
+// import { useSelector, useDispatch } from "react-redux";
+// import { RiMenuFold2Fill } from "@remixicon/react";
+// import Scrollbar from "smooth-scrollbar";
+
+// // Import Components
+// import Logo from "../../logo";
+// import VerticalNav from "./vertical-nav";
+
+// // Import selectors from setting store
+// import * as SettingSelector from "../../../store/setting/selectors";
+
+// const Sidebar = () => {
+//   const dispatch = useDispatch();
+//   const location = useLocation();
+
+//   const sidebarColor = useSelector(SettingSelector.sidebar_color);
+//   const sidebarType = useSelector(SettingSelector.sidebar_type).filter(Boolean).join(" ");
+//   const sidebarMenuStyle = useSelector(SettingSelector.sidebar_menu_style);
+
+//   useEffect(() => {
+//     Scrollbar.init(document.querySelector("#my-scrollbar"));
+//   }, []);
+
+//   const handleSidebar = (forceOpen = false) => {
+//     let aside = document.querySelector("aside");
+//     if (aside) {
+//       if (forceOpen) {
+//         aside.classList.remove("sidebar-mini", "sidebar-hover");
+//       } else {
+//         aside.classList.toggle("sidebar-mini");
+//         aside.classList.toggle("sidebar-hover");
+//       }
+//     }
+//   };
+
+//   useEffect(() => {
+//     const adjustSidebar = () => {
+//       if (window.innerWidth < 990 || location.pathname === "/") {
+//         handleSidebar();
+//       } else {
+//         document.querySelector("aside")?.classList.remove("sidebar-mini", "sidebar-hover");
+//       }
+//     };
+
+//     adjustSidebar();
+//     window.addEventListener("resize", adjustSidebar);
+    
+//     return () => window.removeEventListener("resize", adjustSidebar);
+//   }, [location.pathname]);
+
+//   return (
+//     <aside className={`sidebar sidebar-base sidebar-default ${sidebarColor} ${sidebarType} ${sidebarMenuStyle}`}
+//       id="first-tour"
+//       data-toggle="main-sidebar"
+//       data-sidebar="responsive">
+      
+//       <div className="sidebar-header d-flex align-items-center justify-content-start position-relative">
+//         <Link to="/" className="navbar-brand me-5 pt-3 p-2">
+//           <Logo />
+//         </Link>
+
+//         <div className="ms-5 wrapper-menu d-flex d-none d-xl-block" role="button" onClick={() => handleSidebar(true)}>
+//           <div className="main-circle">
+//             <RiMenuFold2Fill />
+//           </div>
+//         </div>
+
+//         <li className="nav-item d-block d-xl-none" onClick={() => handleSidebar()}>
+//           <a className="wrapper-menu" data-toggle="sidebar" data-active="true">
+//             <div className="main-circle">
+//               <RiMenuFold2Fill />
+//             </div>
+//           </a>
+//         </li>
+//       </div>
+
+//       <div id="my-scrollbar" className="sidebar-body pt-0 data-scrollbar">
+//         <div className="sidebar-list">
+//           <VerticalNav />
+//         </div>
+//       </div>
+
+//       <div className="sidebar-footer"></div>
+//     </aside>
+//   );
+// };
+
+// export default Sidebar;
+
 import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 

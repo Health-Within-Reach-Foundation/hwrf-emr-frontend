@@ -22,6 +22,8 @@ import {
   RiListSettingsLine,
   RiListView,
   RiHealthBookLine,
+   RiBankLine,
+  RiMoneyDollarCircleLine,
 } from "@remixicon/react";
 import { permission } from "process";
 import { checkPermission } from "../../../utilities/utility-function";
@@ -236,6 +238,7 @@ const VerticalNav = () => {
             </Link>
           </Nav.Item>
         )}
+       
         {((!userRoles?.includes("superadmin") &&
           checkPermission(permissions, ["camps:write", "camps:read"])) ||
           userRoles?.includes("admin")) && (
@@ -336,6 +339,30 @@ const VerticalNav = () => {
               </div>
             </Accordion.Item>
           </Accordion>
+        )}
+         {((!userRoles?.includes("superadmin") &&
+          checkPermission(permissions, ["administration:finance"])) ||
+          userRoles?.includes("admin")) && (
+          <Nav.Item as="li">
+            <Link
+              to="/finance"
+              className={`nav-link ${
+                location.pathname === "/finance" ? "active" : ""
+              }`}
+            >
+              <OverlayTrigger
+                key={"Finance"}
+                placement={"right"}
+                overlay={<Tooltip id="Finance">Finance</Tooltip>}
+              >
+                <span>
+                  {/* <RiMoneyDollarCircleLine /> */}
+                 <RiBankLine size={24} />
+                </span>
+              </OverlayTrigger>
+              <span className="item-name ">Finance </span>
+            </Link>
+          </Nav.Item>
         )}
       </ul>
     </>

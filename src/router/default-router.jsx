@@ -110,6 +110,7 @@ import AllUsers from "../views/administration/all-users";
 import AddUser from "../views/administration/add-user";
 import ConfirmPassword from "../views/auth/confirm-password";
 import Appointment from "../views/appointment";
+import Finance from "../views/finance";
 import Roles from "../views/administration/roles-management";
 import FormTemplates from "../views/form-templates";
 import CampManagement from "../views/administration/campaigns";
@@ -322,6 +323,17 @@ export const DefaultRoute = [
             requiredPermissions={["queues:write", "queues:read"]}
           >
             <Appointment />
+          </ClinicRouteGuard>
+        ),
+      },
+      {
+        path: "/finance",
+        // element: <Appointment />,
+        element: (
+          <ClinicRouteGuard
+            requiredPermissions={["administration:finance"]}
+          >
+            <Finance />
           </ClinicRouteGuard>
         ),
       },

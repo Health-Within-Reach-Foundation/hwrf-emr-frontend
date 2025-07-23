@@ -8,6 +8,8 @@ import { generatePath, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import patientServices from "../../api/patient-services";
 import { Loading } from "../loading";
+import { Container } from "react-bootstrap";
+import BackButton from "../back-button";
 
 const MammoReportLexical = () => {
   const { mammographyId, id } = useParams();
@@ -163,7 +165,9 @@ const MammoReportLexical = () => {
   }
 
   return mammoReport ? (
-    <>
+    <Container>
+      <BackButton />
+
       <div className="d-flex gap-4">
         Name: <h4>{patient?.name || "N/A"}</h4>
         Reg No: <h4>{`HWRF- ${patient?.regNo}` || "N/A"}</h4>
@@ -184,7 +188,7 @@ const MammoReportLexical = () => {
         setHtmlToDownload={setMammoHTMLReport}
         editable={true}
       />
-    </>
+    </Container>
   ) : (
     <Loading />
   );

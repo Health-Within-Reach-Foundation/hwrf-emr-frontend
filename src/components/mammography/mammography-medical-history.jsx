@@ -1,24 +1,22 @@
 // TODO : remove the defaultValues try to use form initialValues
-import React, { useEffect, useState } from "react";
+import { RiDownload2Line, RiUpload2Fill } from "@remixicon/react";
 import {
+  Button,
+  Checkbox,
+  DatePicker,
   Form,
   Input,
-  Radio,
-  Button,
-  DatePicker,
   InputNumber,
-  Checkbox,
+  Radio,
   Upload,
-  Badge,
+  Select,
 } from "antd";
-import { Row, Col } from "react-bootstrap";
-import PlaygroundApp from "../Lexical-editor/App";
-import { screeningImagedefault } from "./screeningImage";
-import patientServices from "../../api/patient-services";
-import toast from "react-hot-toast";
 import dayjs from "dayjs";
-import { Link } from "react-router-dom";
-import { RiDownload2Line, RiUpload2Fill } from "@remixicon/react";
+import React, { useEffect, useState } from "react";
+import { Col, Row } from "react-bootstrap";
+import toast from "react-hot-toast";
+import patientServices from "../../api/patient-services";
+import DeletePopover from "../delete-trigger-button";
 // import ImageEditor from "./image-editor";
 
 const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
@@ -69,6 +67,9 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
       nippleRetraction: "",
       nippleRetractionDetails: "",
       additionalInfo: "",
+      reportStatus: "Normal",
+      aiReportScore: null,
+      aiReport: [],
       onlineAmount: null,
       offlineAmount: null,
     };
@@ -131,10 +132,13 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
         patient.nippleRetractionDetails ||
         defaultPatient.nippleRetractionDetails,
       additionalInfo: patient.additionalInfo || defaultPatient.additionalInfo,
+      reportStatus: patient.reportStatus || defaultPatient.reportStatus,
+      aiReportScore: patient.aiReportScore || defaultPatient.aiReportScore,
+      aiReport: patient.aiReport || defaultPatient.aiReport,
       pain: patient.pain || defaultPatient.pain,
       painDetails: patient.painDetails || defaultPatient.painDetails,
       onlineAmount: patient.onlineAmount || defaultPatient.onlineAmount,
-      offlineAmount: patient.offlineAmount || defaultPatient,
+      offlineAmount: patient.offlineAmount || defaultPatient.offlineAmount,
     };
   });
 
@@ -190,12 +194,17 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
     const formData = new FormData();
 
     // Add all form state fields except screeningImage to FormData
-    const { screeningImage, ...otherFormState } = formState;
+    const { screeningImage, aiReport, ...otherFormState } = formState;
 
     // Append each field in the form state to the FormData object
     Object.entries({ ...otherFormState, obstetricHistory }).forEach(
       ([key, value]) => {
-        if (
+        if (key === "lastMenstrualDate") {
+          formData.append(
+            key,
+            value ? dayjs(value).format("YYYY-MM-DD") : null
+          );
+        } else if (
           (typeof value === "object" || Array.isArray(value)) &&
           key !== "lastMenstrualDate"
         ) {
@@ -209,6 +218,10 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
     // Add the screeningImage file if it exists
     if (screeningImage && screeningImage.length > 0) {
       formData.append("screeningFile", screeningImage[0]); // Only append the first file
+    }
+
+    if (aiReport && aiReport.length > 0) {
+      formData.append("aiReport", aiReport[0]); // Only append the first file
     }
 
     console.log("Form Data Submitted:", formState);
@@ -281,16 +294,20 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
     const formData = new FormData();
 
     // Add all form state fields except screeningImage to FormData
-    const { screeningImage, ...otherFormState } = formState;
+    const { screeningImage, aiReport, ...otherFormState } = formState;
 
     // Append each field in the form state to the FormData object
     console.log("Form Data Submitted:", formState);
     Object.entries({ ...otherFormState, obstetricHistory }).forEach(
       ([key, value]) => {
-        if (key === "screeningImage") {
-          formData.append("screeningFile", value[0]); // Only append the first file
-        }
-        if (
+        if (key === "screeningImage" || key === "aiReport") {
+          formData.append(key, value[0]); // Only append the first file
+        } else if (key === "lastMenstrualDate") {
+          formData.append(
+            key,
+            value ? dayjs(value).format("YYYY-MM-DD") : null
+          );
+        } else if (
           (typeof value === "object" || Array.isArray(value)) &&
           key !== "lastMenstrualDate"
         ) {
@@ -321,6 +338,20 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
       toast.error("Internal server error");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (patientId) => {
+    try {
+      const response = await patientServices.deleteMammographyDetailsById(
+        patientId
+      );
+      if (response) {
+        toast.success("Record deleted successfully!");
+        await onSave(); // Refresh the data after deletion
+      }
+    } catch (error) {
+      console.error("Error deleting record:", error);
     }
   };
 
@@ -372,6 +403,20 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               {editMode ? "Cancel" : "Edit"}
             </Button>
           )}
+
+          {readOnly && (
+            <DeletePopover
+              size="large"
+              title={"Delete Record?"}
+              description={"Are you sure you want to delete this record?"}
+              onDelete={() => {
+                // Add your delete logic here
+                handleDelete(patientId);
+              }}
+              isDeleteAction={true}
+              // children={"Hello"}
+            />
+          )}
         </div>
       </div>
 
@@ -409,12 +454,6 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
             <Col xs={24} sm={12} xl={4}>
               <Form.Item
                 label="Last Menstrual Period Date"
-                rules={[
-                  {
-                    required: true,
-                    message: "Last menstrual date is required!",
-                  },
-                ]}
                 name={"lastMenstrualDate"}
               >
                 <DatePicker
@@ -632,7 +671,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
             {formState?.familyHistory === "No" && (
               <Col xs={24} sm={12} xl={12}>
                 <Form.Item
-                  label="If Yes, Please fill"
+                  label="If No, Please fill"
                   name="familyHistoryDetails"
                 >
                   <Input.TextArea
@@ -1081,7 +1120,16 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
             </Col>
           </Row>
           <Col xs={24} sm={12} xl={4}>
-            <Form.Item label="Implants" name="implants">
+            <Form.Item
+              label="Implants"
+              name="implants"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select an option for Implants!",
+                },
+              ]}
+            >
               <Radio.Group defaultValue={formState.implants}>
                 <Radio value="Yes">Yes</Radio>
                 <Radio value="No">No</Radio>
@@ -1431,6 +1479,70 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               </Form.Item>
             </Col>
           </Row>
+
+          <h3 className="mt-4 mb-3">Diagnostic Report Information</h3>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12} xl={4}>
+              <Form.Item label="Report Status" name="reportStatus">
+                <Select
+                  defaultValue={formState.reportStatus}
+                  onChange={(value) =>
+                    setFormState({ ...formState, reportStatus: value })
+                  }
+                >
+                  <Select.Option value="Normal">Normal</Select.Option>
+                  <Select.Option value="Abnormal">Abnormal</Select.Option>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} xl={4}>
+              <Form.Item label="Report Score from Ai" name="aiReportScore">
+                <InputNumber
+                  placeholder="Enter score"
+                  style={{ width: "100%" }}
+                  defaultValue={formState.aiReportScore}
+                />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12} xl={4}>
+              {/* File Upload to upload the report generated by Ai */}
+              <Form.Item label="Upload Report" className="responsive-form-item">
+                <Upload
+                  accept=".pdf, .doc, .docx, .jpg, .jpeg, .png"
+                  beforeUpload={(file) => {
+                    setFormState((prev) => ({
+                      ...prev,
+                      aiReport: [file], // Replace previous file with the new one
+                    }));
+                    return false;
+                  }}
+                  fileList={
+                    Array.isArray(formState.aiReport)
+                      ? formState.aiReport.map((file) => ({
+                          ...file,
+                          name: file.name || file.originFileObj?.name,
+                          uid: file.uid || file.originFileObj?.uid,
+                          status: "done",
+                        }))
+                      : []
+                  }
+                  onRemove={() => {
+                    setFormState((prev) => ({
+                      ...prev,
+                      aiReport: [],
+                    }));
+                  }}
+                  className="ml-3"
+                >
+                  <Button icon={<RiUpload2Fill />} variant="outlined">
+                    Upload
+                  </Button>
+                </Upload>
+              </Form.Item>
+            </Col>
+          </Row>
+
           {/* Submit Button */}
           <div className="d-flex justify-content-end">
             <Button
@@ -1828,7 +1940,6 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               <Input.TextArea value={formState.additionalInfo} readOnly />
             </Form.Item>
           </Row>
-
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12} xl={4}>
               <Form.Item label="Online Amount">
@@ -1849,6 +1960,60 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                   }
                   readOnly
                 />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <h3 className="mt-4 mb-3">Diagnostic Report Information</h3>
+
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12} xl={4}>
+              <Form.Item label="Report Status">
+                <Input value={formState.reportStatus} readOnly />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} xl={4}>
+              <Form.Item label="Report Score from Ai">
+                <Input value={formState.aiReportScore} readOnly />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} md={7}>
+              <Form.Item
+                label="Uploaded Report"
+                className="responsive-form-item"
+              >
+                {Object.keys(patient?.aiReport).length > 0 ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <Button
+                      type="link"
+                      href={`/files?key=${patient?.aiReport?.key}`}
+                      style={{
+                        padding: 0,
+                        fontSize: "14px",
+                        textDecoration: "underline",
+                        color: "#1890ff",
+                      }}
+                      onClick={() => {}}
+                    >
+                      {patient?.aiReport?.fileName || "file"}
+                    </Button>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      fontSize: "14px",
+                      color: "#6c757d", // Bootstrap muted text color
+                    }}
+                  >
+                    No file uploaded.
+                  </div>
+                )}
               </Form.Item>
             </Col>
           </Row>

@@ -115,7 +115,7 @@ const SignIn = () => {
     try {
       setLoading(true);
       const { email, password } = values;
-      const responseData = await login(email, password);
+      const responseData = await login(email.toLowerCase(), password);
       if (responseData.user && responseData.token) {
         toast.success("Logged in");
         navigate("/");
@@ -154,12 +154,13 @@ const SignIn = () => {
               <Form.Item
                 label="Email Address"
                 name="email"
+                className="email_address"
                 rules={[
                   { required: true, message: "Please enter your email" },
                   { type: "email", message: "Enter a valid email" },
                 ]}
               >
-                <Input placeholder="Enter email" />
+                <Input className="ant-input" placeholder="Enter email" />
               </Form.Item>
 
               <Form.Item

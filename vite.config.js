@@ -14,6 +14,9 @@ export default defineConfig(({ mode }) => {
       outDir: "build",
       minify: true,
     },
+    optimizeDeps: {
+      include: ["xlsx", "file-saver"],
+    },
     define: {
       "process.env.IS_PREACT": JSON.stringify("true"),
     },

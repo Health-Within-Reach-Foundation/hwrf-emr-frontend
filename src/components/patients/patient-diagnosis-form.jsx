@@ -47,6 +47,7 @@ const PatientDiagnosisForm = ({
 
   const [treatmentLoading, setTreatmentLoading] = useState(false);
   const [formState, setFormState] = useState({
+    diagnosisDate: dayjs(),
     complaints: [],
     treatmentsSuggested: [],
     // dentalQuadrant: [],
@@ -217,10 +218,12 @@ const PatientDiagnosisForm = ({
         campId,
         key,
         treatmentStatus,
+        diagnosisDate,
         ...filteredData
       } = diagnosisData;
       setFormState({
         ...filteredData,
+        diagnosisDate: diagnosisDate ? dayjs(diagnosisDate) : null,
         xray: [],
         selectedTeeth: selectedTeeth === null ? [] : [selectedTeeth],
         childSelectedTeeth:
@@ -245,6 +248,7 @@ const PatientDiagnosisForm = ({
       });
     } else {
       setFormState({
+        diagnosisDate: dayjs(),
         complaints: [],
         treatmentsSuggested: [],
         childSelectedTeeth: [],
@@ -291,6 +295,8 @@ const PatientDiagnosisForm = ({
         } else if (Array.isArray(value)) {
           // Append arrays as JSON
           formData.append(key, JSON.stringify(value));
+        } else if (key === "diagnosisDate") {
+          formData.append(key, dayjs(value).format("YYYY-MM-DD"));
         } else {
           formData.append(key, value);
         }
@@ -343,6 +349,12 @@ const PatientDiagnosisForm = ({
           value.forEach((file) => {
             formData.append("xrayFiles", file);
           });
+        } else if (key === "treatmentDate" || key === "nextDate") {
+          if (value) {
+            formData.append(key, dayjs(value).format("YYYY-MM-DD"));
+          } else {
+            formData.append(key, value);
+          }
         } else if (Array.isArray(value) || typeof value === "object") {
           // Append arrays as JSON
           formData.append(key, JSON.stringify(value));
@@ -446,7 +458,7 @@ const PatientDiagnosisForm = ({
                   });
               }}
               type="primary"
-              className="bg-primary rounded-0"
+              className="bg-primary"
               loading={loading}
             >
               {isEdit ? "Update Diagnosis" : "Submit Diagnosis"}
@@ -469,6 +481,27 @@ const PatientDiagnosisForm = ({
             form={diagnosisForm}
           >
             <div className="w-100 d-flex justify-content-between gap-3">
+              <Form.Item
+                label="Diagnosis Date"
+                className="w-100"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the diagnosis date",
+                  },
+                ]}
+                name="diagnosisDate"
+                required
+              >
+                <DatePicker
+                  format={"YYYY-MM-DD"}
+                  value={formState.diagnosisDate}
+                  onChange={(value) => {
+                    handleInputChange("diagnosisDate", value);
+                  }}
+                  className="w-100"
+                />
+              </Form.Item>
               <Form.Item
                 label="Complaints"
                 className="w-100"
@@ -721,6 +754,7 @@ const PatientDiagnosisForm = ({
                     onChange={(e) =>
                       handleInputChange("estimatedCost", e.target.value)
                     }
+                    onWheel={(e) => e.target.blur()}
                   />
                 </Form.Item>
               </div>
@@ -786,6 +820,7 @@ const PatientDiagnosisForm = ({
                     onChange={(e) =>
                       handleTreatmentChange("totalAmount", e.target.value)
                     }
+                    onWheel={(e) => e.target.blur()}
                     readOnly
                   />
                 </Form.Item>
@@ -807,6 +842,7 @@ const PatientDiagnosisForm = ({
                     onChange={(e) =>
                       handleTreatmentChange("paidAmount", e.target.value)
                     }
+                    onWheel={(e) => e.target.blur()}
                   />
                 </Form.Item>
                 <Form.Item
@@ -825,6 +861,8 @@ const PatientDiagnosisForm = ({
                     defaultValue={
                       diagnosisData?.treatment?.remainingAmount || 0
                     }
+                    onWheel={(e) => e.target.blur()}
+
                     readOnly
                   />
                 </Form.Item>
@@ -1042,6 +1080,7 @@ const PatientDiagnosisForm = ({
                                   e.target.value
                                 )
                               }
+                    onWheel={(e) => e.target.blur()}
                             />
                           </Form.Item>
                           <Form.Item
@@ -1070,6 +1109,8 @@ const PatientDiagnosisForm = ({
                                   e.target.value
                                 )
                               }
+                    onWheel={(e) => e.target.blur()}
+
                             />
                           </Form.Item>
                           <Form.Item
@@ -1166,7 +1207,7 @@ const PatientDiagnosisForm = ({
                             });
                         }}
                         type="primary"
-                        className="bg-primary rounded-0"
+                        className="bg-primary "
                         loading={treatmentLoading} // Assuming loading is being managed elsewhere
                       >
                         Submit Treatment

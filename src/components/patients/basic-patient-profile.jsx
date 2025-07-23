@@ -1,6 +1,6 @@
-import { Select } from "antd";
+import { Button, Select } from "antd";
 import React, { useState } from "react";
-import { Button, Card, Col, Form, Row } from "react-bootstrap";
+import {  Card, Col, Form, Row } from "react-bootstrap";
 
 const BasicPatientProfile = ({
   patientData,
@@ -19,6 +19,8 @@ const BasicPatientProfile = ({
         <div className="d-flex justify-content-end">
           <Button
             variant="primary"
+            className="bg-primary" 
+            type = "primary"
             onClick={() => setEditingPatient(!editingPatient)}
           >
             {editingPatient ? "Cancel Edit" : "Edit Profile"}

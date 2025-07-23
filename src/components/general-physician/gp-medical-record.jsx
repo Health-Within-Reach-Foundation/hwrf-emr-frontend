@@ -3,12 +3,15 @@ import { Button, Collapse, Drawer, Timeline } from "antd";
 import GPMedicalRecordForm from "./gp-record-form";
 import DateCell from "../date-cell";
 import jsPDF from "jspdf";
-import { DownloadOutlined } from "@ant-design/icons";
+import { DeleteOutlined, DownloadOutlined } from "@ant-design/icons";
 import "jspdf-autotable";
 import {
   calculateBMI,
   formatRegisterNumberOfPatient,
 } from "../../utilities/utility-function";
+import DeletePopover from "../delete-trigger-button";
+import patientServices from "../../api/patient-services";
+import toast from "react-hot-toast";
 
 const generatePath = (path) => {
   return window.origin + import.meta.env.BASE_URL + path;
@@ -20,6 +23,7 @@ const GPMedicalRecord = ({
   onSave = () => {},
   formFields = [],
 }) => {
+  const [allGPRecords, setAllGPRecords] = useState(gpRecords || []);
   const [showDrawer, setShowDrawer] = useState(false);
   console.log("patientData and options ", patientData, formFields);
 
@@ -130,13 +134,12 @@ const GPMedicalRecord = ({
     findingsOptions.forEach((item, index) => {
       doc.rect(margin + 5, cursorY + index * 5, 3, 3);
       if (record.findings?.includes(item.value))
-        doc.text("✔", margin + 6, cursorY +1+ index * 5 + 2.5);
+        doc.text("✔", margin + 6, cursorY + 1 + index * 5 + 2.5);
       doc.text(item.label, margin + 10, cursorY + index * 5 + 3);
     });
     cursorY += findingsOptions.length * 5 + 10;
-   
-    if (cursorY + 20 > 277) addNewPage();
 
+    if (cursorY + 20 > 277) addNewPage();
 
     // Systemic Examination Section
     doc.text("• Systemic Examination", margin + 5, cursorY);
@@ -144,11 +147,10 @@ const GPMedicalRecord = ({
     systemicExaminationOptions.forEach((item, index) => {
       doc.rect(margin + 5, cursorY + index * 5, 3, 3);
       if (record.systemicExamination?.includes(item.value))
-        doc.text("✔", margin + 6, cursorY +1 + index * 5 + 2.5);
+        doc.text("✔", margin + 6, cursorY + 1 + index * 5 + 2.5);
       doc.text(item.label, margin + 10, cursorY + index * 5 + 3);
     });
     cursorY += systemicExaminationOptions.length * 5 + 10;
-
 
     // Treatment Section
     doc.text("• Treatment", margin, cursorY);
@@ -211,6 +213,21 @@ const GPMedicalRecord = ({
     doc.save(`GP_Report_${patientData.name}_${record.createdAt}.pdf`);
   };
 
+  const handleDelete = async (recordId) => {
+    try {
+      const response = await patientServices.deleteGPRecord(recordId);
+      ``;
+      if (response) {
+        const updatedRecords = gpRecords.filter(
+          (record) => record.id !== recordId
+        );
+        setAllGPRecords(updatedRecords);
+      }
+    } catch (error) {
+      console.error("Error deleting record:", error);
+    }
+  };
+
   return (
     <div>
       {/* Button to open drawer for adding new record */}
@@ -262,7 +279,7 @@ const GPMedicalRecord = ({
       {/* Updated Timeline Component */}
       <Timeline
         mode="left"
-        items={gpRecords.map((record, index) => ({
+        items={allGPRecords.map((record, index) => ({
           key: record.id,
           color: index === 0 ? "green" : "blue",
           children: (
@@ -282,14 +299,30 @@ const GPMedicalRecord = ({
                           {record?.otherComplaints}
                         </p>
                       </div>
-                      <Button
-                        onClick={() => handlePrint(record)}
-                        title="Print"
-                        icon={<DownloadOutlined />}
-                        variant="outlined"
-                        shape="circle"
-                        size="middle"
-                      ></Button>
+                      <div className="d-flex gap-2">
+                        <Button
+                          onClick={() => handlePrint(record)}
+                          title="Print"
+                          icon={<DownloadOutlined />}
+                          variant="outlined"
+                          shape="circle"
+                          size="middle"
+                        ></Button>
+                        {/* Add Button with trigger to delete the record */}
+                        <DeletePopover
+                          title={"Delete Record?"}
+                          description={
+                            "Are you sure you want to delete this record?"
+                          }
+                          onDelete={() => {
+                            // Add your delete logic here
+                            console.log("Record deleted:", record.id);
+                            handleDelete(record.id);
+                          }}
+                          isDeleteAction={true}
+                          // children={"Hello"}
+                        />
+                      </div>
                     </div>
                   ),
                   children: (

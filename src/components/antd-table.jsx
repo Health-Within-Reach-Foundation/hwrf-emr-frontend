@@ -95,7 +95,7 @@ const AntdTable = ({
         columns={modifiedColumns}
         dataSource={filteredData}
         pagination={{ pageSize }}
-        scroll={{ x: "max-content", y: 400 }} // Floating header enabled
+        scroll={{ x: 1200, y: 400 }} // Floating header enabled
         rowClassName={rowClassName || (() => "")}
         rowHoverable={false}
         bordered

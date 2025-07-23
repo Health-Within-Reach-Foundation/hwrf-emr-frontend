@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Button, Tabs, Tab } from "react-bootstrap";
-import { Select } from "antd"; // Import TreeSelect from antd
+import { Container, Row, Col, Card, Tabs, Tab } from "react-bootstrap";
+import { Button, Select } from "antd"; // Import TreeSelect from antd
 import { useParams } from "react-router-dom";
 import patientServices from "../../api/patient-services";
 import { Loading } from "../../components/loading";
@@ -117,6 +117,7 @@ const PatientProfile = () => {
       // fixed: "right",
       render: (_, record) => (
         <Button
+        className="bg-primary" type="primary"
           size="sm"
           variant="primary"
           onClick={() => handleOpenDrawer(record, true)}
@@ -498,8 +499,9 @@ const PatientProfile = () => {
                   <div className="d-flex justify-content-end">
                     <Button
                       variant="primary"
+                      className="bg-primary" type="primary"
                       size="sm"
-                      className="my-3"
+                      // className="my-3"
                       onClick={() => handleOpenDrawer(null, false)}
                     >
                       <RiAddLine />

@@ -204,18 +204,25 @@ const CampModalForm = ({
           />
         </Form.Item>
 
-        <Form.Item className="d-flex justify-content-end">
-          <Button
-            type="primary"
-            onClick={handleSubmit}
-            style={{ marginRight: 8 }}
-            loading={loading}
-          >
-            {editCampData ? "Update" : "Submit"}
-          </Button>
-          <Button onClick={onClose} loading={loading}>
-            Cancel
-          </Button>
+        <Form.Item className="w-100">
+          <div className="w-100 d-flex justify-content-end gap-2">
+            <Button
+              onClick={onClose}
+              loading={loading}
+              className="border-primary text-primary ms-2"
+            >
+              Cancel
+            </Button>
+            <Button
+              className="bg-primary"
+              type="primary"
+              onClick={handleSubmit}
+              style={{ marginRight: 8 }}
+              loading={loading}
+            >
+              {editCampData ? "Update" : "Submit"}
+            </Button>
+          </div>
         </Form.Item>
       </Form>
     </Modal>
