@@ -18,7 +18,7 @@ pool:
   vmImage: $(vmImageName)
 
 stages:
-  # 🔍 Debug Stage (Optional – Safe to remove after testing)
+  # 🔍 Debug Variables Stage (Optional)
   - stage: DebugVariables
     displayName: "Debug: Print Pipeline Variables"
     jobs:
@@ -30,13 +30,13 @@ stages:
               echo "AZURE_SERVICE_CONNECTION_PRODUCTION: $(AZURE_SERVICE_CONNECTION_PRODUCTION)"
             displayName: "Print Environment Variables"
 
-  # 🚀 Build & Push Docker Image
+  # 🚀 Build & Push Docker Image Stage
   - stage: DockerBuildAndPush
-    displayName: "Build & Push Docker Image for Production"
+    displayName: "Build & Deploy Docker Image to Production"
     condition: or(
       eq(variables['Build.SourceBranchName'], 'veer-dev'),
       and(
-        contains(variables['system.pullRequest.targetBranch'], 'veer-dev'),
+        contains(variables['System.PullRequest.TargetBranch'], 'veer-dev'),
         eq(variables['Build.Reason'], 'PullRequest')
       )
     )
@@ -45,7 +45,9 @@ stages:
 
     jobs:
       - job: DockerJob
-        displayName: "Docker Build and Push"
+        displayName: "Docker Build & Push"
+        pool:
+          vmImage: $(vmImageName)
         steps:
           - task: Docker@2
             displayName: "Build and Push Docker Image"
@@ -60,7 +62,7 @@ stages:
                 production-$(Build.BuildId)
 
           - task: AzureWebAppContainer@1
-            displayName: "Deploy to Azure Web App for Containers (Production)"
+            displayName: "Deploy to Azure Web App (Production)"
             inputs:
               azureSubscription: $(AZURE_SERVICE_CONNECTION_PRODUCTION)
               appName: $(HWRF_PROD_WEBAPP_NAME)
