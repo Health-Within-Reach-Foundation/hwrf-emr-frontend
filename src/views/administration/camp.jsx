@@ -14,6 +14,7 @@ import MammographyAnalytics from "../../components/camp/mammography-analytics";
 import GPAnalytics from "../../components/camp/gp-analytics";
 import { useAuth } from "../../utilities/AuthProvider";
 import BackButton from "../../components/back-button";
+import { checkPermission } from "../../utilities/utility-function";
 
 const CampDetails = () => {
   const { campId } = useParams();
@@ -200,6 +201,7 @@ const CampDetails = () => {
       dataIndex: "collectedAmount",
       width: 150,
       key: "collectedAmount",
+      hidden: !checkPermission(permissions, ["camps:finance"]),
       render: (text, record) => (
         <Link to={`/patient/patient-profile/${record.id}`}>
           {text?.offlineAmount + text?.onlineAmount}
@@ -211,6 +213,7 @@ const CampDetails = () => {
       dataIndex: "collectedAmount",
       width: 150,
       key: "collectedAmount",
+      hidden: !checkPermission(permissions, ["camps:finance"]),
       render: (text, record) => (
         <Link to={`/patient/patient-profile/${record.id}`}>
           {text?.offlineAmount}
@@ -222,6 +225,7 @@ const CampDetails = () => {
       dataIndex: "collectedAmount",
       width: 150,
       key: "collectedAmount",
+      hidden: !checkPermission(permissions, ["camps:finance"]),
       render: (text, record) => (
         <Link to={`/patient/patient-profile/${record.id}`}>
           {text?.onlineAmount}
@@ -260,6 +264,7 @@ const CampDetails = () => {
       dataIndex: "paidAmount",
       width: 150,
       key: "paidAmount",
+      hidden: !checkPermission(permissions, ["camps:finance"]),
       render: (text, record) =>
         permissions
           .map((permission) => permission.action)
