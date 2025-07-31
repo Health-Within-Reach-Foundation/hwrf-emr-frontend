@@ -1,12 +1,13 @@
-# Stage 1: Build the app
 FROM node:20-alpine AS builder
 WORKDIR /app
+
 COPY package*.json ./
-RUN npm ci
+RUN apk add --no-cache python3 make g++
+RUN npm ci || npm install
+
 COPY . .
 RUN npm run build
 
-# Stage 2: Serve with Nginx
 FROM nginx:stable-alpine
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=builder /app/build /usr/share/nginx/html
