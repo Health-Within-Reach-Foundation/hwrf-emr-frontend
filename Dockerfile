@@ -6,7 +6,8 @@ RUN apk add --no-cache python3 make g++
 RUN npm ci || npm install
 
 COPY . .
-RUN npm run build
+# Increase Node memory for large builds
+RUN NODE_OPTIONS="--max_old_space_size=4096" npm run build
 
 FROM nginx:stable-alpine
 COPY nginx.conf /etc/nginx/nginx.conf
