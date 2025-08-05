@@ -1,24 +1,25 @@
-# Stage 1: Build the app
-FROM node:20-alpine AS builder
+# Dockerfile
+
+# Base image
+FROM node:18 AS builder
+
 WORKDIR /app
 
-# Accept build arg
+# Set build args
 ARG VITE_API_URL
-ENV VITE_API_URL=$VITE_API_URL
 
-COPY package*.json ./
-# Install build dependencies
-RUN apk add --no-cache python3 make g++
-RUN npm ci || npm install
+# Inject build-time environment variable into Vite
+ENV VITE_API_URL=${VITE_API_URL}
 
 COPY . .
 
-# Increase memory for build (avoids OOM on large React builds)
-RUN NODE_OPTIONS="--max_old_space_size=4096" npm run build
+RUN npm ci && npm run build
 
-# Stage 2: Serve with Nginx
-FROM nginx:stable-alpine
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=builder /app/build /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# -----------------------------
+
+FROM nginx:alpine
+
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Optional: copy custom nginx.conf
+# COPY nginx.conf /etc/nginx/nginx.conf
