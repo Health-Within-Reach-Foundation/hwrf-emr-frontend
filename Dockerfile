@@ -1,32 +1,24 @@
-# -----------------------------
-# Stage 1: Build
-# -----------------------------
+# Dockerfile
+
+# Stage 1: Build the React app
 FROM node:18 AS builder
 
 WORKDIR /app
 
-# Set build-time environment variable
+# Set build args and environment
 ARG VITE_API_URL
 ENV VITE_API_URL=${VITE_API_URL}
+ENV NODE_OPTIONS=--max-old-space-size=4096
 
 COPY . .
 
-# Install dependencies
 RUN npm ci
-
-# Increase Node.js heap memory for large builds
-ENV NODE_OPTIONS=--max-old-space-size=4096
-
-# Run the build
 RUN npm run build
 
-# -----------------------------
-# Stage 2: Serve with NGINX
-# -----------------------------
+# Stage 2: Serve using Nginx
 FROM nginx:alpine
 
-# Copy the built app (from 'build' folder)
 COPY --from=builder /app/build /usr/share/nginx/html
 
-# Optional: Copy custom nginx config if you have it
+# Optional: custom nginx config (uncomment if needed)
 # COPY nginx.conf /etc/nginx/nginx.conf
