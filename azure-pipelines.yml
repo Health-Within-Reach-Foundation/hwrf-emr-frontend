@@ -33,23 +33,28 @@ stages:
 
     jobs:
       - job: DockerJob
-        displayName: "Docker Build & Push"
-        pool:
-          vmImage: $(vmImageName)
+        displayName: "Manual Docker Build and Push"
         steps:
-          - task: Docker@2
-            displayName: "Build and Push Docker Image"
-            inputs:
-              containerRegistry: 'ACR-hwrfProd-Connection'
-              repository: $(CONTAINER_REG_REPO_NAME)
-              command: buildAndPush
-              Dockerfile: $(Build.SourcesDirectory)/Dockerfile
-              buildContext: $(Build.SourcesDirectory)
-              buildArguments: |
-                VITE_API_URL=$(VITE_API_URL)
-              tags: |
-                latest
-                production-$(Build.BuildId)
+
+          - script: |
+              echo "Logging in to ACR..."
+              echo $(ACR_PASSWORD) | docker login $(ACR_NAME).azurecr.io -u $(ACR_USERNAME) --password-stdin
+
+              echo "Building Docker image with build args..."
+              docker build \
+                --build-arg VITE_API_URL=$(VITE_API_URL) \
+                -t $(ACR_NAME).azurecr.io/$(CONTAINER_REG_REPO_NAME):latest \
+                -t $(ACR_NAME).azurecr.io/$(CONTAINER_REG_REPO_NAME):production-$(Build.BuildId) \
+                -f $(Build.SourcesDirectory)/Dockerfile \
+                $(Build.SourcesDirectory)
+
+              echo "Pushing Docker image to ACR..."
+              docker push $(ACR_NAME).azurecr.io/$(CONTAINER_REG_REPO_NAME):latest
+              docker push $(ACR_NAME).azurecr.io/$(CONTAINER_REG_REPO_NAME):production-$(Build.BuildId)
+
+              echo "Logout from ACR..."
+              docker logout $(ACR_NAME).azurecr.io
+            displayName: "Build & Push Docker Image with Build Args"
 
           - task: AzureWebAppContainer@1
             displayName: "Deploy to Azure Web App (Production)"
