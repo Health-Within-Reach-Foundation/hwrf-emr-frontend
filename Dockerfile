@@ -13,7 +13,11 @@ ENV VITE_API_URL=${VITE_API_URL}
 
 COPY . .
 
-RUN npm ci && npm run build
+RUN npm ci
+
+# Increase Node.js heap limit to 4GB during build
+ENV NODE_OPTIONS=--max-old-space-size=4096
+RUN npm run build
 
 # -----------------------------
 
