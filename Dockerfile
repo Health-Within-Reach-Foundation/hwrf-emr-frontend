@@ -1,29 +1,32 @@
-# Dockerfile
-
-# Base image
+# -----------------------------
+# Stage 1: Build
+# -----------------------------
 FROM node:18 AS builder
 
 WORKDIR /app
 
-# Set build args
+# Set build-time environment variable
 ARG VITE_API_URL
-
-# Inject build-time environment variable into Vite
 ENV VITE_API_URL=${VITE_API_URL}
 
 COPY . .
 
+# Install dependencies
 RUN npm ci
 
-# Increase Node.js heap limit to 4GB during build
+# Increase Node.js heap memory for large builds
 ENV NODE_OPTIONS=--max-old-space-size=4096
+
+# Run the build
 RUN npm run build
 
 # -----------------------------
-
+# Stage 2: Serve with NGINX
+# -----------------------------
 FROM nginx:alpine
 
-COPY --from=builder /app/dist /usr/share/nginx/html
+# Copy the built app (from 'build' folder)
+COPY --from=builder /app/build /usr/share/nginx/html
 
-# Optional: copy custom nginx.conf
+# Optional: Copy custom nginx config if you have it
 # COPY nginx.conf /etc/nginx/nginx.conf
