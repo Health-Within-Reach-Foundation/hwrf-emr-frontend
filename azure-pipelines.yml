@@ -18,10 +18,15 @@ pool:
   vmImage: $(vmImageName)
 
 stages:
-  # 🚀 Build & Push Docker Image Stage
   - stage: DockerBuildAndPush
     displayName: "Build & Deploy Docker Image to Production"
-    condition: or(eq(variables['Build.SourceBranchName'], 'veer-dev'), and(contains(variables['System.PullRequest.TargetBranch'], 'veer-dev'), eq(variables['Build.Reason'], 'PullRequest')))
+    condition: or(
+      eq(variables['Build.SourceBranchName'], 'veer-dev'),
+      and(
+        contains(variables['System.PullRequest.TargetBranch'], 'veer-dev'),
+        eq(variables['Build.Reason'], 'PullRequest')
+      )
+    )
     variables:
       - group: hwrf-frontend-prod-variable-group
     jobs:
@@ -38,6 +43,8 @@ stages:
               command: buildAndPush
               Dockerfile: $(Build.SourcesDirectory)/Dockerfile
               buildContext: $(Build.SourcesDirectory)
+              buildArguments: |
+                VITE_API_URL=$(VITE_API_URL)
               tags: |
                 latest
                 production-$(Build.BuildId)
