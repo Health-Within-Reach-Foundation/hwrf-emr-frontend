@@ -1,34 +1,29 @@
-import React, { useState, useEffect } from "react";
-import { Row, Col } from "react-bootstrap";
-// import Flatpickr from "react-flatpickr";
-import "flatpickr/dist/flatpickr.css";
-import AppointmentForm from "../components/appointment-form";
-import appointmentServices from "../api/appointment-services";
-import patientServices from "../api/patient-services";
-import { Loading } from "../components/loading";
-import DateCell from "../components/date-cell";
-import { Badge, Button, Dropdown, Menu } from "antd";
-import toast from "react-hot-toast";
-import CurrentCampDetailsHeader from "../components/camp/currentcamp-detail-header";
 import { RiAddLine, RiRefreshLine } from "@remixicon/react";
-import { transformText } from "../utilities/utility-function";
-import { useAuth } from "../utilities/AuthProvider";
-import campManagementService from "../api/camp-management-service";
+import { Badge, Button, Dropdown } from "antd";
+import "flatpickr/dist/flatpickr.css";
+import { useEffect, useState } from "react";
+import { Col, Row } from "react-bootstrap";
+import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import appointmentServices from "../api/appointment-services";
+import campManagementService from "../api/camp-management-service";
 import AntdTable from "../components/antd-table";
+import AppointmentForm from "../components/appointment-form";
+import CurrentCampDetailsHeader from "../components/camp/currentcamp-detail-header";
+import DateCell from "../components/date-cell";
+import { Loading } from "../components/loading";
+import { useAuth } from "../utilities/AuthProvider";
+import { transformText } from "../utilities/utility-function";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [loadingPatient, setLoadingPatient] = useState(false);
   const [loadingAppointments, setLoadingAppointments] = useState(false);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
-  const [filters, setFilters] = useState({ status: "", queueType: "" });
-  const [patientList, setPatientList] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
-  const [selectedQueueType, setSelectedQueueType] = useState(null); // Tracks the selected department
+  const [selectedQueueType, setSelectedQueueType] = useState(null);
   const { user } = useAuth();
 
   const queuePatientColumns = [
@@ -265,17 +260,6 @@ const Appointment = () => {
     }
   };
 
-  const getPatientList = async () => {
-    try {
-      setLoadingPatient(true);
-      const response = await patientServices.getPatients();
-      setPatientList(response.data);
-    } catch (error) {
-      console.error("Error fetching patients:", error);
-    } finally {
-      setLoadingPatient(false);
-    }
-  };
 
   const fetchCampDetails = async () => {
     try {
@@ -323,8 +307,8 @@ const Appointment = () => {
     }
   };
   const refreshData = async () => {
-    await Promise.all([fetchAppointments(), getPatientList()]);
-    // toast.success("Data refreshed successfully!");
+    await Promise.all([fetchAppointments()]);
+    // Note: Removed getPatientList() - patients are now fetched on-demand in AppointmentForm
   };
 
   // useEffect(() => {
@@ -350,8 +334,6 @@ const Appointment = () => {
   }, [appointments, user?.id]); // Dependencies for effect
   useEffect(() => {
     fetchAppointments();
-    getPatientList();
-    // getSpecialtyDepartmentsByClinic();
     fetchCampDetails();
   }, []);
 
@@ -366,7 +348,7 @@ const Appointment = () => {
   //   fetchAppointments(date);
   // }, [date]);
 
-  if (loading || loadingPatient || loadingAppointments) {
+  if (loading || loadingAppointments) {
     return <Loading />;
   }
 
@@ -453,7 +435,6 @@ const Appointment = () => {
       <AppointmentForm
         show={show}
         modalClose={() => setShow(false)}
-        patients={patientList}
         departments={departmentList}
         onSave={() => fetchAppointments(date)}
       />

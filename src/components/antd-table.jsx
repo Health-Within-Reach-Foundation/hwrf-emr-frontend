@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Table, Input, Select, Tooltip } from "antd";
+import { Input, Select, Table } from "antd";
+import React, { useEffect, useState } from "react";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -7,18 +7,27 @@ const { Option } = Select;
 const AntdTable = ({
   columns,
   data,
-  pageSizeOptions = [5, 10, 20],
-  defaultPageSize = 10,
+  pageSizeOptions = [50, 100, 150, 200],
+  defaultPageSize = 50,
   rowClassName,
   summary,
+  totalRecords = 0,
+  currentPage = 1,
+  onPaginationChange = () => {},
+  isServerSide = false,
+  loading = false,
+  searchValue = "",
+  onSearch = () => {},
 }) => {
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState(searchValue);
   const [filteredData, setFilteredData] = useState(data);
   const [pageSize, setPageSize] = useState(defaultPageSize);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPageLocal, setCurrentPageLocal] = useState(currentPage);
 
-  // 🔍 Search Functionality
+  // 🔍 Search Functionality (Client-side only, ignored if server-side)
   const handleSearch = (value) => {
+    if (isServerSide) return; // Disable client-side search for server-side pagination
+    
     setSearchText(value);
     const filtered = data.filter((item) =>
       Object.values(item).some((field) =>
@@ -26,19 +35,19 @@ const AntdTable = ({
       )
     );
     setFilteredData(filtered);
-    setCurrentPage(1); // Reset to first page on search
+    setCurrentPageLocal(1);
   };
 
   // If data changes, update filteredData
   useEffect(() => {
     setFilteredData(data);
-    setCurrentPage(1); // Reset to first page if data changes externally
-  }, [data]);
+    setCurrentPageLocal(currentPage);
+  }, [data, currentPage]);
 
   // 📌 Modified Columns for Sorting, Width Control & Overflow Handling
   const modifiedColumns = columns.map((col) => ({
     ...col,
-    sorter: col.sortable
+    sorter: !isServerSide && col.sortable
       ? (a, b) => (a[col.dataIndex] > b[col.dataIndex] ? 1 : -1)
       : false,
     title: col.sortable ? (
@@ -70,19 +79,36 @@ const AntdTable = ({
     fixed: col.fixed,
   }));
 
-  // Calculate if current page is the last page
-  const totalItems = filteredData.length;
-  const lastPage = Math.ceil(totalItems / pageSize);
-  const isLastPage = currentPage === lastPage;
+  // Calculate pagination metadata
+  const displayData = isServerSide ? data : filteredData;
+  const totalItems = isServerSide ? totalRecords : displayData.length;
+  const pageSizeValue = pageSize;
+  const currentPageValue = isServerSide ? currentPageLocal : Math.ceil((currentPageLocal - 1) * pageSize / (filteredData.length || 1)) + 1;
+  const lastPage = Math.ceil(totalItems / pageSizeValue);
+  const isLastPage = currentPageValue === lastPage || (isServerSide && !data.length);
 
-  // Table pagination configuration
-  const paginationConfig = {
-    pageSize,
-    current: currentPage,
+  // Server-side pagination configuration
+  const paginationConfig = isServerSide ? {
+    pageSize: pageSizeValue,
+    current: currentPageValue,
+    total: totalItems,
     showSizeChanger: true,
     pageSizeOptions: pageSizeOptions.map(String),
     onChange: (page, size) => {
-      setCurrentPage(page);
+      setCurrentPageLocal(page);
+      setPageSize(size);
+      const offset = (page - 1) * size;
+      onPaginationChange(offset, size);
+    },
+    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total}`,
+    disabled: loading,
+  } : {
+    pageSize: pageSizeValue,
+    current: currentPageValue,
+    showSizeChanger: true,
+    pageSizeOptions: pageSizeOptions.map(String),
+    onChange: (page, size) => {
+      setCurrentPageLocal(page);
       setPageSize(size);
     },
   };
@@ -90,38 +116,53 @@ const AntdTable = ({
   return (
     <div style={{ overflowX: "auto", padding: "10px" }}>
       {/* 🔍 Search & Pagination Controls */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: 16,
-        }}
-      >
-        <Search
-          placeholder="Search..."
-          value={searchText}
-          onChange={(e) => handleSearch(e.target.value)}
-          style={{ width: 200 }}
-        />
-        {/* <Select value={pageSize} onChange={setPageSize} style={{ width: 120 }}>
-          {pageSizeOptions.map((size) => (
-            <Option key={size} value={size}>
-              {size} per page
-            </Option>
-          ))}
-        </Select> */}
-      </div>
+      {!isServerSide && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: 16,
+          }}
+        >
+          <Search
+            placeholder="Search..."
+            value={searchText}
+            onChange={(e) => handleSearch(e.target.value)}
+            style={{ width: 200 }}
+          />
+        </div>
+      )}
+      {/* 🔍 Search for Server-Side Pagination */}
+      {isServerSide && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: 16,
+          }}
+        >
+          <Search
+            placeholder="Search by name..."
+            value={searchValue}
+            onChange={(e) => onSearch(e.target.value)}
+            style={{ width: 300 }}
+            allowClear
+            loading={loading}
+          />
+        </div>
+      )}
 
       {/* 🏆 Responsive Table */}
       <Table
         columns={modifiedColumns}
-        dataSource={filteredData}
+        dataSource={displayData}
         pagination={paginationConfig}
         scroll={{ x: 1200, y: 400 }}
         rowClassName={rowClassName || (() => "")}
         rowHoverable={false}
         bordered
         summary={isLastPage && summary ? summary : undefined}
+        loading={loading}
       />
     </div>
   );

@@ -22,10 +22,15 @@ const addPatient = async (patientData) => {
   }
 };
 
-const getPatients = async (clinicId) => {
+const getPatients = async (limit = 50, offset = 0) => {
   try {
-    // Make the GET request with clinic ID as a query parameter
-    const response = await apiClient.get("/patients");
+    // Make the GET request with pagination parameters
+    const response = await apiClient.get("/patients", {
+      params: {
+        limit,
+        offset,
+      },
+    });
 
     // Return the data from the response
     return response.data;
@@ -41,6 +46,88 @@ const getPatients = async (clinicId) => {
       // Handle other types of errors
       console.error("Unexpected error:", error.message);
       throw new Error("An unexpected error occurred while fetching patients");
+    }
+  }
+};
+
+/**
+ * Fetch ALL patients for the clinic for export (no pagination)
+ * Used for Excel/CSV export functionality
+ * 
+ * @param {number} maxRecords - Maximum records to export (default 10000)
+ * @returns {Promise<Object>} - { success, data: [all patients], meta: { total, exported } }
+ * @throws {Error} - If fetch fails or exceeds max records
+ */
+/**
+ * Search patients by name with server-side pagination
+ * Searches across all clinic patients, not just current page
+ * 
+ * @param {string} searchTerm - Name to search for
+ * @param {number} limit - Records per page (default 50)
+ * @param {number} offset - Pagination offset (default 0)
+ * @returns {Promise<Object>} - { success, data: [matching patients], meta: { total, ... } }
+ * @throws {Error} - If search fails
+ */
+const searchPatients = async (searchTerm = "", limit = 50, offset = 0) => {
+  try {
+    // Make the GET request with search parameters
+    const response = await apiClient.get("/patients/search", {
+      params: {
+        searchTerm,
+        limit,
+        offset,
+      },
+    });
+
+    // Return the data from the response
+    return response.data;
+  } catch (error) {
+    // Handle potential errors
+    if (error.response) {
+      // Handle specific error responses from the API
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to search patients"
+      );
+    } else {
+      // Handle other types of errors
+      console.error("Unexpected error:", error.message);
+      throw new Error("An unexpected error occurred while searching patients");
+    }
+  }
+};
+
+const getPatientForExport = async (maxRecords = 10000) => {
+  try {
+    // Make the GET request to the export endpoint without pagination
+    const response = await apiClient.get("/patients/export", {
+      params: {
+        maxRecords,
+      },
+      // Increase timeout for large exports
+      timeout: 60000,
+    });
+
+    // Return the complete data including metadata
+    return response.data;
+  } catch (error) {
+    // Handle potential errors
+    if (error.response) {
+      // Handle specific error responses from the API
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to fetch patients for export"
+      );
+    } else if (error.code === 'ECONNABORTED') {
+      console.error("Request timeout:", error.message);
+      throw new Error(
+        "Export request timed out. Please try again or reduce the number of records."
+      );
+    } else {
+      console.error("Unexpected error:", error.message);
+      throw new Error(
+        "An unexpected error occurred while exporting patients"
+      );
     }
   }
 };
@@ -433,6 +520,8 @@ export default {
   addPatient,
   createMammographyDetails,
   getPatients,
+  searchPatients,
+  getPatientForExport,
   getPatientDetailsById,
   updatePatientDetails,
   addPatientDiagnosis,
