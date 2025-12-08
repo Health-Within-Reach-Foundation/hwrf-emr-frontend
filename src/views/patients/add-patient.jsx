@@ -33,7 +33,7 @@ const AddPatient = () => {
       age: values.age,
       sex: values.sex,
       address: `${values.add1}, ${values.city}`,
-      referral_source: values.referral_source || null,
+      referral_source: values.referral_source,
     };
 
     try {
@@ -177,7 +177,9 @@ const AddPatient = () => {
                     <Form.Item
                       label="Referral Source"
                       name="referral_source"
-                      rules={[]}
+                      rules={[
+                        { required: true, message: "Referral source is required" },
+                      ]}
                     >
                       <Select
                         placeholder="Select referral source"
