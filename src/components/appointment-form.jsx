@@ -9,13 +9,14 @@ import patientServices from "../api/patient-services";
 const AppointmentForm = ({
   show,
   modalClose,
+  recentPatients,
   departments,
   onSave,
 }) => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
   const [patientSearchLoading, setPatientSearchLoading] = useState(false);
-  const [patientOptions, setPatientOptions] = useState([]);
+  const [patientOptions, setPatientOptions] = useState(recentPatients || []);
   const [searchTerm, setSearchTerm] = useState("");
 
   // Debounce utility function
@@ -32,7 +33,7 @@ const AppointmentForm = ({
     setSearchTerm(value);
 
     if (!value || value.trim().length < 1) {
-      setPatientOptions([]);
+      setPatientOptions(recentPatients || []);
       return;
     }
 

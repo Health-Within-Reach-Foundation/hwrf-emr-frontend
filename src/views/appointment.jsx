@@ -14,12 +14,15 @@ import DateCell from "../components/date-cell";
 import { Loading } from "../components/loading";
 import { useAuth } from "../utilities/AuthProvider";
 import { transformText } from "../utilities/utility-function";
+import patientServices from "../api/patient-services";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [patientLoading, setPatientLoading] = useState(false);
   const [loadingAppointments, setLoadingAppointments] = useState(false);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
+  const [recentPatients, setRecentPatients] = useState([]);
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
   const [departmentList, setDepartmentList] = useState([]);
@@ -86,7 +89,7 @@ const Appointment = () => {
       title: "Primary Doctor",
       dataIndex: "primaryDoctor",
       key: "primaryDoctor",
-      width:150,
+      width: 150,
       sortable: true,
       render: (text, record) => (
         <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
@@ -260,7 +263,6 @@ const Appointment = () => {
     }
   };
 
-
   const fetchCampDetails = async () => {
     try {
       setLoading(true);
@@ -277,6 +279,33 @@ const Appointment = () => {
       console.error("Error fetching camp details:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getRecentPatients = async () => {
+    try {
+      setPatientLoading(true);
+      const response = await patientServices.getRecentPatients();
+      if (response) {
+        const options = response.map((patient) => ({
+          value: patient.id,
+          label: (
+            <div className="d-flex justify-content-between align-items-center p-2">
+              <span className="fw-medium">{patient.name}</span>
+              <span className="text-muted ms-2 fst-italic">
+                {patient.mobileNumber}
+              </span>
+            </div>
+          ),
+          name: patient.name,
+          mobile: patient.mobileNumber,
+        }));
+        setRecentPatients(options);
+      }
+    } catch (error) {
+      console.error("Error fetching recent patients:", error);
+    } finally {
+      setPatientLoading(false);
     }
   };
 
@@ -335,6 +364,7 @@ const Appointment = () => {
   useEffect(() => {
     fetchAppointments();
     fetchCampDetails();
+    getRecentPatients();
   }, []);
 
   const customRowClass = (record) => {
@@ -363,11 +393,11 @@ const Appointment = () => {
             <div className="d-flex flex-column">
               <div className="d-flex flex-row-reverse gap-2">
                 <Button
-                className="bg-primary" type="primary"
+                  className="bg-primary"
+                  type="primary"
                   variant="primary"
                   onClick={() => setShow(true)}
                   disabled={user?.currentCampId === null}
-              
                   title={
                     user?.currentCampId === null ? "Please select camp!" : null
                   }
@@ -377,7 +407,8 @@ const Appointment = () => {
                   Add to Queue
                 </Button>
                 <Button
-                className="bg-primary" type="primary"
+                  className="bg-primary"
+                  type="primary"
                   variant="outline-primary"
                   onClick={refreshData}
                   // className="mb-3"
@@ -390,19 +421,23 @@ const Appointment = () => {
                 Sort By:
                 {departmentList.map((department) => (
                   <Button
-               
-                  key={department.value}
-                  size="lg"
-                  onClick={() => handleQueueTypeSort(department)}
-                  style={{
-                    backgroundColor:
-                      selectedQueueType === department.label ? "#0a58b8" : "transparent",
-                    color: selectedQueueType === department.label ? "#fff" : "#0a58b8",
-                    border: "1px solid #0a58b8",
-                  }}
-                >
-                  {department.label}
-                </Button>
+                    key={department.value}
+                    size="lg"
+                    onClick={() => handleQueueTypeSort(department)}
+                    style={{
+                      backgroundColor:
+                        selectedQueueType === department.label
+                          ? "#0a58b8"
+                          : "transparent",
+                      color:
+                        selectedQueueType === department.label
+                          ? "#fff"
+                          : "#0a58b8",
+                      border: "1px solid #0a58b8",
+                    }}
+                  >
+                    {department.label}
+                  </Button>
                 ))}
               </div>
             </div>
@@ -434,6 +469,7 @@ const Appointment = () => {
 
       <AppointmentForm
         show={show}
+        recentPatients={recentPatients}
         modalClose={() => setShow(false)}
         departments={departmentList}
         onSave={() => fetchAppointments(date)}

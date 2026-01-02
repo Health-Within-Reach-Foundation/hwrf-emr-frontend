@@ -180,6 +180,7 @@ const PatientList = () => {
       "Cash Paid (In ₹)": item.onlinePaid || 0,
       "Online Paid Amount (In ₹)": item.offlinePaid || 0,
       "Total Paid Amount (In ₹)": item.total || 0,
+      "Referral Source": item?.referral_source || "",
     }));
   }
 

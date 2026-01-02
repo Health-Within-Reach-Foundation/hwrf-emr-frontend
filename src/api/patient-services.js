@@ -50,10 +50,34 @@ const getPatients = async (limit = 50, offset = 0) => {
   }
 };
 
+const getRecentPatients = async (limit = 50, offset = 0) => {
+  try {
+    // Make the GET request to fetch recent patients
+    const response = await apiClient.get("/patients/recent");
+    // Return the data from the response
+    return response.data;
+  } catch (error) {
+    // Handle potential errors
+    if (error.response) {
+      // Handle specific error responses from the API
+      console.error("Error response:", error.response.data);
+      throw new Error(
+        error.response.data.message || "Failed to fetch recent patients"
+      );
+    } else {
+      // Handle other types of errors
+      console.error("Unexpected error:", error.message);
+      throw new Error(
+        "An unexpected error occurred while fetching recent patients"
+      );
+    }
+  }
+};
+
 /**
  * Fetch ALL patients for the clinic for export (no pagination)
  * Used for Excel/CSV export functionality
- * 
+ *
  * @param {number} maxRecords - Maximum records to export (default 10000)
  * @returns {Promise<Object>} - { success, data: [all patients], meta: { total, exported } }
  * @throws {Error} - If fetch fails or exceeds max records
@@ -61,7 +85,7 @@ const getPatients = async (limit = 50, offset = 0) => {
 /**
  * Search patients by name with server-side pagination
  * Searches across all clinic patients, not just current page
- * 
+ *
  * @param {string} searchTerm - Name to search for
  * @param {number} limit - Records per page (default 50)
  * @param {number} offset - Pagination offset (default 0)
@@ -118,16 +142,14 @@ const getPatientForExport = async (maxRecords = 10000) => {
       throw new Error(
         error.response.data.message || "Failed to fetch patients for export"
       );
-    } else if (error.code === 'ECONNABORTED') {
+    } else if (error.code === "ECONNABORTED") {
       console.error("Request timeout:", error.message);
       throw new Error(
         "Export request timed out. Please try again or reduce the number of records."
       );
     } else {
       console.error("Unexpected error:", error.message);
-      throw new Error(
-        "An unexpected error occurred while exporting patients"
-      );
+      throw new Error("An unexpected error occurred while exporting patients");
     }
   }
 };
@@ -520,6 +542,7 @@ export default {
   addPatient,
   createMammographyDetails,
   getPatients,
+  getRecentPatients,
   searchPatients,
   getPatientForExport,
   getPatientDetailsById,
