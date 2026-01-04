@@ -1,0 +1,58 @@
+trigger:
+  branches:
+    include:
+      - veer-dev
+
+pr:
+  branches:
+    include:
+      - veer-dev
+
+variables:
+  - name: npm_config_cache
+    value: $(Pipeline.Workspace)/.npm
+  - name: vmImageName
+    value: ubuntu-latest
+
+pool:
+  vmImage: $(vmImageName)
+
+stages:
+  - stage: DockerBuildAndPush
+    displayName: "Build & Deploy Docker Image to Production"
+    condition: |
+      or(
+        eq(variables['Build.SourceBranchName'], 'veer-dev'),
+        and(
+          contains(variables['System.PullRequest.TargetBranch'], 'veer-dev'),
+          eq(variables['Build.Reason'], 'PullRequest')
+        )
+      )
+    variables:
+      - group: hwrf-frontend-prod-variable-group  # Ensure VITE_API_URL and other vars are defined here
+
+    jobs:
+      - job: DockerJob
+        displayName: "Docker Build & Push"
+        steps:
+          - task: Docker@2
+            displayName: "Build and Push Docker Image"
+            inputs:
+              containerRegistry: 'ACR-hwrfProd-Connection'
+              repository: $(CONTAINER_REG_REPO_NAME)
+              command: buildAndPush
+              Dockerfile: $(Build.SourcesDirectory)/Dockerfile
+              buildContext: $(Build.SourcesDirectory)
+              buildArguments: |
+                VITE_API_URL=$(VITE_API_URL)
+              tags: |
+                latest
+                production-$(Build.BuildId)
+
+          - task: AzureWebAppContainer@1
+            displayName: "Deploy to Azure Web App (Production)"
+            inputs:
+              azureSubscription: 'hwrf-production-connection'
+              appName: $(HWRF_PROD_WEBAPP_NAME)
+              resourceGroupName: $(HWRF_PROD_RESOURCE_GROUP)
+              imageName: $(ACR_NAME).azurecr.io/$(CONTAINER_REG_REPO_NAME):latest
