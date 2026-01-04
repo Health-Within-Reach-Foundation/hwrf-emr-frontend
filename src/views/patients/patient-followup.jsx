@@ -3,6 +3,7 @@ import patientServices from "../../api/patient-services";
 import { Loading } from "../../components/loading";
 import AntdTable from "../../components/antd-table";
 import { Link } from "react-router-dom";
+import DateCell from "../../components/date-cell";
 
 const PatientFollowUp = () => {
   const [patients, setPatients] = useState([]);
@@ -16,7 +17,9 @@ const PatientFollowUp = () => {
       sortable: true,
       width: 120,
       render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record?.id}`}>{text}</Link>
+        <Link to={`/patient/patient-profile/${record?.id}`}>
+          <DateCell date={text} dateFormat="MMM D, h:mm A" />
+        </Link>
       ),
     },
     {

@@ -118,7 +118,7 @@ const RoleModalForm = ({
           name="roleName"
           rules={[{ required: true, message: "Role name is required." }]}
         >
-          <Input placeholder="Enter role name" disabled />
+          <Input placeholder="Enter role name" disabled={currentRole ? true : false} />
         </Form.Item>
 
         <Form.Item label="Role Description" name="roleDescription">

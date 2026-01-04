@@ -1,37 +1,32 @@
-import React, { useState, useEffect } from "react";
-import { Row, Col } from "react-bootstrap";
-// import Flatpickr from "react-flatpickr";
-import "flatpickr/dist/flatpickr.css";
-import Select from "react-select";
-import AppointmentForm from "../components/appointment-form";
-import appointmentServices from "../api/appointment-services";
-import patientServices from "../api/patient-services";
-import clinicServices from "../api/clinic-services";
-import CustomTable from "../components/custom-table";
-import { Loading } from "../components/loading";
-import DateCell from "../components/date-cell";
-import { Badge, Button, Dropdown, Menu } from "antd";
-import toast from "react-hot-toast";
-import CurrentCampDetailsHeader from "../components/camp/currentcamp-detail-header";
 import { RiAddLine, RiRefreshLine } from "@remixicon/react";
-import { transformText } from "../utilities/utility-function";
-import { useAuth } from "../utilities/AuthProvider";
-import campManagementService from "../api/camp-management-service";
+import { Badge, Button, Dropdown } from "antd";
+import "flatpickr/dist/flatpickr.css";
+import { useEffect, useState } from "react";
+import { Col, Row } from "react-bootstrap";
+import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import appointmentServices from "../api/appointment-services";
+import campManagementService from "../api/camp-management-service";
 import AntdTable from "../components/antd-table";
+import AppointmentForm from "../components/appointment-form";
+import CurrentCampDetailsHeader from "../components/camp/currentcamp-detail-header";
+import DateCell from "../components/date-cell";
+import { Loading } from "../components/loading";
+import { useAuth } from "../utilities/AuthProvider";
+import { transformText } from "../utilities/utility-function";
+import patientServices from "../api/patient-services";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [loadingPatient, setLoadingPatient] = useState(false);
+  const [patientLoading, setPatientLoading] = useState(false);
   const [loadingAppointments, setLoadingAppointments] = useState(false);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
+  const [recentPatients, setRecentPatients] = useState([]);
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
-  const [filters, setFilters] = useState({ status: "", queueType: "" });
-  const [patientList, setPatientList] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
-  const [selectedQueueType, setSelectedQueueType] = useState(null); // Tracks the selected department
+  const [selectedQueueType, setSelectedQueueType] = useState(null);
   const { user } = useAuth();
 
   const queuePatientColumns = [
@@ -94,7 +89,7 @@ const Appointment = () => {
       title: "Primary Doctor",
       dataIndex: "primaryDoctor",
       key: "primaryDoctor",
-      width:150,
+      width: 150,
       sortable: true,
       render: (text, record) => (
         <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
@@ -268,18 +263,6 @@ const Appointment = () => {
     }
   };
 
-  const getPatientList = async () => {
-    try {
-      setLoadingPatient(true);
-      const response = await patientServices.getPatients();
-      setPatientList(response.data);
-    } catch (error) {
-      console.error("Error fetching patients:", error);
-    } finally {
-      setLoadingPatient(false);
-    }
-  };
-
   const fetchCampDetails = async () => {
     try {
       setLoading(true);
@@ -296,6 +279,33 @@ const Appointment = () => {
       console.error("Error fetching camp details:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getRecentPatients = async () => {
+    try {
+      setPatientLoading(true);
+      const response = await patientServices.getRecentPatients();
+      if (response) {
+        const options = response.map((patient) => ({
+          value: patient.id,
+          label: (
+            <div className="d-flex justify-content-between align-items-center p-2">
+              <span className="fw-medium">{patient.name}</span>
+              <span className="text-muted ms-2 fst-italic">
+                {patient.mobileNumber}
+              </span>
+            </div>
+          ),
+          name: patient.name,
+          mobile: patient.mobileNumber,
+        }));
+        setRecentPatients(options);
+      }
+    } catch (error) {
+      console.error("Error fetching recent patients:", error);
+    } finally {
+      setPatientLoading(false);
     }
   };
 
@@ -326,8 +336,8 @@ const Appointment = () => {
     }
   };
   const refreshData = async () => {
-    await Promise.all([fetchAppointments(), getPatientList()]);
-    // toast.success("Data refreshed successfully!");
+    await Promise.all([fetchAppointments()]);
+    // Note: Removed getPatientList() - patients are now fetched on-demand in AppointmentForm
   };
 
   // useEffect(() => {
@@ -353,9 +363,8 @@ const Appointment = () => {
   }, [appointments, user?.id]); // Dependencies for effect
   useEffect(() => {
     fetchAppointments();
-    getPatientList();
-    // getSpecialtyDepartmentsByClinic();
     fetchCampDetails();
+    getRecentPatients();
   }, []);
 
   const customRowClass = (record) => {
@@ -369,7 +378,7 @@ const Appointment = () => {
   //   fetchAppointments(date);
   // }, [date]);
 
-  if (loading || loadingPatient || loadingAppointments) {
+  if (loading || loadingAppointments) {
     return <Loading />;
   }
 
@@ -384,11 +393,11 @@ const Appointment = () => {
             <div className="d-flex flex-column">
               <div className="d-flex flex-row-reverse gap-2">
                 <Button
-                className="bg-primary" type="primary"
+                  className="bg-primary"
+                  type="primary"
                   variant="primary"
                   onClick={() => setShow(true)}
                   disabled={user?.currentCampId === null}
-              
                   title={
                     user?.currentCampId === null ? "Please select camp!" : null
                   }
@@ -398,7 +407,8 @@ const Appointment = () => {
                   Add to Queue
                 </Button>
                 <Button
-                className="bg-primary" type="primary"
+                  className="bg-primary"
+                  type="primary"
                   variant="outline-primary"
                   onClick={refreshData}
                   // className="mb-3"
@@ -411,19 +421,23 @@ const Appointment = () => {
                 Sort By:
                 {departmentList.map((department) => (
                   <Button
-               
-                  key={department.value}
-                  size="lg"
-                  onClick={() => handleQueueTypeSort(department)}
-                  style={{
-                    backgroundColor:
-                      selectedQueueType === department.label ? "#0a58b8" : "transparent",
-                    color: selectedQueueType === department.label ? "#fff" : "#0a58b8",
-                    border: "1px solid #0a58b8",
-                  }}
-                >
-                  {department.label}
-                </Button>
+                    key={department.value}
+                    size="lg"
+                    onClick={() => handleQueueTypeSort(department)}
+                    style={{
+                      backgroundColor:
+                        selectedQueueType === department.label
+                          ? "#0a58b8"
+                          : "transparent",
+                      color:
+                        selectedQueueType === department.label
+                          ? "#fff"
+                          : "#0a58b8",
+                      border: "1px solid #0a58b8",
+                    }}
+                  >
+                    {department.label}
+                  </Button>
                 ))}
               </div>
             </div>
@@ -455,8 +469,8 @@ const Appointment = () => {
 
       <AppointmentForm
         show={show}
+        recentPatients={recentPatients}
         modalClose={() => setShow(false)}
-        patients={patientList}
         departments={departmentList}
         onSave={() => fetchAppointments(date)}
       />

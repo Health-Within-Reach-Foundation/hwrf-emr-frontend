@@ -1,217 +1,79 @@
-// import React, { useState } from "react";
-// import { Modal, Row, Col, Form } from "react-bootstrap";
-// import { Select, Checkbox, Button } from "antd"; // For searchable dropdowns and checkboxes
-// import { Link } from "react-router-dom"; // For navigation
-// import toast from "react-hot-toast";
-// import appointmentServices from "../api/appointment-services";
-
-// const AppointmentForm = ({
-//   show,
-//   modalClose,
-//   patients,
-//   departments,
-//   onSave,
-// }) => {
-//   const [selectedPatient, setSelectedPatient] = useState(null);
-//   const [selectedDepartments, setSelectedDepartments] = useState([]);
-//   const [isLoading, setIsLoading] = useState(false);
-
-//   // Patient select handler
-//   const handlePatientChange = (value) => {
-//     // Find the selected patient object based on the value
-//     const selectedOption = patients.find((patient) => patient.id === value);
-//     console.log("Selected Patient:", selectedOption);
-//     setSelectedPatient(selectedOption); // Set the selected patient
-//   };
-
-//   const handleDepartmentChange = (checkedValues) => {
-//     setSelectedDepartments(checkedValues);
-//   };
-
-//   const handleSave = async () => {
-//     if (!selectedPatient || !selectedDepartments.length) {
-//       toast.error("Please fill in all fields!");
-//       return;
-//     }
-
-//     // Set today's date as appointment date
-//     const appointmentDate = new Date().toLocaleDateString("en-CA");
-
-//     // const dateString = appointmentDate.toLocaleDateString("en-CA"); // Outputs 'YYYY-MM-DD'
-
-//     const appointmentData = {
-//       patientId: selectedPatient.id, // Ensure correct patient ID
-//       specialties: selectedDepartments,
-//       appointmentDate,
-//       // appointmentDate: appointmentDate.toISOString().split("T")[0], // Sends only "YYYY-MM-DD"
-//       status: "in queue",
-//     };
-
-//     try {
-//       setIsLoading(true); // Start loading state
-//       console.log("Appointment Data:", appointmentData);
-//       const response = await appointmentServices.bookAppointment(
-//         appointmentData
-//       );
-
-//       if (response?.success) {
-//         toast.success(response.message);
-
-//         // Reset fields
-//         setSelectedPatient(null);
-//         setSelectedDepartments([]);
-//         modalClose(); // Close the modal
-//       } else {
-//         throw new Error(response?.message || "Failed to book appointment.");
-//       }
-//     } catch (error) {
-//       console.error("Error booking appointment:", error.message);
-//       toast.error(error.message || "An unexpected error occurred!");
-//     } finally {
-//       setIsLoading(false); // End loading state
-//       onSave();
-//     }
-//   };
-
-//   return (
-//     <Modal
-//       className="queue-modal"
-//       show={show}
-//       onHide={modalClose}
-//       centered
-//       backdrop="static"
-//       animation
-//     >
-//       <Modal.Header>
-//         <Modal.Title>Add to queue</Modal.Title>
-//         <button
-//           type="button"
-//           className="btn-close"
-//           aria-label="Close"
-//           onClick={modalClose}
-//         ></button>
-//       </Modal.Header>
-//       <Modal.Body>
-//         <Form>
-//           {/* Select Patient */}
-//           <Row className="mb-3 align-items-center">
-//             <Col xs={2}>
-//               <label className="col-form-label">
-//                 <i className="ri-group-line"></i>
-//               </label>
-//             </Col>
-//             <Col xs={10}>
-//               <Select
-//                 placeholder="Select Patient"
-//                 value={selectedPatient?.id || null} // Use `value` instead of `defaultValue`
-//                 options={patients.map((patient) => ({
-//                   value: patient.id, // Ensure `id` is used as value
-//                   label: (
-//                     <div className="d-flex justify-content-between align-items-center p-2">
-//                       <span className="fw-medium">{patient.name}</span>
-//                       <span className="text-muted ms-2 fst-italic">
-//                         {patient.mobile}
-//                       </span>
-//                     </div>
-//                   ),
-//                   name: patient.name,
-//                   phoneNumber: patient.mobile,
-//                 }))}
-//                 onChange={handlePatientChange} // Correctly updates state on change
-//                 dropdownStyle={{ zIndex: 9999 }} // Fix dropdown z-index
-//                 className="w-100 my-2"
-//                 showSearch
-//                 filterOption={(input, option) => {
-//                   const labelMatch = option.name
-//                     .toLowerCase()
-//                     .includes(input.toLowerCase());
-//                   const phoneMatch = option.phoneNumber
-//                     .toLowerCase()
-//                     .includes(input.toLowerCase());
-//                   return labelMatch || phoneMatch;
-//                 }}
-//                 allowClear
-//               />
-//               {/* Link to Create Patient */}
-//               <div className="mt-2">
-//                 <Link to="/patient/add-patient" className="text-primary">
-//                   Create a new patient
-//                 </Link>
-//               </div>
-//             </Col>
-//           </Row>
-
-//           {/* Select Department */}
-//           <Row className="mb-3 align-items-center">
-//             <Col xs={2}>
-//               <label className="col-form-label">
-//                 <i className="ri-building-line"></i>
-//               </label>
-//             </Col>
-//             <Col xs={10}>
-//               <Checkbox.Group
-//                 options={departments}
-//                 value={selectedDepartments}
-//                 onChange={handleDepartmentChange}
-//               />
-//             </Col>
-//           </Row>
-//         </Form>
-//       </Modal.Body>
-//       <Modal.Footer className="border-0">
-//         <Button
-//           variant="secondary"
-//           className="border-primary text-primary"
-//           onClick={() => {
-//             setSelectedPatient(null);
-//             setSelectedDepartments([]);
-//             modalClose();
-//           }}
-//         >
-//           Cancel
-//         </Button>
-//         <Button
-//           className="bg-primary"
-//           type="primary"
-//           size="middle"
-//           onClick={handleSave}
-//           disabled={isLoading} // Disable button during loading
-//         >
-//           {isLoading ? "Saving..." : "Save"}
-//         </Button>
-//       </Modal.Footer>
-//     </Modal>
-//   );
-// };
-
-// export default AppointmentForm;
-
-import React, { useState } from "react";
-import { Modal, Row, Col, Form, Select, Checkbox, Button } from "antd"; // Replaced Bootstrap components with Antd
-import { Link } from "react-router-dom"; // For navigation
-import toast from "react-hot-toast";
-import appointmentServices from "../api/appointment-services";
 import { RiBuildingLine, RiGroupLine } from "@remixicon/react";
+import { Button, Checkbox, Col, Form, Modal, Row, Select, Spin } from "antd";
+import { useMemo, useState } from "react";
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
+import appointmentServices from "../api/appointment-services";
+import patientServices from "../api/patient-services";
 
 const AppointmentForm = ({
   show,
   modalClose,
-  patients,
+  recentPatients,
   departments,
   onSave,
 }) => {
-  const [form] = Form.useForm(); // Antd useForm Hook
+  const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
+  const [patientSearchLoading, setPatientSearchLoading] = useState(false);
+  const [patientOptions, setPatientOptions] = useState(recentPatients || []);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // Patient select handler
-  const handlePatientChange = (value) => {
-    const selectedOption = patients.find((patient) => patient.id === value);
-    console.log("Selected Patient:", selectedOption);
-    form.setFieldsValue({ patient: value }); // Sync with form state
+  // Debounce utility function
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    };
   };
 
+  // Fetch patients based on search term
+  const handlePatientSearch = async (value) => {
+    setSearchTerm(value);
+
+    if (!value || value.trim().length < 1) {
+      setPatientOptions(recentPatients || []);
+      return;
+    }
+
+    try {
+      setPatientSearchLoading(true);
+      const response = await patientServices.searchPatients(value, 30, 0);
+
+      if (response.success && response.data.length > 0) {
+        const options = response.data.map((patient) => ({
+          value: patient.id,
+          label: (
+            <div className="d-flex justify-content-between align-items-center p-2">
+              <span className="fw-medium">{patient.name}</span>
+              <span className="text-muted ms-2 fst-italic">
+                {patient.mobileNumber}
+              </span>
+            </div>
+          ),
+          name: patient.name,
+          mobile: patient.mobileNumber,
+        }));
+        setPatientOptions(options);
+      } else {
+        setPatientOptions([]);
+      }
+    } catch (error) {
+      console.error("Error searching patients:", error);
+      toast.error("Failed to search patients");
+    } finally {
+      setPatientSearchLoading(false);
+    }
+  };
+
+  const debouncedSearch = useMemo(
+    () => debounce(handlePatientSearch, 500),
+    []
+  );
+
   const handleDepartmentChange = (checkedValues) => {
-    form.setFieldsValue({ departments: checkedValues }); // Sync with form state
+    form.setFieldsValue({ departments: checkedValues });
   };
 
   const handleSave = async () => {
@@ -277,7 +139,7 @@ const AppointmentForm = ({
       <h4>Add to Queue</h4>
 
       <Form form={form} layout="vertical">
-        {/* Select Patient */}
+        {/* Select Patient with Dynamic Search */}
         <Form.Item
           name="patient"
           layout="horizontal"
@@ -285,27 +147,28 @@ const AppointmentForm = ({
           rules={[{ required: true, message: "Please select a patient!" }]}
         >
           <Select
-            placeholder="Select Patient"
-            options={patients.map((patient) => ({
-              value: patient.id,
-              label: (
-                <div className="d-flex justify-content-between align-items-center p-2">
-                  <span className="fw-medium">{patient.name}</span>
-                  <span className="text-muted ms-2 fst-italic">
-                    {patient.mobile}
-                  </span>
-                </div>
-              ),
-            }))}
-            onChange={handlePatientChange}
+            placeholder="Search and select patient (type name or mobile)"
+            options={patientOptions}
+            onSearch={debouncedSearch}
+            onChange={(value) => {
+              form.setFieldsValue({ patient: value });
+            }}
             className="w-100"
             showSearch
-            filterOption={(input, option) =>
-              option.label.props.children[0].props.children
-                .toLowerCase()
-                .includes(input.toLowerCase())
+            filterOption={false}
+            notFoundContent={
+              patientSearchLoading ? (
+                <Spin size="small" />
+              ) : (
+                <div className="text-muted text-center p-2">
+                  {searchTerm
+                    ? "No patients found"
+                    : "Start typing to search patients"}
+                </div>
+              )
             }
             allowClear
+            loading={patientSearchLoading}
           />
           <div className="mt-2">
             <Link to="/patient/add-patient" className="text-primary">
@@ -335,6 +198,8 @@ const AppointmentForm = ({
             <Button
               onClick={() => {
                 form.resetFields();
+                setPatientOptions([]);
+                setSearchTerm("");
                 modalClose();
               }}
               style={{ marginRight: 10 }}
