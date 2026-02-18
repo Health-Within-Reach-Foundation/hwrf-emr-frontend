@@ -44,7 +44,7 @@ const AuthProvider = ({ children }) => {
       // setLoading(false);
       return data;
     } catch (error) {
-      console.error("Login failed:", error.message);
+      console.error("Login failed:", error);
       // setLoading(false);
       throw error;
     }

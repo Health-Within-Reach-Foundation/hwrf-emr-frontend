@@ -1,5 +1,5 @@
 import { RiFileExcel2Line } from "@remixicon/react";
-import { Button } from "antd";
+import { Button, Dropdown } from "antd";
 import { saveAs } from "file-saver";
 import "flatpickr/dist/themes/material_blue.css";
 import { useEffect, useState } from "react";
@@ -184,8 +184,43 @@ const PatientList = () => {
     }));
   }
 
+  // Export visible paginated list to Excel
+  const exportVisibleToExcel = async () => {
+    try {
+      setLoading(true);
+
+      if (patientList.length === 0) {
+        throw new Error("No patients to export on this page");
+      }
+
+      // Format the visible data for Excel
+      const flatData = getFlatData(patientList);
+
+      // Generate Excel file
+      const worksheet = XLSX.utils.json_to_sheet(flatData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Patients");
+
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+      });
+
+      const blob = new Blob([excelBuffer], {
+        type: "application/octet-stream",
+      });
+      const timestamp = new Date().toISOString().split("T")[0];
+      saveAs(blob, `patients_export_visible_${timestamp}.xlsx`);
+    } catch (error) {
+      console.error("Export error:", error);
+      alert(`Export failed: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Export to Excel - fetch ALL patients, not just current page
-  const exportToExcel = async () => {
+  const exportAllToExcel = async () => {
     try {
       setLoading(true);
 
@@ -213,7 +248,7 @@ const PatientList = () => {
         type: "application/octet-stream",
       });
       const timestamp = new Date().toISOString().split("T")[0];
-      saveAs(blob, `patients_export_${timestamp}.xlsx`);
+      saveAs(blob, `patients_export_all_${timestamp}.xlsx`);
     } catch (error) {
       console.error("Export error:", error);
       alert(`Export failed: ${error.message}`);
@@ -311,18 +346,36 @@ const PatientList = () => {
             <div
               style={{ margin: "16px 0 0 16px", display: "flex", gap: "10px" }}
             >
-              <Button
-                className="bg-primary"
-                type="primary"
-                variant="primary"
-                onClick={exportToExcel}
-                loading={loading}
-                disabled={patientList.length === 0}
-                style={{ width: "auto" }}
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: "visible",
+                      label: "Export Visible List",
+                      onClick: exportVisibleToExcel,
+                    },
+                    {
+                      key: "all",
+                      label: "Export All",
+                      onClick: exportAllToExcel,
+                    },
+                  ],
+                }}
+                placement="bottomLeft"
+                trigger="hover"
               >
-                <RiFileExcel2Line className="h-3 w-4 me-2" />
-                Export to Excel
-              </Button>
+                <Button
+                  className="bg-primary"
+                  type="primary"
+                  variant="primary"
+                  loading={loading}
+                  disabled={patientList.length === 0}
+                  style={{ width: "auto" }}
+                >
+                  <RiFileExcel2Line className="h-3 w-4 me-2" />
+                  Export to Excel ▼
+                </Button>
+              </Dropdown>
             </div>
           )}
         </Card>
