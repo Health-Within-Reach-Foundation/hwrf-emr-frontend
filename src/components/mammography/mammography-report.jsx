@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from "react";
-import PlaygroundApp from "../Lexical-editor/App";
-import html2pdf from "html2pdf.js";
-import { mammoReportDefault } from "./mammography-report-template";
-import { Button } from "antd";
-import { RiFileDownloadLine, RiSave3Fill } from "@remixicon/react";
-import { generatePath, useParams } from "react-router-dom";
-import toast from "react-hot-toast";
-import patientServices from "../../api/patient-services";
-import { Loading } from "../loading";
-import { Container } from "react-bootstrap";
-import BackButton from "../back-button";
+import { RiFileDownloadLine, RiSave3Fill } from '@remixicon/react';
+import { Button } from 'antd';
+import { useEffect, useState } from 'react';
+import { Container } from 'react-bootstrap';
+import toast from 'react-hot-toast';
+import { generatePath, useParams } from 'react-router-dom';
+import patientServices from '../../api/patient-services';
+import BackButton from '../back-button';
+import PlaygroundApp from '../Lexical-editor/App';
+import { Loading } from '../loading';
+import { mammoReportDefault } from './mammography-report-template';
 
 const MammoReportLexical = () => {
   const { mammographyId, id } = useParams();
@@ -27,27 +26,20 @@ const MammoReportLexical = () => {
 
       if (response.success) {
         const fetchedPatient = response.data;
-        console.log("**********", fetchedPatient);
+        console.log('**********', fetchedPatient);
         const report =
-          fetchedPatient.mammoReport &&
-          Object.keys(fetchedPatient.mammoReport).length > 0
+          fetchedPatient.mammoReport && Object.keys(fetchedPatient.mammoReport).length > 0
             ? fetchedPatient.mammoReport
-            : JSON.stringify(
-                mammoReportDefault(
-                  `HWRF-${fetchedPatient.regNo}`,
-                  fetchedPatient.name,
-                  fetchedPatient.age
-                )
-              );
+            : JSON.stringify(mammoReportDefault(`HWRF-${fetchedPatient.regNo}`, fetchedPatient.name, fetchedPatient.age));
 
         setPatient(fetchedPatient);
         setMammoReport(report);
       } else {
-        toast.error("Failed to fetch mammography details.");
+        toast.error('Failed to fetch mammography details.');
       }
     } catch (error) {
-      console.error("Error fetching mammography details: ", error);
-      toast.error("Error while generating mammography report!");
+      console.error('Error fetching mammography details: ', error);
+      toast.error('Error while generating mammography report!');
     } finally {
       setLoading(false);
     }
@@ -66,9 +58,7 @@ const MammoReportLexical = () => {
         <html>
           <head>
            <title>${patient.name} - Mammography Report</title>
-      <link rel="icon" href=${generatePath(
-        "/assets/images/favicon.ico"
-      )} type="image/x-icon"> 
+      <link rel="icon" href=${generatePath('/assets/images/favicon.ico')} type="image/x-icon"> 
     
             <style>
               body {
@@ -96,10 +86,10 @@ const MammoReportLexical = () => {
           </body>
         </html>
       `;
-      const blob = new Blob([fullHtml], { type: "text/html" });
+      const blob = new Blob([fullHtml], { type: 'text/html' });
 
       // Create an anchor tag to trigger the file download
-      const link = document.createElement("a");
+      const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
       link.download = patient.mobile
         ? `${patient.name}(${patient.mobile}) Mammography Report.html`
@@ -127,12 +117,10 @@ const MammoReportLexical = () => {
       //     doc.setFontSize(10);
       //   }
       // });
-      toast.success(
-        "Downloading the latest saved report. Unsaved changes in the editor won't be included."
-      );
+      toast.success("Downloading the latest saved report. Unsaved changes in the editor won't be included.");
       // await pdf.save();
     } catch (error) {
-      console.error("Error generating PDF:", error);
+      console.error('Error generating PDF:', error);
     } finally {
       setIsDownloading(false);
     }
@@ -149,8 +137,8 @@ const MammoReportLexical = () => {
         // await onSave();
       }
     } catch (error) {
-      console.log("error: ", error);
-      toast.error("Error while saving mammography report!");
+      console.log('error: ', error);
+      toast.error('Error while saving mammography report!');
     } finally {
       setLoading(false);
     }
@@ -169,8 +157,8 @@ const MammoReportLexical = () => {
       <BackButton />
 
       <div className="d-flex gap-4">
-        Name: <h4>{patient?.name || "N/A"}</h4>
-        Reg No: <h4>{`HWRF- ${patient?.regNo}` || "N/A"}</h4>
+        Name: <h4>{patient?.name || 'N/A'}</h4>
+        Reg No: <h4>{patient?.regNo ? `HWRF- ${patient?.regNo}` : 'N/A'}</h4>
       </div>
       <div className="d-flex flex-row-reverse mb-3 gap-2">
         <Button onClick={handleSave} loading={isDownloading}>

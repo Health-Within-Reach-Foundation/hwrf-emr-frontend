@@ -1,52 +1,40 @@
-import React, { useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Button,
-  Table,
-  Card,
-  Spinner,
-  Badge,
-} from "react-bootstrap";
-import { Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { getCampsAnalytics } from "../api/camp-management-service";
-import { useAuth } from "../utilities/AuthProvider";
-import { checkPermission } from "../utilities/utility-function";
-import AccessDenied from "./extra-pages/access-denied";
-import toast from "react-hot-toast";
-import AntdTable from "../components/antd-table";
-import { Table as AntdInnerTable } from "antd"; // For summary/footer row
-import DateCell from "../components/date-cell";
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
-import { RiFileExcel2Line } from "@remixicon/react";
+import { RiFileExcel2Line } from '@remixicon/react';
+import { Table as AntdInnerTable } from 'antd'; // For summary/footer row
+import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
+import { saveAs } from 'file-saver';
+import { useState } from 'react';
+import { Badge, Button, Card, Col, Container, Form, Row, Spinner, Table } from 'react-bootstrap';
+import { Doughnut } from 'react-chartjs-2';
+import toast from 'react-hot-toast';
+import * as XLSX from 'xlsx';
+import { getCampsAnalytics } from '../api/camp-management-service';
+import AntdTable from '../components/antd-table';
+import DateCell from '../components/date-cell';
+import { useAuth } from '../utilities/AuthProvider';
+import { checkPermission } from '../utilities/utility-function';
+import AccessDenied from './extra-pages/access-denied';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const COLORS = [
-  "#007bff",
-  "#28a745",
-  "#ffc107",
-  "#dc3545",
-  "#6f42c1",
-  "#17a2b8",
-  "#fd7e14",
-  "#20c997",
-  "#6610f2",
-  "#e83e8c",
-  "#6c757d",
-  "#343a40",
+  '#007bff',
+  '#28a745',
+  '#ffc107',
+  '#dc3545',
+  '#6f42c1',
+  '#17a2b8',
+  '#fd7e14',
+  '#20c997',
+  '#6610f2',
+  '#e83e8c',
+  '#6c757d',
+  '#343a40',
 ];
 
 const DoctorCollection = () => {
   const today = new Date();
-  const endDateDefault = today.toISOString().split("T")[0]; // Format: YYYY-MM-DD
-  const startDateDefault = new Date(today.getFullYear(), today.getMonth(), 1)
-    .toISOString()
-    .split("T")[0];
+  const endDateDefault = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+  const startDateDefault = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
 
   const [startDate, setStartDate] = useState(startDateDefault);
   const [endDate, setEndDate] = useState(endDateDefault);
@@ -57,14 +45,13 @@ const DoctorCollection = () => {
   const [campTable, setCampTable] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  console.log("DoctorCollection component rendered", campTable);
+  console.log('DoctorCollection component rendered', campTable);
 
   const { userRoles, permissions } = useAuth();
 
   if (
-    !userRoles?.includes("admin") &&
-    (userRoles?.includes("superadmin") ||
-      !checkPermission(permissions, ["administration:finance"]))
+    !userRoles?.includes('admin') &&
+    (userRoles?.includes('superadmin') || !checkPermission(permissions, ['administration:finance']))
   ) {
     // Show Access Denied page
     <AccessDenied />;
@@ -74,43 +61,40 @@ const DoctorCollection = () => {
 
   const fetchData = async () => {
     if (!startDate || !endDate) {
-      toast.error("Please select both start and end dates");
+      toast.error('Please select both start and end dates');
       return;
     }
     setLoading(true);
     try {
       const response = await getCampsAnalytics(startDate, endDate);
-      console.log("Camps Analytics Response:", response);
-      if (!response.success)
-        throw new Error(response.message || "Unknown error");
+      console.log('Camps Analytics Response:', response);
+      if (!response.success) throw new Error(response.message || 'Unknown error');
       const data = response.data;
 
       const campTable = data.campsTable || [];
       setCampTable(campTable);
       if (campTable.length === 0) {
-        toast.error("No camps found for the selected date range");
+        toast.error('No camps found for the selected date range');
         setLoading(false);
         return;
       }
 
       // Dentistry doctor-wise
       const dentistryDoctorWise = data.dentistryAnalytics?.doctorWiseData || {};
-      const formattedDentistry = Object.entries(dentistryDoctorWise).map(
-        ([name, d]) => ({
-          name: name === "undefined" ? "Unknown" : name,
-          patientsTreated: d.patientsTreated ?? 0,
-          onlineEarnings: d.onlineEarnings ?? 0,
-          offlineEarnings: d.offlineEarnings ?? 0,
-          crownEarnings: d.crownEarnings ?? 0,
-          totalEarnings: (d.onlineEarnings ?? 0) + (d.offlineEarnings ?? 0),
-          totalPatients: d.totalPatients ?? d.patientsTreated ?? 0,
-        })
-      );
+      const formattedDentistry = Object.entries(dentistryDoctorWise).map(([name, d]) => ({
+        name: name === 'undefined' ? 'Unknown' : name,
+        patientsTreated: d.patientsTreated ?? 0,
+        onlineEarnings: d.onlineEarnings ?? 0,
+        offlineEarnings: d.offlineEarnings ?? 0,
+        crownEarnings: d.crownEarnings ?? 0,
+        totalEarnings: (d.onlineEarnings ?? 0) + (d.offlineEarnings ?? 0),
+        totalPatients: d.totalPatients ?? d.patientsTreated ?? 0,
+      }));
 
       // GP doctor-wise (if available in future)
       const gpDoctorWise = data.gpAnalytics?.doctorWiseData || {};
       const formattedGp = Object.entries(gpDoctorWise).map(([name, d]) => ({
-        name: name === "undefined" ? "Unknown" : name,
+        name: name === 'undefined' ? 'Unknown' : name,
         patientsTreated: d.patientsTreated ?? 0,
         onlineEarnings: d.onlineEarnings ?? 0,
         offlineEarnings: d.offlineEarnings ?? 0,
@@ -119,15 +103,13 @@ const DoctorCollection = () => {
 
       // Mammo doctor-wise (if available in future)
       const mammoDoctorWise = data.mammoAnalytics?.doctorWiseData || {};
-      const formattedMammo = Object.entries(mammoDoctorWise).map(
-        ([name, d]) => ({
-          name: name === "undefined" ? "Unknown" : name,
-          patientsTreated: d.patientsTreated ?? 0,
-          onlineEarnings: d.onlineEarnings ?? 0,
-          offlineEarnings: d.offlineEarnings ?? 0,
-          totalEarnings: (d.onlineEarnings ?? 0) + (d.offlineEarnings ?? 0),
-        })
-      );
+      const formattedMammo = Object.entries(mammoDoctorWise).map(([name, d]) => ({
+        name: name === 'undefined' ? 'Unknown' : name,
+        patientsTreated: d.patientsTreated ?? 0,
+        onlineEarnings: d.onlineEarnings ?? 0,
+        offlineEarnings: d.offlineEarnings ?? 0,
+        totalEarnings: (d.onlineEarnings ?? 0) + (d.offlineEarnings ?? 0),
+      }));
 
       setDentistryDoctors(formattedDentistry);
       setGpDoctors(formattedGp);
@@ -143,9 +125,9 @@ const DoctorCollection = () => {
   // --- CAMP TABLE COLUMNS ---
   const campTableColumns = [
     {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
+      title: 'Date',
+      dataIndex: 'date',
+      key: 'date',
       sortable: true,
       render: (text) => (
         <span className="badge bg-light text-dark border px-2 py-1">
@@ -155,17 +137,17 @@ const DoctorCollection = () => {
       width: 120,
     },
     {
-      title: "Camp Name",
-      dataIndex: "campName",
-      key: "campName",
+      title: 'Camp Name',
+      dataIndex: 'campName',
+      key: 'campName',
       sortable: true,
       render: (text) => <span className="fw-semibold">{text}</span>,
       width: 200,
     },
     {
       title: <>Total Patients</>,
-      dataIndex: "totalPatients",
-      key: "totalPatients",
+      dataIndex: 'totalPatients',
+      key: 'totalPatients',
       sortable: true,
       render: (text) => <span className="badge bg-secondary">{text}</span>,
       width: 120,
@@ -176,14 +158,10 @@ const DoctorCollection = () => {
           Online <span className="text-success">(₹)</span>
         </>
       ),
-      dataIndex: "onlineEarnings",
-      key: "onlineEarnings",
+      dataIndex: 'onlineEarnings',
+      key: 'onlineEarnings',
       sortable: true,
-      render: (text) => (
-        <span className="text-success fw-semibold">
-          ₹{Number(text).toLocaleString()}
-        </span>
-      ),
+      render: (text) => <span className="text-success fw-semibold">₹{Number(text).toLocaleString()}</span>,
       width: 120,
     },
     {
@@ -192,14 +170,10 @@ const DoctorCollection = () => {
           Offline <span className="text-warning">(₹)</span>
         </>
       ),
-      dataIndex: "offlineEarnings",
-      key: "offlineEarnings",
+      dataIndex: 'offlineEarnings',
+      key: 'offlineEarnings',
       sortable: true,
-      render: (text) => (
-        <span className="text-warning fw-semibold">
-          ₹{Number(text).toLocaleString()}
-        </span>
-      ),
+      render: (text) => <span className="text-warning fw-semibold">₹{Number(text).toLocaleString()}</span>,
       width: 120,
     },
     {
@@ -208,14 +182,10 @@ const DoctorCollection = () => {
           Crown <span className="text-info">(₹)</span>
         </>
       ),
-      dataIndex: "crownEarnings",
-      key: "crownEarnings",
+      dataIndex: 'crownEarnings',
+      key: 'crownEarnings',
       sortable: true,
-      render: (text) => (
-        <span className="text-info fw-semibold">
-          ₹{Number(text).toLocaleString()}
-        </span>
-      ),
+      render: (text) => <span className="text-info fw-semibold">₹{Number(text).toLocaleString()}</span>,
       width: 120,
     },
     {
@@ -224,14 +194,10 @@ const DoctorCollection = () => {
           Total <span className="text-dark">(₹)</span>
         </>
       ),
-      dataIndex: "totalEarnings",
-      key: "totalEarnings",
+      dataIndex: 'totalEarnings',
+      key: 'totalEarnings',
       sortable: true,
-      render: (text) => (
-        <span className="fw-bold text-dark">
-          ₹{Number(text).toLocaleString()}
-        </span>
-      ),
+      render: (text) => <span className="fw-bold text-dark">₹{Number(text).toLocaleString()}</span>,
       width: 140,
     },
   ];
@@ -239,24 +205,17 @@ const DoctorCollection = () => {
   // --- CAMP TABLE DATA ---
   const campTableData =
     campTable && Array.isArray(campTable)
-      ? [...campTable]
-          .sort((a, b) => new Date(a.date) - new Date(b.date))
-          .map((row, idx) => ({ ...row, key: idx }))
+      ? [...campTable].sort((a, b) => new Date(a.date) - new Date(b.date)).map((row, idx) => ({ ...row, key: idx }))
       : [];
 
   // --- CAMP TABLE SUMMARY FOOTER ---
   const campTableSummary = () => {
     const totals = {
-      totalPatients:
-        campTable?.reduce((sum, r) => sum + (r.totalPatients || 0), 0) || 0,
-      onlineEarnings:
-        campTable?.reduce((sum, r) => sum + (r.onlineEarnings || 0), 0) || 0,
-      offlineEarnings:
-        campTable?.reduce((sum, r) => sum + (r.offlineEarnings || 0), 0) || 0,
-      crownEarnings:
-        campTable?.reduce((sum, r) => sum + (r.crownEarnings || 0), 0) || 0,
-      totalEarnings:
-        campTable?.reduce((sum, r) => sum + (r.totalEarnings || 0), 0) || 0,
+      totalPatients: campTable?.reduce((sum, r) => sum + (r.totalPatients || 0), 0) || 0,
+      onlineEarnings: campTable?.reduce((sum, r) => sum + (r.onlineEarnings || 0), 0) || 0,
+      offlineEarnings: campTable?.reduce((sum, r) => sum + (r.offlineEarnings || 0), 0) || 0,
+      crownEarnings: campTable?.reduce((sum, r) => sum + (r.crownEarnings || 0), 0) || 0,
+      totalEarnings: campTable?.reduce((sum, r) => sum + (r.totalEarnings || 0), 0) || 0,
     };
     return (
       <AntdInnerTable.Summary.Row>
@@ -267,24 +226,16 @@ const DoctorCollection = () => {
           <span className="badge bg-secondary">{totals.totalPatients}</span>
         </AntdInnerTable.Summary.Cell>
         <AntdInnerTable.Summary.Cell index={3}>
-          <span className="text-success">
-            ₹{totals.onlineEarnings.toLocaleString()}
-          </span>
+          <span className="text-success">₹{totals.onlineEarnings.toLocaleString()}</span>
         </AntdInnerTable.Summary.Cell>
         <AntdInnerTable.Summary.Cell index={4}>
-          <span className="text-warning">
-            ₹{totals.offlineEarnings.toLocaleString()}
-          </span>
+          <span className="text-warning">₹{totals.offlineEarnings.toLocaleString()}</span>
         </AntdInnerTable.Summary.Cell>
         <AntdInnerTable.Summary.Cell index={5}>
-          <span className="text-info">
-            ₹{totals.crownEarnings.toLocaleString()}
-          </span>
+          <span className="text-info">₹{totals.crownEarnings.toLocaleString()}</span>
         </AntdInnerTable.Summary.Cell>
         <AntdInnerTable.Summary.Cell index={6}>
-          <span className="fw-bold text-dark">
-            ₹{totals.totalEarnings.toLocaleString()}
-          </span>
+          <span className="fw-bold text-dark">₹{totals.totalEarnings.toLocaleString()}</span>
         </AntdInnerTable.Summary.Cell>
       </AntdInnerTable.Summary.Row>
     );
@@ -292,9 +243,9 @@ const DoctorCollection = () => {
 
   const dentistryColumns = [
     {
-      title: "Doctor",
-      dataIndex: "name",
-      key: "name",
+      title: 'Doctor',
+      dataIndex: 'name',
+      key: 'name',
       sortable: true,
       render: (text, record) => (
         <span className="fw-semibold">
@@ -309,52 +260,42 @@ const DoctorCollection = () => {
       width: 180,
     },
     {
-      title: "Patients",
-      dataIndex: "patientsTreated",
-      key: "patientsTreated",
+      title: 'Patients',
+      dataIndex: 'patientsTreated',
+      key: 'patientsTreated',
       sortable: true,
       width: 120,
     },
     {
       title: <>Online (₹)</>,
-      dataIndex: "onlineEarnings",
-      key: "onlineEarnings",
+      dataIndex: 'onlineEarnings',
+      key: 'onlineEarnings',
       sortable: true,
-      render: (val) => (
-        <span className="text-success">₹{Number(val).toLocaleString()}</span>
-      ),
+      render: (val) => <span className="text-success">₹{Number(val).toLocaleString()}</span>,
       width: 120,
     },
     {
       title: <>Offline (₹)</>,
-      dataIndex: "offlineEarnings",
-      key: "offlineEarnings",
+      dataIndex: 'offlineEarnings',
+      key: 'offlineEarnings',
       sortable: true,
-      render: (val) => (
-        <span className="text-warning">₹{Number(val).toLocaleString()}</span>
-      ),
+      render: (val) => <span className="text-warning">₹{Number(val).toLocaleString()}</span>,
       width: 120,
     },
     {
       title: <>Crown (₹)</>,
-      dataIndex: "crownEarnings",
-      key: "crownEarnings",
+      dataIndex: 'crownEarnings',
+      key: 'crownEarnings',
       sortable: true,
-      render: (val) => (
-        <span className="text-info">₹{Number(val).toLocaleString()}</span>
-      ),
+      render: (val) => <span className="text-info">₹{Number(val).toLocaleString()}</span>,
       width: 120,
     },
     {
       title: <>Total (₹)</>,
-      dataIndex: "totalEarnings",
-      key: "totalEarnings",
+      dataIndex: 'totalEarnings',
+      key: 'totalEarnings',
       sortable: true,
-      render: (val) => (
-        <span className="fw-bold text-dark">
-          ₹{Number(val).toLocaleString()}
-        </span>
-      ),
+      render: (val) => <span className="fw-bold text-dark">₹{Number(val).toLocaleString()}</span>,
       width: 120,
     },
   ];
@@ -365,35 +306,18 @@ const DoctorCollection = () => {
   }));
 
   const dentistryTableSummary = () => {
-    const totalPatients = dentistryDoctors.reduce(
-      (sum, d) => sum + d.patientsTreated,
-      0
-    );
-    const totalOnline = dentistryDoctors.reduce(
-      (sum, d) => sum + d.onlineEarnings,
-      0
-    );
-    const totalOffline = dentistryDoctors.reduce(
-      (sum, d) => sum + d.offlineEarnings,
-      0
-    );
-    const totalCrown = dentistryDoctors.reduce(
-      (sum, d) => sum + (d.crownEarnings ?? 0),
-      0
-    );
-    const totalEarnings = dentistryDoctors.reduce(
-      (sum, d) => sum + d.totalEarnings,
-      0
-    );
+    const totalPatients = dentistryDoctors.reduce((sum, d) => sum + d.patientsTreated, 0);
+    const totalOnline = dentistryDoctors.reduce((sum, d) => sum + d.onlineEarnings, 0);
+    const totalOffline = dentistryDoctors.reduce((sum, d) => sum + d.offlineEarnings, 0);
+    const totalCrown = dentistryDoctors.reduce((sum, d) => sum + (d.crownEarnings ?? 0), 0);
+    const totalEarnings = dentistryDoctors.reduce((sum, d) => sum + d.totalEarnings, 0);
 
     return (
       <AntdInnerTable.Summary.Row>
         <AntdInnerTable.Summary.Cell index={0}>
           <strong>Total</strong>
         </AntdInnerTable.Summary.Cell>
-        <AntdInnerTable.Summary.Cell index={1}>
-          {totalPatients}
-        </AntdInnerTable.Summary.Cell>
+        <AntdInnerTable.Summary.Cell index={1}>{totalPatients}</AntdInnerTable.Summary.Cell>
         <AntdInnerTable.Summary.Cell index={2}>
           <span className="text-success">₹{totalOnline.toLocaleString()}</span>
         </AntdInnerTable.Summary.Cell>
@@ -404,20 +328,17 @@ const DoctorCollection = () => {
           <span className="text-info">₹{totalCrown.toLocaleString()}</span>
         </AntdInnerTable.Summary.Cell>
         <AntdInnerTable.Summary.Cell index={5}>
-          <span className="fw-bold text-dark">
-            ₹{totalEarnings.toLocaleString()}
-          </span>
+          <span className="fw-bold text-dark">₹{totalEarnings.toLocaleString()}</span>
         </AntdInnerTable.Summary.Cell>
       </AntdInnerTable.Summary.Row>
     );
   };
 
   function flattenToText(node) {
-    if (typeof node === "string" || typeof node === "number") return node;
-    if (Array.isArray(node)) return node.map(flattenToText).join("");
-    if (node && node.props && node.props.children)
-      return flattenToText(node.props.children);
-    return "";
+    if (typeof node === 'string' || typeof node === 'number') return node;
+    if (Array.isArray(node)) return node.map(flattenToText).join('');
+    if (node && node.props && node.props.children) return flattenToText(node.props.children);
+    return '';
   }
 
   const getExportTableData = (data, columns) => {
@@ -425,24 +346,20 @@ const DoctorCollection = () => {
       const rowObj = {};
       columns.forEach((col) => {
         let value = row[col.dataIndex];
-        if (col.dataIndex === "date") {
+        if (col.dataIndex === 'date') {
           // Use raw value or format here if needed
           // If your date is like "2025-08-14", this will be fine for Excel
-          value = value;
         } else if (col.render) {
           const rendered = col.render(value, row);
           value = flattenToText(rendered);
         }
         // Remove ₹ and commas for money columns
-        const header =
-          typeof col.title === "string" ? col.title : flattenToText(col.title);
+        const header = typeof col.title === 'string' ? col.title : flattenToText(col.title);
         if (
-          typeof value === "string" &&
-          ["Online", "Offline", "Crown", "Total"].some((label) =>
-            header.toLowerCase().includes(label.toLowerCase())
-          )
+          typeof value === 'string' &&
+          ['Online', 'Offline', 'Crown', 'Total'].some((label) => header.toLowerCase().includes(label.toLowerCase()))
         ) {
-          value = value.replace(/₹/g, "").replace(/,/g, "").trim();
+          value = value.replace(/₹/g, '').replace(/,/g, '').trim();
         }
         rowObj[header] = value;
       });
@@ -455,13 +372,13 @@ const DoctorCollection = () => {
     const exportData = getExportTableData(campTableData, campTableColumns);
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Camp Collection");
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Camp Collection');
     const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
+      bookType: 'xlsx',
+      type: 'array',
     });
-    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
-    saveAs(blob, "camp_collection.xlsx");
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(blob, 'camp_collection.xlsx');
   };
 
   // Chart data for dentistry
@@ -469,7 +386,7 @@ const DoctorCollection = () => {
     labels: dentistryDoctors.map((d) => d.name),
     datasets: [
       {
-        label: "Total Earnings",
+        label: 'Total Earnings',
         data: dentistryDoctors.map((d) => d.totalEarnings),
         backgroundColor: COLORS,
         borderWidth: 1,
@@ -482,7 +399,7 @@ const DoctorCollection = () => {
     labels: gpDoctors.map((d) => d.name),
     datasets: [
       {
-        label: "Total Earnings",
+        label: 'Total Earnings',
         data: gpDoctors.map((d) => d.totalEarnings),
         backgroundColor: COLORS,
         borderWidth: 1,
@@ -495,7 +412,7 @@ const DoctorCollection = () => {
     labels: mammoDoctors.map((d) => d.name),
     datasets: [
       {
-        label: "Total Earnings",
+        label: 'Total Earnings',
         data: mammoDoctors.map((d) => d.totalEarnings),
         backgroundColor: COLORS,
         borderWidth: 1,
@@ -505,10 +422,7 @@ const DoctorCollection = () => {
 
   // Helper for summary cards
   const SummaryCard = ({ title, value, color, icon }) => (
-    <Card
-      className="text-center shadow-sm border-0 mb-3"
-      style={{ minHeight: 110 }}
-    >
+    <Card className="text-center shadow-sm border-0 mb-3" style={{ minHeight: 110 }}>
       <Card.Body>
         <div className="mb-2" style={{ fontSize: 22 }}>
           {icon}
@@ -520,7 +434,7 @@ const DoctorCollection = () => {
   );
 
   // Helper for section headers
-  const SectionHeader = ({ children, color = "primary", icon }) => (
+  const SectionHeader = ({ children, color = 'primary', icon }) => (
     <div className="d-flex align-items-center gap-2 mt-5 mb-3">
       {icon && <span style={{ fontSize: 22 }}>{icon}</span>}
       <h4 className={`mb-0 text-${color}`}>{children}</h4>
@@ -566,13 +480,7 @@ const DoctorCollection = () => {
                 </Form.Group>
               </Col>
               <Col xs={12} md={4} lg={3} className="d-flex align-items-end">
-                <Button
-                  onClick={fetchData}
-                  disabled={loading}
-                  variant="primary"
-                  className="w-100"
-                  size="sm"
-                >
+                <Button onClick={fetchData} disabled={loading} variant="primary" className="w-100" size="sm">
                   {loading ? (
                     <>
                       <Spinner animation="border" size="sm" className="me-2" />
@@ -636,12 +544,7 @@ const DoctorCollection = () => {
           </Card.Header>
           <div className="antd-table-container">
             <div className="mt-3 ms-2 p-1">
-              <Button
-                size="sm"
-                className="bg-primary"
-                type="button"
-                onClick={exportCampTableToExcel}
-              >
+              <Button size="sm" className="bg-primary" type="button" onClick={exportCampTableToExcel}>
                 <RiFileExcel2Line className="h-3 w-4 me-2" />
                 Export to Excel
               </Button>
@@ -718,7 +621,7 @@ const DoctorCollection = () => {
               />
             </Col>
           </Row>
-          
+
           {dentistryDoctors.length > 0 && (
             <div className="antd-table-container mt-2">
               <AntdTable
@@ -737,7 +640,7 @@ const DoctorCollection = () => {
                   <i className="bi bi-pie-chart-fill me-2" />
                   Earnings Breakdown
                 </h5>
-                <div style={{ maxWidth: 350, width: "100%" }}>
+                <div style={{ maxWidth: 350, width: '100%' }}>
                   <Doughnut data={dentistryChartData} />
                 </div>
               </Col>
@@ -748,10 +651,7 @@ const DoctorCollection = () => {
       {/* GP Analytics */}
       {summary && (
         <>
-          <SectionHeader
-            color="success"
-            icon={<i className="bi bi-heart-pulse-fill" />}
-          >
+          <SectionHeader color="success" icon={<i className="bi bi-heart-pulse-fill" />}>
             GP Analytics
           </SectionHeader>
           <Row className="mb-3 g-3">
@@ -790,12 +690,7 @@ const DoctorCollection = () => {
           </Row>
           {gpDoctors.length > 0 && (
             <div className="table-responsive mt-2">
-              <Table
-                bordered
-                hover
-                size="sm"
-                className="align-middle shadow-sm"
-              >
+              <Table bordered hover size="sm" className="align-middle shadow-sm">
                 <thead className="table-success">
                   <tr>
                     <th>Doctor</th>
@@ -810,40 +705,21 @@ const DoctorCollection = () => {
                     <tr key={idx}>
                       <td>{doc.name}</td>
                       <td>{doc.patientsTreated}</td>
-                      <td className="text-success">
-                        ₹{doc.onlineEarnings.toLocaleString()}
-                      </td>
-                      <td className="text-warning">
-                        ₹{doc.offlineEarnings.toLocaleString()}
-                      </td>
-                      <td className="fw-bold text-dark">
-                        ₹{doc.totalEarnings.toLocaleString()}
-                      </td>
+                      <td className="text-success">₹{doc.onlineEarnings.toLocaleString()}</td>
+                      <td className="text-warning">₹{doc.offlineEarnings.toLocaleString()}</td>
+                      <td className="fw-bold text-dark">₹{doc.totalEarnings.toLocaleString()}</td>
                     </tr>
                   ))}
                   <tr className="table-secondary fw-bold">
                     <td>Total</td>
-                    <td>
-                      {gpDoctors.reduce((sum, d) => sum + d.patientsTreated, 0)}
-                    </td>
+                    <td>{gpDoctors.reduce((sum, d) => sum + d.patientsTreated, 0)}</td>
                     <td className="text-success">
-                      ₹
-                      {gpDoctors
-                        .reduce((sum, d) => sum + d.onlineEarnings, 0)
-                        .toLocaleString()}
+                      ₹{gpDoctors.reduce((sum, d) => sum + d.onlineEarnings, 0).toLocaleString()}
                     </td>
                     <td className="text-warning">
-                      ₹
-                      {gpDoctors
-                        .reduce((sum, d) => sum + d.offlineEarnings, 0)
-                        .toLocaleString()}
+                      ₹{gpDoctors.reduce((sum, d) => sum + d.offlineEarnings, 0).toLocaleString()}
                     </td>
-                    <td className="text-dark">
-                      ₹
-                      {gpDoctors
-                        .reduce((sum, d) => sum + d.totalEarnings, 0)
-                        .toLocaleString()}
-                    </td>
+                    <td className="text-dark">₹{gpDoctors.reduce((sum, d) => sum + d.totalEarnings, 0).toLocaleString()}</td>
                   </tr>
                 </tbody>
               </Table>
@@ -856,7 +732,7 @@ const DoctorCollection = () => {
                   <i className="bi bi-pie-chart-fill me-2" />
                   Earnings Breakdown
                 </h5>
-                <div style={{ maxWidth: 350, width: "100%" }}>
+                <div style={{ maxWidth: 350, width: '100%' }}>
                   <Doughnut data={gpChartData} />
                 </div>
               </Col>
@@ -867,10 +743,7 @@ const DoctorCollection = () => {
       {/* Mammo Analytics */}
       {summary && (
         <>
-          <SectionHeader
-            color="warning"
-            icon={<i className="bi bi-gender-female" />}
-          >
+          <SectionHeader color="warning" icon={<i className="bi bi-gender-female" />}>
             Mammo Analytics
           </SectionHeader>
           <Row className="mb-3 g-3">
@@ -909,12 +782,7 @@ const DoctorCollection = () => {
           </Row>
           {mammoDoctors.length > 0 && (
             <div className="table-responsive mt-2">
-              <Table
-                bordered
-                hover
-                size="sm"
-                className="align-middle shadow-sm"
-              >
+              <Table bordered hover size="sm" className="align-middle shadow-sm">
                 <thead className="table-warning">
                   <tr>
                     <th>Doctor</th>
@@ -929,42 +797,22 @@ const DoctorCollection = () => {
                     <tr key={idx}>
                       <td>{doc.name}</td>
                       <td>{doc.patientsTreated}</td>
-                      <td className="text-success">
-                        ₹{doc.onlineEarnings.toLocaleString()}
-                      </td>
-                      <td className="text-warning">
-                        ₹{doc.offlineEarnings.toLocaleString()}
-                      </td>
-                      <td className="fw-bold text-dark">
-                        ₹{doc.totalEarnings.toLocaleString()}
-                      </td>
+                      <td className="text-success">₹{doc.onlineEarnings.toLocaleString()}</td>
+                      <td className="text-warning">₹{doc.offlineEarnings.toLocaleString()}</td>
+                      <td className="fw-bold text-dark">₹{doc.totalEarnings.toLocaleString()}</td>
                     </tr>
                   ))}
                   <tr className="table-secondary fw-bold">
                     <td>Total</td>
-                    <td>
-                      {mammoDoctors.reduce(
-                        (sum, d) => sum + d.patientsTreated,
-                        0
-                      )}
-                    </td>
+                    <td>{mammoDoctors.reduce((sum, d) => sum + d.patientsTreated, 0)}</td>
                     <td className="text-success">
-                      ₹
-                      {mammoDoctors
-                        .reduce((sum, d) => sum + d.onlineEarnings, 0)
-                        .toLocaleString()}
+                      ₹{mammoDoctors.reduce((sum, d) => sum + d.onlineEarnings, 0).toLocaleString()}
                     </td>
                     <td className="text-warning">
-                      ₹
-                      {mammoDoctors
-                        .reduce((sum, d) => sum + d.offlineEarnings, 0)
-                        .toLocaleString()}
+                      ₹{mammoDoctors.reduce((sum, d) => sum + d.offlineEarnings, 0).toLocaleString()}
                     </td>
                     <td className="text-dark">
-                      ₹
-                      {mammoDoctors
-                        .reduce((sum, d) => sum + d.totalEarnings, 0)
-                        .toLocaleString()}
+                      ₹{mammoDoctors.reduce((sum, d) => sum + d.totalEarnings, 0).toLocaleString()}
                     </td>
                   </tr>
                 </tbody>
@@ -978,7 +826,7 @@ const DoctorCollection = () => {
                   <i className="bi bi-pie-chart-fill me-2" />
                   Earnings Breakdown
                 </h5>
-                <div style={{ maxWidth: 350, width: "100%" }}>
+                <div style={{ maxWidth: 350, width: '100%' }}>
                   <Doughnut data={mammoChartData} />
                 </div>
               </Col>
