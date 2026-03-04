@@ -1,7 +1,7 @@
-import React, { Fragment } from "react";
-import { Row, Col, Container } from "react-bootstrap";
-import Card from "../../components/Card";
-import { Link } from "react-router-dom";
+import React, { Fragment } from 'react';
+import { Row, Col, Container } from 'react-bootstrap';
+import Card from '../../components/Card';
+import { Link } from 'react-router-dom';
 
 const Grid = () => {
   return (
@@ -15,10 +15,7 @@ const Grid = () => {
               </div>
             </Card.Header>
             <Card.Body>
-              <p>
-                See how aspects of the Bootstrap grid system work across
-                multiple devices with a handy table..
-              </p>
+              <p>See how aspects of the Bootstrap grid system work across multiple devices with a handy table..</p>
               <div className="table-responsive">
                 <table className="table table-bordered table-striped">
                   <thead>
@@ -144,10 +141,9 @@ const Grid = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                For example, here are two grid layouts that apply to every
-                device and viewport, from <code>xs</code> to <code>xl</code>.
-                Add any number of unit-less classes for each breakpoint you
-                need and every column will be the same width.
+                For example, here are two grid layouts that apply to every device and viewport, from <code>xs</code> to{' '}
+                <code>xl</code>. Add any number of unit-less classes for each breakpoint you need and every column will be
+                the same width.
               </p>
               <div className="iq-example-row">
                 <Container fluid>
@@ -170,7 +166,7 @@ const Grid = () => {
                       .col-6 .col-md-4
                     </Col>
                   </Row>
-                  <Row >
+                  <Row>
                     <div className="col-6">.col-6</div>
                     <div className="col-6">.col-6</div>
                   </Row>
@@ -186,12 +182,9 @@ const Grid = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Auto-layout for flexbox grid columns also means you can set
-                the width of one column and have the sibling columns
-                automatically resize around it. You may use predefined grid
-                classes (as shown below), grid mixins, or inline widths. Note
-                that the other columns will resize no matter the width of the
-                center column.
+                Auto-layout for flexbox grid columns also means you can set the width of one column and have the sibling
+                columns automatically resize around it. You may use predefined grid classes (as shown below), grid mixins, or
+                inline widths. Note that the other columns will resize no matter the width of the center column.
               </p>
               <div className="iq-example-row">
                 <Container fluid>
@@ -200,7 +193,7 @@ const Grid = () => {
                     <div className="col-6">2 of 3 (wider)</div>
                     <div className="col">3 of 3</div>
                   </Row>
-                  <Row >
+                  <Row>
                     <Col>1 of 3</Col>
                     <div className="col-5">2 of 3 (wider)</div>
                     <div className="col">3 of 3</div>
@@ -217,8 +210,8 @@ const Grid = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Use <code>col-{"{breakpoint}"}-auto</code> classes to size columns
-                based on the natural width of their content.
+                Use <code>col-{'{breakpoint}'}-auto</code> classes to size columns based on the natural width of their
+                content.
               </p>
               <div className="iq-example-row">
                 <Container fluid>
@@ -244,10 +237,8 @@ const Grid = () => {
             </div>
             <Card.Body>
               <p>
-                Create equal-width columns that span multiple rows by
-                inserting a <code>.w-100</code> where you want the columns to
-                break to a new line. Make the breaks responsive by mixing the{" "}
-                <code>.w-100</code> with some{" "}
+                Create equal-width columns that span multiple rows by inserting a <code>.w-100</code> where you want the
+                columns to break to a new line. Make the breaks responsive by mixing the <code>.w-100</code> with some{' '}
                 <Link to="https://getbootstrap.com/" target="_blank">
                   responsive display utilities
                 </Link>
@@ -274,18 +265,14 @@ const Grid = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Bootstrap’s grid includes five tiers of predefined classes for
-                building complex responsive layouts. Customize the size of
-                your columns on extra small, small, medium, large, or extra
-                large devices however you see fit.
+                Bootstrap’s grid includes five tiers of predefined classes for building complex responsive layouts. Customize
+                the size of your columns on extra small, small, medium, large, or extra large devices however you see fit.
               </p>
               <h4 className="card-title">All breakpoints</h4>
               <p>
-                For grids that are the same from the smallest of devices to
-                the largest, use the <code>.col</code> and <code>.col-*</code>{" "}
-                classes. Specify a numbered class when you need a particularly
-                sized column; otherwise, feel free to stick to{" "}
-                <code>.col</code>.
+                For grids that are the same from the smallest of devices to the largest, use the <code>.col</code> and{' '}
+                <code>.col-*</code> classes. Specify a numbered class when you need a particularly sized column; otherwise,
+                feel free to stick to <code>.col</code>.
               </p>
               <div className="iq-example-row">
                 <Container fluid>
@@ -295,7 +282,7 @@ const Grid = () => {
                     <Col>col</Col>
                     <Col>col</Col>
                   </Row>
-                  <Row >
+                  <Row>
                     <div className="col-8">col-8</div>
                     <div className="col-4">col-4</div>
                   </Row>
@@ -311,9 +298,8 @@ const Grid = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Using a single set of <code>.col-sm-*</code> classes, you can
-                create a basic grid system that starts out stacked and becomes
-                horizontal at the small breakpoint (<code>sm</code>).
+                Using a single set of <code>.col-sm-*</code> classes, you can create a basic grid system that starts out
+                stacked and becomes horizontal at the small breakpoint (<code>sm</code>).
               </p>
               <div className="iq-example-row">
                 <Container fluid>
@@ -321,7 +307,7 @@ const Grid = () => {
                     <Col sm="8">col-sm-8</Col>
                     <Col sm="4">col-sm-4</Col>
                   </Row>
-                  <Row >
+                  <Row>
                     <div className="col-sm">col-sm</div>
                     <div className="col-sm">col-sm</div>
                     <div className="col-sm">col-sm</div>
@@ -338,10 +324,8 @@ const Grid = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Don’t want your columns to simply stack in some grid tiers?
-                Use a combination of different classes for each tier as
-                needed. See the example below for a better idea of how it all
-                works.
+                Don’t want your columns to simply stack in some grid tiers? Use a combination of different classes for each
+                tier as needed. See the example below for a better idea of how it all works.
               </p>
               <div className="iq-example-row">
                 <Container fluid>
@@ -380,32 +364,22 @@ const Grid = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Gutters can be responsively adjusted by breakpoint-specific
-                padding and negative margin utility classes. To change the
-                gutters in a given row, pair a negative margin utility on the{" "}
-                <code>.row</code> and matching padding utilities on the{" "}
-                <code>.col</code>s. The <code>.container</code> or{" "}
-                <code>.container-fluid</code> parent may need to be adjusted
-                too to avoid unwanted overflow, using again matching padding
-                utility.
+                Gutters can be responsively adjusted by breakpoint-specific padding and negative margin utility classes. To
+                change the gutters in a given row, pair a negative margin utility on the <code>.row</code> and matching
+                padding utilities on the <code>.col</code>s. The <code>.container</code> or <code>.container-fluid</code>{' '}
+                parent may need to be adjusted too to avoid unwanted overflow, using again matching padding utility.
               </p>
               <p>
-                Here’s an example of customizing the Bootstrap grid at the
-                large (<code>lg</code>) breakpoint and above. We’ve increased
-                the <code>.col</code> padding with <code>.px-lg-5</code>,
-                counteracted that with <code>.mx-lg-n5</code> on the parent{" "}
-                <code>.row</code> and then adjusted the{" "}
-                <code>.container</code> wrapper with <code>.px-lg-5</code>.
+                Here’s an example of customizing the Bootstrap grid at the large (<code>lg</code>) breakpoint and above.
+                We’ve increased the <code>.col</code> padding with <code>.px-lg-5</code>, counteracted that with{' '}
+                <code>.mx-lg-n5</code> on the parent <code>.row</code> and then adjusted the <code>.container</code> wrapper
+                with <code>.px-lg-5</code>.
               </p>
               <div className="iq-example-row">
                 <Container fluid className="px-lg-5">
                   <Row className="mx-lg-n5">
-                    <Col className="col py-3 px-lg-5 border bg-body">
-                      Custom column padding
-                    </Col>
-                    <Col className="col py-3 px-lg-5 border bg-body">
-                      Custom column padding
-                    </Col>
+                    <Col className="col py-3 px-lg-5 border bg-body">Custom column padding</Col>
+                    <Col className="col py-3 px-lg-5 border bg-body">Custom column padding</Col>
                   </Row>
                 </Container>
               </div>
@@ -419,16 +393,12 @@ const Grid = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Use flexbox alignment utilities to vertically and horizontally
-                align columns.{" "}
+                Use flexbox alignment utilities to vertically and horizontally align columns.{' '}
                 <strong>
-                  Internet Explorer 10-11 do not support vertical alignment of
-                  flex items when the flex container has a{" "}
+                  Internet Explorer 10-11 do not support vertical alignment of flex items when the flex container has a{' '}
                   <code>min-height</code> as shown below.
-                </strong>{" "}
-                <Link to="https://github.com/philipwalton/flexbugs#flexbug-3">
-                  See Flexbugs #3 for more details.
-                </Link>
+                </strong>{' '}
+                <Link to="https://github.com/philipwalton/flexbugs#flexbug-3">See Flexbugs #3 for more details.</Link>
               </p>
               <h4 className="mb-3">Vertical alignment</h4>
               <div className="iq-example-row iq-example-row-flex-cols">
@@ -451,12 +421,8 @@ const Grid = () => {
                 </Container>
                 <Container fluid>
                   <Row>
-                    <Col className="align-self-start">
-                      One of three columns
-                    </Col>
-                    <Col className="align-self-center">
-                      One of three columns
-                    </Col>
+                    <Col className="align-self-start">One of three columns</Col>
+                    <Col className="align-self-center">One of three columns</Col>
                     <Col className="align-self-end">One of three columns</Col>
                   </Row>
                 </Container>
@@ -471,14 +437,9 @@ const Grid = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Create equal-width columns that span multiple rows by
-                inserting a <code>.w-100</code> where you want the columns to
-                break to a new line. Make the breaks responsive by mixing the{" "}
-                <code>.w-100</code> with some{" "}
-                <a href="#">
-                  responsive display utilities
-                </a>
-                .
+                Create equal-width columns that span multiple rows by inserting a <code>.w-100</code> where you want the
+                columns to break to a new line. Make the breaks responsive by mixing the <code>.w-100</code> with some{' '}
+                <a href="#">responsive display utilities</a>.
               </p>
               <div className="iq-example-row">
                 <Container fluid>

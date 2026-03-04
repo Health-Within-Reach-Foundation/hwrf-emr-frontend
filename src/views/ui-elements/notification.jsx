@@ -1,6 +1,6 @@
-import React, { Fragment } from "react";
-import { Row, Col, Toast, Button } from "react-bootstrap";
-import Card from "../../components/Card";
+import React, { Fragment } from 'react';
+import { Row, Col, Toast, Button } from 'react-bootstrap';
+import Card from '../../components/Card';
 
 const Notification = () => {
   return (
@@ -14,13 +14,11 @@ const Notification = () => {
               </div>
             </Card.Header>
             <Card.Body>
-              <p>Toasts are as flexible as you need and have very little required markup. At a minimum, we require a single element to contain your “toasted” content and strongly encourage a dismiss button.</p>
-              <Toast
-                className="fade show"
-                role="alert"
-                aria-live="assertive"
-                aria-atomic="true"
-              >
+              <p>
+                Toasts are as flexible as you need and have very little required markup. At a minimum, we require a single
+                element to contain your “toasted” content and strongly encourage a dismiss button.
+              </p>
+              <Toast className="fade show" role="alert" aria-live="assertive" aria-atomic="true">
                 <Toast.Header closeButton={false}>
                   <svg
                     className="bd-placeholder-img rounded me-2"
@@ -48,17 +46,9 @@ const Notification = () => {
               </div>
             </Card.Header>
             <Card.Body>
-              <p>
-                When you have multiple toasts, we default to vertically stacking
-                them in a readable manner.
-              </p>
+              <p>When you have multiple toasts, we default to vertically stacking them in a readable manner.</p>
 
-              <Toast
-                className="toast fade show mb-2"
-                role="alert"
-                aria-live="assertive"
-                aria-atomic="true"
-              >
+              <Toast className="toast fade show mb-2" role="alert" aria-live="assertive" aria-atomic="true">
                 <Toast.Header closeButton={false}>
                   <svg
                     className="bd-placeholder-img rounded me-2"
@@ -77,12 +67,7 @@ const Notification = () => {
                 </Toast.Header>
                 <div className="toast-body">See? Just like this.</div>
               </Toast>
-              <Toast
-                className="fade show"
-                role="alert"
-                aria-live="assertive"
-                aria-atomic="true"
-              >
+              <Toast className="fade show" role="alert" aria-live="assertive" aria-atomic="true">
                 <Toast.Header closeButton={false}>
                   <svg
                     className="bd-placeholder-img rounded me-2"
@@ -99,31 +84,24 @@ const Notification = () => {
                   <small className="text-muted">2 seconds ago</small>
                   <Button className="ms-2 mb-1 btn-close" variant=" " bsPrefix=" "></Button>
                 </Toast.Header>
-                <div className="toast-body">
-                  Heads up, toasts will stack automatically
-                </div>
+                <div className="toast-body">Heads up, toasts will stack automatically</div>
               </Toast>
             </Card.Body>
           </Card>
           <Card>
             <Card.Header className="card-header d-flex justify-content-between">
               <div className="header-title">
-                <h4 className="card-title">
-                  Notifications Horizontally And/Or Vertically{" "}
-                </h4>
+                <h4 className="card-title">Notifications Horizontally And/Or Vertically </h4>
               </div>
             </Card.Header>
             <Card.Body>
-              <p>
-                You can also get fancy with flexbox utilities to align toasts
-                horizontally and/or vertically.
-              </p>
+              <p>You can also get fancy with flexbox utilities to align toasts horizontally and/or vertically.</p>
               <div className="p-3 bg-dark">
                 <div
                   aria-live="polite"
                   aria-atomic="true"
                   className="d-flex justify-content-center align-items-center"
-                  style={{ minHeight: "200px" }}
+                  style={{ minHeight: '200px' }}
                 >
                   <Toast>
                     <Toast.Header closeButton={false}>
@@ -136,14 +114,10 @@ const Notification = () => {
                         preserveAspectRatio="xMidYMid slice"
                         focusable="false"
                       >
-                        <rect
-                          width="100%"
-                          height="100%"
-                          fill="#007aff"
-                        ></rect>
+                        <rect width="100%" height="100%" fill="#007aff"></rect>
                       </svg>
                       <strong className="me-auto">Bootstrap</strong>
-                      <small >11 mins ago</small>
+                      <small>11 mins ago</small>
                       <Button
                         bsPrefix=" "
                         variant=" "
@@ -153,9 +127,7 @@ const Notification = () => {
                         aria-label="Close"
                       ></Button>
                     </Toast.Header>
-                    <Toast.Body>
-                      Hello, world! This is a toast message.
-                    </Toast.Body>
+                    <Toast.Body>Hello, world! This is a toast message.</Toast.Body>
                   </Toast>
                 </div>
               </div>
@@ -171,10 +143,8 @@ const Notification = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Toasts are slightly translucent, too, so they blend over
-                whatever they might appear over. For browsers that support the{" "}
-                <code>backdrop-filter</code> CSS property, we’ll also attempt to
-                blur the elements under a toast.
+                Toasts are slightly translucent, too, so they blend over whatever they might appear over. For browsers that
+                support the <code>backdrop-filter</code> CSS property, we’ll also attempt to blur the elements under a toast.
               </p>
 
               <div className="p-3 bg-dark" position="top-start">
@@ -192,7 +162,7 @@ const Notification = () => {
                       <rect width="100%" height="100%" fill="#007aff"></rect>
                     </svg>
                     <strong className="me-auto">Bootstrap</strong>
-                    <small >11 mins ago</small>
+                    <small>11 mins ago</small>
                     <Button
                       bsPrefix=" "
                       variant=" "
@@ -202,9 +172,7 @@ const Notification = () => {
                       aria-label="Close"
                     ></Button>
                   </Toast.Header>
-                  <Toast.Body>
-                    Hello, world! This is a toast message.
-                  </Toast.Body>
+                  <Toast.Body>Hello, world! This is a toast message.</Toast.Body>
                 </Toast>
               </div>
             </Card.Body>
@@ -217,18 +185,13 @@ const Notification = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Place toasts with custom CSS as you need them. The top right is
-                often used for notifications, as is the top middle. If you’re
-                only ever going to show one toast at a time, put the positioning
-                styles right on the <code>.toast</code>.
+                Place toasts with custom CSS as you need them. The top right is often used for notifications, as is the top
+                middle. If you’re only ever going to show one toast at a time, put the positioning styles right on the{' '}
+                <code>.toast</code>.
               </p>
               <div className="p-3 bg-dark" position="top-start">
-                <div
-                  aria-live="polite"
-                  aria-atomic="true"
-                  style={{ minHeight: "200px", position: 'relative' }}
-                >
-                  <Toast style={{ position: "absolute", top: '0', right: '0' }}>
+                <div aria-live="polite" aria-atomic="true" style={{ minHeight: '200px', position: 'relative' }}>
+                  <Toast style={{ position: 'absolute', top: '0', right: '0' }}>
                     <Toast.Header closeButton={false}>
                       <svg
                         className="bd-placeholder-img rounded me-2"
@@ -252,29 +215,17 @@ const Notification = () => {
                         aria-label="Close"
                       ></Button>
                     </Toast.Header>
-                    <Toast.Body>
-                      Hello, world! This is a toast message.
-                    </Toast.Body>
+                    <Toast.Body>Hello, world! This is a toast message.</Toast.Body>
                   </Toast>
                 </div>
               </div>
               <p className="mt-3">
-                For systems that generate more notifications, consider using a
-                wrapping element so they can easily stack.
+                For systems that generate more notifications, consider using a wrapping element so they can easily stack.
               </p>
               <div className=" mt-3 p-3 bg-dark">
-                <div
-                  aria-live="polite"
-                  aria-atomic="true"
-                  style={{ minHeight: "200px", position: 'relative' }}
-                >
+                <div aria-live="polite" aria-atomic="true" style={{ minHeight: '200px', position: 'relative' }}>
                   <div style={{ position: 'relative', top: '0', right: '0' }}>
-                    <Toast
-                      className="fade show mb-2"
-                      role="alert"
-                      aria-live="assertive"
-                      aria-atomic="true"
-                    >
+                    <Toast className="fade show mb-2" role="alert" aria-live="assertive" aria-atomic="true">
                       <Toast.Header closeButton={false}>
                         <svg
                           className="bd-placeholder-img rounded me-2"
@@ -298,16 +249,9 @@ const Notification = () => {
                           aria-label="Close"
                         ></Button>
                       </Toast.Header>
-                      <Toast.Body>
-                        See? Just like this.
-                      </Toast.Body>
+                      <Toast.Body>See? Just like this.</Toast.Body>
                     </Toast>
-                    <Toast
-                      className="fade show"
-                      role="alert"
-                      aria-live="assertive"
-                      aria-atomic="true"
-                    >
+                    <Toast className="fade show" role="alert" aria-live="assertive" aria-atomic="true">
                       <Toast.Header closeButton={false}>
                         <svg
                           className="bd-placeholder-img rounded me-2"
@@ -331,9 +275,7 @@ const Notification = () => {
                           aria-label="Close"
                         ></Button>
                       </Toast.Header>
-                      <Toast.Body>
-                        Heads up, toasts will stack automatically
-                      </Toast.Body>
+                      <Toast.Body>Heads up, toasts will stack automatically</Toast.Body>
                     </Toast>
                   </div>
                 </div>
@@ -350,11 +292,10 @@ const Notification = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Toasts are as flexible as you need and have very little required
-                markup. At a minimum, we require a single element to contain
-                your “toasted” content and strongly encourage a dismiss button.
+                Toasts are as flexible as you need and have very little required markup. At a minimum, we require a single
+                element to contain your “toasted” content and strongly encourage a dismiss button.
               </p>
-              <div >
+              <div>
                 <Toast
                   className="fade show bg-primary text-white mt-3 border-0"
                   role="alert"
@@ -382,9 +323,7 @@ const Notification = () => {
                       aria-label="Close"
                     ></button>
                   </Toast.Header>
-                  <Toast.Body>
-                    Hello, world! This is a toast message.
-                  </Toast.Body>
+                  <Toast.Body>Hello, world! This is a toast message.</Toast.Body>
                 </Toast>
                 <Toast
                   className="fade show bg-success text-white border-0 mt-3"
@@ -413,9 +352,7 @@ const Notification = () => {
                       aria-label="Close"
                     ></button>
                   </Toast.Header>
-                  <Toast.Body>
-                    Hello, world! This is a toast message.
-                  </Toast.Body>
+                  <Toast.Body>Hello, world! This is a toast message.</Toast.Body>
                 </Toast>
               </div>
             </Card.Body>

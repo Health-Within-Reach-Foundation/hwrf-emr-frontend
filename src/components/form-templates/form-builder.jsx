@@ -1,63 +1,62 @@
-import React from "react";
-import { Button, Card, Select, Space, Divider, message } from "antd";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { PlusOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
-import { useFormBuilder } from "../hooks/use-form-builder";
-import FieldProperties from "./field-properties";
-import axios from "axios"; // Import Axios for API requests
-import FormPreview from "./form-preview";
+import React from 'react';
+import { Button, Card, Select, Space, Divider, message } from 'antd';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { PlusOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons';
+import { useFormBuilder } from '../hooks/use-form-builder';
+import FieldProperties from './field-properties';
+import axios from 'axios'; // Import Axios for API requests
+import FormPreview from './form-preview';
 
 // Available field types
 const fieldOptions = [
-  { label: "Text", value: "text" },
-  { label: "Number", value: "number" },
-  { label: "Email", value: "email" },
-  { label: "Select", value: "select" },
-  { label: "File Upload", value: "file" },
-  { label: "Date", value: "date" },
-  { label: "Radio", value: "radio" },
-  { label: "Checkbox", value: "checkbox" },
-  { label: "Paragraph", value: "textarea" },
-  { label: "Switch", value: "switch" },
-  { label: "Slider", value: "slider" },
-  { label: "Rate", value: "rate" },
-  { label: "Color Picker", value: "color" },
-  { label: "Password", value: "password" },
-  { label: "Phone", value: "phone" },
-  { label: "URL", value: "url" },
-  { label: "Time", value: "time" },
-  { label: "Week", value: "week" },
-  { label: "Month", value: "month" },
-  { label: "Year", value: "year" },
-  { label: "Cascader", value: "cascader" },
-  { label: "Rate", value: "rate" },
-  { label: "Transfer", value: "transfer" },
-  { label: "Mentions", value: "mentions" },
-  { label: "TreeSelect", value: "treeSelect" },
-  { label: "Upload", value: "upload" },
-  { label: "AutoComplete", value: "autoComplete" },
-  { label: "Input Search", value: "inputSearch" },
-  { label: "Input Group", value: "inputGroup" },
-  { label: "Input Number", value: "inputNumber" },
-  { label: "Input Password", value: "inputPassword" },
-  { label: "Input Text", value: "inputText" },
-  { label: "Input Text Area", value: "inputTextArea" },
-  { label: "Input Search", value: "inputSearch" },
-  { label: "Input Group", value: "inputGroup" },
-  { label: "Input Number", value: "inputNumber" },
-  { label: "Input Password", value: "inputPassword" },
-  { label: "Input Text", value: "inputText" },
-  { label: "Input Text Area", value: "inputTextArea" },
-  { label: "Input Search", value: "inputSearch" },
-  { label: "Input Group", value: "inputGroup" },
-  { label: "Input Number", value: "inputNumber" },
-  { label: "Input Password", value: "inputPassword" },
-  { label: "Input Text", value: "inputText" },
+  { label: 'Text', value: 'text' },
+  { label: 'Number', value: 'number' },
+  { label: 'Email', value: 'email' },
+  { label: 'Select', value: 'select' },
+  { label: 'File Upload', value: 'file' },
+  { label: 'Date', value: 'date' },
+  { label: 'Radio', value: 'radio' },
+  { label: 'Checkbox', value: 'checkbox' },
+  { label: 'Paragraph', value: 'textarea' },
+  { label: 'Switch', value: 'switch' },
+  { label: 'Slider', value: 'slider' },
+  { label: 'Rate', value: 'rate' },
+  { label: 'Color Picker', value: 'color' },
+  { label: 'Password', value: 'password' },
+  { label: 'Phone', value: 'phone' },
+  { label: 'URL', value: 'url' },
+  { label: 'Time', value: 'time' },
+  { label: 'Week', value: 'week' },
+  { label: 'Month', value: 'month' },
+  { label: 'Year', value: 'year' },
+  { label: 'Cascader', value: 'cascader' },
+  { label: 'Rate', value: 'rate' },
+  { label: 'Transfer', value: 'transfer' },
+  { label: 'Mentions', value: 'mentions' },
+  { label: 'TreeSelect', value: 'treeSelect' },
+  { label: 'Upload', value: 'upload' },
+  { label: 'AutoComplete', value: 'autoComplete' },
+  { label: 'Input Search', value: 'inputSearch' },
+  { label: 'Input Group', value: 'inputGroup' },
+  { label: 'Input Number', value: 'inputNumber' },
+  { label: 'Input Password', value: 'inputPassword' },
+  { label: 'Input Text', value: 'inputText' },
+  { label: 'Input Text Area', value: 'inputTextArea' },
+  { label: 'Input Search', value: 'inputSearch' },
+  { label: 'Input Group', value: 'inputGroup' },
+  { label: 'Input Number', value: 'inputNumber' },
+  { label: 'Input Password', value: 'inputPassword' },
+  { label: 'Input Text', value: 'inputText' },
+  { label: 'Input Text Area', value: 'inputTextArea' },
+  { label: 'Input Search', value: 'inputSearch' },
+  { label: 'Input Group', value: 'inputGroup' },
+  { label: 'Input Number', value: 'inputNumber' },
+  { label: 'Input Password', value: 'inputPassword' },
+  { label: 'Input Text', value: 'inputText' },
 ];
 
 const FormBuilder = () => {
-  const { fields, addField, updateField, removeField, reorderFields } =
-    useFormBuilder();
+  const { fields, addField, updateField, removeField, reorderFields } = useFormBuilder();
 
   // Handle Drag & Drop reordering
   const onDragEnd = (result) => {
@@ -71,7 +70,7 @@ const FormBuilder = () => {
   // Handle form submission (Save to backend)
   const handleSubmit = async () => {
     if (fields.length === 0) {
-      message.warning("Please add at least one field before saving.");
+      message.warning('Please add at least one field before saving.');
       return;
     }
 
@@ -82,11 +81,11 @@ const FormBuilder = () => {
       //   });
 
       //   message.success("Form saved successfully!");
-      console.log("Form created --> ", fields);
+      console.log('Form created --> ', fields);
       //   console.log("Saved Form Response:", response.data);
     } catch (error) {
-      message.error("Failed to save form. Please try again.");
-      console.error("Save Form Error:", error);
+      message.error('Failed to save form. Please try again.');
+      console.error('Save Form Error:', error);
     }
   };
 
@@ -125,35 +124,26 @@ const FormBuilder = () => {
                         ...provided.draggableProps.style, // Keep React-Beautiful-DND styles
                         padding: 10,
                         marginBottom: 10,
-                        background: snapshot.isDragging ? "#e6f7ff" : "#fff",
-                        border: "1px solid #ccc",
+                        background: snapshot.isDragging ? '#e6f7ff' : '#fff',
+                        border: '1px solid #ccc',
                         borderRadius: 4,
-                        boxShadow: snapshot.isDragging
-                          ? "0px 0px 10px rgba(0,0,0,0.1)"
-                          : "none",
+                        boxShadow: snapshot.isDragging ? '0px 0px 10px rgba(0,0,0,0.1)' : 'none',
                       }}
                     >
                       <Card>
                         <Space
                           style={{
-                            justifyContent: "space-between",
-                            width: "100%",
+                            justifyContent: 'space-between',
+                            width: '100%',
                           }}
                         >
                           <span>
                             {field.label} (Type: {field.type})
                           </span>
-                          <Button
-                            danger
-                            icon={<DeleteOutlined />}
-                            onClick={() => removeField(field.id)}
-                          />
+                          <Button danger icon={<DeleteOutlined />} onClick={() => removeField(field.id)} />
                         </Space>
                         {/* Field Properties Editor */}
-                        <FieldProperties
-                          field={field}
-                          updateField={updateField}
-                        />
+                        <FieldProperties field={field} updateField={updateField} />
                       </Card>
                     </div>
                   )}
@@ -174,12 +164,7 @@ const FormBuilder = () => {
 
       <Divider />
       {/* Save Form Button */}
-      <Button
-        type="primary"
-        icon={<SaveOutlined />}
-        onClick={handleSubmit}
-        className="mb-3"
-      >
+      <Button type="primary" icon={<SaveOutlined />} onClick={handleSubmit} className="mb-3">
         Save Form
       </Button>
 

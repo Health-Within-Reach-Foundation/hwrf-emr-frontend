@@ -1,22 +1,11 @@
-import React, { useEffect } from "react";
-import {
-  Button,
-  CardTitle,
-  Col,
-  Container,
-  Dropdown,
-  Nav,
-  ProgressBar,
-  Row,
-  Tab,
-  Table,
-} from "react-bootstrap";
-import Chart from "react-apexcharts";
-import * as am4core from "@amcharts/amcharts4/core";
-import * as am4charts from "@amcharts/amcharts4/charts";
-import am4themes_animated from "@amcharts/amcharts4/themes/animated";
-import ReactApexChart from "react-apexcharts";
-import Card from "../../components/Card";
+import React, { useEffect } from 'react';
+import { Button, CardTitle, Col, Container, Dropdown, Nav, ProgressBar, Row, Tab, Table } from 'react-bootstrap';
+import Chart from 'react-apexcharts';
+import * as am4core from '@amcharts/amcharts4/core';
+import * as am4charts from '@amcharts/amcharts4/charts';
+import am4themes_animated from '@amcharts/amcharts4/themes/animated';
+import ReactApexChart from 'react-apexcharts';
+import Card from '../../components/Card';
 
 const generatePath = (path) => {
   return window.origin + import.meta.env.BASE_URL + path;
@@ -27,21 +16,21 @@ const HospitalDashboardTwo = () => {
   const chartOptions = {
     series: [
       {
-        name: "PRODUCT A",
+        name: 'PRODUCT A',
         data: [44, 55, 41, 67, 22, 43],
       },
       {
-        name: "PRODUCT B",
+        name: 'PRODUCT B',
         data: [13, 23, 20, 8, 13, 27],
       },
       {
-        name: "PRODUCT C",
+        name: 'PRODUCT C',
         data: [11, 17, 15, 15, 21, 14],
       },
     ],
-    colors: ["#089bab", "#FC9F5B", "#5bc5d1"],
+    colors: ['#089bab', '#FC9F5B', '#5bc5d1'],
     chart: {
-      type: "bar",
+      type: 'bar',
       height: 350,
       stacked: true,
       toolbar: {
@@ -56,7 +45,7 @@ const HospitalDashboardTwo = () => {
         breakpoint: 480,
         options: {
           legend: {
-            position: "bottom",
+            position: 'bottom',
             offsetX: -10,
             offsetY: 0,
           },
@@ -69,18 +58,18 @@ const HospitalDashboardTwo = () => {
       },
     },
     xaxis: {
-      type: "datetime",
+      type: 'datetime',
       categories: [
-        "01/01/2011 GMT",
-        "01/02/2011 GMT",
-        "01/03/2011 GMT",
-        "01/04/2011 GMT",
-        "01/05/2011 GMT",
-        "01/06/2011 GMT",
+        '01/01/2011 GMT',
+        '01/02/2011 GMT',
+        '01/03/2011 GMT',
+        '01/04/2011 GMT',
+        '01/05/2011 GMT',
+        '01/06/2011 GMT',
       ],
     },
     legend: {
-      position: "right",
+      position: 'right',
       offsetY: 40,
     },
     fill: {
@@ -94,56 +83,56 @@ const HospitalDashboardTwo = () => {
     am4core.useTheme(am4themes_animated);
 
     // Create chart instance
-    const chart = am4core.create("doc-chart-01", am4charts.RadarChart);
+    const chart = am4core.create('doc-chart-01', am4charts.RadarChart);
 
     // Chart data
     chart.data = [
       {
-        country: "USA",
+        country: 'USA',
         visits: 2025,
       },
       {
-        country: "China",
+        country: 'China',
         visits: 1882,
       },
       {
-        country: "Japan",
+        country: 'Japan',
         visits: 1809,
       },
       {
-        country: "Germany",
+        country: 'Germany',
         visits: 1322,
       },
       {
-        country: "UK",
+        country: 'UK',
         visits: 1122,
       },
       {
-        country: "France",
+        country: 'France',
         visits: 1114,
       },
       {
-        country: "India",
+        country: 'India',
         visits: 984,
       },
       {
-        country: "Spain",
+        country: 'Spain',
         visits: 711,
       },
       {
-        country: "Netherlands",
+        country: 'Netherlands',
         visits: 665,
       },
       {
-        country: "Russia",
+        country: 'Russia',
         visits: 580,
       },
       {
-        country: "South Korea",
+        country: 'South Korea',
         visits: 443,
       },
       {
-        country: "Canada",
+        country: 'Canada',
         visits: 441,
       },
     ];
@@ -152,7 +141,7 @@ const HospitalDashboardTwo = () => {
     chart.innerRadius = am4core.percent(40);
 
     const categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-    categoryAxis.dataFields.category = "country";
+    categoryAxis.dataFields.category = 'country';
     categoryAxis.renderer.grid.template.location = 0;
     categoryAxis.renderer.minGridDistance = 60;
     categoryAxis.renderer.inversed = true;
@@ -165,30 +154,30 @@ const HospitalDashboardTwo = () => {
     valueAxis.renderer.grid.template.strokeOpacity = 0.08;
 
     const series = chart.series.push(new am4charts.RadarColumnSeries());
-    series.dataFields.categoryX = "country";
-    series.dataFields.valueY = "visits";
-    series.tooltipText = "{valueY.value}";
+    series.dataFields.categoryX = 'country';
+    series.dataFields.valueY = 'visits';
+    series.tooltipText = '{valueY.value}';
     series.columns.template.strokeOpacity = 0;
     series.columns.template.radarColumn.cornerRadius = 5;
     series.columns.template.radarColumn.innerCornerRadius = 0;
 
     // Define specific colors for the series
     chart.colors.list = [
-      am4core.color("#ffb57e"),
-      am4core.color("#279fac"),
-      am4core.color("#ffb57e"),
-      am4core.color("#279fac"),
-      am4core.color("#ffb57e"),
-      am4core.color("#279fac"),
-      am4core.color("#ffb57e"),
-      am4core.color("#279fac"),
-      am4core.color("#ffb57e"),
-      am4core.color("#279fac"),
-      am4core.color("#ffb57e"),
+      am4core.color('#ffb57e'),
+      am4core.color('#279fac'),
+      am4core.color('#ffb57e'),
+      am4core.color('#279fac'),
+      am4core.color('#ffb57e'),
+      am4core.color('#279fac'),
+      am4core.color('#ffb57e'),
+      am4core.color('#279fac'),
+      am4core.color('#ffb57e'),
+      am4core.color('#279fac'),
+      am4core.color('#ffb57e'),
     ];
 
     // Set color based on index of series
-    series.columns.template.adapter.add("fill", (fill, target) => {
+    series.columns.template.adapter.add('fill', (fill, target) => {
       return chart.colors.getIndex(target.dataItem.index);
     });
 
@@ -197,7 +186,7 @@ const HospitalDashboardTwo = () => {
 
     // Cursor
     chart.cursor = new am4charts.RadarCursor();
-    chart.cursor.behavior = "none";
+    chart.cursor.behavior = 'none';
     chart.cursor.lineX.disabled = true;
     chart.cursor.lineY.disabled = true;
 
@@ -224,22 +213,22 @@ const HospitalDashboardTwo = () => {
     am4core.useTheme(am4themes_animated);
 
     // Create chart instance
-    const chart = am4core.create("doc-chart-01", am4charts.RadarChart);
+    const chart = am4core.create('doc-chart-01', am4charts.RadarChart);
 
     // Set chart data
     chart.data = [
-      { country: "USA", visits: 2025 },
-      { country: "China", visits: 1882 },
-      { country: "Japan", visits: 1809 },
-      { country: "Germany", visits: 1322 },
-      { country: "UK", visits: 1122 },
-      { country: "France", visits: 1114 },
-      { country: "India", visits: 984 },
-      { country: "Spain", visits: 711 },
-      { country: "Netherlands", visits: 665 },
-      { country: "Russia", visits: 580 },
-      { country: "South Korea", visits: 443 },
-      { country: "Canada", visits: 441 },
+      { country: 'USA', visits: 2025 },
+      { country: 'China', visits: 1882 },
+      { country: 'Japan', visits: 1809 },
+      { country: 'Germany', visits: 1322 },
+      { country: 'UK', visits: 1122 },
+      { country: 'France', visits: 1114 },
+      { country: 'India', visits: 984 },
+      { country: 'Spain', visits: 711 },
+      { country: 'Netherlands', visits: 665 },
+      { country: 'Russia', visits: 580 },
+      { country: 'South Korea', visits: 443 },
+      { country: 'Canada', visits: 441 },
     ];
 
     chart.rtl = true;
@@ -248,7 +237,7 @@ const HospitalDashboardTwo = () => {
     // Create axes
     const categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
     categoryAxis.renderer.grid.template.location = 0;
-    categoryAxis.dataFields.category = "country";
+    categoryAxis.dataFields.category = 'country';
     categoryAxis.renderer.minGridDistance = 60;
     categoryAxis.renderer.inversed = true;
     categoryAxis.renderer.labels.template.location = 0.5;
@@ -263,31 +252,31 @@ const HospitalDashboardTwo = () => {
 
     // Create series
     const series = chart.series.push(new am4charts.RadarColumnSeries());
-    series.dataFields.categoryX = "country";
-    series.dataFields.valueY = "visits";
-    series.tooltipText = "{valueY.value}";
+    series.dataFields.categoryX = 'country';
+    series.dataFields.valueY = 'visits';
+    series.tooltipText = '{valueY.value}';
     series.columns.template.strokeOpacity = 0;
     series.columns.template.radarColumn.cornerRadius = 5;
     series.columns.template.radarColumn.innerCornerRadius = 0;
     chart.colors.list = [
-      am4core.color("#279fac"),
-      am4core.color("#ffb57e"),
-      am4core.color("#279fac"),
-      am4core.color("#ffb57e"),
-      am4core.color("#279fac"),
-      am4core.color("#ffb57e"),
-      am4core.color("#279fac"),
-      am4core.color("#ffb57e"),
-      am4core.color("#279fac"),
-      am4core.color("#ffb57e"),
-      am4core.color("#279fac"),
-      am4core.color("#ffb57e"),
+      am4core.color('#279fac'),
+      am4core.color('#ffb57e'),
+      am4core.color('#279fac'),
+      am4core.color('#ffb57e'),
+      am4core.color('#279fac'),
+      am4core.color('#ffb57e'),
+      am4core.color('#279fac'),
+      am4core.color('#ffb57e'),
+      am4core.color('#279fac'),
+      am4core.color('#ffb57e'),
+      am4core.color('#279fac'),
+      am4core.color('#ffb57e'),
     ];
 
     chart.zoomOutButton.disabled = true;
 
     // Adapter for color
-    series.columns.template.adapter.add("fill", (fill, target) => {
+    series.columns.template.adapter.add('fill', (fill, target) => {
       return chart.colors.getIndex(target.dataItem.index);
     });
 
@@ -304,7 +293,7 @@ const HospitalDashboardTwo = () => {
 
     // Set cursor
     chart.cursor = new am4charts.RadarCursor();
-    chart.cursor.behavior = "none";
+    chart.cursor.behavior = 'none';
     chart.cursor.lineX.disabled = true;
     chart.cursor.lineY.disabled = true;
 
@@ -321,31 +310,31 @@ const HospitalDashboardTwo = () => {
   const options = {
     chart: {
       height: 400,
-      type: "bar",
+      type: 'bar',
       sparkline: { show: false },
       toolbar: { show: false },
     },
-    colors: ["#089bab", "#FC9F5B"],
+    colors: ['#089bab', '#FC9F5B'],
     plotOptions: {
       bar: {
         horizontal: false,
-        columnWidth: "30%",
-        endingShape: "rounded",
+        columnWidth: '30%',
+        endingShape: 'rounded',
       },
     },
     dataLabels: { enabled: false },
     stroke: {
       show: false,
       width: 5,
-      colors: ["#ffffff"],
+      colors: ['#ffffff'],
     },
     series: [
       {
-        name: "Male",
+        name: 'Male',
         data: [44, 90, 90, 60, 115],
       },
       {
-        name: "Female",
+        name: 'Female',
         data: [35, 80, 100, 70, 95],
       },
     ],
@@ -359,146 +348,139 @@ const HospitalDashboardTwo = () => {
 
   const tableData = [
     {
-      label: "Excellent",
+      label: 'Excellent',
       value: 2400,
-      percentage: "60%",
-      statusClass: "status-online",
+      percentage: '60%',
+      statusClass: 'status-online',
     },
     {
-      label: "Very Good",
+      label: 'Very Good',
       value: 1200,
-      percentage: "30%",
-      statusClass: "status-blue",
+      percentage: '30%',
+      statusClass: 'status-blue',
     },
     {
-      label: "Good",
+      label: 'Good',
       value: 240,
-      percentage: "6%",
-      statusClass: "status-primary",
+      percentage: '6%',
+      statusClass: 'status-primary',
     },
-    { label: "Fair", value: 80, percentage: "2%", statusClass: "status-info" },
-    { label: "Poor", value: 40, percentage: "1%", statusClass: "status-away" },
+    { label: 'Fair', value: 80, percentage: '2%', statusClass: 'status-info' },
+    { label: 'Poor', value: 40, percentage: '1%', statusClass: 'status-away' },
     {
-      label: "Very Poor",
+      label: 'Very Poor',
       value: 40,
-      percentage: "1%",
-      statusClass: "status-danger",
+      percentage: '1%',
+      statusClass: 'status-danger',
     },
   ];
 
   const tasks = {
     home: [
-      "You should check in some of below.",
-      "Get the address of customer",
-      "Contact Vendor for parcel",
-      "Refuel delivery truck",
-      "Pick up for order no. 334",
-      "Pay taxes for every bill",
-      "I am designers & I have no life",
-      "This is a good product. Buy it",
+      'You should check in some of below.',
+      'Get the address of customer',
+      'Contact Vendor for parcel',
+      'Refuel delivery truck',
+      'Pick up for order no. 334',
+      'Pay taxes for every bill',
+      'I am designers & I have no life',
+      'This is a good product. Buy it',
     ],
-    profile: [
-      "You should check in on some of below.",
-      "You should check in on some of below.",
-    ],
+    profile: ['You should check in on some of below.', 'You should check in on some of below.'],
     contact: [
-      "You should check in on some of below.",
-      "You should check in on some of below.",
-      "You should check in on some of below.",
+      'You should check in on some of below.',
+      'You should check in on some of below.',
+      'You should check in on some of below.',
     ],
   };
 
   const timelineData = [
     {
-      title: "Patient Checkup",
-      date: "23 November 2019",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque",
-      dotClass: "",
+      title: 'Patient Checkup',
+      date: '23 November 2019',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque',
+      dotClass: '',
     },
     {
-      title: "Patient Admit",
-      date: "24 November 2019",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque",
-      dotClass: "border-success",
+      title: 'Patient Admit',
+      date: '24 November 2019',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque',
+      dotClass: 'border-success',
     },
     {
-      title: "Treatment Starts",
-      date: "24 November 2019",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque",
-      dotClass: "border-primary",
+      title: 'Treatment Starts',
+      date: '24 November 2019',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque',
+      dotClass: 'border-primary',
     },
     {
-      title: "Patient Discharge",
-      date: "30 November 2019",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque",
-      dotClass: "border-warning",
+      title: 'Patient Discharge',
+      date: '30 November 2019',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque',
+      dotClass: 'border-warning',
     },
   ];
 
   const patientsData = [
     {
-      name: "Petey Cruiser",
-      email: "peteycruiser01@gmail.com",
-      contact: "+1-202-555-0146",
-      disease: "Fever",
+      name: 'Petey Cruiser',
+      email: 'peteycruiser01@gmail.com',
+      contact: '+1-202-555-0146',
+      disease: 'Fever',
     },
     {
-      name: "Anna Sthesia",
-      email: "annasthesia121@gmail.com",
-      contact: "+1-202-555-0164",
-      disease: "Cancer",
+      name: 'Anna Sthesia',
+      email: 'annasthesia121@gmail.com',
+      contact: '+1-202-555-0164',
+      disease: 'Cancer',
     },
     {
-      name: "Paul Molive",
-      email: "paulmolive30@gmail.com",
-      contact: "+1-202-555-0153",
-      disease: "Diabetes",
+      name: 'Paul Molive',
+      email: 'paulmolive30@gmail.com',
+      contact: '+1-202-555-0153',
+      disease: 'Diabetes',
     },
     {
-      name: "Anna Mull",
-      email: "annamull07@gmail.com",
-      contact: "+1-202-555-0154",
-      disease: "Eye",
+      name: 'Anna Mull',
+      email: 'annamull07@gmail.com',
+      contact: '+1-202-555-0154',
+      disease: 'Eye',
     },
     {
-      name: "John Deo",
-      email: "johndeo123@gmail.com",
-      contact: "+1-202-555-0155",
-      disease: "Lung",
+      name: 'John Deo',
+      email: 'johndeo123@gmail.com',
+      contact: '+1-202-555-0155',
+      disease: 'Lung',
     },
   ];
 
   const reportData = [
     {
-      name: "X-ray.pdf",
-      link: "#",
-      buttonLabel: "Download",
-      buttonVariant: "info-subtle",
+      name: 'X-ray.pdf',
+      link: '#',
+      buttonLabel: 'Download',
+      buttonVariant: 'info-subtle',
       mb: 4,
     },
     {
-      name: "pathologyreport.pdf",
-      link: "#",
-      buttonLabel: "Download",
-      buttonVariant: "info-subtle",
+      name: 'pathologyreport.pdf',
+      link: '#',
+      buttonLabel: 'Download',
+      buttonVariant: 'info-subtle',
       mb: 4,
     },
     {
-      name: "laboratoryreports.pdf",
-      link: "#",
-      buttonLabel: "On Hold",
-      buttonVariant: "danger-subtle",
+      name: 'laboratoryreports.pdf',
+      link: '#',
+      buttonLabel: 'On Hold',
+      buttonVariant: 'danger-subtle',
       mb: 4,
     },
     {
-      name: "operativereport.pdf",
-      link: "#",
-      buttonLabel: "Download",
-      buttonVariant: "info-subtle",
+      name: 'operativereport.pdf',
+      link: '#',
+      buttonLabel: 'Download',
+      buttonVariant: 'info-subtle',
       mb: 0,
     },
   ];
@@ -515,12 +497,7 @@ const HospitalDashboardTwo = () => {
               </Card.Header.Title>
             </Card.Header>
             <Card.Body className="pt-0">
-              <Chart
-                options={chartOptions}
-                series={chartOptions.series}
-                type="bar"
-                height={350}
-              />
+              <Chart options={chartOptions} series={chartOptions.series} type="bar" height={350} />
             </Card.Body>
           </Card>
         </Col>
@@ -529,11 +506,7 @@ const HospitalDashboardTwo = () => {
         <Col lg={4}>
           <Card>
             <div className="rounded d-flex align-items-center justify-content-center pb-4 pt-1">
-              <img
-                src={generatePath("/assets/images/page-img/39.png")}
-                className="img-fluid rounded"
-                alt="banner-img"
-              />
+              <img src={generatePath('/assets/images/page-img/39.png')} className="img-fluid rounded" alt="banner-img" />
             </div>
           </Card>
         </Col>
@@ -547,7 +520,7 @@ const HospitalDashboardTwo = () => {
               </Card.Header.Title>
             </Card.Header>
             <Card.Body className="pt-0">
-              <div id="doc-chart-01" style={{ height: "415px" }}></div>
+              <div id="doc-chart-01" style={{ height: '415px' }}></div>
             </Card.Body>
           </Card>
         </Col>
@@ -561,12 +534,7 @@ const HospitalDashboardTwo = () => {
               </Card.Header.Title>
             </Card.Header>
             <Card.Body className="pt-0">
-              <ReactApexChart
-                options={options}
-                series={options.series}
-                type="bar"
-                height={400}
-              />
+              <ReactApexChart options={options} series={options.series} type="bar" height={400} />
             </Card.Body>
           </Card>
         </Col>
@@ -580,10 +548,12 @@ const HospitalDashboardTwo = () => {
               </Card.Header.Title>
             </Card.Header>
             <Card.Body>
-              <h2>3,897<span className="text-success font-size-14 ms-3 me-3"><i
-                className="ri-arrow-up-fill me-2"></i>+3.3%</span><small
-                  className="text-secondary font-size-14">Generated by
-                  clients</small>
+              <h2>
+                3,897
+                <span className="text-success font-size-14 ms-3 me-3">
+                  <i className="ri-arrow-up-fill me-2"></i>+3.3%
+                </span>
+                <small className="text-secondary font-size-14">Generated by clients</small>
               </h2>
 
               <ProgressBar className="mt-3">
@@ -601,9 +571,7 @@ const HospitalDashboardTwo = () => {
                     {tableData.map((item, index) => (
                       <tr key={index}>
                         <td>
-                          <div
-                            className={`profile-avatar ${item.statusClass} mt-4`}
-                          ></div>
+                          <div className={`profile-avatar ${item.statusClass} mt-4`}></div>
                         </td>
                         <td>
                           <h4>{item.label}</h4>
@@ -628,16 +596,10 @@ const HospitalDashboardTwo = () => {
                   <CardTitle as="h4">Tasks</CardTitle>
                 </Card.Header.Title>
                 <div className="card-header-toolbar d-flex align-items-center">
-                  <Nav
-                    variant="pills"
-                    className="custom-nav-pills flex-nowrap"
-                  >
+                  <Nav variant="pills" className="custom-nav-pills flex-nowrap">
                     {Object.keys(tasks).map((key) => (
                       <Nav.Item key={key}>
-                        <Nav.Link
-                          eventKey={key}
-                          className="text-primary-subtle"
-                        >
+                        <Nav.Link eventKey={key} className="text-primary-subtle">
                           {key.charAt(0).toUpperCase() + key.slice(1)}
                         </Nav.Link>
                       </Nav.Item>
@@ -650,21 +612,10 @@ const HospitalDashboardTwo = () => {
                   {Object.keys(tasks).map((key) => (
                     <Tab.Pane eventKey={key} key={key}>
                       {tasks[key].map((task, index) => (
-                        <div
-                          className="d-flex justify-content-between tasks-card"
-                          role="alert"
-                          key={index}
-                        >
+                        <div className="d-flex justify-content-between tasks-card" role="alert" key={index}>
                           <div className="custom-control custom-checkbox d-flex justity-content-center align-items-center gap-1">
-                            <input
-                              type="checkbox"
-                              className="custom-control-input"
-                              id={`${key}-task-${index}`}
-                            />{" "}
-                            <label
-                              className="custom-control-label ms-1"
-                              htmlFor={`${key}-task-${index}`}
-                            >
+                            <input type="checkbox" className="custom-control-input" id={`${key}-task-${index}`} />{' '}
+                            <label className="custom-control-label ms-1" htmlFor={`${key}-task-${index}`}>
                               {task}
                             </label>
                           </div>
@@ -686,23 +637,25 @@ const HospitalDashboardTwo = () => {
               </Card.Header.Title>
               <div className="card-header-toolbar d-flex align-items-center">
                 <Dropdown className="appointments-dropdown">
-                  <Dropdown.Toggle
-                    as="span"
-                    className="text-primary"
-                    id="dropdownMenuButton4"
-                    bsPrefix=" "
-                  >
+                  <Dropdown.Toggle as="span" className="text-primary" id="dropdownMenuButton4" bsPrefix=" ">
                     View All
                   </Dropdown.Toggle>
-                  <Dropdown.Menu
-                    align="end"
-                    aria-labelledby="dropdownMenuButton4"
-                  >
-                    <Dropdown.Item href="#" className="d-flex"><i className="ri-eye-fill me-2"></i>View</Dropdown.Item>
-                    <Dropdown.Item href="#" className="d-flex"><i className="ri-delete-bin-6-fill me-2"></i>Delete</Dropdown.Item>
-                    <Dropdown.Item href="#" className="d-flex"><i className="ri-pencil-fill me-2"></i>Edit</Dropdown.Item>
-                    <Dropdown.Item href="#" className="d-flex"><i className="ri-printer-fill me-2"></i>Print</Dropdown.Item>
-                    <Dropdown.Item href="#" className="d-flex"><i className="ri-file-download-fill me-2"></i>Download</Dropdown.Item>
+                  <Dropdown.Menu align="end" aria-labelledby="dropdownMenuButton4">
+                    <Dropdown.Item href="#" className="d-flex">
+                      <i className="ri-eye-fill me-2"></i>View
+                    </Dropdown.Item>
+                    <Dropdown.Item href="#" className="d-flex">
+                      <i className="ri-delete-bin-6-fill me-2"></i>Delete
+                    </Dropdown.Item>
+                    <Dropdown.Item href="#" className="d-flex">
+                      <i className="ri-pencil-fill me-2"></i>Edit
+                    </Dropdown.Item>
+                    <Dropdown.Item href="#" className="d-flex">
+                      <i className="ri-printer-fill me-2"></i>Print
+                    </Dropdown.Item>
+                    <Dropdown.Item href="#" className="d-flex">
+                      <i className="ri-file-download-fill me-2"></i>Download
+                    </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
               </div>
@@ -712,13 +665,9 @@ const HospitalDashboardTwo = () => {
               <ul className="timeline">
                 {timelineData.map((event, index) => (
                   <li key={index}>
-                    <div
-                      className={`timeline-dots mt-1 ${event.dotClass}`}
-                    ></div>
+                    <div className={`timeline-dots mt-1 ${event.dotClass}`}></div>
                     <h6 className="float-start mb-1 mt-2">{event.title}</h6>
-                    <small className="float-end mt-1 mt-2">
-                      {event.date}
-                    </small>
+                    <small className="float-end mt-1 mt-2">{event.date}</small>
                     <div className="d-inline-block w-100">
                       <p>{event.description}</p>
                     </div>
@@ -747,10 +696,7 @@ const HospitalDashboardTwo = () => {
                   >
                     View All
                   </Dropdown.Toggle>
-                  <Dropdown.Menu
-                    align="end"
-                    aria-labelledby="dropdownMenuButton5"
-                  >
+                  <Dropdown.Menu align="end" aria-labelledby="dropdownMenuButton5">
                     <Dropdown.Item href="#" className="d-flex">
                       <i className="ri-eye-fill me-2"></i>View
                     </Dropdown.Item>
@@ -806,10 +752,7 @@ const HospitalDashboardTwo = () => {
             <Card.Body>
               <ul className="report-lists m-0 p-0">
                 {reportData.map((report, index) => (
-                  <li
-                    key={index}
-                    className={`d-flex align-items-center justify-content-between  mb-${report.mb}`}
-                  >
+                  <li key={index} className={`d-flex align-items-center justify-content-between  mb-${report.mb}`}>
                     <div className="media-support-info">
                       <h6>{report.name}</h6>
                       <a href={report.link}>View report</a>
@@ -823,7 +766,7 @@ const HospitalDashboardTwo = () => {
             </Card.Body>
           </Card>
         </div>
-      </Row >
+      </Row>
     </>
   );
 };

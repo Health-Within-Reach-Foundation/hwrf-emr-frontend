@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { Button, Input, List } from "antd";
+import React, { useState } from 'react';
+import { Button, Input, List } from 'antd';
 
 const OptionsManager = ({ options, onOptionsUpdate }) => {
-  const [newOption, setNewOption] = useState("");
+  const [newOption, setNewOption] = useState('');
 
   const handleAddOption = () => {
     if (newOption.trim()) {
       onOptionsUpdate([...options, newOption.trim()]);
-      setNewOption("");
+      setNewOption('');
     }
   };
 
@@ -17,33 +17,29 @@ const OptionsManager = ({ options, onOptionsUpdate }) => {
   };
 
   return (
-    <div style={{ marginTop: "10px" }}>
+    <div style={{ marginTop: '10px' }}>
       <Input
         value={newOption}
         onChange={(e) => setNewOption(e.target.value)}
         placeholder="Enter new option"
         onPressEnter={handleAddOption}
       />
-      <Button
-        type="primary"
-        onClick={handleAddOption}
-        style={{ marginTop: "5px" }}
-      >
+      <Button type="primary" onClick={handleAddOption} style={{ marginTop: '5px' }}>
         Add Option
       </Button>
       {/* Display options using div and map */}
-      <div style={{ marginTop: "10px" }}>
+      <div style={{ marginTop: '10px' }}>
         {options.map((item, index) => (
           <div
             key={index}
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "5px",
-              padding: "5px",
-              border: "1px solid #d9d9d9",
-              borderRadius: "4px",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '5px',
+              padding: '5px',
+              border: '1px solid #d9d9d9',
+              borderRadius: '4px',
             }}
           >
             <span>{item}</span>
@@ -51,7 +47,7 @@ const OptionsManager = ({ options, onOptionsUpdate }) => {
               type="text"
               danger
               onClick={() => handleDeleteOption(index)}
-              style={{ padding: "5px", fontSize: "16px" }}
+              style={{ padding: '5px', fontSize: '16px' }}
             >
               <i className="ri-delete-bin-line"></i>
             </Button>

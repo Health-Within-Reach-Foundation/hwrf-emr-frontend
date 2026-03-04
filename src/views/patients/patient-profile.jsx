@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Tabs, Tab } from "react-bootstrap";
-import { Button, Select } from "antd"; // Import TreeSelect from antd
-import { useParams } from "react-router-dom";
-import patientServices from "../../api/patient-services";
-import { Loading } from "../../components/loading";
-import { useAuth } from "../../utilities/AuthProvider";
-import toast from "react-hot-toast";
-import PatientDiagnosisForm from "../../components/patients/patient-diagnosis-form";
-import DateCell from "../../components/date-cell";
-import BasicPatientProfile from "../../components/patients/basic-patient-profile";
-import clinicServices from "../../api/clinic-services";
-import { transformText } from "../../utilities/utility-function";
-import { RiAddLine } from "@remixicon/react";
-import campManagementService from "../../api/camp-management-service";
-import CurrentCampDetailsHeader from "../../components/camp/currentcamp-detail-header";
-import MammoMedicalHistory from "../../components/mammography/mammography-medical-history";
-import AntdTable from "../../components/antd-table";
-import GPMedicalRecord from "../../components/general-physician/gp-medical-record";
-import formFieldsServices from "../../api/form-fields.services";
-import BackButton from "../../components/back-button";
+import React, { useEffect, useState } from 'react';
+import { Container, Row, Col, Card, Tabs, Tab } from 'react-bootstrap';
+import { Button, Select } from 'antd'; // Import TreeSelect from antd
+import { useParams } from 'react-router-dom';
+import patientServices from '../../api/patient-services';
+import { Loading } from '../../components/loading';
+import { useAuth } from '../../utilities/AuthProvider';
+import toast from 'react-hot-toast';
+import PatientDiagnosisForm from '../../components/patients/patient-diagnosis-form';
+import DateCell from '../../components/date-cell';
+import BasicPatientProfile from '../../components/patients/basic-patient-profile';
+import clinicServices from '../../api/clinic-services';
+import { transformText } from '../../utilities/utility-function';
+import { RiAddLine } from '@remixicon/react';
+import campManagementService from '../../api/camp-management-service';
+import CurrentCampDetailsHeader from '../../components/camp/currentcamp-detail-header';
+import MammoMedicalHistory from '../../components/mammography/mammography-medical-history';
+import AntdTable from '../../components/antd-table';
+import GPMedicalRecord from '../../components/general-physician/gp-medical-record';
+import formFieldsServices from '../../api/form-fields.services';
+import BackButton from '../../components/back-button';
 
 const PatientProfile = () => {
   const { id } = useParams();
@@ -39,7 +39,7 @@ const PatientProfile = () => {
   const [users, setUsers] = useState([]);
   const [departmentList, setDepartmentList] = useState([]);
   const [allDiagnoses, setAllDiagnoses] = useState([]);
-  const [activeTab, setActiveTab] = useState("dentistry");
+  const [activeTab, setActiveTab] = useState('dentistry');
   const [options, setOptions] = useState({
     complaintsOptions: [],
     treatmentsSuggestedOptions: [],
@@ -60,64 +60,59 @@ const PatientProfile = () => {
 
   const newDenistryColumns = [
     {
-      title: "Diagnosis date",
-      dataIndex: "createdAt",
-      key: "createdAt",
+      title: 'Diagnosis date',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       sortable: true,
-      render: (text) => (
-        <DateCell date={new Date(text)} dateFormat="D MMM, YYYY" />
-      ),
+      render: (text) => <DateCell date={new Date(text)} dateFormat="D MMM, YYYY" />,
     },
     {
-      title: "Tooth Number",
-      dataIndex: "selectedTeeth",
+      title: 'Tooth Number',
+      dataIndex: 'selectedTeeth',
       width: 140,
-      key: "selectedTeeth",
+      key: 'selectedTeeth',
       render: (text) => text,
     },
     {
-      title: "Complaints",
-      dataIndex: "complaints",
-      key: "complaints",
+      title: 'Complaints',
+      dataIndex: 'complaints',
+      key: 'complaints',
       sortable: true,
-      render: (text) => (
-        <span title={text?.join(", ")}>{text?.join(", ")}</span>
-      ),
+      render: (text) => <span title={text?.join(', ')}>{text?.join(', ')}</span>,
     },
     {
-      title: "Suggested Treatment",
+      title: 'Suggested Treatment',
       sortable: true,
       ellipsis: false,
-      dataIndex: "treatmentsSuggested",
+      dataIndex: 'treatmentsSuggested',
       width: 200,
-      key: "treatmentsSuggested",
-      render: (text) => (
-        <span title={text?.join(", ")}>{text?.join(", ")}</span>
-      ),
+      key: 'treatmentsSuggested',
+      render: (text) => <span title={text?.join(', ')}>{text?.join(', ')}</span>,
     },
     {
-      title: "Treatment Progress",
-      dataIndex: "treatmentStatus",
+      title: 'Treatment Progress',
+      dataIndex: 'treatmentStatus',
       width: 200,
       filters: [
-        { text: "Not Started", value: "not started" },
-        { text: "Started", value: "started" },
-        { text: "Completed", value: "completed" },
+        { text: 'Not Started', value: 'not started' },
+        { text: 'Started', value: 'started' },
+        { text: 'Completed', value: 'completed' },
       ],
       onFilter: (value, record) => record?.treatment?.status === value,
-      key: "treatmentStatus",
+      key: 'treatmentStatus',
       render: (text, record) => {
         return <span>{transformText(record?.treatment?.status)}</span>;
       },
     },
     {
-      title: "View Diagnosis",
+      title: 'View Diagnosis',
       dataIndex: null,
-      key: "viewDiagnosis",
+      key: 'viewDiagnosis',
       // fixed: "right",
       render: (_, record) => (
         <Button
-        className="bg-primary" type="primary"
+          className="bg-primary"
+          type="primary"
           size="sm"
           variant="primary"
           onClick={() => handleOpenDrawer(record, true)}
@@ -131,12 +126,9 @@ const PatientProfile = () => {
   const fetchPatientData = async () => {
     try {
       setPatientLoading(true);
-      const response = await patientServices.getPatientDetailsById(
-        id,
-        user?.specialties[0]?.id
-      );
+      const response = await patientServices.getPatientDetailsById(id, user?.specialties[0]?.id);
       const { data } = response;
-      console.log("patient profile data-->", data);
+      console.log('patient profile data-->', data);
       setPatientData(data);
       if (data.diagnoses.length > 0) {
         data.diagnoses.map((diagnosis) => {
@@ -156,7 +148,7 @@ const PatientProfile = () => {
         // setAllDiagnoses(replicatedDiagnoses); // Save the replicated data
 
         const totalAmount = data.diagnoses.reduce((acc, curr) => {
-          if (curr.treatment.status !== "not started") {
+          if (curr.treatment.status !== 'not started') {
             const amount = Number(curr.treatment.totalAmount);
             return isNaN(amount) ? acc : acc + amount;
           }
@@ -164,7 +156,7 @@ const PatientProfile = () => {
         }, 0);
 
         const remainingAmount = data.diagnoses.reduce((acc, curr) => {
-          if (curr.treatment.status !== "not started") {
+          if (curr.treatment.status !== 'not started') {
             const amount = Number(curr.treatment.remainingAmount);
             return isNaN(amount) ? acc : acc + amount;
           }
@@ -172,7 +164,7 @@ const PatientProfile = () => {
         }, 0);
 
         const paidAmount = data.diagnoses.reduce((acc, curr) => {
-          if (curr.treatment.status !== "not started") {
+          if (curr.treatment.status !== 'not started') {
             const amount = Number(curr.treatment.paidAmount);
             return isNaN(amount) ? acc : acc + amount;
           }
@@ -186,11 +178,7 @@ const PatientProfile = () => {
         });
 
         if (selectedDiagnosis !== null) {
-          setSelectedDiagnosis(
-            data.diagnoses.find(
-              (dignosis) => dignosis?.id === selectedDiagnosis.id
-            )
-          );
+          setSelectedDiagnosis(data.diagnoses.find((dignosis) => dignosis?.id === selectedDiagnosis.id));
         } else {
           setDrawerVisible(false);
         }
@@ -198,7 +186,7 @@ const PatientProfile = () => {
 
       // setSelectedDiagnosisRow(null);
     } catch (error) {
-      console.error("Error fetching patient data:", error);
+      console.error('Error fetching patient data:', error);
     } finally {
       setPatientLoading(false);
     }
@@ -288,7 +276,7 @@ const PatientProfile = () => {
       //     )?.options || [],
       // });
     } catch (error) {
-      console.error("Error fetching form fields:", error);
+      console.error('Error fetching form fields:', error);
     } finally {
       setOptionsLoading(false);
     }
@@ -312,15 +300,12 @@ const PatientProfile = () => {
       patientBody.primaryDoctor = primaryDoctor;
     }
     try {
-      const response = await patientServices.updatePatientDetails(
-        id,
-        patientBody
-      );
+      const response = await patientServices.updatePatientDetails(id, patientBody);
       if (response.success) {
         toast.success(response.message);
       }
     } catch (error) {
-      toast.error("Error while updating patient !");
+      toast.error('Error while updating patient !');
     }
   };
 
@@ -329,12 +314,8 @@ const PatientProfile = () => {
     try {
       const response = await clinicServices.getUsersByClinic();
       const filteredUsers = response.data.filter((eachUser) => {
-        const isDoctor = eachUser?.roles?.some(
-          (role) => role?.roleName === "doctor"
-        );
-        const isDentist = eachUser?.specialties?.some(
-          (specialty) => specialty?.name === "Dentist"
-        );
+        const isDoctor = eachUser?.roles?.some((role) => role?.roleName === 'doctor');
+        const isDentist = eachUser?.specialties?.some((specialty) => specialty?.name === 'Dentist');
         return isDoctor && isDentist;
       });
 
@@ -360,16 +341,13 @@ const PatientProfile = () => {
           label: department.departmentName,
         }))
       );
-      const settingActiveTab = patientData?.appointments?.find(
-        (appointment) => appointment.status === "in"
-      )?.specialtyId;
+      const settingActiveTab = patientData?.appointments?.find((appointment) => appointment.status === 'in')?.specialtyId;
       setActiveTab(
-        response.data.specialties
-          ?.find((department) => department.id === settingActiveTab)
-          ?.departmentName.toLowerCase() || "dentistry"
+        response.data.specialties?.find((department) => department.id === settingActiveTab)?.departmentName.toLowerCase() ||
+          'dentistry'
       );
     } catch (error) {
-      console.error("Error fetching departments:", error);
+      console.error('Error fetching departments:', error);
     } finally {
       setCampLoading(false);
     }
@@ -378,25 +356,20 @@ const PatientProfile = () => {
   const fetchCampDetails = async () => {
     try {
       setCampLoading(true);
-      const response = await campManagementService.getCampById(
-        user.currentCampId
-      );
+      const response = await campManagementService.getCampById(user.currentCampId);
       setDepartmentList(
         response.data.specialties.map((department) => ({
           value: department.id,
           label: department.departmentName,
         }))
       );
-      const settingActiveTab = patientData?.appointments?.find(
-        (appointment) => appointment.status === "in"
-      )?.specialtyId;
+      const settingActiveTab = patientData?.appointments?.find((appointment) => appointment.status === 'in')?.specialtyId;
       setActiveTab(
-        response.data.specialties
-          ?.find((department) => department.id === settingActiveTab)
-          ?.departmentName.toLowerCase() || "dentistry"
+        response.data.specialties?.find((department) => department.id === settingActiveTab)?.departmentName.toLowerCase() ||
+          'dentistry'
       );
     } catch (error) {
-      console.error("Error fetching camp details:", error);
+      console.error('Error fetching camp details:', error);
     } finally {
       setCampLoading(false);
     }
@@ -406,7 +379,7 @@ const PatientProfile = () => {
     fetchPatientData();
     getUsersbyClinic();
     fetchOptions();
-    if (userRoles.includes("admin")) {
+    if (userRoles.includes('admin')) {
       getSpecialtyDepartmentsByClinic();
     } else {
       fetchCampDetails();
@@ -414,20 +387,19 @@ const PatientProfile = () => {
   }, []);
 
   const customRowClass = (record) => {
-    if (record?.treatment?.status === "completed") {
-      return "row-success";
+    if (record?.treatment?.status === 'completed') {
+      return 'row-success';
     }
-    if (record?.treatment?.status === "started") {
-      return "row-info";
+    if (record?.treatment?.status === 'started') {
+      return 'row-info';
     }
-    if (record?.treatment?.status === "not started") {
-      return "row-warning";
+    if (record?.treatment?.status === 'not started') {
+      return 'row-warning';
     }
-    return "";
+    return '';
   };
 
-  if (patientLoading || usersLoading || campLoading || optionsLoading)
-    return <Loading />;
+  if (patientLoading || usersLoading || campLoading || optionsLoading) return <Loading />;
 
   return (
     <Container>
@@ -462,9 +434,7 @@ const PatientProfile = () => {
             activeKey={activeTab}
           >
             {/* Dentistry Tab */}
-            {departmentList
-              .map((eachDepartment) => eachDepartment.label)
-              .includes("Dentistry") && (
+            {departmentList.map((eachDepartment) => eachDepartment.label).includes('Dentistry') && (
               <Tab eventKey="dentistry" title="Dentistry">
                 <label htmlFor="primary-doc" className="form-label">
                   Primary Doctor
@@ -479,17 +449,13 @@ const PatientProfile = () => {
                     handleSavePatientData(option);
                   }}
                   filterOption={(input, option) => {
-                    const labelMatch = option.label
-                      .toLowerCase()
-                      .includes(input.toLowerCase());
+                    const labelMatch = option.label.toLowerCase().includes(input.toLowerCase());
                     const phoneMatch = option.phoneNumber
-                      ? option.phoneNumber
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
+                      ? option.phoneNumber.toLowerCase().includes(input.toLowerCase())
                       : false;
                     return labelMatch || phoneMatch;
                   }}
-                />{" "}
+                />{' '}
                 <Container className="mt-3">
                   <h5 className="mt-3">Diagnoses</h5>
                   <hr />
@@ -499,7 +465,8 @@ const PatientProfile = () => {
                   <div className="d-flex justify-content-end">
                     <Button
                       variant="primary"
-                      className="bg-primary" type="primary"
+                      className="bg-primary"
+                      type="primary"
                       size="sm"
                       // className="my-3"
                       onClick={() => handleOpenDrawer(null, false)}
@@ -522,9 +489,7 @@ const PatientProfile = () => {
             )}
 
             {/* GP Tab */}
-            {departmentList
-              .map((eachDepartment) => eachDepartment.label)
-              .includes("GP") && (
+            {departmentList.map((eachDepartment) => eachDepartment.label).includes('GP') && (
               <Tab eventKey="gp" title="GP">
                 <>
                   <GPMedicalRecord
@@ -532,18 +497,14 @@ const PatientProfile = () => {
                     patientData={patientData}
                     onSave={fetchPatientData}
                     // options={options}
-                    formFields={
-                      formFields["GP Form"] ? formFields["GP Form"] : []
-                    }
+                    formFields={formFields['GP Form'] ? formFields['GP Form'] : []}
                   />
                 </>
               </Tab>
             )}
 
             {/* Mammography Tab */}
-            {departmentList
-              .map((eachDepartment) => eachDepartment.label)
-              .includes("Mammography") && (
+            {departmentList.map((eachDepartment) => eachDepartment.label).includes('Mammography') && (
               <Tab eventKey="mammography" title="Mammography">
                 {/* <MammoReportLexical patient={patientData}/> */}
                 <MammoMedicalHistory

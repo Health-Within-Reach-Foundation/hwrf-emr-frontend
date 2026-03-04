@@ -1,7 +1,7 @@
-import React from "react";
-import { Input, Radio, Checkbox, Select } from "antd";
-import OptionsManager from "./OptionsManager";
-import "./FieldRenderer.module.scss";
+import React from 'react';
+import { Input, Radio, Checkbox, Select } from 'antd';
+import OptionsManager from './OptionsManager';
+import './FieldRenderer.module.scss';
 
 const { TextArea } = Input;
 
@@ -29,7 +29,7 @@ const FieldRenderer = ({ field, onFieldUpdate }) => {
           placeholder="Field title"
           className="title-input"
         /> */}
-        Field Title 
+        Field Title
       </div>
 
       {
@@ -38,7 +38,7 @@ const FieldRenderer = ({ field, onFieldUpdate }) => {
 
           {(() => {
             switch (field.type) {
-              case "input":
+              case 'input':
                 return (
                   <Input
                     placeholder="Enter text"
@@ -48,7 +48,7 @@ const FieldRenderer = ({ field, onFieldUpdate }) => {
                     className="value-input"
                   />
                 );
-              case "phone":
+              case 'phone':
                 return (
                   <Input
                     id={field.id}
@@ -59,7 +59,7 @@ const FieldRenderer = ({ field, onFieldUpdate }) => {
                     className="value-input"
                   />
                 );
-              case "mailId":
+              case 'mailId':
                 return (
                   <Input
                     id={field.id}
@@ -69,7 +69,7 @@ const FieldRenderer = ({ field, onFieldUpdate }) => {
                     className="value-input"
                   />
                 );
-              case "textarea":
+              case 'textarea':
                 return (
                   <TextArea
                     placeholder="Enter text"
@@ -80,7 +80,7 @@ const FieldRenderer = ({ field, onFieldUpdate }) => {
                     className="value-input"
                   />
                 );
-              case "radio":
+              case 'radio':
                 return (
                   <>
                     <Radio.Group
@@ -90,36 +90,24 @@ const FieldRenderer = ({ field, onFieldUpdate }) => {
                         value: opt,
                       }))}
                       value={field.value}
-                      onChange={(e) =>
-                        onFieldUpdate({ ...field, value: e.target.value })
-                      }
+                      onChange={(e) => onFieldUpdate({ ...field, value: e.target.value })}
                     />
-                    <OptionsManager
-                      options={field.options}
-                      id={field.id}
-                      onOptionsUpdate={handleOptionsUpdate}
-                    />
+                    <OptionsManager options={field.options} id={field.id} onOptionsUpdate={handleOptionsUpdate} />
                   </>
                 );
-              case "checkbox":
+              case 'checkbox':
                 return (
                   <>
                     <Checkbox.Group
                       options={field.options}
                       id={field.id}
                       value={field.value}
-                      onChange={(checkedValues) =>
-                        onFieldUpdate({ ...field, value: checkedValues })
-                      }
+                      onChange={(checkedValues) => onFieldUpdate({ ...field, value: checkedValues })}
                     />
-                    <OptionsManager
-                      options={field.options}
-                      onOptionsUpdate={handleOptionsUpdate}
-                      id={field.id}
-                    />
+                    <OptionsManager options={field.options} onOptionsUpdate={handleOptionsUpdate} id={field.id} />
                   </>
                 );
-              case "select":
+              case 'select':
                 return (
                   <>
                     <Select
@@ -130,13 +118,9 @@ const FieldRenderer = ({ field, onFieldUpdate }) => {
                       }))}
                       value={field.value}
                       onChange={(value) => onFieldUpdate({ ...field, value })}
-                      style={{ width: "100%" }}
+                      style={{ width: '100%' }}
                     />
-                    <OptionsManager
-                      id={field.id}
-                      options={field.options}
-                      onOptionsUpdate={handleOptionsUpdate}
-                    />
+                    <OptionsManager id={field.id} options={field.options} onOptionsUpdate={handleOptionsUpdate} />
                   </>
                 );
               default:

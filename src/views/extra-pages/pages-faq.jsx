@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Accordion } from "react-bootstrap"; 
+import React, { useState } from 'react';
+import { Accordion } from 'react-bootstrap';
 
 const Faq = () => {
   const [activeKey, setActiveKey] = useState('0');
@@ -10,7 +10,12 @@ const Faq = () => {
 
   return (
     <>
-      <Accordion defaultActiveKey={"0"} activeKey={activeKey} className="accordion-flush custom-accordion iq-faq" id="accordion-1">
+      <Accordion
+        defaultActiveKey={'0'}
+        activeKey={activeKey}
+        className="accordion-flush custom-accordion iq-faq"
+        id="accordion-1"
+      >
         <div className="row">
           <div className="col-lg-6">
             {[
@@ -126,6 +131,6 @@ const Faq = () => {
       </Accordion>
     </>
   );
-}
+};
 
 export default Faq;

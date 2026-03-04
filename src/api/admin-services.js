@@ -1,4 +1,4 @@
-import apiClient from "./axios-client";
+import apiClient from './axios-client';
 
 const inviteUser = async (userFormBody) => {
   try {
@@ -9,8 +9,7 @@ const inviteUser = async (userFormBody) => {
     return { success: true };
   } catch (error) {
     // Extract and handle error message
-    const errorMessage =
-      error.response?.data?.message || "An error occurred. Please try again.";
+    const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
     return { success: false, error: errorMessage };
   }
 };
@@ -23,37 +22,27 @@ const getAllFormTemplates = async () => {
     return response.data;
   } catch (error) {
     if (error.response) {
-      console.error("Error response:", error.response.data);
-      throw new Error(
-        error.response.data.message || "Failed to fetch form templates"
-      );
+      console.error('Error response:', error.response.data);
+      throw new Error(error.response.data.message || 'Failed to fetch form templates');
     } else {
-      console.error("Unexpected error:", error.message);
-      throw new Error(
-        "An unexpected error occurred while fetching form templates"
-      );
+      console.error('Unexpected error:', error.message);
+      throw new Error('An unexpected error occurred while fetching form templates');
     }
   }
 };
 
 const getFormTemplateById = async (formTemplateId) => {
   try {
-    const response = await apiClient.get(
-      `/clinics/form-template/${formTemplateId}`
-    );
+    const response = await apiClient.get(`/clinics/form-template/${formTemplateId}`);
 
     return response.data;
   } catch (error) {
     if (error.response) {
-      console.error("Error response:", error.response.data);
-      throw new Error(
-        error.response.data.message || "Failed to fetch form template"
-      );
+      console.error('Error response:', error.response.data);
+      throw new Error(error.response.data.message || 'Failed to fetch form template');
     } else {
-      console.error("Unexpected error:", error.message);
-      throw new Error(
-        "An unexpected error occurred while fetching form template"
-      );
+      console.error('Unexpected error:', error.message);
+      throw new Error('An unexpected error occurred while fetching form template');
     }
   }
 };

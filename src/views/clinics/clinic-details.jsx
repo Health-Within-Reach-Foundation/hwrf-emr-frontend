@@ -1,23 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import {
-  Card,
-  Button,
-  Container,
-  Row,
-  Col,
-  Alert,
-  Breadcrumb,
-  Form,
-  Spinner,
-} from "react-bootstrap";
-import { Select } from "antd";
-import toast from "react-hot-toast";
-import clinicServices from "../../api/clinic-services";
-import superadminServices from "../../api/superadmin-services";
-import DateCell from "../../components/date-cell";
-import { Loading } from "../../components/loading";
-import BackButton from "../../components/back-button";
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { Card, Button, Container, Row, Col, Alert, Breadcrumb, Form, Spinner } from 'react-bootstrap';
+import { Select } from 'antd';
+import toast from 'react-hot-toast';
+import clinicServices from '../../api/clinic-services';
+import superadminServices from '../../api/superadmin-services';
+import DateCell from '../../components/date-cell';
+import { Loading } from '../../components/loading';
+import BackButton from '../../components/back-button';
 
 const ClinicDetails = () => {
   const { id } = useParams();
@@ -37,7 +27,7 @@ const ClinicDetails = () => {
       const response = await clinicServices.getClinicById(id);
       setClinic(response.data);
     } catch {
-      setError("Failed to load clinic details.");
+      setError('Failed to load clinic details.');
     } finally {
       setLoading(false);
     }
@@ -53,7 +43,7 @@ const ClinicDetails = () => {
       }));
       setSpecialtyOptions(options);
     } catch {
-      toast.error("Failed to fetch specialties.");
+      toast.error('Failed to fetch specialties.');
     }
   };
 
@@ -98,7 +88,7 @@ const ClinicDetails = () => {
         setIsEditing(false);
       }
     } catch {
-      toast.error("Failed to update clinic details.");
+      toast.error('Failed to update clinic details.');
     } finally {
       setLoading(false);
       fetchClinicDetails();
@@ -116,7 +106,7 @@ const ClinicDetails = () => {
       }
       fetchClinicDetails();
     } catch {
-      toast.error("Failed to approve the clinic.");
+      toast.error('Failed to approve the clinic.');
     } finally {
       setApprovalLoading(false);
     }
@@ -136,29 +126,19 @@ const ClinicDetails = () => {
       <Breadcrumb>
         <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
         <Breadcrumb.Item href="/clinics">Clinics</Breadcrumb.Item>
-        <Breadcrumb.Item active>{clinic?.clinicName || "N/A"}</Breadcrumb.Item>
+        <Breadcrumb.Item active>{clinic?.clinicName || 'N/A'}</Breadcrumb.Item>
       </Breadcrumb>
 
-      {clinic?.status === "pending" && !isApproved && (
+      {clinic?.status === 'pending' && !isApproved && (
         <div className="d-flex justify-content-end text-center my-3">
-          <Button
-            variant="success"
-            onClick={handleApproveClinic}
-            disabled={loading}
-          >
+          <Button variant="success" onClick={handleApproveClinic} disabled={loading}>
             {approvalLoading ? (
               <>
-                <Spinner
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />
+                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
                 <span className="ms-2">Loading...</span>
               </>
             ) : (
-              "Approve Clinic"
+              'Approve Clinic'
             )}
           </Button>
         </div>
@@ -173,7 +153,7 @@ const ClinicDetails = () => {
               onChange={(e) => handleInputChange("clinicName", e.target.value)}
             />
           ) : ( */}
-          <h4>{clinic?.clinicName || "N/A"}</h4>
+          <h4>{clinic?.clinicName || 'N/A'}</h4>
           {/*  )} */}
           {!isEditing && (
             <Button variant="light" onClick={handleEditClick}>
@@ -192,7 +172,7 @@ const ClinicDetails = () => {
                   onChange={(e) => handleInputChange("adminName", e.target.value)}
                 />
               ) : ( */}
-              <p>{clinic?.adminName || "N/A"}</p>
+              <p>{clinic?.adminName || 'N/A'}</p>
               {/* )} */}
             </Col>
             <Col sm={6}>
@@ -201,17 +181,13 @@ const ClinicDetails = () => {
                 <Select
                   mode="multiple"
                   options={specialtyOptions}
-                  style={{ width: "100%" }}
+                  style={{ width: '100%' }}
                   placeholder="Select specialties"
                   value={editedClinic.specialties || []}
-                  onChange={(value) => handleInputChange("specialties", value)}
+                  onChange={(value) => handleInputChange('specialties', value)}
                 />
               ) : (
-                <p>
-                  {clinic?.specialties
-                    ?.map((s) => s.departmentName)
-                    .join(", ") || "N/A"}
-                </p>
+                <p>{clinic?.specialties?.map((s) => s.departmentName).join(', ') || 'N/A'}</p>
               )}
             </Col>
           </Row>
@@ -225,7 +201,7 @@ const ClinicDetails = () => {
                   onChange={(e) => handleInputChange("adminContactEmail", e.target.value)}
                 />
               ) : ( */}
-              <p>{clinic?.adminContactEmail || "N/A"}</p>
+              <p>{clinic?.adminContactEmail || 'N/A'}</p>
               {/* )} */}
             </Col>
             <Col sm={6}>
@@ -237,7 +213,7 @@ const ClinicDetails = () => {
                   onChange={(e) => handleInputChange("adminContactNumber", e.target.value)}
                 />
               ) : ( */}
-              <p>{clinic?.adminContactNumber || "N/A"}</p>
+              <p>{clinic?.adminContactNumber || 'N/A'}</p>
               {/* )} */}
             </Col>
           </Row>
@@ -251,7 +227,7 @@ const ClinicDetails = () => {
                   onChange={(e) => handleInputChange("clinicContactEmail", e.target.value)}
                 />
               ) : ( */}
-              <p>{clinic?.clinicContactEmail || "N/A"}</p>
+              <p>{clinic?.clinicContactEmail || 'N/A'}</p>
               {/* )} */}
             </Col>
             <Col sm={6}>
@@ -263,7 +239,7 @@ const ClinicDetails = () => {
                   onChange={(e) => handleInputChange("clinicPhoneNumber", e.target.value)}
                 />
               ) : ( */}
-              <p>{clinic?.clinicPhoneNumber || "N/A"}</p>
+              <p>{clinic?.clinicPhoneNumber || 'N/A'}</p>
               {/* )} */}
             </Col>
           </Row>
@@ -272,14 +248,14 @@ const ClinicDetails = () => {
               <h5>Status:</h5>
               <span
                 className={`badge ${
-                  clinic?.status === "pending"
-                    ? "bg-warning text-dark"
-                    : clinic?.status === "active"
-                    ? "bg-success"
-                    : "bg-secondary"
+                  clinic?.status === 'pending'
+                    ? 'bg-warning text-dark'
+                    : clinic?.status === 'active'
+                      ? 'bg-success'
+                      : 'bg-secondary'
                 }`}
               >
-                {clinic?.status?.toUpperCase() || "N/A"}
+                {clinic?.status?.toUpperCase() || 'N/A'}
               </span>
             </Col>
             <Col sm={6}>
@@ -289,11 +265,7 @@ const ClinicDetails = () => {
           </Row>
           {isEditing && (
             <div className="text-end">
-              <Button
-                variant="success"
-                onClick={handleSaveChanges}
-                className="me-2"
-              >
+              <Button variant="success" onClick={handleSaveChanges} className="me-2">
                 Save Changes
               </Button>
               <Button variant="secondary" onClick={() => setIsEditing(false)}>

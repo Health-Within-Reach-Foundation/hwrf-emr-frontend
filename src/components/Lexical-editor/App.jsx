@@ -1,13 +1,13 @@
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import * as React from "react";
-import "./index.css";
-import { FlashMessageContext } from "./context/FlashMessageContext";
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import * as React from 'react';
+import './index.css';
+import { FlashMessageContext } from './context/FlashMessageContext';
 // import { useSettings } from "./context/SettingsContext";
-import Editor from "./Editor";
-import PlaygroundNodes from "./nodes/PlaygroundNodes";
-import { TableContext } from "./plugins/TablePlugin";
-import PlaygroundEditorTheme from "./themes/PlaygroundEditorTheme";
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
+import Editor from './Editor';
+import PlaygroundNodes from './nodes/PlaygroundNodes';
+import { TableContext } from './plugins/TablePlugin';
+import PlaygroundEditorTheme from './themes/PlaygroundEditorTheme';
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 function App({
   setEditorContent,
   defaultEditorContent,
@@ -22,26 +22,20 @@ function App({
 
   try {
     // If defaultEditorContent is a string, parse it
-    const parsedContent =
-      typeof defaultEditorContent === "string"
-        ? defaultEditorContent
-        : defaultEditorContent;
+    const parsedContent = typeof defaultEditorContent === 'string' ? defaultEditorContent : defaultEditorContent;
 
     // Check if parsedContent is a valid editor state
     initialEditorState =
-      Object.keys(parsedContent.toJSON ? parsedContent.toJSON() : parsedContent)
-        .length === 0
-        ? null
-        : parsedContent;
+      Object.keys(parsedContent.toJSON ? parsedContent.toJSON() : parsedContent).length === 0 ? null : parsedContent;
   } catch (error) {
     // Handle JSON parse errors or invalid editor content
-    console.error("Error parsing defaultEditorContent:", error);
+    console.error('Error parsing defaultEditorContent:', error);
     initialEditorState = null;
   }
 
   let initialConfig = {
     editorState: initialEditorState,
-    namespace: "Mammography Report",
+    namespace: 'Mammography Report',
     nodes: [...PlaygroundNodes],
     onError: (error) => {
       throw error;
@@ -50,7 +44,7 @@ function App({
   };
   let initialConfigReadOnly = {
     editorState: initialEditorState,
-    namespace: "Policy",
+    namespace: 'Policy',
     nodes: [...PlaygroundNodes],
     onError: (error) => {
       throw error;
@@ -59,9 +53,7 @@ function App({
     editable: false,
   };
   return (
-    <LexicalComposer
-      initialConfig={editable ? initialConfig : initialConfigReadOnly}
-    >
+    <LexicalComposer initialConfig={editable ? initialConfig : initialConfigReadOnly}>
       <TableContext>
         <div className="editor-shell">
           <Editor
@@ -75,9 +67,7 @@ function App({
           />
         </div>
       </TableContext>
-      <OnChangePlugin
-        onChange={(editorstate) => setEditorContent(editorstate)}
-      />
+      <OnChangePlugin onChange={(editorstate) => setEditorContent(editorstate)} />
     </LexicalComposer>
   );
 }

@@ -1,20 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { Input, Radio, Checkbox, Select, Form, Button, DatePicker, Upload } from "antd";
-import { InboxOutlined } from "@ant-design/icons";
-import "./DynamicForm.scss";
+import React, { useState, useEffect } from 'react';
+import { Input, Radio, Checkbox, Select, Form, Button, DatePicker, Upload } from 'antd';
+import { InboxOutlined } from '@ant-design/icons';
+import './DynamicForm.scss';
 
 const { TextArea } = Input;
 const { Option } = Select;
 
-
-const DynamicForm = ({ data, onSubmit = () => {}  }) => {
+const DynamicForm = ({ data, onSubmit = () => {} }) => {
   const [formState, setFormState] = useState({});
   const [form] = Form.useForm();
 
   // Initialize form state from the data prop
   useEffect(() => {
     const initialState = data.reduce((acc, field) => {
-      acc[field.id] = field.value || (field.type === "checkbox" ? [] : "");
+      acc[field.id] = field.value || (field.type === 'checkbox' ? [] : '');
       return acc;
     }, {});
     setFormState(initialState);
@@ -31,7 +30,7 @@ const DynamicForm = ({ data, onSubmit = () => {}  }) => {
   // Render a specific field based on its type
   const renderField = (field) => {
     switch (field.type) {
-      case "input":
+      case 'input':
         return (
           <Input
             id={field.id}
@@ -40,7 +39,7 @@ const DynamicForm = ({ data, onSubmit = () => {}  }) => {
             onChange={(e) => handleFieldChange(field.id, e.target.value)}
           />
         );
-      case "phone":
+      case 'phone':
         return (
           <Input
             id={field.id}
@@ -50,7 +49,7 @@ const DynamicForm = ({ data, onSubmit = () => {}  }) => {
             onChange={(e) => handleFieldChange(field.id, e.target.value)}
           />
         );
-      case "mailId":
+      case 'mailId':
         return (
           <Input
             id={field.id}
@@ -60,7 +59,7 @@ const DynamicForm = ({ data, onSubmit = () => {}  }) => {
             onChange={(e) => handleFieldChange(field.id, e.target.value)}
           />
         );
-      case "password":
+      case 'password':
         return (
           <Input.Password
             id={field.id}
@@ -69,7 +68,7 @@ const DynamicForm = ({ data, onSubmit = () => {}  }) => {
             onChange={(e) => handleFieldChange(field.id, e.target.value)}
           />
         );
-      case "number":
+      case 'number':
         return (
           <Input
             id={field.id}
@@ -79,7 +78,7 @@ const DynamicForm = ({ data, onSubmit = () => {}  }) => {
             onChange={(e) => handleFieldChange(field.id, e.target.value)}
           />
         );
-      case "textarea":
+      case 'textarea':
         return (
           <TextArea
             id={field.id}
@@ -89,7 +88,7 @@ const DynamicForm = ({ data, onSubmit = () => {}  }) => {
             onChange={(e) => handleFieldChange(field.id, e.target.value)}
           />
         );
-      case "radio":
+      case 'radio':
         return (
           <Radio.Group
             id={field.id}
@@ -98,7 +97,7 @@ const DynamicForm = ({ data, onSubmit = () => {}  }) => {
             onChange={(e) => handleFieldChange(field.id, e.target.value)}
           />
         );
-      case "checkbox":
+      case 'checkbox':
         return (
           <Checkbox.Group
             id={field.id}
@@ -107,7 +106,7 @@ const DynamicForm = ({ data, onSubmit = () => {}  }) => {
             onChange={(checkedValues) => handleFieldChange(field.id, checkedValues)}
           />
         );
-      case "select":
+      case 'select':
         return (
           <Select
             id={field.id}
@@ -117,7 +116,7 @@ const DynamicForm = ({ data, onSubmit = () => {}  }) => {
             onChange={(value) => handleFieldChange(field.id, value)}
           />
         );
-      case "date":
+      case 'date':
         return (
           <DatePicker
             id={field.id}
@@ -126,7 +125,7 @@ const DynamicForm = ({ data, onSubmit = () => {}  }) => {
             onChange={(date, dateString) => handleFieldChange(field.id, dateString)}
           />
         );
-      case "file":
+      case 'file':
         return (
           <Upload.Dragger
             id={field.id}
@@ -177,4 +176,3 @@ const DynamicForm = ({ data, onSubmit = () => {}  }) => {
 };
 
 export default DynamicForm;
-

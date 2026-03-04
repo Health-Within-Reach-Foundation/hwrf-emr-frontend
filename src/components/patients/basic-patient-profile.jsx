@@ -1,12 +1,8 @@
-import { Button, Select } from "antd";
-import React, { useState } from "react";
-import {  Card, Col, Form, Row } from "react-bootstrap";
+import { Button, Select } from 'antd';
+import React, { useState } from 'react';
+import { Card, Col, Form, Row } from 'react-bootstrap';
 
-const BasicPatientProfile = ({
-  patientData,
-  handleSavePatientData,
-  setPatientData,
-}) => {
+const BasicPatientProfile = ({ patientData, handleSavePatientData, setPatientData }) => {
   const [editingPatient, setEditingPatient] = useState(false);
   const handleInputChange = (key, value) => {
     setPatientData((prev) => ({ ...prev, [key]: value }));
@@ -17,13 +13,8 @@ const BasicPatientProfile = ({
         <h4>Patient Profile</h4>
         {/* <p className="fw-bold text-decoration-underline">Registration No. : {"HWRF-".concat(patientData.regNo)}</p> */}
         <div className="d-flex justify-content-end">
-          <Button
-            variant="primary"
-            className="bg-primary" 
-            type = "primary"
-            onClick={() => setEditingPatient(!editingPatient)}
-          >
-            {editingPatient ? "Cancel Edit" : "Edit Profile"}
+          <Button variant="primary" className="bg-primary" type="primary" onClick={() => setEditingPatient(!editingPatient)}>
+            {editingPatient ? 'Cancel Edit' : 'Edit Profile'}
           </Button>
         </div>
       </Card.Header>
@@ -36,7 +27,7 @@ const BasicPatientProfile = ({
                 <Form.Control
                   disabled={!editingPatient}
                   value={patientData.name}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
                 />
               </Form.Group>
             </Col>
@@ -46,7 +37,7 @@ const BasicPatientProfile = ({
                 <Form.Control
                   disabled={!editingPatient}
                   value={patientData.mobile}
-                  onChange={(e) => handleInputChange("mobile", e.target.value)}
+                  onChange={(e) => handleInputChange('mobile', e.target.value)}
                 />
               </Form.Group>
             </Col>
@@ -56,8 +47,8 @@ const BasicPatientProfile = ({
                 <Form.Control
                   type="number"
                   disabled={!editingPatient}
-                  value={patientData.age || ""}
-                  onChange={(e) => handleInputChange("age", e.target.value)}
+                  value={patientData.age || ''}
+                  onChange={(e) => handleInputChange('age', e.target.value)}
                 />
               </Form.Group>
             </Col>
@@ -65,14 +56,14 @@ const BasicPatientProfile = ({
               <Form.Group>
                 <Form.Label>Sex</Form.Label>
                 <Select
-                  style={{ width: "100%" }}
+                  style={{ width: '100%' }}
                   disabled={!editingPatient}
-                  value={patientData.sex || ""}
-                  onChange={(value) => handleInputChange("sex", value)}
+                  value={patientData.sex || ''}
+                  onChange={(value) => handleInputChange('sex', value)}
                   options={[
-                    { label: "Male", value: "male" },
-                    { label: "Female", value: "female" },
-                    { label: "Other", value: "other" },
+                    { label: 'Male', value: 'male' },
+                    { label: 'Female', value: 'female' },
+                    { label: 'Other', value: 'other' },
                   ]}
                 />
               </Form.Group>
@@ -82,10 +73,10 @@ const BasicPatientProfile = ({
                 <Form.Label>Address</Form.Label>
                 <Form.Control
                   as="input"
-                  rows={"1"}
+                  rows={'1'}
                   disabled={!editingPatient}
-                  value={patientData.address || ""}
-                  onChange={(e) => handleInputChange("address", e.target.value)}
+                  value={patientData.address || ''}
+                  onChange={(e) => handleInputChange('address', e.target.value)}
                 />
               </Form.Group>
             </Col>

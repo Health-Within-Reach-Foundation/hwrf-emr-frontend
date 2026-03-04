@@ -1,12 +1,12 @@
-import { memo, Fragment } from "react";
+import { memo, Fragment } from 'react';
 
 // React-bootstrap
-import { ListGroup, Row, Col } from "react-bootstrap";
+import { ListGroup, Row, Col } from 'react-bootstrap';
 
 // react-router-dom
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 // component
-import Card from '../../components/Card'
+import Card from '../../components/Card';
 
 const ListGroups = memo(() => {
   return (
@@ -21,9 +21,8 @@ const ListGroups = memo(() => {
             </Card.Header>
             <Card.Body>
               <p>
-                The most basic list group is an unordered list with list items
-                and the proper classes. Build upon it with the options that
-                follow, or with your own CSS as needed.
+                The most basic list group is an unordered list with list items and the proper classes. Build upon it with the
+                options that follow, or with your own CSS as needed.
               </p>
               <ListGroup>
                 <ListGroup.Item>Cras justo odio</ListGroup.Item>
@@ -42,10 +41,9 @@ const ListGroups = memo(() => {
             </Card.Header>
             <Card.Body>
               <p>
-                Add <code>.disabled</code> to a <code>.list-group-item</code> to
-                make it <em>appear</em> disabled. Note that some elements with{" "}
-                <code>.disabled</code> will also require custom JavaScript to
-                fully disable their click events (e.g., links).
+                Add <code>.disabled</code> to a <code>.list-group-item</code> to make it <em>appear</em> disabled. Note that
+                some elements with <code>.disabled</code> will also require custom JavaScript to fully disable their click
+                events (e.g., links).
               </p>
               <ListGroup>
                 <ListGroup.Item disabled>Cras justo odio</ListGroup.Item>
@@ -64,7 +62,8 @@ const ListGroups = memo(() => {
             </Card.Header>
             <Card.Body>
               <p>
-                Add <code>.list-group-flush</code>{" "}to remove some borders and rounded corners to render list group items edge-to-edge in a parent container (e.g., cards).
+                Add <code>.list-group-flush</code> to remove some borders and rounded corners to render list group items
+                edge-to-edge in a parent container (e.g., cards).
               </p>
               <ListGroup variant="flush">
                 <ListGroup.Item>Cras justo odio</ListGroup.Item>
@@ -82,37 +81,17 @@ const ListGroups = memo(() => {
               </Card.Header.Title>
             </Card.Header>
             <Card.Body>
-              <p>
-                Use contextual classes to style list items with a stateful background and color.
-              </p>
+              <p>Use contextual classes to style list items with a stateful background and color.</p>
               <ListGroup>
-                <ListGroup.Item variant="">
-                  Dapibus ac facilisis in
-                </ListGroup.Item>
-                <ListGroup.Item variant="primary">
-                  A simple primary list group item
-                </ListGroup.Item>
-                <ListGroup.Item variant="secondary">
-                  A simple secondary list group item
-                </ListGroup.Item>
-                <ListGroup.Item variant="success">
-                  A simple success list group item
-                </ListGroup.Item>
-                <ListGroup.Item variant="danger">
-                  A simple danger list group item
-                </ListGroup.Item>
-                <ListGroup.Item variant="warning">
-                  A simple warning list group item
-                </ListGroup.Item>
-                <ListGroup.Item variant="info">
-                  A simple info list group item
-                </ListGroup.Item>
-                <ListGroup.Item variant="light">
-                  A simple light list group item
-                </ListGroup.Item>
-                <ListGroup.Item variant="dark">
-                  A simple dark list group item
-                </ListGroup.Item>
+                <ListGroup.Item variant="">Dapibus ac facilisis in</ListGroup.Item>
+                <ListGroup.Item variant="primary">A simple primary list group item</ListGroup.Item>
+                <ListGroup.Item variant="secondary">A simple secondary list group item</ListGroup.Item>
+                <ListGroup.Item variant="success">A simple success list group item</ListGroup.Item>
+                <ListGroup.Item variant="danger">A simple danger list group item</ListGroup.Item>
+                <ListGroup.Item variant="warning">A simple warning list group item</ListGroup.Item>
+                <ListGroup.Item variant="info">A simple info list group item</ListGroup.Item>
+                <ListGroup.Item variant="light">A simple light list group item</ListGroup.Item>
+                <ListGroup.Item variant="dark">A simple dark list group item</ListGroup.Item>
               </ListGroup>
             </Card.Body>
           </Card>
@@ -124,8 +103,7 @@ const ListGroups = memo(() => {
             </Card.Header>
             <Card.Body>
               <p>
-                Add badges to any list group item to show unread counts,
-                activity, and more with the help of some{" "}
+                Add badges to any list group item to show unread counts, activity, and more with the help of some{' '}
                 <a href="#">utilities</a>.
               </p>
               <ListGroup>
@@ -152,8 +130,7 @@ const ListGroups = memo(() => {
             </Card.Header>
             <Card.Body>
               <p>
-                Add badges to any list group item to show unread counts,
-                activity, and more with the help of some{" "}
+                Add badges to any list group item to show unread counts, activity, and more with the help of some{' '}
                 <a href="#">utilities</a>.
               </p>
               <ListGroup>
@@ -182,13 +159,10 @@ const ListGroups = memo(() => {
             </Card.Header>
             <Card.Body>
               <p>
-                Add <code>.active</code>{" "}to a <code> .list-group-item</code>{" "}
-                to indicate the current active selection.
+                Add <code>.active</code> to a <code> .list-group-item</code> to indicate the current active selection.
               </p>
               <ListGroup>
-                <ListGroup.Item active>
-                  Cras justo odio
-                </ListGroup.Item>
+                <ListGroup.Item active>Cras justo odio</ListGroup.Item>
                 <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
                 <ListGroup.Item>Morbi leo risus</ListGroup.Item>
                 <ListGroup.Item>Porta ac consectetur ac</ListGroup.Item>
@@ -204,18 +178,14 @@ const ListGroups = memo(() => {
             </Card.Header>
             <Card.Body>
               <p>
-                Use <code>&lt;a&gt;</code>s or <code>&lt;button&gt;</code>s to
-                create <em>actionable</em> list group items with hover,
-                disabled, and active states by adding{" "}
-                <code>.list-group-item-action</code>. We separate these
-                pseudo-classes to ensure list groups made of non-interactive
-                elements (like <code>&lt;li&gt;</code>s or{" "}
-                <code>&lt;div&gt;</code>s) don’t provide a click or tap
-                affordance.
+                Use <code>&lt;a&gt;</code>s or <code>&lt;button&gt;</code>s to create <em>actionable</em> list group items
+                with hover, disabled, and active states by adding <code>.list-group-item-action</code>. We separate these
+                pseudo-classes to ensure list groups made of non-interactive elements (like <code>&lt;li&gt;</code>s or{' '}
+                <code>&lt;div&gt;</code>s) don’t provide a click or tap affordance.
               </p>
 
               <p>
-                Be sure to{" "}
+                Be sure to{' '}
                 <strong>
                   not use the standard <code>.btn</code> classes here
                 </strong>
@@ -248,23 +218,18 @@ const ListGroups = memo(() => {
             </Card.Header>
             <Card.Body>
               <p>
-                Add <code>.list-group-horizontal</code> to change the layout of
-                list group items from vertical to horizontal across all
-                breakpoints. Alternatively, choose a responsive variant{" "}
-                <code>.list-group-horizontal-{"{sm|md|lg|xl}"}</code>{" "}to make a list group
-                horizontal starting at that breakpoint’s <code>min-width</code>.
-                Currently{" "}
-                <strong>
-                  horizontal list groups cannot be combined with flush list
-                  groups.
-                </strong>
+                Add <code>.list-group-horizontal</code> to change the layout of list group items from vertical to horizontal
+                across all breakpoints. Alternatively, choose a responsive variant{' '}
+                <code>.list-group-horizontal-{'{sm|md|lg|xl}'}</code> to make a list group horizontal starting at that
+                breakpoint’s <code>min-width</code>. Currently{' '}
+                <strong>horizontal list groups cannot be combined with flush list groups.</strong>
               </p>
               <p>
-                <strong>ProTip:</strong> Want equal-width list group items when
-                horizontal? Add <code>.flex-fill</code> to each list group item.
+                <strong>ProTip:</strong> Want equal-width list group items when horizontal? Add <code>.flex-fill</code> to
+                each list group item.
               </p>
               <div>
-                {["sm"].map((breakpoint, idx) => (
+                {['sm'].map((breakpoint, idx) => (
                   <ListGroup horizontal key={idx}>
                     <ListGroup.Item>Cras justo odio</ListGroup.Item>
                     <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
@@ -281,37 +246,17 @@ const ListGroups = memo(() => {
               </Card.Header.Title>
             </Card.Header>
             <Card.Body>
-              <p>
-                Use contextual classes to style list items with a stateful background and color.
-              </p>
+              <p>Use contextual classes to style list items with a stateful background and color.</p>
               <ListGroup>
-                <ListGroup.Item variant="">
-                  Dapibus ac facilisis in
-                </ListGroup.Item>
-                <ListGroup.Item variant="primary">
-                  A simple primary list group item
-                </ListGroup.Item>
-                <ListGroup.Item variant="secondary">
-                  A simple secondary list group item
-                </ListGroup.Item>
-                <ListGroup.Item variant="success">
-                  A simple success list group item
-                </ListGroup.Item>
-                <ListGroup.Item variant="danger">
-                  A simple danger list group item
-                </ListGroup.Item>
-                <ListGroup.Item variant="warning">
-                  A simple warning list group item
-                </ListGroup.Item>
-                <ListGroup.Item variant="info">
-                  A simple info list group item
-                </ListGroup.Item>
-                <ListGroup.Item variant="light">
-                  A simple light list group item
-                </ListGroup.Item>
-                <ListGroup.Item variant="dark">
-                  A simple dark list group item
-                </ListGroup.Item>
+                <ListGroup.Item variant="">Dapibus ac facilisis in</ListGroup.Item>
+                <ListGroup.Item variant="primary">A simple primary list group item</ListGroup.Item>
+                <ListGroup.Item variant="secondary">A simple secondary list group item</ListGroup.Item>
+                <ListGroup.Item variant="success">A simple success list group item</ListGroup.Item>
+                <ListGroup.Item variant="danger">A simple danger list group item</ListGroup.Item>
+                <ListGroup.Item variant="warning">A simple warning list group item</ListGroup.Item>
+                <ListGroup.Item variant="info">A simple info list group item</ListGroup.Item>
+                <ListGroup.Item variant="light">A simple light list group item</ListGroup.Item>
+                <ListGroup.Item variant="dark">A simple dark list group item</ListGroup.Item>
               </ListGroup>
             </Card.Body>
           </Card>
@@ -323,24 +268,17 @@ const ListGroups = memo(() => {
             </Card.Header>
             <Card.Body>
               <p>
-                Add nearly any HTML within, even for linked list groups like
-                the one below, with the help of{" "}
-                <a href="#">
-                  flexbox utilities
-                </a>
-                .
+                Add nearly any HTML within, even for linked list groups like the one below, with the help of{' '}
+                <a href="#">flexbox utilities</a>.
               </p>
               <ListGroup>
-                <a
-                  className="list-group-item list-group-item-action active"
-                >
+                <a className="list-group-item list-group-item-action active">
                   <div className="d-flex w-100 justify-content-between">
                     <h5 className="mb-1 text-white">List group item heading</h5>
                     <small>3 days ago</small>
                   </div>
                   <p className="mb-1">
-                    Donec id elit non mi porta gravida at eget metus. Maecenas
-                    sed diam eget risus varius blandit.
+                    Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.
                   </p>
                   <small>Donec id elit non mi porta.</small>
                 </a>
@@ -350,8 +288,7 @@ const ListGroups = memo(() => {
                     <small className="text-muted">3 days ago</small>
                   </div>
                   <p className="mb-1">
-                    Donec id elit non mi porta gravida at eget metus. Maecenas
-                    sed diam eget risus varius blandit.
+                    Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.
                   </p>
                   <small className="text-muted">Donec id elit non mi porta.</small>
                 </a>
@@ -361,8 +298,7 @@ const ListGroups = memo(() => {
                     <small className="text-muted">3 days ago</small>
                   </div>
                   <p className="mb-1">
-                    Donec id elit non mi porta gravida at eget metus. Maecenas
-                    sed diam eget risus varius blandit.
+                    Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.
                   </p>
                   <small className="text-muted">Donec id elit non mi porta.</small>
                 </a>
@@ -375,5 +311,5 @@ const ListGroups = memo(() => {
   );
 });
 
-ListGroups.displayName = "ListGroups";
+ListGroups.displayName = 'ListGroups';
 export default ListGroups;

@@ -301,15 +301,15 @@
 
 // export default AddUser;
 
-import React, { useEffect, useState } from "react";
-import { Row, Col, Alert } from "react-bootstrap";
-import { Button, Form, Input, Select } from "antd";
-import adminService from "../../api/admin-services";
-import { Loading } from "../../components/loading";
-import toast from "react-hot-toast";
-import clinicServices from "../../api/clinic-services";
-import rolePermissionService from "../../api/role-permission-service";
-import Card from "../../components/Card";
+import React, { useEffect, useState } from 'react';
+import { Row, Col, Alert } from 'react-bootstrap';
+import { Button, Form, Input, Select } from 'antd';
+import adminService from '../../api/admin-services';
+import { Loading } from '../../components/loading';
+import toast from 'react-hot-toast';
+import clinicServices from '../../api/clinic-services';
+import rolePermissionService from '../../api/role-permission-service';
+import Card from '../../components/Card';
 const AddUser = () => {
   const [form] = Form.useForm();
   const [roles, setRoles] = useState([]);
@@ -329,7 +329,7 @@ const AddUser = () => {
         }))
       );
     } catch (error) {
-      console.error("Error fetching roles:", error);
+      console.error('Error fetching roles:', error);
     } finally {
       setLoading(false);
     }
@@ -347,7 +347,7 @@ const AddUser = () => {
         }))
       );
     } catch (error) {
-      console.error("Error fetching specialities:", error);
+      console.error('Error fetching specialities:', error);
     } finally {
       setLoading(false);
     }
@@ -359,13 +359,11 @@ const AddUser = () => {
   }, []);
 
   // Watch the selected roles
-  const selectedRoles = Form.useWatch("roles", form) || [];
-  const isDoctorSelected = selectedRoles.some(
-    (roleId) => roles.find((role) => role.label === "doctor")?.value === roleId
-  );
+  const selectedRoles = Form.useWatch('roles', form) || [];
+  const isDoctorSelected = selectedRoles.some((roleId) => roles.find((role) => role.label === 'doctor')?.value === roleId);
 
   const handleSubmit = async (values) => {
-    console.log("values inside handle submit function", values);
+    console.log('values inside handle submit function', values);
     setLoading(true);
     try {
       const { firstName, lastName, roles, specialty, ...rest } = values;
@@ -375,18 +373,18 @@ const AddUser = () => {
         roles,
         specialties: isDoctorSelected ? [specialty] : null,
       };
-      console.log("user data", updatedData);
+      console.log('user data', updatedData);
       const result = await adminService.inviteUser(updatedData);
       if (result.success) {
         setShowAlert(true);
         form.resetFields();
-        toast.success("Invitation sent to the user.");
+        toast.success('Invitation sent to the user.');
       } else {
         toast.error(result.error);
       }
     } catch (err) {
-      console.error("Unexpected error:", err);
-      toast.error("An unexpected error occurred.");
+      console.error('Unexpected error:', err);
+      toast.error('An unexpected error occurred.');
     } finally {
       setLoading(false);
     }
@@ -408,18 +406,8 @@ const AddUser = () => {
             </Card.Header>
             <Card.Body>
               <Form form={form} layout="vertical" onFinish={handleSubmit}>
-                <Form.Item
-                  name="roles"
-                  label="User Role"
-                  rules={[{ required: true, message: "Please select a role!" }]}
-                >
-                  <Select
-                    mode="multiple"
-                    placeholder="Select Role"
-                    options={roles}
-                    allowClear
-                    className="w-100"
-                  />
+                <Form.Item name="roles" label="User Role" rules={[{ required: true, message: 'Please select a role!' }]}>
+                  <Select mode="multiple" placeholder="Select Role" options={roles} allowClear className="w-100" />
                 </Form.Item>
 
                 {isDoctorSelected && (
@@ -429,15 +417,11 @@ const AddUser = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Please select a specialty!",
+                        message: 'Please select a specialty!',
                       },
                     ]}
                   >
-                    <Select
-                      placeholder="Select Specialty"
-                      options={specialities}
-                      className="w-100"
-                    />
+                    <Select placeholder="Select Specialty" options={specialities} className="w-100" />
                   </Form.Item>
                 )}
               </Form>
@@ -456,20 +440,12 @@ const AddUser = () => {
                 <Form.Item
                   name="firstName"
                   label="First Name"
-                  rules={[
-                    { required: true, message: "First Name is required!" },
-                  ]}
+                  rules={[{ required: true, message: 'First Name is required!' }]}
                 >
                   <Input placeholder="First Name" />
                 </Form.Item>
 
-                <Form.Item
-                  name="lastName"
-                  label="Last Name"
-                  rules={[
-                    { required: true, message: "Last Name is required!" },
-                  ]}
-                >
+                <Form.Item name="lastName" label="Last Name" rules={[{ required: true, message: 'Last Name is required!' }]}>
                   <Input placeholder="Last Name" />
                 </Form.Item>
 
@@ -477,10 +453,10 @@ const AddUser = () => {
                   name="phoneNumber"
                   label="Mobile Number"
                   rules={[
-                    { required: true, message: "Mobile number is required!" },
+                    { required: true, message: 'Mobile number is required!' },
                     {
                       pattern: /^\d{10}$/,
-                      message: "A valid 10-digit mobile number is required!",
+                      message: 'A valid 10-digit mobile number is required!',
                     },
                   ]}
                 >
@@ -491,10 +467,10 @@ const AddUser = () => {
                   name="email"
                   label="Email"
                   rules={[
-                    { required: true, message: "Email is required!" },
+                    { required: true, message: 'Email is required!' },
                     {
-                      type: "email",
-                      message: "A valid email address is required!",
+                      type: 'email',
+                      message: 'A valid email address is required!',
                     },
                   ]}
                 >
@@ -502,24 +478,20 @@ const AddUser = () => {
                 </Form.Item>
 
                 <Form.Item className="d-flex justify-content-end">
-                <Button
-                // classNames="bg-primary"
-                  // type="primary"
-                  htmlType="submit"
-                 className="bg-primary" type="primary"
-                  // onclick={() => handleSubmit(form.getFieldsValue())}
-                >
-                  Send Invitation
-                </Button>
+                  <Button
+                    // classNames="bg-primary"
+                    // type="primary"
+                    htmlType="submit"
+                    className="bg-primary"
+                    type="primary"
+                    // onclick={() => handleSubmit(form.getFieldsValue())}
+                  >
+                    Send Invitation
+                  </Button>
                 </Form.Item>
               </Form>
               {showAlert && (
-                <Alert
-                  variant="success"
-                  className="mt-3"
-                  onClose={() => setShowAlert(false)}
-                  dismissible
-                >
+                <Alert variant="success" className="mt-3" onClose={() => setShowAlert(false)} dismissible>
                   User invited successfully!
                 </Alert>
               )}
