@@ -6,7 +6,8 @@ const login = async (email, password) => {
     const response = await apiClient.post("auth/login", { email, password });
     return response.data;
   } catch (error) {
-    throw error.response?.data || new Error("Login failed");
+    console.error("Login failed:", error);
+    throw error.response?.data || error?.message || new Error("Login failed");
   }
 };
 
@@ -56,7 +57,7 @@ const verifyToken = async (jwtToken) => {
   console.log(jwtToken);
   try {
     const response = await apiClient.get(
-      `/auth/verify-token/?token=${jwtToken}`
+      `/auth/verify-token/?token=${jwtToken}`,
     );
     return response.data;
   } catch (error) {
@@ -71,7 +72,7 @@ const resetPassword = async (jwtToken, password) => {
       `/auth/reset-password/?token=${jwtToken}`,
       {
         password,
-      }
+      },
     );
     return response.data;
   } catch (error) {
