@@ -76,9 +76,7 @@ const AntdTable = ({
   const displayData = isServerSide ? data : filteredData;
   const totalItems = isServerSide ? totalRecords : displayData.length;
   const pageSizeValue = pageSize;
-  const currentPageValue = isServerSide
-    ? currentPageLocal
-    : Math.ceil(((currentPageLocal - 1) * pageSize) / (filteredData.length || 1)) + 1;
+  const currentPageValue = currentPageLocal;
   const lastPage = Math.ceil(totalItems / pageSizeValue);
   const isLastPage = currentPageValue === lastPage || (isServerSide && !data.length);
 

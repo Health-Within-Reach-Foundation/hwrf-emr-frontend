@@ -3,6 +3,9 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Container, Row, Col, Card, Badge, Accordion } from 'react-bootstrap';
 import { Form, Input, DatePicker, Select, Tabs, Button, Tooltip } from 'antd';
+import { RiFileExcel2Line } from '@remixicon/react';
+import { saveAs } from 'file-saver';
+import * as XLSX from 'xlsx';
 import campManagementService from '../../api/camp-management-service';
 import { Loading } from '../../components/loading';
 import dayjs from 'dayjs';
@@ -27,6 +30,7 @@ const CampDetails = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({});
   const [specialtiesOptions, setSpecialtiesOptions] = useState([]);
+  const [exportLoading, setExportLoading] = useState(false);
 
   const fetchCampDetails = async () => {
     try {
@@ -112,6 +116,62 @@ const CampDetails = () => {
     }));
   };
 
+  // Helper: flatten patient data for export
+  function getFlatPatientData(data) {
+    return data.map((patient) => ({
+      'Token Number': patient.tokenNumber || '',
+      Name: patient.name || '',
+      Age: patient.age || '',
+      Gender: patient.sex || '',
+      Mobile: patient.mobile || '',
+      Address: patient.address || '',
+      'Service Taken': Array.isArray(patient.serviceTaken) ? patient.serviceTaken.join(', ') : patient.serviceTaken || '',
+      'Offline Amount (₹)': patient.collectedAmount?.offlineAmount || 0,
+      'Online Amount (₹)': patient.collectedAmount?.onlineAmount || 0,
+      'Total Collected (₹)': (patient.collectedAmount?.offlineAmount || 0) + (patient.collectedAmount?.onlineAmount || 0),
+      'Treated Doctors': Array.isArray(patient.treatingDoctors)
+        ? patient.treatingDoctors.map((d) => d?.label).join(', ')
+        : '',
+      'Amount Paid (₹)': patient.paidAmount || 0,
+    }));
+  }
+
+  // Export all patients to Excel
+  const exportPatientsToExcel = async () => {
+    try {
+      setExportLoading(true);
+
+      if (!patients || patients.length === 0) {
+        throw new Error('No patients to export');
+      }
+
+      // Format the patient data for Excel
+      const flatData = getFlatPatientData(patients);
+
+      // Generate Excel file
+      const worksheet = XLSX.utils.json_to_sheet(flatData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Camp Patients');
+
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: 'xlsx',
+        type: 'array',
+      });
+
+      const blob = new Blob([excelBuffer], {
+        type: 'application/octet-stream',
+      });
+      const timestamp = new Date().toISOString().split('T')[0];
+      saveAs(blob, `camp-patients_${name}_${timestamp}.xlsx`);
+      toast.success('Patients exported to Excel successfully');
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error(`Export failed: ${error.message}`);
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
   useEffect(() => {
     getDoctors();
     fetchCampDetails();
@@ -160,7 +220,30 @@ const CampDetails = () => {
       dataIndex: 'name',
       key: 'name',
       sortable: true,
+      width: 200,
       render: (text, record) => <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>,
+    },
+    // Add age, geneder, and mobile keys are age, sex and mobile respectively in the response
+    {
+      title: 'Age',
+      dataIndex: 'age',
+      key: 'age',
+      width: 100,
+      sortable: true,
+    },
+    {
+      title: 'Gender',
+      dataIndex: 'sex',
+      key: 'sex',
+      width: 100,
+      sortable: true,
+    },
+    {
+      title: 'Mobile',
+      dataIndex: 'mobile',
+      key: 'mobile',
+      width: 150,
+      sortable: true,
     },
     {
       title: 'Service Taken',
@@ -439,8 +522,20 @@ const CampDetails = () => {
       <Row className="mb-4">
         <Col>
           <Card className="shadow-sm">
-            <Card.Header>
-              <h5>Patients Attended</h5>
+            <Card.Header className="d-flex justify-content-between align-items-center">
+              <h5 className="mb-0">Patients Attended</h5>
+              <Button
+                className="bg-primary"
+                type="primary"
+                variant="primary"
+                loading={exportLoading}
+                disabled={!patients || patients.length === 0}
+                onClick={exportPatientsToExcel}
+                style={{ width: 'auto' }}
+              >
+                <RiFileExcel2Line className="me-2" />
+                Export to Excel
+              </Button>
             </Card.Header>
             <Card.Body>
               <AntdTable
