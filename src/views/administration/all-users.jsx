@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { Button, Col, Row } from "react-bootstrap";
-import Card from "../../components/Card";
-import { Loading } from "../../components/loading";
-import clinicSerivces from "../../api/clinic-services";
-import UserDrawer from "../../components/administration/user-drawer";
-import clinicServices from "../../api/clinic-services";
-import rolePermissionService from "../../api/role-permission-service";
-import { Dropdown, Badge } from "antd";
-import { RiDeleteBin4Line, RiSettings4Fill } from "@remixicon/react";
-import userServices from "../../api/user-services";
-import toast from "react-hot-toast";
-import AntdTable from "../../components/antd-table";
-import { transformText } from "../../utilities/utility-function";
+import React, { useEffect, useState } from 'react';
+import { Button, Col, Row } from 'react-bootstrap';
+import Card from '../../components/Card';
+import { Loading } from '../../components/loading';
+import clinicSerivces from '../../api/clinic-services';
+import UserDrawer from '../../components/administration/user-drawer';
+import clinicServices from '../../api/clinic-services';
+import rolePermissionService from '../../api/role-permission-service';
+import { Dropdown, Badge } from 'antd';
+import { RiDeleteBin4Line, RiSettings4Fill } from '@remixicon/react';
+import userServices from '../../api/user-services';
+import toast from 'react-hot-toast';
+import AntdTable from '../../components/antd-table';
+import { transformText } from '../../utilities/utility-function';
 
 const AllUsers = () => {
   const [loading, setLoading] = useState(false);
@@ -23,39 +23,37 @@ const AllUsers = () => {
   const [allDepartments, setAllDepartments] = useState([]);
 
   const columns = [
-    { title: "Name", data: "name", key: "name" },
-    { title: "Email", data: "email", key: "email" },
-    { title: "Phone Number", data: "phoneNumber", key: "phoneNumber" },
-    { title: "Specialist", data: "specialist" },
+    { title: 'Name', data: 'name', key: 'name' },
+    { title: 'Email', data: 'email', key: 'email' },
+    { title: 'Phone Number', data: 'phoneNumber', key: 'phoneNumber' },
+    { title: 'Specialist', data: 'specialist' },
     {
-      title: "Roles",
-      data: "roles",
-      key: "roles",
+      title: 'Roles',
+      data: 'roles',
+      key: 'roles',
       render: (data, row) => {
-        return <div>{data?.map((role) => role.roleName).join(", ")}</div>;
+        return <div>{data?.map((role) => role.roleName).join(', ')}</div>;
       },
     },
     {
-      title: "Department",
-      data: "department",
-      key: "department",
+      title: 'Department',
+      data: 'department',
+      key: 'department',
       render: (data, row) => {
-        return <div>{data?.map((dept) => dept.departmentName).join(", ")}</div>;
+        return <div>{data?.map((dept) => dept.departmentName).join(', ')}</div>;
       },
     },
-    { title: "Register Date", data: "createdAt", key: "createdAt" },
+    { title: 'Register Date', data: 'createdAt', key: 'createdAt' },
     {
       data: null,
-      title: "Action",
+      title: 'Action',
       render: (data, row) => {
         const menu = {
           items: [
             {
-              key: "1",
+              key: '1',
               label: (
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
-                >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <RiSettings4Fill />
                   <span>Manage</span>
                 </div>
@@ -63,11 +61,9 @@ const AllUsers = () => {
               onClick: () => handleEditClick(row),
             },
             {
-              key: "2",
+              key: '2',
               label: (
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
-                >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <RiDeleteBin4Line />
                   <span>Delete</span>
                 </div>
@@ -78,7 +74,7 @@ const AllUsers = () => {
         };
 
         return (
-          <Dropdown menu={menu} trigger={["click"]}>
+          <Dropdown menu={menu} trigger={['click']}>
             <Button type="primary" size="sm">
               Action
             </Button>
@@ -92,51 +88,42 @@ const AllUsers = () => {
 
   const usersColumns = [
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
       sortable: true,
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
       sortable: true,
     },
     {
-      title: "Phone Number",
-      dataIndex: "phoneNumber",
-      key: "phoneNumber",
+      title: 'Phone Number',
+      dataIndex: 'phoneNumber',
+      key: 'phoneNumber',
       sortable: false,
     },
     {
-      title: "Specialist",
-      dataIndex: "specialist",
-      key: "specialist",
+      title: 'Specialist',
+      dataIndex: 'specialist',
+      key: 'specialist',
       sortable: true,
       filters: [
-        { text: "Mammographer", value: "Mammographer" },
-        { text: "Dentist", value: "Dentist" },
-        { text: "GP", value: "GP" },
+        { text: 'Mammographer', value: 'Mammographer' },
+        { text: 'Dentist', value: 'Dentist' },
+        { text: 'GP', value: 'GP' },
       ],
-      onFilter: (value, record) =>
-        record?.specialties
-          ?.map((specialist) => specialist.name)
-          .includes(value),
+      onFilter: (value, record) => record?.specialties?.map((specialist) => specialist.name).includes(value),
       width: 120,
-      render: (text, record) => (
-        <span>
-          {record?.specialties?.map((specialist) => specialist.name).join(", ")}
-        </span>
-      ),
+      render: (text, record) => <span>{record?.specialties?.map((specialist) => specialist.name).join(', ')}</span>,
     },
     {
-      title: "Roles",
-      dataIndex: "roles",
-      key: "roles",
-      render: (text, record) => (
-        <span>{text?.map((role) => role.roleName).join(", ")}</span>
-      ),
+      title: 'Roles',
+      dataIndex: 'roles',
+      key: 'roles',
+      render: (text, record) => <span>{text?.map((role) => role.roleName).join(', ')}</span>,
     },
     // {
     //   title: "Department",
@@ -148,40 +135,30 @@ const AllUsers = () => {
     //   ),
     // },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
       render: (text, record) => (
         <Badge
           dot
-          status={
-            text === "active"
-              ? "success"
-              : text === "pending"
-              ? "warning"
-              : "error"
-          }
+          status={text === 'active' ? 'success' : text === 'pending' ? 'warning' : 'error'}
           text={transformText(text)}
         ></Badge>
       ),
     },
     {
-      title: "Action",
+      title: 'Action',
       dataIndex: null,
-      key: "action",
+      key: 'action',
       render: (text, record) => {
-        const isAdmin = record?.roles
-          .map((role) => role.roleName)
-          .includes("admin");
+        const isAdmin = record?.roles.map((role) => role.roleName).includes('admin');
 
         const menu = {
           items: [
             {
-              key: "1",
+              key: '1',
               label: (
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
-                >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <RiSettings4Fill />
                   <span>Manage</span>
                 </div>
@@ -189,11 +166,9 @@ const AllUsers = () => {
               onClick: () => handleEditClick(record),
             },
             {
-              key: "2",
+              key: '2',
               label: (
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
-                >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <RiDeleteBin4Line />
                   <span>Delete</span>
                 </div>
@@ -205,7 +180,7 @@ const AllUsers = () => {
         };
 
         return (
-          <Dropdown menu={menu} trigger={["click"]}>
+          <Dropdown menu={menu} trigger={['click']}>
             <Button type="primary" size="sm">
               Action
             </Button>
@@ -226,7 +201,7 @@ const AllUsers = () => {
         }))
       );
     } catch (error) {
-      console.error("Error fetching departments:", error);
+      console.error('Error fetching departments:', error);
     } finally {
       setLoading(false);
     }
@@ -244,7 +219,7 @@ const AllUsers = () => {
         }))
       );
     } catch (error) {
-      console.error("Error fetching roles:", error);
+      console.error('Error fetching roles:', error);
     } finally {
       setLoading(false);
     }
@@ -255,7 +230,7 @@ const AllUsers = () => {
     setUserLoading(true);
     try {
       const response = await clinicSerivces.getUsersByClinic();
-      console.log("response", response);
+      console.log('response', response);
       const formattedUsers = response.data.map((user) => ({
         key: user.id,
         id: user.id,
@@ -270,10 +245,10 @@ const AllUsers = () => {
         specialties: user.specialties,
         createdAt: new Date(user.createdAt).toLocaleDateString(), // Format date
       }));
-      console.log("formattedUsers", formattedUsers);
+      console.log('formattedUsers', formattedUsers);
       setUsers(formattedUsers);
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error('Error fetching users:', error);
     } finally {
       setLoading(false);
       setUserLoading(false);
@@ -289,7 +264,7 @@ const AllUsers = () => {
         toast.success(response.message);
       }
     } catch (error) {
-      console.error("Error : ", error);
+      console.error('Error : ', error);
     } finally {
       setLoading(false);
       getUsersbyClinic();
@@ -324,12 +299,7 @@ const AllUsers = () => {
         </Col>
 
         <div className="antd-table-container">
-          <AntdTable
-            columns={usersColumns}
-            data={users}
-            pageSizeOptions={[50, 100, 150, 200]}
-            defaultPageSize={50}
-          />
+          <AntdTable columns={usersColumns} data={users} pageSizeOptions={[50, 100, 150, 200]} defaultPageSize={50} />
         </div>
 
         {openDrawer && (

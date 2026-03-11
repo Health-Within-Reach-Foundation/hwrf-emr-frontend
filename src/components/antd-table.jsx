@@ -1,5 +1,5 @@
-import { Input, Select, Table } from "antd";
-import React, { useEffect, useState } from "react";
+import { Input, Select, Table } from 'antd';
+import React, { useEffect, useState } from 'react';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -16,7 +16,7 @@ const AntdTable = ({
   onPaginationChange = () => {},
   isServerSide = false,
   loading = false,
-  searchValue = "",
+  searchValue = '',
   onSearch = () => {},
 }) => {
   const [searchText, setSearchText] = useState(searchValue);
@@ -27,12 +27,10 @@ const AntdTable = ({
   // 🔍 Search Functionality (Client-side only, ignored if server-side)
   const handleSearch = (value) => {
     if (isServerSide) return; // Disable client-side search for server-side pagination
-    
+
     setSearchText(value);
     const filtered = data.filter((item) =>
-      Object.values(item).some((field) =>
-        String(field).toLowerCase().includes(value.toLowerCase())
-      )
+      Object.values(item).some((field) => String(field).toLowerCase().includes(value.toLowerCase()))
     );
     setFilteredData(filtered);
     setCurrentPageLocal(1);
@@ -47,17 +45,15 @@ const AntdTable = ({
   // 📌 Modified Columns for Sorting, Width Control & Overflow Handling
   const modifiedColumns = columns.map((col) => ({
     ...col,
-    sorter: !isServerSide && col.sortable
-      ? (a, b) => (a[col.dataIndex] > b[col.dataIndex] ? 1 : -1)
-      : false,
+    sorter: !isServerSide && col.sortable ? (a, b) => (a[col.dataIndex] > b[col.dataIndex] ? 1 : -1) : false,
     title: col.sortable ? (
       <span>
-        {col.title} <span style={{ fontSize: "12px", opacity: 0.6 }}></span>
+        {col.title} <span style={{ fontSize: '12px', opacity: 0.6 }}></span>
       </span>
     ) : (
       col.title
     ),
-    width: col.width || "fit-content",
+    width: col.width || 'fit-content',
     ellipsis: col.ellipsis !== false,
     render: (text, record) => {
       const cellValue = col.render ? col.render(text, record) : text;
@@ -65,10 +61,7 @@ const AntdTable = ({
         return cellValue;
       } else {
         return col.ellipsis !== false ? (
-          <span
-            className="text-truncate d-inline-block"
-            style={{ maxWidth: col.width || 150 }}
-          >
+          <span className="text-truncate d-inline-block" style={{ maxWidth: col.width || 150 }}>
             {text}
           </span>
         ) : (
@@ -83,44 +76,46 @@ const AntdTable = ({
   const displayData = isServerSide ? data : filteredData;
   const totalItems = isServerSide ? totalRecords : displayData.length;
   const pageSizeValue = pageSize;
-  const currentPageValue = isServerSide ? currentPageLocal : Math.ceil((currentPageLocal - 1) * pageSize / (filteredData.length || 1)) + 1;
+  const currentPageValue = currentPageLocal;
   const lastPage = Math.ceil(totalItems / pageSizeValue);
   const isLastPage = currentPageValue === lastPage || (isServerSide && !data.length);
 
   // Server-side pagination configuration
-  const paginationConfig = isServerSide ? {
-    pageSize: pageSizeValue,
-    current: currentPageValue,
-    total: totalItems,
-    showSizeChanger: true,
-    pageSizeOptions: pageSizeOptions.map(String),
-    onChange: (page, size) => {
-      setCurrentPageLocal(page);
-      setPageSize(size);
-      const offset = (page - 1) * size;
-      onPaginationChange(offset, size);
-    },
-    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total}`,
-    disabled: loading,
-  } : {
-    pageSize: pageSizeValue,
-    current: currentPageValue,
-    showSizeChanger: true,
-    pageSizeOptions: pageSizeOptions.map(String),
-    onChange: (page, size) => {
-      setCurrentPageLocal(page);
-      setPageSize(size);
-    },
-  };
+  const paginationConfig = isServerSide
+    ? {
+        pageSize: pageSizeValue,
+        current: currentPageValue,
+        total: totalItems,
+        showSizeChanger: true,
+        pageSizeOptions: pageSizeOptions.map(String),
+        onChange: (page, size) => {
+          setCurrentPageLocal(page);
+          setPageSize(size);
+          const offset = (page - 1) * size;
+          onPaginationChange(offset, size);
+        },
+        showTotal: (total, range) => `${range[0]}-${range[1]} of ${total}`,
+        disabled: loading,
+      }
+    : {
+        pageSize: pageSizeValue,
+        current: currentPageValue,
+        showSizeChanger: true,
+        pageSizeOptions: pageSizeOptions.map(String),
+        onChange: (page, size) => {
+          setCurrentPageLocal(page);
+          setPageSize(size);
+        },
+      };
 
   return (
-    <div style={{ overflowX: "auto", padding: "10px" }}>
+    <div style={{ overflowX: 'auto', padding: '10px' }}>
       {/* 🔍 Search & Pagination Controls */}
       {!isServerSide && (
         <div
           style={{
-            display: "flex",
-            justifyContent: "space-between",
+            display: 'flex',
+            justifyContent: 'space-between',
             marginBottom: 16,
           }}
         >
@@ -136,8 +131,8 @@ const AntdTable = ({
       {isServerSide && (
         <div
           style={{
-            display: "flex",
-            justifyContent: "space-between",
+            display: 'flex',
+            justifyContent: 'space-between',
             marginBottom: 16,
           }}
         >
@@ -158,7 +153,7 @@ const AntdTable = ({
         dataSource={displayData}
         pagination={paginationConfig}
         scroll={{ x: 1200, y: 400 }}
-        rowClassName={rowClassName || (() => "")}
+        rowClassName={rowClassName || (() => '')}
         rowHoverable={false}
         bordered
         summary={isLastPage && summary ? summary : undefined}

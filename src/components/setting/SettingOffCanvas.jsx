@@ -1,39 +1,37 @@
-import { useState, useEffect, memo, Fragment } from "react";
+import { useState, useEffect, memo, Fragment } from 'react';
 
 //react-bootstrap
-import { Offcanvas, Row, Col, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Offcanvas, Row, Col, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 // Redux Selector / Action
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from 'react-redux';
 
 // Import selectors & action from setting store
-import * as SettingSelector from "../../store/setting/selectors";
-import { reset_state } from "../../store/setting/actions";
+import * as SettingSelector from '../../store/setting/selectors';
+import { reset_state } from '../../store/setting/actions';
 
 // Section Components
 // Style Setting Section Components
-import ThemeScheme from "./sections/theme-scheme";
-import ColorCustomizer from "./sections/color-customizer";
-import MenuColor from "./sections/menu-color";
-import MenuStyle from "./sections/menu-style";
-import MenuActiveStyle from "./sections/menu-active-style";
-import Direction from "./sections/direction";
-import PageStyle from "./sections/page-style";
+import ThemeScheme from './sections/theme-scheme';
+import ColorCustomizer from './sections/color-customizer';
+import MenuColor from './sections/menu-color';
+import MenuStyle from './sections/menu-style';
+import MenuActiveStyle from './sections/menu-active-style';
+import Direction from './sections/direction';
+import PageStyle from './sections/page-style';
 
-import { copyToClipboard } from "../../utilities/dom";
+import { copyToClipboard } from '../../utilities/dom';
 
-import Scrollbar from "smooth-scrollbar";
+import Scrollbar from 'smooth-scrollbar';
 
 const SettingOffCanvas = memo(() => {
   const [show, setShow] = useState(false);
   const [setShowTooltip] = useState(false);
-  const [tooltipText, setTooltipText] = useState("Copy");
+  const [tooltipText, setTooltipText] = useState('Copy');
 
   // Define selectors
   const themeScheme = useSelector(SettingSelector.theme_scheme);
-  const themeSchemeDirection = useSelector(
-    SettingSelector.theme_scheme_direction
-  );
+  const themeSchemeDirection = useSelector(SettingSelector.theme_scheme_direction);
   const themeColor = useSelector(SettingSelector.theme_color);
   const sidebarType = useSelector(SettingSelector.sidebar_type);
   const sidebarMenuStyle = useSelector(SettingSelector.sidebar_menu_style);
@@ -46,38 +44,33 @@ const SettingOffCanvas = memo(() => {
   useEffect(() => {
     const onClick = (e) => {
       if (show) {
-        if (
-          e.target.closest(".live-customizer") == null &&
-          e.target.closest("#settingbutton") == null
-        ) {
+        if (e.target.closest('.live-customizer') == null && e.target.closest('#settingbutton') == null) {
           setShow(false);
         }
       }
     };
-    document.body.addEventListener("click", onClick);
+    document.body.addEventListener('click', onClick);
 
     return () => {
-      document.body.removeEventListener("click", onClick);
+      document.body.removeEventListener('click', onClick);
     };
   });
 
   const copyConfig = (e) => {
     copyToClipboard(settingObj, true);
-    setTooltipText("Copied!");
+    setTooltipText('Copied!');
   };
 
   const resetTheme = (e) => {
     // dispatch(reset_state())
-    const confirm = window.confirm(
-      "Are you sure you want to reset your settings?"
-    );
+    const confirm = window.confirm('Are you sure you want to reset your settings?');
     if (confirm) {
       dispatch(reset_state());
     }
   };
 
   useEffect(() => {
-    const scrollbarElement = document.querySelector(".my-scrollbar");
+    const scrollbarElement = document.querySelector('.my-scrollbar');
 
     if (scrollbarElement) {
       Scrollbar.init(scrollbarElement);
@@ -97,7 +90,7 @@ const SettingOffCanvas = memo(() => {
       <Offcanvas
         show={show}
         onHide={() => setShow(false)}
-        placement={`${themeSchemeDirection === "rtl" ? "start" : "end"}`}
+        placement={`${themeSchemeDirection === 'rtl' ? 'start' : 'end'}`}
         className="live-customizer"
         tabIndex="-1"
         id="live-customizer"
@@ -138,8 +131,8 @@ const SettingOffCanvas = memo(() => {
                             </button>
                         </OverlayTrigger> */}
             <OverlayTrigger
-              key={"ResetAllSettings"}
-              placement={"left"}
+              key={'ResetAllSettings'}
+              placement={'left'}
               overlay={<Tooltip id="Copy">Reset All Settings</Tooltip>}
             >
               <button
@@ -179,14 +172,10 @@ const SettingOffCanvas = memo(() => {
             </div>
           </div>
         </Offcanvas.Header>
-        <Offcanvas.Body
-          id=""
-          className="my-scrollbar"
-          style={{ height: "auto" }}
-        >
+        <Offcanvas.Body id="" className="my-scrollbar" style={{ height: 'auto' }}>
           <Row>
             <Col lg={12}>
-              <div className="my-scrollbar" style={{ height: "auto" }}>
+              <div className="my-scrollbar" style={{ height: 'auto' }}>
                 <div className="text-center mb-4">
                   <h5 className="d-inline-block">Style Setting</h5>
                 </div>
@@ -255,5 +244,5 @@ const SettingOffCanvas = memo(() => {
   );
 });
 
-SettingOffCanvas.displayName = "SettingOffCanvas";
+SettingOffCanvas.displayName = 'SettingOffCanvas';
 export default SettingOffCanvas;

@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
-import useDataTable from "../../components/hooks/useDatatable";
-import Card from "../../components/Card";
-import clinicServices from "../../api/clinic-services";
-import { Loading } from "../../components/loading";
-import { Col, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import AntdTable from "../../components/antd-table";
-import { Badge } from "antd";
+import React, { useEffect, useRef, useState } from 'react';
+import useDataTable from '../../components/hooks/useDatatable';
+import Card from '../../components/Card';
+import clinicServices from '../../api/clinic-services';
+import { Loading } from '../../components/loading';
+import { Col, Row } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import AntdTable from '../../components/antd-table';
+import { Badge } from 'antd';
 
 const Clinics = () => {
   const [pendingClinicsTableData, setPendingClinicsTableData] = useState([]);
@@ -15,111 +15,83 @@ const Clinics = () => {
   const [enrolledLoading, setEnrolledLoading] = useState(false);
 
   const columns = [
-    { title: "Clinic Name", data: "clinicName" },
-    { title: "Owner Name", data: "ownerName" },
-    { title: "City", data: "city" },
-    { title: "State", data: "state" },
-    { title: "Admin Contact Number", data: "adminContactNumber" },
-    { title: "Admin Contact Email", data: "adminContactEmail" },
-    { title: "Specialties", data: "specialties" },
-    { title: "Status", data: "status" },
+    { title: 'Clinic Name', data: 'clinicName' },
+    { title: 'Owner Name', data: 'ownerName' },
+    { title: 'City', data: 'city' },
+    { title: 'State', data: 'state' },
+    { title: 'Admin Contact Number', data: 'adminContactNumber' },
+    { title: 'Admin Contact Email', data: 'adminContactEmail' },
+    { title: 'Specialties', data: 'specialties' },
+    { title: 'Status', data: 'status' },
     {
-      title: "Enrolled On",
-      data: "createdAt",
+      title: 'Enrolled On',
+      data: 'createdAt',
       render: (data) => new Date(data).toLocaleString(),
     },
     {
-      title: "More",
-      data: "id",
-      render: (data) =>
-        `<a href="/clinics/${data}" class="btn btn-primary btn-sm">View</a>`,
+      title: 'More',
+      data: 'id',
+      render: (data) => `<a href="/clinics/${data}" class="btn btn-primary btn-sm">View</a>`,
     },
   ];
 
   const newClinicColumns = [
     {
-      title: "Clinic Name",
-      dataIndex: "clinicName",
-      key: "clinicName",
-      render: (text, record) => (
-        <Link to={`/clinics/${record.id}`}>{text}</Link>
-      ),
+      title: 'Clinic Name',
+      dataIndex: 'clinicName',
+      key: 'clinicName',
+      render: (text, record) => <Link to={`/clinics/${record.id}`}>{text}</Link>,
     },
     {
-      title: "Owner Name",
-      dataIndex: "ownerName",
-      key: "ownerName",
-      render: (text, record) => (
-        <Link to={`/clinics/${record.id}`}>{text}</Link>
-      ),
+      title: 'Owner Name',
+      dataIndex: 'ownerName',
+      key: 'ownerName',
+      render: (text, record) => <Link to={`/clinics/${record.id}`}>{text}</Link>,
     },
     {
-      title: "City",
-      dataIndex: "city",
-      key: "city",
-      render: (text, record) => (
-        <Link to={`/clinics/${record.id}`}>{text}</Link>
-      ),
+      title: 'City',
+      dataIndex: 'city',
+      key: 'city',
+      render: (text, record) => <Link to={`/clinics/${record.id}`}>{text}</Link>,
     },
     {
-      title: "State",
-      dataIndex: "state",
-      key: "state",
-      render: (text, record) => (
-        <Link to={`/clinics/${record.id}`}>{text}</Link>
-      ),
+      title: 'State',
+      dataIndex: 'state',
+      key: 'state',
+      render: (text, record) => <Link to={`/clinics/${record.id}`}>{text}</Link>,
     },
     {
-      title: "Admin Contact Number",
-      dataIndex: "adminContactNumber",
-      key: "adminContactNumber",
-      render: (text, record) => (
-        <Link to={`/clinics/${record.id}`}>{text}</Link>
-      ),
+      title: 'Admin Contact Number',
+      dataIndex: 'adminContactNumber',
+      key: 'adminContactNumber',
+      render: (text, record) => <Link to={`/clinics/${record.id}`}>{text}</Link>,
     },
     {
-      title: "Admin Contact Email",
-      dataIndex: "adminContactEmail",
-      key: "adminContactEmail",
-      render: (text, record) => (
-        <Link to={`/clinics/${record.id}`}>{text}</Link>
-      ),
+      title: 'Admin Contact Email',
+      dataIndex: 'adminContactEmail',
+      key: 'adminContactEmail',
+      render: (text, record) => <Link to={`/clinics/${record.id}`}>{text}</Link>,
     },
     {
-      title: "Specialties",
-      dataIndex: "specialties",
-      key: "specialties",
-      render: (text, record) => (
-        <Link to={`/clinics/${record.id}`}>{text}</Link>
-      ),
+      title: 'Specialties',
+      dataIndex: 'specialties',
+      key: 'specialties',
+      render: (text, record) => <Link to={`/clinics/${record.id}`}>{text}</Link>,
     },
     {
-      title: "Enrolled On",
-      dataIndex: "createdAt",
-      key: "createdAt",
+      title: 'Enrolled On',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (text, record) => <Link to={`/clinics/${record.id}`}>{new Date(text).toLocaleString()}</Link>,
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      fixed: 'right',
       render: (text, record) => (
         <Link to={`/clinics/${record.id}`}>
-          {new Date(text).toLocaleString()}
-        </Link>
-      ),
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      fixed: "right",
-      render: (text, record) => (
-        <Link to={`/clinics/${record.id}`}>
-          <Badge
-            text={text}
-            status={
-              text === "active"
-                ? "success"
-                : text === "pending"
-                ? "processing"
-                : "default"
-            }
-          />
+          <Badge text={text} status={text === 'active' ? 'success' : text === 'pending' ? 'processing' : 'default'} />
         </Link>
       ),
     },
@@ -146,10 +118,10 @@ const Clinics = () => {
   const getPendingClinics = async () => {
     try {
       setPendingLoading(true);
-      const response = await clinicServices.getClinics("pending");
+      const response = await clinicServices.getClinics('pending');
       setPendingClinicsTableData(response.data); // Use transformed data directly
     } catch (error) {
-      console.error("Error fetching clinics:", error);
+      console.error('Error fetching clinics:', error);
     } finally {
       setPendingLoading(false);
     }
@@ -158,10 +130,10 @@ const Clinics = () => {
   const getEnrolledClincs = async () => {
     try {
       setEnrolledLoading(true);
-      const response = await clinicServices.getClinics("active");
+      const response = await clinicServices.getClinics('active');
       setEnrolledClinicsTableData(response.data); // Use transformed data directly
     } catch (error) {
-      console.error("Error fetching clinics:", error);
+      console.error('Error fetching clinics:', error);
     } finally {
       setEnrolledLoading(false);
     }

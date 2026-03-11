@@ -1,6 +1,6 @@
-import React, { useRef, useState } from "react";
-import { Table as BootstrapTable, Button, Offcanvas } from "react-bootstrap";
-import newUseDataTable from "./hooks/newUseDatatable";
+import { useRef, useState } from 'react';
+import { Table as BootstrapTable, Button, Offcanvas } from 'react-bootstrap';
+import useNewDataTable from './hooks/newUseDatatable';
 
 const CustomTable = ({
   columns,
@@ -17,7 +17,7 @@ const CustomTable = ({
   const [showFilters, setShowFilters] = useState(false);
 
   // Initialize DataTable
-  newUseDataTable({
+  useNewDataTable({
     tableRef,
     columns, // Ensure columns are passed correctly here
     data,
@@ -29,7 +29,7 @@ const CustomTable = ({
     lengthMenu: [50, 75, 100, 200], // Customize entries per page options
   });
 
-  const tableRowStyle = rowOnClick ? { cursor: "pointer" } : {};
+  const tableRowStyle = rowOnClick ? { cursor: 'pointer' } : {};
 
   return (
     <div>
@@ -42,11 +42,7 @@ const CustomTable = ({
       )}
       <BootstrapTable ref={tableRef} striped bordered hover style={tableRowStyle} />
       {enableFilters && (
-        <Offcanvas
-          show={showFilters}
-          onHide={() => setShowFilters(false)}
-          placement="end"
-        >
+        <Offcanvas show={showFilters} onHide={() => setShowFilters(false)} placement="end">
           <Offcanvas.Header closeButton>
             <Offcanvas.Title>Filters</Offcanvas.Title>
           </Offcanvas.Header>

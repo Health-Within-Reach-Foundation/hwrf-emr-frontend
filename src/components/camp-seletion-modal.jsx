@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { Modal, Radio, Button } from "antd";
-import campManagementService from "../api/camp-management-service";
-import authServices from "../api/auth-services";
-import { useAuth } from "../utilities/AuthProvider";
+import React, { useState } from 'react';
+import { Modal, Radio, Button } from 'antd';
+import campManagementService from '../api/camp-management-service';
+import authServices from '../api/auth-services';
+import { useAuth } from '../utilities/AuthProvider';
 
 const CampSelectionModal = ({ open, camps, onClose, preCheckedCampId }) => {
   const [selectedCampId, setSelectedCampId] = useState(preCheckedCampId);
   const [loading, setLoading] = useState(false);
-    console.log(camps, preCheckedCampId);
+  console.log(camps, preCheckedCampId);
   // Handle camp selection
   const handleSelect = async () => {
     const selectedCamp = camps.find((camp) => camp.id === selectedCampId);
@@ -27,38 +27,26 @@ const CampSelectionModal = ({ open, camps, onClose, preCheckedCampId }) => {
       open={open}
       onCancel={onClose}
       footer={[
-        <Button
-          key="select"
-          type="primary"
-          onClick={handleSelect}
-          disabled={!selectedCampId}
-          loading={loading}
-        >
+        <Button key="select" type="primary" onClick={handleSelect} disabled={!selectedCampId} loading={loading}>
           Select
         </Button>,
       ]}
     >
-      <Radio.Group
-        value={selectedCampId}
-        onChange={(e) => setSelectedCampId(e.target.value)}
-        style={{ width: "100%" }}
-      >
+      <Radio.Group value={selectedCampId} onChange={(e) => setSelectedCampId(e.target.value)} style={{ width: '100%' }}>
         {camps.map((camp) => (
           <div
             key={camp.id}
             style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "10px",
-              padding: "10px",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: '10px',
+              padding: '10px',
+              border: '1px solid #ccc',
+              borderRadius: '8px',
             }}
           >
-            <Radio
-              value ={camp.id}
-            />
-            <div style={{ marginLeft: "10px" }}>
+            <Radio value={camp.id} />
+            <div style={{ marginLeft: '10px' }}>
               <h4 className="mb-0 text-black">{camp.name}</h4>
               <p>
                 {camp.address}, {camp.city}, {camp.state}

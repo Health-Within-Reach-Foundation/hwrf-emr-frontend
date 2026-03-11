@@ -1,15 +1,15 @@
-import React, { memo, Fragment, useState } from "react";
+import React, { memo, Fragment, useState } from 'react';
 
-import _ from "lodash";
+import _ from 'lodash';
 
 //react-bootstrap
-import { Tooltip, OverlayTrigger, Collapse } from "react-bootstrap";
+import { Tooltip, OverlayTrigger, Collapse } from 'react-bootstrap';
 
 //router
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
-import { useDispatch } from "react-redux";
-import { theme_color } from "../../../store/setting/actions";
+import { useDispatch } from 'react-redux';
+import { theme_color } from '../../../store/setting/actions';
 
 // Images
 
@@ -42,13 +42,11 @@ const ColorCustomizer = memo((props) => {
         <h6 className="mt-4 mb-3">Color Customizer</h6>
         <div className="d-flex align-items-center">
           <Link
-
             to="#custom"
             role="button"
             onClick={() => setOpen(!open)}
             aria-controls="example-collapse-text"
             aria-expanded={open}
-
           >
             Custom
           </Link>
@@ -69,10 +67,7 @@ const ColorCustomizer = memo((props) => {
               title="Reset Color"
               data-bs-original-title="Reset color"
             >
-              <OverlayTrigger
-                placement="top"
-                overlay={<Tooltip>Reset Color</Tooltip>}
-              >
+              <OverlayTrigger placement="top" overlay={<Tooltip>Reset Color</Tooltip>}>
                 <div
                   data-value="default"
                   data-bs-toggle="tooltip"
@@ -80,8 +75,8 @@ const ColorCustomizer = memo((props) => {
                   title="Default"
                   data-bs-original-title="Default"
                   onClick={() => {
-                    colorChange("default");
-                    setOpen(!open)
+                    colorChange('default');
+                    setOpen(!open);
                   }}
                 >
                   <svg
@@ -114,20 +109,10 @@ const ColorCustomizer = memo((props) => {
             <input
               name="theme_color"
               data-extra="primary"
-              onInput={(e) =>
-                colorChange(
-                  "custom",
-                  { "--{{prefix}}primary": e.target.value },
-                  true
-                )
-              }
+              onInput={(e) => colorChange('custom', { '--{{prefix}}primary': e.target.value }, true)}
               type="color"
               id="custom-primary-color"
-              value={
-                colorValue.colors["--{{prefix}}primary"]
-                  ? colorValue.colors["--{{prefix}}primary"]
-                  : "#0aab93"
-              }
+              value={colorValue.colors['--{{prefix}}primary'] ? colorValue.colors['--{{prefix}}primary'] : '#0aab93'}
             />
           </div>
           <div className="form-group d-flex d-flex justify-content-between align-items-center">
@@ -135,20 +120,10 @@ const ColorCustomizer = memo((props) => {
             <input
               name="theme_color"
               data-extra="secondary"
-              onInput={(e) =>
-                colorChange(
-                  "custom",
-                  { "--{{prefix}}secondary": e.target.value },
-                  true
-                )
-              }
+              onInput={(e) => colorChange('custom', { '--{{prefix}}secondary': e.target.value }, true)}
               type="color"
               id="custom-secondary-color"
-              value={
-                colorValue.colors["--{{prefix}}secondary"]
-                  ? colorValue.colors["--{{prefix}}secondary"]
-                  : "#f68685"
-              }
+              value={colorValue.colors['--{{prefix}}secondary'] ? colorValue.colors['--{{prefix}}secondary'] : '#f68685'}
             />
           </div>
           <div className="form-group d-flex d-flex justify-content-between align-items-center">
@@ -156,20 +131,10 @@ const ColorCustomizer = memo((props) => {
             <input
               name="theme_color"
               data-extra="success"
-              onInput={(e) =>
-                colorChange(
-                  "custom",
-                  { "--{{prefix}}success": e.target.value },
-                  true
-                )
-              }
+              onInput={(e) => colorChange('custom', { '--{{prefix}}success': e.target.value }, true)}
               type="color"
               id="custom-success-color"
-              value={
-                colorValue.colors["--{{prefix}}success"]
-                  ? colorValue.colors["--{{prefix}}success"]
-                  : "#1aa053"
-              }
+              value={colorValue.colors['--{{prefix}}success'] ? colorValue.colors['--{{prefix}}success'] : '#1aa053'}
             />
           </div>
           <div className="form-group d-flex d-flex justify-content-between align-items-center">
@@ -177,20 +142,10 @@ const ColorCustomizer = memo((props) => {
             <input
               name="theme_color"
               data-extra="danger"
-              onInput={(e) =>
-                colorChange(
-                  "custom",
-                  { "--{{prefix}}danger": e.target.value },
-                  true
-                )
-              }
+              onInput={(e) => colorChange('custom', { '--{{prefix}}danger': e.target.value }, true)}
               type="color"
               id="custom-danger-color"
-              value={
-                colorValue.colors["--{{prefix}}danger"]
-                  ? colorValue.colors["--{{prefix}}danger"]
-                  : "#eb5757"
-              }
+              value={colorValue.colors['--{{prefix}}danger'] ? colorValue.colors['--{{prefix}}danger'] : '#eb5757'}
             />
           </div>
           <div className="form-group d-flex d-flex justify-content-between align-items-center">
@@ -198,20 +153,10 @@ const ColorCustomizer = memo((props) => {
             <input
               name="theme_color"
               data-extra="warning"
-              onInput={(e) =>
-                colorChange(
-                  "custom",
-                  { "--{{prefix}}warning": e.target.value },
-                  true
-                )
-              }
+              onInput={(e) => colorChange('custom', { '--{{prefix}}warning': e.target.value }, true)}
               type="color"
               id="custom-warning-color"
-              value={
-                colorValue.colors["--{{prefix}}warning"]
-                  ? colorValue.colors["--{{prefix}}warning"]
-                  : "#f16a1b"
-              }
+              value={colorValue.colors['--{{prefix}}warning'] ? colorValue.colors['--{{prefix}}warning'] : '#f16a1b'}
             />
           </div>
           <div className="form-group d-flex d-flex justify-content-between align-items-center">
@@ -219,20 +164,10 @@ const ColorCustomizer = memo((props) => {
             <input
               name="theme_color"
               data-extra="info"
-              onInput={(e) =>
-                colorChange(
-                  "custom",
-                  { "--{{prefix}}info": e.target.value },
-                  true
-                )
-              }
+              onInput={(e) => colorChange('custom', { '--{{prefix}}info': e.target.value }, true)}
               type="color"
               id="custom-info-color"
-              value={
-                colorValue.colors["--{{prefix}}info"]
-                  ? colorValue.colors["--{{prefix}}info"]
-                  : "#000000"
-              }
+              value={colorValue.colors['--{{prefix}}info'] ? colorValue.colors['--{{prefix}}info'] : '#000000'}
             />
           </div>
         </div>
@@ -246,8 +181,8 @@ const ColorCustomizer = memo((props) => {
               className="btn-check"
               name="theme_color"
               id="color-1"
-              onClick={() => colorChange("color-1")}
-              defaultChecked={colorValue.value === "color-1"}
+              onClick={() => colorChange('color-1')}
+              defaultChecked={colorValue.value === 'color-1'}
             />
             <label
               className={`btn btn-border d-block bg-transparent`}
@@ -271,8 +206,8 @@ const ColorCustomizer = memo((props) => {
               className="btn-check"
               name="theme_color"
               id="color-2"
-              onClick={() => colorChange("color-2")}
-              defaultChecked={colorValue.value === "color-2"}
+              onClick={() => colorChange('color-2')}
+              defaultChecked={colorValue.value === 'color-2'}
             />
             <label
               className={` btn btn-border d-block bg-transparent`}
@@ -297,9 +232,9 @@ const ColorCustomizer = memo((props) => {
               name="theme_color"
               id="color-3"
               onClick={() => {
-                colorChange("color-3");
+                colorChange('color-3');
               }}
-              defaultChecked={colorValue.value === "color-3"}
+              defaultChecked={colorValue.value === 'color-3'}
             />
             <label
               className={` btn btn-border d-block bg-transparent`}
@@ -324,9 +259,9 @@ const ColorCustomizer = memo((props) => {
               name="theme_color"
               id="color-4"
               onClick={() => {
-                colorChange("color-4");
+                colorChange('color-4');
               }}
-              defaultChecked={colorValue.value === "color-4"}
+              defaultChecked={colorValue.value === 'color-4'}
             />
             <label
               className={` btn btn-border d-block bg-transparent`}
@@ -351,9 +286,9 @@ const ColorCustomizer = memo((props) => {
               name="theme_color"
               id="color-5"
               onClick={() => {
-                colorChange("color-5");
+                colorChange('color-5');
               }}
-              defaultChecked={colorValue.value === "color-5"}
+              defaultChecked={colorValue.value === 'color-5'}
             />
             <label
               className={`btn btn-border d-block bg-transparent`}
@@ -374,5 +309,5 @@ const ColorCustomizer = memo((props) => {
   );
 });
 
-ColorCustomizer.displayName = "ColorCustomizer";
+ColorCustomizer.displayName = 'ColorCustomizer';
 export default ColorCustomizer;

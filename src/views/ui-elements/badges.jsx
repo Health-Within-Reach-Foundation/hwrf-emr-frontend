@@ -1,8 +1,8 @@
-import React, { Fragment } from "react";
-import { Badge, Row, Col } from "react-bootstrap";
+import React, { Fragment } from 'react';
+import { Badge, Row, Col } from 'react-bootstrap';
 // component
-import Card from '../../components/Card'
-import { Link } from "react-router-dom";
+import Card from '../../components/Card';
+import { Link } from 'react-router-dom';
 
 const Badges = () => {
   return (
@@ -18,7 +18,8 @@ const Badges = () => {
               </Card.Header>
               <Card.Body>
                 <p>
-                  Badges scale to match the size of the immediate parent element by using relative font sizing and <code>em</code> units.
+                  Badges scale to match the size of the immediate parent element by using relative font sizing and{' '}
+                  <code>em</code> units.
                 </p>
                 <h1 className="mt-2">
                   Example heading <Badge bg="primary">New</Badge>
@@ -49,23 +50,23 @@ const Badges = () => {
               <Card.Body>
                 <p>Badges can be used as part of buttons to provide a counter.</p>
                 <button type="button" className="btn mb-1 btn-primary">
-                  Notifications{" "}
+                  Notifications{' '}
                   <Badge bg="secondary" className="badge ms-2">
                     4
-                  </Badge>{" "}
-                </button>{" "}
+                  </Badge>{' '}
+                </button>{' '}
                 <button type="button" className="btn mb-1 btn-success">
-                  Notifications{" "}
+                  Notifications{' '}
                   <Badge bg="secondary" className="badge ms-2">
                     4
-                  </Badge>{" "}
-                </button>{" "}
+                  </Badge>{' '}
+                </button>{' '}
                 <button type="button" className="btn mb-1 btn-danger">
-                  Notifications{" "}
+                  Notifications{' '}
                   <Badge bg="secondary" className="badge ms-2">
                     4
-                  </Badge>{" "}
-                </button>{" "}
+                  </Badge>{' '}
+                </button>{' '}
               </Card.Body>
             </Card>
             <Card>
@@ -77,23 +78,23 @@ const Badges = () => {
               <Card.Body>
                 <p>Badges can be used as part of buttons to provide a counter.</p>
                 <button type="button" className="btn mb-1 btn-outline-primary">
-                  Notifications{" "}
+                  Notifications{' '}
                   <Badge bg="primary" className="badge bg-primary ms-2">
                     4
                   </Badge>
-                </button>{" "}
+                </button>{' '}
                 <button type="button" className="btn mb-1 btn-outline-success">
-                  Notifications{" "}
+                  Notifications{' '}
                   <Badge bg="success" className="badge bg-primary ms-2">
                     4
                   </Badge>
-                </button>{" "}
+                </button>{' '}
                 <button type="button" className="btn mb-1 btn-outline-danger">
-                  Notifications{" "}
+                  Notifications{' '}
                   <Badge bg="danger" className="badge bg-primary ms-2">
                     4
                   </Badge>
-                </button>{" "}
+                </button>{' '}
               </Card.Body>
             </Card>
             <Card>
@@ -105,23 +106,23 @@ const Badges = () => {
               <Card.Body>
                 <p>Badges can be used as part of buttons to provide a counter.</p>
                 <button type="button" className="btn mb-1 bg-primary-subtle">
-                  Notifications{" "}
+                  Notifications{' '}
                   <Badge bg="primary" className="badge bg-primary ms-2">
                     4
                   </Badge>
-                </button>{" "}
+                </button>{' '}
                 <button type="button" className="btn mb-1 bg-success-subtle">
-                  Notifications{" "}
+                  Notifications{' '}
                   <Badge bg="success" className="badge bg-primary ms-2">
                     4
                   </Badge>
-                </button>{" "}
+                </button>{' '}
                 <button type="button" className="btn mb-1 bg-danger-subtle">
-                  Notifications{" "}
+                  Notifications{' '}
                   <Badge bg="danger" className="badge bg-primary ms-2">
                     4
                   </Badge>
-                </button>{" "}
+                </button>{' '}
               </Card.Body>
             </Card>
           </Col>
@@ -133,104 +134,99 @@ const Badges = () => {
                 </div>
               </Card.Header>
               <Card.Body>
-                <p className="mb-2">
-                  Add any of the below mentioned modifier classes to change the
-                  appearance of a badge
-                </p>
+                <p className="mb-2">Add any of the below mentioned modifier classes to change the appearance of a badge</p>
                 <Badge bg="primary" className="mt-2">
                   Primary
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge bg="secondary" className="mt-2">
                   Secondary
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge bg="success" className="mt-2">
                   Success
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge bg="danger" className="mt-2">
                   Danger
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge bg="warning" className="mt-2">
                   Warning
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge bg="info" className="mt-2">
                   Info
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge bg="light" className="mt-2 text-white">
                   Light
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge bg="dark" className="mt-2">
                   Dark
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge bg="gray" className="mt-2">
                   Gray
-                </Badge>{" "}
+                </Badge>{' '}
                 <h5 className="card-title mt-4">Pill badges</h5>
                 <p className="mb-2">
-                  Use the{" "}
-                  <code>  .badge-pill</code> modifier class to make badges more
-                  rounded (with a larger <code>border-radius</code> and additional
-                  horizontal{" "}
-                  <code> padding</code>). Useful if you miss the badges from v3.
+                  Use the <code> .badge-pill</code> modifier class to make badges more rounded (with a larger{' '}
+                  <code>border-radius</code> and additional horizontal <code> padding</code>). Useful if you miss the badges
+                  from v3.
                 </p>
                 <Badge pill bg="primary" className="mt-2">
                   Primary
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge pill bg="secondary" className="mt-2">
                   Secondary
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge pill bg="success" className=" mt-2">
                   Success
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge pill bg="danger" className="mt-2">
                   Danger
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge pill bg="warning" className=" mt-2">
                   Warning
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge pill bg="info" className="mt-2">
                   Info
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge pill bg="light" className="mt-2 text-white">
                   Light
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge pill bg="dark" className="mt-2">
                   Dark
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge pill bg="gray" className="mt-2">
                   Gray
-                </Badge>{" "}
+                </Badge>{' '}
                 <h5 className="card-title mt-4">Links</h5>
                 <p className="mb-2">
-                  Using the contextual <code>.badge-*</code> classes on an{" "}
-                  <code>&lt;a&gt;</code> element quickly provide <em>actionable</em> badges with hover and focus states.
+                  Using the contextual <code>.badge-*</code> classes on an <code>&lt;a&gt;</code> element quickly provide{' '}
+                  <em>actionable</em> badges with hover and focus states.
                 </p>
                 <Badge as={Link} bg="primary" to="#" className="mt-2">
                   Primary
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge as={Link} bg="secondary" to="#" className="mt-2">
                   Secondary
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge as={Link} bg="success" to="#" className="mt-2">
                   Success
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge as={Link} bg="danger" to="#" className="mt-2">
                   Danger
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge as={Link} bg="warning" to="#" className="mt-2">
                   Warning
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge as={Link} bg="info" to="#" className="mt-2">
                   Info
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge as={Link} bg="light" to="#" className="mt-2 text-white">
                   Light
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge as={Link} bg="dark" to="#" className="mt-2">
                   Dark
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge as={Link} bg="gray" to="#" className="mt-2">
                   Gray
-                </Badge>{" "}
+                </Badge>{' '}
               </Card.Body>
             </Card>
             <Card>
@@ -240,214 +236,99 @@ const Badges = () => {
                 </div>
               </Card.Header>
               <Card.Body>
-                <p className="mb-2">
-                  Add any of the below mentioned modifier classes to change the
-                  appearance of a badge.
-                </p>
-                <Badge
-                  bg=""
-                  bsPrefix="badge border border-primary text-primary mt-2"
-                >
+                <p className="mb-2">Add any of the below mentioned modifier classes to change the appearance of a badge.</p>
+                <Badge bg="" bsPrefix="badge border border-primary text-primary mt-2">
                   Primary
-                </Badge>{" "}
-                <Badge
-                  bg=""
-                  className="badge border border-secondary text-secondary mt-2"
-                >
+                </Badge>{' '}
+                <Badge bg="" className="badge border border-secondary text-secondary mt-2">
                   Secondary
-                </Badge>{" "}
-                <Badge
-                  bg=""
-                  className="badge border border-success text-success mt-2"
-                >
+                </Badge>{' '}
+                <Badge bg="" className="badge border border-success text-success mt-2">
                   Success
-                </Badge>{" "}
-                <Badge
-                  bg=""
-                  className="badge border border-danger text-danger mt-2"
-                >
+                </Badge>{' '}
+                <Badge bg="" className="badge border border-danger text-danger mt-2">
                   Danger
-                </Badge>{" "}
-                <Badge
-                  bg=""
-                  className="badge border border-warning text-warning mt-2"
-                >
+                </Badge>{' '}
+                <Badge bg="" className="badge border border-warning text-warning mt-2">
                   Warning
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge bg="" className="badge border border-info text-info mt-2">
                   Info
-                </Badge>{" "}
-                <Badge
-                  bg=""
-                  className="badge border border-light text-light  mt-2"
-                >
+                </Badge>{' '}
+                <Badge bg="" className="badge border border-light text-light  mt-2">
                   Light
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge bg="" className="badge border border-dark text-dark mt-2">
                   Dark
-                </Badge>{" "}
+                </Badge>{' '}
                 <Badge bg="" className="badge border border-gray text-gray mt-2">
                   Gray
-                </Badge>{" "}
+                </Badge>{' '}
                 <h5 className="card-title mt-4">Pill badges</h5>
                 <p className="mb-2">
-                  Use the <code> .badge-pill</code> modifier class to make badges
-                  more rounded (with a larger <code> border-radius</code> and
-                  additional horizontal{" "}
-                  <code> padding</code>
+                  Use the <code> .badge-pill</code> modifier class to make badges more rounded (with a larger{' '}
+                  <code> border-radius</code> and additional horizontal <code> padding</code>
                   ). Useful if you miss the badges from v3.
                 </p>
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-primary text-primary mt-2"
-                >
+                <Badge as={Link} bg="" to="#" className="badge border border-primary text-primary mt-2">
                   Primary
-                </Badge>{" "}
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-secondary text-secondary mt-2"
-                >
+                </Badge>{' '}
+                <Badge as={Link} bg="" to="#" className="badge border border-secondary text-secondary mt-2">
                   Secondary
-                </Badge>{" "}
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-success text-success mt-2"
-                >
+                </Badge>{' '}
+                <Badge as={Link} bg="" to="#" className="badge border border-success text-success mt-2">
                   Success
-                </Badge>{" "}
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-danger text-danger mt-2"
-                >
+                </Badge>{' '}
+                <Badge as={Link} bg="" to="#" className="badge border border-danger text-danger mt-2">
                   Danger
-                </Badge>{" "}
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-warning text-warning mt-2"
-                >
+                </Badge>{' '}
+                <Badge as={Link} bg="" to="#" className="badge border border-warning text-warning mt-2">
                   Warning
-                </Badge>{" "}
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-info text-info mt-2"
-                >
+                </Badge>{' '}
+                <Badge as={Link} bg="" to="#" className="badge border border-info text-info mt-2">
                   Info
-                </Badge>{" "}
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-light text-light  mt-2"
-                >
+                </Badge>{' '}
+                <Badge as={Link} bg="" to="#" className="badge border border-light text-light  mt-2">
                   Light
-                </Badge>{" "}
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-dark text-dark mt-2"
-                >
+                </Badge>{' '}
+                <Badge as={Link} bg="" to="#" className="badge border border-dark text-dark mt-2">
                   Dark
-                </Badge>{" "}
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-gray text-gray mt-2"
-                >
+                </Badge>{' '}
+                <Badge as={Link} bg="" to="#" className="badge border border-gray text-gray mt-2">
                   Gray
-                </Badge>{" "}
+                </Badge>{' '}
                 <h5 className="card-title mt-4">Links</h5>
                 <p className="mb-2">
-                  Using the contextual{" "}
-                  <code> .badge-* {" "}</code>classes on an <code>&lt;a&gt;</code>{" "}
-                  element quickly provide
+                  Using the contextual <code> .badge-* </code>classes on an <code>&lt;a&gt;</code> element quickly provide
                   <em> actionable</em> badges with hover and focus states.
                 </p>
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-primary text-primary mt-2"
-                >
+                <Badge as={Link} bg="" to="#" className="badge border border-primary text-primary mt-2">
                   Primary
-                </Badge>{" "}
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-secondary text-secondary mt-2"
-                >
+                </Badge>{' '}
+                <Badge as={Link} bg="" to="#" className="badge border border-secondary text-secondary mt-2">
                   Secondary
-                </Badge>{" "}
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-success text-success mt-2"
-                >
+                </Badge>{' '}
+                <Badge as={Link} bg="" to="#" className="badge border border-success text-success mt-2">
                   Success
-                </Badge>{" "}
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-danger text-danger mt-2"
-                >
+                </Badge>{' '}
+                <Badge as={Link} bg="" to="#" className="badge border border-danger text-danger mt-2">
                   Danger
-                </Badge>{" "}
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-warning text-warning mt-2"
-                >
+                </Badge>{' '}
+                <Badge as={Link} bg="" to="#" className="badge border border-warning text-warning mt-2">
                   Warning
-                </Badge>{" "}
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-info text-info mt-2"
-                >
+                </Badge>{' '}
+                <Badge as={Link} bg="" to="#" className="badge border border-info text-info mt-2">
                   Info
-                </Badge>{" "}
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-light text-light mt-2"
-                >
+                </Badge>{' '}
+                <Badge as={Link} bg="" to="#" className="badge border border-light text-light mt-2">
                   Light
-                </Badge>{" "}
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-dark text-dark mt-2"
-                >
+                </Badge>{' '}
+                <Badge as={Link} bg="" to="#" className="badge border border-dark text-dark mt-2">
                   Dark
-                </Badge>{" "}
-                <Badge
-                  as={Link}
-                  bg=""
-                  to="#"
-                  className="badge border border-gray text-gray mt-2"
-                >
+                </Badge>{' '}
+                <Badge as={Link} bg="" to="#" className="badge border border-gray text-gray mt-2">
                   Gray
-                </Badge>{" "}
+                </Badge>{' '}
               </Card.Body>
             </Card>
           </Col>

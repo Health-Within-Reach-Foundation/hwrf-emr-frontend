@@ -1,6 +1,6 @@
-import React, { Fragment } from "react";
-import { Col, Row } from "react-bootstrap";
-import Card from "../../components/Card";
+import React, { Fragment } from 'react';
+import { Col, Row } from 'react-bootstrap';
+import Card from '../../components/Card';
 
 const Video = () => {
   return (
@@ -15,15 +15,10 @@ const Video = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Wrap any embed like an{" "}
-                <code className="highlighter-rouge">&lt;iframe&gt;</code> in a
-                parent element with{" "}
-                <code className="highlighter-rouge">.embed-responsive</code> and
-                an aspect ratio. The{" "}
-                <code className="highlighter-rouge">
-                  .embed-responsive-item
-                </code>{" "}
-                isn’t strictly required, but we encourage it.
+                Wrap any embed like an <code className="highlighter-rouge">&lt;iframe&gt;</code> in a parent element with{' '}
+                <code className="highlighter-rouge">.embed-responsive</code> and an aspect ratio. The{' '}
+                <code className="highlighter-rouge">.embed-responsive-item</code> isn’t strictly required, but we encourage
+                it.
               </p>
               <div className="ratio ratio-16x9">
                 <iframe
@@ -41,10 +36,7 @@ const Video = () => {
               </div>
             </Card.Header>
             <Card.Body>
-              <p>
-                Progress components are built with two HTML elements, some CSS
-                to set the width, and a few attributes.
-              </p>
+              <p>Progress components are built with two HTML elements, some CSS to set the width, and a few attributes.</p>
               <div className="ratio ratio-4x3">
                 <iframe
                   className="embed-responsive-item"
@@ -63,10 +55,7 @@ const Video = () => {
               </div>
             </Card.Header>
             <Card.Body>
-              <p>
-                Progress components are built with two HTML elements, some CSS
-                to set the width, and a few attributes.
-              </p>
+              <p>Progress components are built with two HTML elements, some CSS to set the width, and a few attributes.</p>
               <div className="ratio ratio-21x9">
                 <iframe
                   className="embed-responsive-item"
@@ -83,10 +72,7 @@ const Video = () => {
               </div>
             </Card.Header>
             <Card.Body>
-              <p>
-                Progress components are built with two HTML elements, some CSS
-                to set the width, and a few attributes.
-              </p>
+              <p>Progress components are built with two HTML elements, some CSS to set the width, and a few attributes.</p>
               <div className="ratio ratio-1x1">
                 <iframe
                   className="embed-responsive-item"

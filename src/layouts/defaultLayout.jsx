@@ -1,22 +1,22 @@
-import React from "react";
+import React from 'react';
 
 // react-router
-import { Outlet } from "react-router-dom";
+import { Outlet } from 'react-router-dom';
 
 // Import selectors & action from setting store
-import * as SettingSelector from "../store/setting/selectors";
+import * as SettingSelector from '../store/setting/selectors';
 
 // Redux Selector / Action
-import { useSelector } from "react-redux";
+import { useSelector } from 'react-redux';
 
 // Partials
-import Header from "../components/partials/headerStyle/header";
-import Footer from "../components/partials/footerStyle/footer";
-import Sidebar from "../components/partials/sidebar/sidebar";
-import SettingOffCanvas from "../components/setting/SettingOffCanvas";
+import Header from '../components/partials/headerStyle/header';
+import Footer from '../components/partials/footerStyle/footer';
+import Sidebar from '../components/partials/sidebar/sidebar';
+import SettingOffCanvas from '../components/setting/SettingOffCanvas';
 
-import { useAuth } from "../utilities/AuthProvider";
-import "./camp-details-header.scss";
+import { useAuth } from '../utilities/AuthProvider';
+import './camp-details-header.scss';
 
 const DefaultLayout = () => {
   const pageLayout = useSelector(SettingSelector.page_layout);
@@ -28,7 +28,7 @@ const DefaultLayout = () => {
         <Sidebar />
         <main className="main-content content-page ">
           {/* Show warning if currentCampId is not available */}
-          
+
           <div className="position-relative">
             {/* --Nav Start-- */}
             <Header />

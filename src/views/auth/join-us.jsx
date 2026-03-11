@@ -287,26 +287,26 @@
 
 // export default JoinUs;
 
-import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Select, Spin } from "antd";
-import { Link } from "react-router-dom";
-import toast from "react-hot-toast";
-import superadminServices from "../../api/superadmin-services";
-import clinicServices from "../../api/clinic-services";
-import { Loading } from "../../components/loading";
+import React, { useState, useEffect } from 'react';
+import { Form, Input, Button, Select, Spin } from 'antd';
+import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import superadminServices from '../../api/superadmin-services';
+import clinicServices from '../../api/clinic-services';
+import { Loading } from '../../components/loading';
 
 const generatePath = (path) => {
   return window.origin + import.meta.env.BASE_URL + path;
 };
 
 const initialStateFormData = {
-  adminName: "",
+  adminName: '',
   specialties: [],
-  adminEmail: "",
-  adminPhoneNumber: "",
-  clinicName: "",
-  phoneNumber: "",
-  contactEmail: "",
+  adminEmail: '',
+  adminPhoneNumber: '',
+  clinicName: '',
+  phoneNumber: '',
+  contactEmail: '',
 };
 
 const JoinUs = () => {
@@ -326,7 +326,7 @@ const JoinUs = () => {
         }));
         setSpecialtyOptions(options);
       } catch (error) {
-        console.error("Error fetching specialties:", error);
+        console.error('Error fetching specialties:', error);
       } finally {
         setLoading(false);
       }
@@ -336,7 +336,7 @@ const JoinUs = () => {
 
   const handleSubmit = async (values) => {
     setLoading(true);
-    console.log("values of join us -->", values);
+    console.log('values of join us -->', values);
     try {
       // const response = await clinicServices.onBoardClinic(values);
       if (response.success) {
@@ -345,8 +345,8 @@ const JoinUs = () => {
         form.resetFields();
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error("Failed to onboard clinic");
+      console.error('Error submitting form:', error);
+      toast.error('Failed to onboard clinic');
     } finally {
       setLoading(false);
     }
@@ -362,30 +362,18 @@ const JoinUs = () => {
         <div className="row justify-content-center">
           <div className="col-md-6 text-center mt-3">
             <Link to="/" className="sign-in-logo mb-4 d-block">
-              <img
-                src={generatePath("/assets/images/hwrf-vertical.svg")}
-                className="img-fluid"
-                alt="Logo"
-              />
+              <img src={generatePath('/assets/images/hwrf-vertical.svg')} className="img-fluid" alt="Logo" />
             </Link>
           </div>
         </div>
         <div className="row justify-content-center">
           <div className="col-md-6 col-lg-5 p-4 border rounded bg-light shadow">
             <h2 className="text-center mb-4">Join Us</h2>
-            <Form
-              form={form}
-              layout="vertical"
-              onFinish={handleSubmit}
-              initialValues={initialStateFormData}
-              size="large"
-            >
+            <Form form={form} layout="vertical" onFinish={handleSubmit} initialValues={initialStateFormData} size="large">
               <Form.Item
                 label="Admin Name"
                 name="adminName"
-                rules={[
-                  { required: true, message: "Please enter the admin name" },
-                ]}
+                rules={[{ required: true, message: 'Please enter the admin name' }]}
               >
                 <Input placeholder="Enter admin name" />
               </Form.Item>
@@ -396,7 +384,7 @@ const JoinUs = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please select at least one specialty",
+                    message: 'Please select at least one specialty',
                   },
                 ]}
               >
@@ -404,9 +392,7 @@ const JoinUs = () => {
                   mode="multiple"
                   options={specialtyOptions}
                   placeholder="Select specialties"
-                  filterOption={(input, option) =>
-                    option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                  }
+                  filterOption={(input, option) => option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                 />
               </Form.Item>
 
@@ -414,8 +400,8 @@ const JoinUs = () => {
                 label="Admin Email"
                 name="adminEmail"
                 rules={[
-                  { required: true, message: "Please enter your email" },
-                  { type: "email", message: "Enter a valid email" },
+                  { required: true, message: 'Please enter your email' },
+                  { type: 'email', message: 'Enter a valid email' },
                 ]}
               >
                 <Input placeholder="Enter admin email" />
@@ -424,9 +410,7 @@ const JoinUs = () => {
               <Form.Item
                 label="Admin Phone Number"
                 name="adminPhoneNumber"
-                rules={[
-                  { required: true, message: "Please enter the phone number" },
-                ]}
+                rules={[{ required: true, message: 'Please enter the phone number' }]}
               >
                 <Input placeholder="Enter admin phone number" />
               </Form.Item>
@@ -434,9 +418,7 @@ const JoinUs = () => {
               <Form.Item
                 label="Clinic Name"
                 name="clinicName"
-                rules={[
-                  { required: true, message: "Please enter the clinic name" },
-                ]}
+                rules={[{ required: true, message: 'Please enter the clinic name' }]}
               >
                 <Input placeholder="Enter clinic name" />
               </Form.Item>
@@ -474,12 +456,7 @@ const JoinUs = () => {
                 >
                   Reset
                 </Button>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  disabled={loading}
-                  className="btn-primary bg-primary"
-                >
+                <Button type="primary" htmlType="submit" disabled={loading} className="btn-primary bg-primary">
                   Submit
                 </Button>
               </div>

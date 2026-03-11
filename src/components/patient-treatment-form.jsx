@@ -1,42 +1,36 @@
-import React, { useEffect, useState } from "react";
-import { Drawer, Input, TreeSelect, Select } from "antd";
-import { Button, Form } from "react-bootstrap";
+import React, { useEffect, useState } from 'react';
+import { Drawer, Input, TreeSelect, Select } from 'antd';
+import { Button, Form } from 'react-bootstrap';
 
-const PatientTreatmentForm = ({
-  isEdit,
-  drawerVisible,
-  onClose,
-  treatmentData,
-  onSave,
-}) => {
+const PatientTreatmentForm = ({ isEdit, drawerVisible, onClose, treatmentData, onSave }) => {
   const dentalQuadrantOptions = [
     {
-      title: "Upper Left",
-      value: "upperLeft",
+      title: 'Upper Left',
+      value: 'upperLeft',
       children: Array.from({ length: 8 }, (_, i) => ({
         title: `Tooth ${i + 1}`,
         value: `upperLeft-tooth${i + 1}`,
       })),
     },
     {
-      title: "Upper Right",
-      value: "upperRight",
+      title: 'Upper Right',
+      value: 'upperRight',
       children: Array.from({ length: 8 }, (_, i) => ({
         title: `Tooth ${i + 1}`,
         value: `upperRight-tooth${i + 1}`,
       })),
     },
     {
-      title: "Lower Left",
-      value: "lowerLeft",
+      title: 'Lower Left',
+      value: 'lowerLeft',
       children: Array.from({ length: 8 }, (_, i) => ({
         title: `Tooth ${i + 1}`,
         value: `lowerLeft-tooth${i + 1}`,
       })),
     },
     {
-      title: "Lower Right",
-      value: "lowerRight",
+      title: 'Lower Right',
+      value: 'lowerRight',
       children: Array.from({ length: 8 }, (_, i) => ({
         title: `Tooth ${i + 1}`,
         value: `lowerRight-tooth${i + 1}`,
@@ -48,7 +42,7 @@ const PatientTreatmentForm = ({
     treatment: [],
     dentalQuadrant: [],
     xrayStatus: false,
-    notes: "",
+    notes: '',
     treatmentStatus: [],
     billing: { totalCost: 0, paid: 0, remaining: 0 },
   });
@@ -63,7 +57,7 @@ const PatientTreatmentForm = ({
         dentalQuadrant: [],
         xrayStatus: false,
         file: null,
-        notes: "",
+        notes: '',
         treatmentStatus: [],
         billing: { totalCost: 0, paid: 0, remaining: 0 },
       });
@@ -86,27 +80,21 @@ const PatientTreatmentForm = ({
   };
 
   return (
-    <Drawer
-      title={"Update treatment"}
-      placement="right"
-      onClose={onClose}
-      open={drawerVisible}
-      width={600}
-    >
+    <Drawer title={'Update treatment'} placement="right" onClose={onClose} open={drawerVisible} width={600}>
       <Form>
         <Form.Group className="py-2">
           <Form.Label>Complaints</Form.Label>
           <Select
             mode="multiple"
             value={formState.complaints}
-            onChange={(value) => handleInputChange("complaints", value)}
+            onChange={(value) => handleInputChange('complaints', value)}
             options={[
-              { value: "Tooth Ache", label: "Tooth Ache" },
-              { value: "Tooth Missing", label: "Tooth Missing" },
-              { value: "Bad Breath", label: "Bad Breath" },
-              { value: "Caries", label: "Caries" },
-              { value: "NA", label: "NA" },
-              { value: "Calculus", label: "Calculus" },
+              { value: 'Tooth Ache', label: 'Tooth Ache' },
+              { value: 'Tooth Missing', label: 'Tooth Missing' },
+              { value: 'Bad Breath', label: 'Bad Breath' },
+              { value: 'Caries', label: 'Caries' },
+              { value: 'NA', label: 'NA' },
+              { value: 'Calculus', label: 'Calculus' },
             ]}
             className="w-100"
           />
@@ -116,27 +104,26 @@ const PatientTreatmentForm = ({
           <Select
             mode="multiple"
             value={formState.treatment}
-            onChange={(value) => handleInputChange("complaints", value)}
+            onChange={(value) => handleInputChange('complaints', value)}
             options={[
-              { value: "Scaling-Regular", label: "Scaling-Regular" },
-              { value: "Scaling-Complex", label: "Scaling-Complex" },
-              { value: "RC-Simple", label: "RC-Simple" },
-              { value: "RC-Complex", label: "RC-Complex" },
-              { value: "Filling-Regular", label: "Filling-Regular" },
-              { value: "Filling-Deep", label: "Filling-Deep" },
-              { value: "Extraction-Simple", label: "Extraction-Simple" },
-              { value: "Extraction-Complex", label: "Extraction-Complex" },
-              { value: "Crown-Metal", label: "Crown-Metal" },
-              { value: "Crown-PFM", label: "Crown-PFM" },
-              { value: "Crown-Zirconia", label: "Crown-Zirconia" },
-              { value: "Floride", label: "Floride" },
-              { value: "Pit Fissure Sealant", label: "Pit Fissure Sealant" },
-              { value: "Pulpectomy", label: "Pulpectomy" },
-              { value: "OPD Done", label: "OPD Done" },
-              { value: "OPD", label: "OPD" },
-              { value: "Crown Cutting", label: "Crown Cutting" },
+              { value: 'Scaling-Regular', label: 'Scaling-Regular' },
+              { value: 'Scaling-Complex', label: 'Scaling-Complex' },
+              { value: 'RC-Simple', label: 'RC-Simple' },
+              { value: 'RC-Complex', label: 'RC-Complex' },
+              { value: 'Filling-Regular', label: 'Filling-Regular' },
+              { value: 'Filling-Deep', label: 'Filling-Deep' },
+              { value: 'Extraction-Simple', label: 'Extraction-Simple' },
+              { value: 'Extraction-Complex', label: 'Extraction-Complex' },
+              { value: 'Crown-Metal', label: 'Crown-Metal' },
+              { value: 'Crown-PFM', label: 'Crown-PFM' },
+              { value: 'Crown-Zirconia', label: 'Crown-Zirconia' },
+              { value: 'Floride', label: 'Floride' },
+              { value: 'Pit Fissure Sealant', label: 'Pit Fissure Sealant' },
+              { value: 'Pulpectomy', label: 'Pulpectomy' },
+              { value: 'OPD Done', label: 'OPD Done' },
+              { value: 'OPD', label: 'OPD' },
+              { value: 'Crown Cutting', label: 'Crown Cutting' },
             ]}
-
             className="w-100"
           />
         </Form.Group>
@@ -145,13 +132,11 @@ const PatientTreatmentForm = ({
           <TreeSelect
             treeData={dentalQuadrantOptions}
             value={formState?.dentalQuadrant}
-            onChange={(value) =>
-              setFormState((prev) => ({ ...prev, dentalQuadrant: value }))
-            }
+            onChange={(value) => setFormState((prev) => ({ ...prev, dentalQuadrant: value }))}
             treeCheckable={true}
             showCheckedStrategy={TreeSelect.SHOW_PARENT}
             placeholder="Please select"
-            style={{ width: "100%" }}
+            style={{ width: '100%' }}
           />
         </Form.Group>
         <Form.Group className="py-2">
@@ -187,25 +172,20 @@ const PatientTreatmentForm = ({
           <Select
             mode="multiple"
             value={formState?.treatmentStatus}
-            onChange={(value) =>
-              setFormState((prev) => ({ ...prev, treatmentStatus: value }))
-            }
+            onChange={(value) => setFormState((prev) => ({ ...prev, treatmentStatus: value }))}
             placeholder="Select Status"
-            style={{ width: "100%" }}
+            style={{ width: '100%' }}
             options={[
-              { value: "completed", label: "Completed" },
-              { value: "pending", label: "Pending" },
-              { value: "cancelled", label: "Cancelled" },
+              { value: 'completed', label: 'Completed' },
+              { value: 'pending', label: 'Pending' },
+              { value: 'cancelled', label: 'Cancelled' },
             ]}
           />
         </Form.Group>
 
         <Form.Group className="py-2">
           <Form.Label>Notes</Form.Label>
-          <Input.TextArea
-            value={formState.notes}
-            onChange={(e) => handleInputChange("notes", e.target.value)}
-          />
+          <Input.TextArea value={formState.notes} onChange={(e) => handleInputChange('notes', e.target.value)} />
         </Form.Group>
 
         <Form.Group>
@@ -230,7 +210,7 @@ const PatientTreatmentForm = ({
             onChange={(e) =>
               setRecordForm((prev) => ({
                 ...prev,
-                paidAmount: e.target.value
+                paidAmount: e.target.value,
               }))
             }
           />
@@ -244,13 +224,13 @@ const PatientTreatmentForm = ({
             onChange={(e) =>
               setRecordForm((prev) => ({
                 ...prev,
-                remainingAmount:  e.target.value 
+                remainingAmount: e.target.value,
               }))
             }
           />
         </Form.Group>
         <Button className="mt-3" onClick={handleSubmit}>
-          {isEdit ? "Update" : "Add"}
+          {isEdit ? 'Update' : 'Add'}
         </Button>
       </Form>
     </Drawer>

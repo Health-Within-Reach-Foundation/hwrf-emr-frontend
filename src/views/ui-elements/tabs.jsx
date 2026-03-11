@@ -1,6 +1,6 @@
-import React from "react";
-import { Row, Col, Nav, Tab } from "react-bootstrap";
-import Card from "../../components/Card";
+import React from 'react';
+import { Row, Col, Nav, Tab } from 'react-bootstrap';
+import Card from '../../components/Card';
 
 const Tabs = () => {
   return (
@@ -15,14 +15,12 @@ const Tabs = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                The base <code>.nav</code> component does not include any{" "}
-                <code>.active</code> state. The following examples include
-                the class, mainly to demonstrate that this particular class
-                does not trigger any special styling.
+                The base <code>.nav</code> component does not include any <code>.active</code> state. The following examples
+                include the class, mainly to demonstrate that this particular class does not trigger any special styling.
               </p>
               <Tab.Container defaultActiveKey="firstBasic">
-                <Nav variant="tabs" id="nav-tab" role="tablist" as={"ul"}>
-                  <Nav.Item as={"li"}>
+                <Nav variant="tabs" id="nav-tab" role="tablist" as={'ul'}>
+                  <Nav.Item as={'li'}>
                     <Nav.Link
                       eventKey="firstBasic"
                       id="nav-home-tab"
@@ -36,7 +34,7 @@ const Tabs = () => {
                       Home
                     </Nav.Link>
                   </Nav.Item>
-                  <Nav.Item as={"li"}>
+                  <Nav.Item as={'li'}>
                     <Nav.Link
                       eventKey="secondBasic"
                       id="nav-profile-tab"
@@ -50,7 +48,7 @@ const Tabs = () => {
                       Profile
                     </Nav.Link>
                   </Nav.Item>
-                  <Nav.Item as={"li"}>
+                  <Nav.Item as={'li'}>
                     <Nav.Link
                       eventKey="thirdBasic"
                       id="nav-contact-tab"
@@ -67,46 +65,25 @@ const Tabs = () => {
                 </Nav>
 
                 <Tab.Content>
-                  <Tab.Pane
-                    eventKey="firstBasic"
-                    id="nav-home"
-                    role="tabpanel"
-                    aria-labelledby="nav-home-tab"
-                  >
+                  <Tab.Pane eventKey="firstBasic" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
-                  <Tab.Pane
-                    eventKey="secondBasic"
-                    id="nav-profile"
-                    role="tabpanel"
-                    aria-labelledby="nav-profile-tab"
-                  >
+                  <Tab.Pane eventKey="secondBasic" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
-                  <Tab.Pane
-                    eventKey="thirdBasic"
-                    id="nav-contact"
-                    role="tabpanel"
-                    aria-labelledby="nav-contact-tab"
-                  >
+                  <Tab.Pane eventKey="thirdBasic" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
                 </Tab.Content>
@@ -121,17 +98,11 @@ const Tabs = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Takes the basic nav from above and adds the{" "}
-                <code>.nav-tabs</code> class to generate a tabbed interface.
+                Takes the basic nav from above and adds the <code>.nav-tabs</code> class to generate a tabbed interface.
               </p>
               <Tab.Container defaultActiveKey="firstTabs3">
-                <Nav
-                  variant="tabs"
-                  id="nav-tab"
-                  role="tablist"
-                  as={"ul"}
-                >
-                  <Nav.Item as={"li"}>
+                <Nav variant="tabs" id="nav-tab" role="tablist" as={'ul'}>
+                  <Nav.Item as={'li'}>
                     <Nav.Link
                       eventKey="firstTabs3"
                       variant=" d-flex align-items-center"
@@ -146,7 +117,7 @@ const Tabs = () => {
                       Home
                     </Nav.Link>
                   </Nav.Item>
-                  <Nav.Item as={"li"}>
+                  <Nav.Item as={'li'}>
                     <Nav.Link
                       eventKey="secondTabs3"
                       variant=""
@@ -161,7 +132,7 @@ const Tabs = () => {
                       Profile
                     </Nav.Link>
                   </Nav.Item>
-                  <Nav.Item as={"li"}>
+                  <Nav.Item as={'li'}>
                     <Nav.Link
                       eventKey="thirdTabs3"
                       variant=""
@@ -178,46 +149,25 @@ const Tabs = () => {
                   </Nav.Item>
                 </Nav>
                 <Tab.Content>
-                  <Tab.Pane
-                    eventKey="firstTabs3"
-                    id="nav-home"
-                    role="tabpanel"
-                    aria-labelledby="nav-home-tab"
-                  >
+                  <Tab.Pane eventKey="firstTabs3" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
-                  <Tab.Pane
-                    id="nav-profile"
-                    eventKey="secondTabs3"
-                    role="tabpanel"
-                    aria-labelledby="nav-profile-tab"
-                  >
+                  <Tab.Pane id="nav-profile" eventKey="secondTabs3" role="tabpanel" aria-labelledby="nav-profile-tab">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
-                  <Tab.Pane
-                    id="nav-contact"
-                    eventKey="thirdTabs3"
-                    role="tabpanel"
-                    aria-labelledby="nav-contact-tab"
-                  >
+                  <Tab.Pane id="nav-contact" eventKey="thirdTabs3" role="tabpanel" aria-labelledby="nav-contact-tab">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
                 </Tab.Content>
@@ -231,7 +181,9 @@ const Tabs = () => {
               </div>
             </Card.Header>
             <Card.Body className="custom-tabs-vertical-pills">
-              <p>Stack your navigation by changing the flex item direction with the <code>.flex-column</code> utility.</p>
+              <p>
+                Stack your navigation by changing the flex item direction with the <code>.flex-column</code> utility.
+              </p>
               <Row>
                 <Tab.Container defaultActiveKey="firstVertical">
                   <Col sm="3">
@@ -293,14 +245,10 @@ const Tabs = () => {
                         aria-labelledby="v-pills-home-tab"
                       >
                         <p>
-                          Lorem Ipsum is simply dummy text of the printing
-                          and typesetting industry. Lorem Ipsum has been the
-                          industry&apos;s standard dummy text ever since the
-                          1500s, when an unknown printer took a galley of
-                          type and scrambled it to make a type specimen
-                          book. It has survived not only five centuries, but
-                          also the leap into electronic typesetting,
-                          remaining essentially unchanged.
+                          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                          industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of
+                          type and scrambled it to make a type specimen book. It has survived not only five centuries, but
+                          also the leap into electronic typesetting, remaining essentially unchanged.
                         </p>
                       </Tab.Pane>
                       <Tab.Pane
@@ -310,14 +258,10 @@ const Tabs = () => {
                         aria-labelledby="v-pills-profile-tab"
                       >
                         <p>
-                          Lorem Ipsum is simply dummy text of the printing
-                          and typesetting industry. Lorem Ipsum has been the
-                          industry&apos;s standard dummy text ever since the
-                          1500s, when an unknown printer took a galley of
-                          type and scrambled it to make a type specimen
-                          book. It has survived not only five centuries, but
-                          also the leap into electronic typesetting,
-                          remaining essentially unchanged.
+                          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                          industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of
+                          type and scrambled it to make a type specimen book. It has survived not only five centuries, but
+                          also the leap into electronic typesetting, remaining essentially unchanged.
                         </p>
                       </Tab.Pane>
                       <Tab.Pane
@@ -327,14 +271,10 @@ const Tabs = () => {
                         aria-labelledby="v-pills-messages-tab"
                       >
                         <p>
-                          Lorem Ipsum is simply dummy text of the printing
-                          and typesetting industry. Lorem Ipsum has been the
-                          industry&apos;s standard dummy text ever since the
-                          1500s, when an unknown printer took a galley of
-                          type and scrambled it to make a type specimen
-                          book. It has survived not only five centuries, but
-                          also the leap into electronic typesetting,
-                          remaining essentially unchanged.
+                          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                          industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of
+                          type and scrambled it to make a type specimen book. It has survived not only five centuries, but
+                          also the leap into electronic typesetting, remaining essentially unchanged.
                         </p>
                       </Tab.Pane>
                       <Tab.Pane
@@ -344,14 +284,10 @@ const Tabs = () => {
                         aria-labelledby="v-pills-settings-tab"
                       >
                         <p>
-                          Lorem Ipsum is simply dummy text of the printing
-                          and typesetting industry. Lorem Ipsum has been the
-                          industry&apos;s standard dummy text ever since the
-                          1500s, when an unknown printer took a galley of
-                          type and scrambled it to make a type specimen
-                          book. It has survived not only five centuries, but
-                          also the leap into electronic typesetting,
-                          remaining essentially unchanged.
+                          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                          industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of
+                          type and scrambled it to make a type specimen book. It has survived not only five centuries, but
+                          also the leap into electronic typesetting, remaining essentially unchanged.
                         </p>
                       </Tab.Pane>
                     </Tab.Content>
@@ -367,17 +303,13 @@ const Tabs = () => {
               </div>
             </Card.Header>
             <Card.Body>
-              <p>Centered with <code>.justify-content-center</code></p>
+              <p>
+                Centered with <code>.justify-content-center</code>
+              </p>
               <Tab.Container defaultActiveKey="firstJustify">
                 {/* <Nav> */}
-                <Nav
-                  variant="tabs"
-                  className="justify-content-center"
-                  id="nav-tab"
-                  role="tablist"
-                  as={"ul"}
-                >
-                  <Nav.Item as={"li"}>
+                <Nav variant="tabs" className="justify-content-center" id="nav-tab" role="tablist" as={'ul'}>
+                  <Nav.Item as={'li'}>
                     <Nav.Link
                       eventKey="firstJustify"
                       variant=" d-flex align-items-center"
@@ -392,7 +324,7 @@ const Tabs = () => {
                       Home
                     </Nav.Link>
                   </Nav.Item>
-                  <Nav.Item as={"li"}>
+                  <Nav.Item as={'li'}>
                     <Nav.Link
                       eventKey="secondJustify"
                       variant=""
@@ -407,7 +339,7 @@ const Tabs = () => {
                       Profile
                     </Nav.Link>
                   </Nav.Item>
-                  <Nav.Item as={"li"}>
+                  <Nav.Item as={'li'}>
                     <Nav.Link
                       eventKey="thirdJustify"
                       variant=""
@@ -425,46 +357,25 @@ const Tabs = () => {
                 </Nav>
                 {/* </Nav> */}
                 <Tab.Content>
-                  <Tab.Pane
-                    eventKey="firstJustify"
-                    id="nav-home"
-                    role="tabpanel"
-                    aria-labelledby="nav-home-tab"
-                  >
+                  <Tab.Pane eventKey="firstJustify" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
-                  <Tab.Pane
-                    id="nav-profile"
-                    eventKey="secondJustify"
-                    role="tabpanel"
-                    aria-labelledby="nav-profile-tab"
-                  >
+                  <Tab.Pane id="nav-profile" eventKey="secondJustify" role="tabpanel" aria-labelledby="nav-profile-tab">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
-                  <Tab.Pane
-                    id="nav-contact"
-                    eventKey="thirdJustify"
-                    role="tabpanel"
-                    aria-labelledby="nav-contact-tab"
-                  >
+                  <Tab.Pane id="nav-contact" eventKey="thirdJustify" role="tabpanel" aria-labelledby="nav-contact-tab">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
                 </Tab.Content>
@@ -481,16 +392,10 @@ const Tabs = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Take that same HTML, but use <code>.nav-pills</code>{" "}
-                instead:
+                Take that same HTML, but use <code>.nav-pills</code> instead:
               </p>
               <Tab.Container defaultActiveKey="firstTabs">
-                <Nav
-                  variant="pills"
-                  className="mb-3"
-                  id="pills-tab"
-                  role="tablist"
-                >
+                <Nav variant="pills" className="mb-3" id="pills-tab" role="tablist">
                   <Nav.Item className="nav-item">
                     <Nav.Link
                       eventKey="firstTabs"
@@ -534,50 +439,26 @@ const Tabs = () => {
                     </Nav.Link>
                   </Nav.Item>
                 </Nav>
-                <Tab.Content
-                  className="tab-content"
-                  id="pills-tabContent-2"
-                >
-                  <Tab.Pane
-                    eventKey="firstTabs"
-                    id="pills-home"
-                    role="tabpanel"
-                    aria-labelledby="pills-home-tab"
-                  >
+                <Tab.Content className="tab-content" id="pills-tabContent-2">
+                  <Tab.Pane eventKey="firstTabs" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
-                  <Tab.Pane
-                    eventKey="secondTabs"
-                    id="pills-profile"
-                    role="tabpanel"
-                    aria-labelledby="pills-profile-tab"
-                  >
+                  <Tab.Pane eventKey="secondTabs" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
-                  <Tab.Pane
-                    eventKey="thirdTabs"
-                    id="pills-contact"
-                    role="tabpanel"
-                    aria-labelledby="pills-contact-tab"
-                  >
+                  <Tab.Pane eventKey="thirdTabs" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
                 </Tab.Content>
@@ -592,17 +473,12 @@ const Tabs = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Takes the basic nav from above and adds the{" "}
-                <code>.nav-tabs</code> class to generate a tabbed interface.
+                Takes the basic nav from above and adds the <code>.nav-tabs</code> class to generate a tabbed interface.
               </p>
               <Tab.Container defaultActiveKey="firstTabs4">
                 {/* <Nav> */}
-                <Nav
-                  variant="tabs"
-                  id="nav-tab"
-                  role="tablist"
-                >
-                  <Nav.Item as={"li"}>
+                <Nav variant="tabs" id="nav-tab" role="tablist">
+                  <Nav.Item as={'li'}>
                     <Nav.Link
                       eventKey="firstTabs4"
                       variant=" d-flex align-items-center"
@@ -617,7 +493,7 @@ const Tabs = () => {
                       Home
                     </Nav.Link>
                   </Nav.Item>
-                  <Nav.Item as={"li"}>
+                  <Nav.Item as={'li'}>
                     <Nav.Link
                       eventKey="secondTabs4"
                       variant=""
@@ -632,7 +508,7 @@ const Tabs = () => {
                       Profile
                     </Nav.Link>
                   </Nav.Item>
-                  <Nav.Item as={"li"}>
+                  <Nav.Item as={'li'}>
                     <Nav.Link
                       eventKey="thirdTabs4"
                       variant=""
@@ -650,32 +526,18 @@ const Tabs = () => {
                 </Nav>
                 {/* </Nav> */}
                 <Tab.Content>
-                  <Tab.Pane
-                    eventKey="firstTabs4"
-                    id="nav-home"
-                    role="tabpanel"
-                    aria-labelledby="nav-home-tab"
-                  >
+                  <Tab.Pane eventKey="firstTabs4" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
-                  <Tab.Pane
-                    id="nav-profile"
-                    eventKey="secondTabs4"
-                    role="tabpanel"
-                    aria-labelledby="nav-profile-tab"
-                  >
+                  <Tab.Pane id="nav-profile" eventKey="secondTabs4" role="tabpanel" aria-labelledby="nav-profile-tab">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
                   <Tab.Pane
@@ -686,11 +548,9 @@ const Tabs = () => {
                     aria-labelledby="nav-contact-tab"
                   >
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
                 </Tab.Content>
@@ -704,15 +564,13 @@ const Tabs = () => {
               </div>
             </Card.Header>
             <Card.Body>
-              <p>Force your <code>.nav</code>’s contents to extend the full available width one of two modifier classes. To proportionately fill all available space with your <code>.nav-item</code>s, use <code>.nav-fill</code>. Notice that all horizontal space is occupied, but not every nav item has the same width.</p>
+              <p>
+                Force your <code>.nav</code>’s contents to extend the full available width one of two modifier classes. To
+                proportionately fill all available space with your <code>.nav-item</code>s, use <code>.nav-fill</code>.
+                Notice that all horizontal space is occupied, but not every nav item has the same width.
+              </p>
               <Tab.Container defaultActiveKey="firstFill">
-                <Nav
-                  as="ul"
-                  variant="pills"
-                  className="mb-3 nav-fill"
-                  id="pills-tab-1"
-                  role="tablist"
-                >
+                <Nav as="ul" variant="pills" className="mb-3 nav-fill" id="pills-tab-1" role="tablist">
                   <Nav.Item className="nav-item">
                     <Nav.Link
                       eventKey="firstFill"
@@ -753,47 +611,26 @@ const Tabs = () => {
                     </Nav.Link>
                   </Nav.Item>
                 </Nav>
-                <Tab.Content
-                  className="tab-content"
-                  id="pills-tabContent-1"
-                >
-                  <Tab.Pane
-                    eventKey="firstFill"
-                    role="tabpanel"
-                    aria-labelledby="pills-home-tab-fill"
-                  >
+                <Tab.Content className="tab-content" id="pills-tabContent-1">
+                  <Tab.Pane eventKey="firstFill" role="tabpanel" aria-labelledby="pills-home-tab-fill">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
-                  <Tab.Pane
-                    eventKey="secondFill"
-                    role="tabpanel"
-                    aria-labelledby="pills-profile-tab-fill"
-                  >
+                  <Tab.Pane eventKey="secondFill" role="tabpanel" aria-labelledby="pills-profile-tab-fill">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
-                  <Tab.Pane
-                    eventKey="thirdFill"
-                    role="tabpanel"
-                    aria-labelledby="pills-contact-tab-fill"
-                  >
+                  <Tab.Pane eventKey="thirdFill" role="tabpanel" aria-labelledby="pills-contact-tab-fill">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
                 </Tab.Content>
@@ -812,14 +649,8 @@ const Tabs = () => {
               </p>
               <Tab.Container defaultActiveKey="firstRight">
                 {/* <Nav> */}
-                <Nav
-                  variant="tabs"
-                  className="justify-content-end"
-                  id="nav-tab"
-                  role="tablist"
-                  as={"ul"}
-                >
-                  <Nav.Item as={"li"}>
+                <Nav variant="tabs" className="justify-content-end" id="nav-tab" role="tablist" as={'ul'}>
+                  <Nav.Item as={'li'}>
                     <Nav.Link
                       eventKey="firstRight"
                       variant=" d-flex align-items-center"
@@ -834,7 +665,7 @@ const Tabs = () => {
                       Home
                     </Nav.Link>
                   </Nav.Item>
-                  <Nav.Item as={"li"}>
+                  <Nav.Item as={'li'}>
                     <Nav.Link
                       eventKey="secondRight"
                       variant=""
@@ -849,7 +680,7 @@ const Tabs = () => {
                       Profile
                     </Nav.Link>
                   </Nav.Item>
-                  <Nav.Item as={"li"}>
+                  <Nav.Item as={'li'}>
                     <Nav.Link
                       eventKey="thirdRight"
                       variant=""
@@ -867,46 +698,25 @@ const Tabs = () => {
                 </Nav>
                 {/* </Nav> */}
                 <Tab.Content>
-                  <Tab.Pane
-                    eventKey="firstRight"
-                    id="nav-home"
-                    role="tabpanel"
-                    aria-labelledby="nav-home-tab"
-                  >
+                  <Tab.Pane eventKey="firstRight" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
-                  <Tab.Pane
-                    id="nav-profile"
-                    eventKey="secondRight"
-                    role="tabpanel"
-                    aria-labelledby="nav-profile-tab"
-                  >
+                  <Tab.Pane id="nav-profile" eventKey="secondRight" role="tabpanel" aria-labelledby="nav-profile-tab">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
-                  <Tab.Pane
-                    id="nav-contact"
-                    eventKey="thirdRight"
-                    role="tabpanel"
-                    aria-labelledby="nav-contact-tab"
-                  >
+                  <Tab.Pane id="nav-contact" eventKey="thirdRight" role="tabpanel" aria-labelledby="nav-contact-tab">
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the
-                      industry&apos;s standard dummy text ever since the 1500s,
-                      when an unknown printer took a galley of type and
-                      scrambled it to make a type specimen book.
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                      industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                      and scrambled it to make a type specimen book.
                     </p>
                   </Tab.Pane>
                 </Tab.Content>

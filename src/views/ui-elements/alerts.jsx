@@ -1,34 +1,26 @@
 import React from 'react';
 import { Row, Col, Alert, Button } from 'react-bootstrap';
-import Card from "../../components/Card";
+import Card from '../../components/Card';
 
 const basicAlerts = [
   {
     variant: 'success',
-    icon: (
-      <i className="ph ph-thumbs-up"></i>
-    ),
+    icon: <i className="ph ph-thumbs-up"></i>,
     message: 'This is a success alert—check it out!',
   },
   {
     variant: 'info',
-    icon: (
-      <i className="ph ph-bell-ringing"></i>
-    ),
+    icon: <i className="ph ph-bell-ringing"></i>,
     message: 'This is a info alert—check it out!',
   },
   {
     variant: 'warning',
-    icon: (
-      <i className="ph ph-bell-ringing"></i>
-    ),
+    icon: <i className="ph ph-bell-ringing"></i>,
     message: 'This is a warning alert—check it out!',
   },
   {
     variant: 'danger',
-    icon: (
-      <i className="ph ph-lifebuoy"></i>
-    ),
+    icon: <i className="ph ph-lifebuoy"></i>,
     message: 'This is a danger alert—check it out!',
   },
 ];
@@ -174,16 +166,15 @@ const Alerts = () => (
           </Card.Header>
           <Card.Body>
             <p className="mb-4">
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-              Lorem Ipsum has been the industry&apos;s standard dummy text ever.
+              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+              industry&apos;s standard dummy text ever.
             </p>
             {basicAlerts.map(({ variant, icon, message }, index) => (
               <Alert key={index} variant={variant} className="alert-dismissible fade show mb-3 d-flex gap-2" role="alert">
                 {icon}
 
                 <span>{message}</span>
-                <Button variant="close" data-bs-dismiss="alert" aria-label="Close">
-                </Button>
+                <Button variant="close" data-bs-dismiss="alert" aria-label="Close"></Button>
               </Alert>
             ))}
           </Card.Body>
@@ -196,8 +187,8 @@ const Alerts = () => (
           </Card.Header>
           <Card.Body>
             <p className="mb-4">
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-              Lorem Ipsum has been the industry&apos;s standard dummy text ever.
+              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+              industry&apos;s standard dummy text ever.
             </p>
             <svg xmlns="http://www.w3.org/2000/svg" style={{ display: 'none' }}>
               <symbol id="check-circle-fill3" fill="currentColor" viewBox="0 0 16 16">
@@ -281,12 +272,7 @@ const Alerts = () => (
               >
                 <i className={alert.iconClass}></i>
                 <span> {alert.message}</span>
-                <Button
-                  type="button"
-                  className="btn-close"
-                  data-bs-dismiss="alert"
-                  aria-label="Close"
-                ></Button>
+                <Button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></Button>
               </Alert>
             ))}
           </Card.Body>
@@ -309,12 +295,7 @@ const Alerts = () => (
               >
                 <i className={alert.iconClass}></i>
                 <span> {alert.message}</span>
-                <Button
-                  type="button"
-                  className="btn-close"
-                  data-bs-dismiss="alert"
-                  aria-label="Close"
-                ></Button>
+                <Button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></Button>
               </Alert>
             ))}
           </Card.Body>

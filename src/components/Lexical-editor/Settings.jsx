@@ -36,9 +36,7 @@ export default function Settings() {
 
   useEffect(() => {
     if (INITIAL_SETTINGS.disableBeforeInput && CAN_USE_BEFORE_INPUT) {
-      console.error(
-        `Legacy events are enabled (disableBeforeInput) but CAN_USE_BEFORE_INPUT is true`
-      );
+      console.error(`Legacy events are enabled (disableBeforeInput) but CAN_USE_BEFORE_INPUT is true`);
     }
   }, []);
 
@@ -46,8 +44,7 @@ export default function Settings() {
   const [isSplitScreen, search] = useMemo(() => {
     const parentWindow = window.parent;
     const _search = windowLocation.search;
-    const _isSplitScreen =
-      parentWindow && parentWindow.location.pathname === '/split/';
+    const _isSplitScreen = parentWindow && parentWindow.location.pathname === '/split/';
     return [_isSplitScreen, _search];
   }, [windowLocation]);
 
@@ -88,15 +85,9 @@ export default function Settings() {
             checked={measureTypingPerf}
             text="Measure Perf"
           />
+          <Switch onClick={() => setOption('showTreeView', !showTreeView)} checked={showTreeView} text="Debug View" />
           <Switch
-            onClick={() => setOption('showTreeView', !showTreeView)}
-            checked={showTreeView}
-            text="Debug View"
-          />
-          <Switch
-            onClick={() =>
-              setOption('showNestedEditorTreeView', !showNestedEditorTreeView)
-            }
+            onClick={() => setOption('showNestedEditorTreeView', !showNestedEditorTreeView)}
             checked={showNestedEditorTreeView}
             text="Nested Editors Debug View"
           />
@@ -108,21 +99,13 @@ export default function Settings() {
             checked={isRichText}
             text="Rich Text"
           />
-          <Switch
-            onClick={() => setOption('isCharLimit', !isCharLimit)}
-            checked={isCharLimit}
-            text="Char Limit"
-          />
+          <Switch onClick={() => setOption('isCharLimit', !isCharLimit)} checked={isCharLimit} text="Char Limit" />
           <Switch
             onClick={() => setOption('isCharLimitUtf8', !isCharLimitUtf8)}
             checked={isCharLimitUtf8}
             text="Char Limit (UTF-8)"
           />
-          <Switch
-            onClick={() => setOption('isMaxLength', !isMaxLength)}
-            checked={isMaxLength}
-            text="Max Length"
-          />
+          <Switch onClick={() => setOption('isMaxLength', !isMaxLength)} checked={isMaxLength} text="Max Length" />
           <Switch
             onClick={() => setOption('isAutocomplete', !isAutocomplete)}
             checked={isAutocomplete}
@@ -145,20 +128,14 @@ export default function Settings() {
           />
           <Switch
             onClick={() => {
-              setOption(
-                'shouldUseLexicalContextMenu',
-                !shouldUseLexicalContextMenu
-              );
+              setOption('shouldUseLexicalContextMenu', !shouldUseLexicalContextMenu);
             }}
             checked={shouldUseLexicalContextMenu}
             text="Use Lexical Context Menu"
           />
           <Switch
             onClick={() => {
-              setOption(
-                'shouldPreserveNewLinesInMarkdown',
-                !shouldPreserveNewLinesInMarkdown
-              );
+              setOption('shouldPreserveNewLinesInMarkdown', !shouldPreserveNewLinesInMarkdown);
             }}
             checked={shouldPreserveNewLinesInMarkdown}
             text="Preserve newlines in Markdown"

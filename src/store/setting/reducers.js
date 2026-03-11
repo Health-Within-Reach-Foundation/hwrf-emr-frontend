@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { initialState, defaultState } from "./state.ts";
+import { createSlice } from '@reduxjs/toolkit';
+import { initialState, defaultState } from './state.ts';
 import {
   updateBodyClass,
   updateHtmlClass,
@@ -10,9 +10,9 @@ import {
   updateDomValueBySetting,
   getStorage,
   updateThemeScheme,
-} from "../../utilities/setting";
-import { setFontFamily } from "../../utilities/root-var";
-import _ from "lodash";
+} from '../../utilities/setting';
+import { setFontFamily } from '../../utilities/root-var';
+import _ from 'lodash';
 const DefaultSetting = defaultState.setting;
 
 const Choices = {
@@ -32,13 +32,13 @@ const createSettingObj = (state) => {
 };
 
 export const settingSlice = createSlice({
-  name: "setting",
+  name: 'setting',
   initialState,
   reducers: {
     setSetting: (state, action) => {
       const json = getStorage(state.storeKey);
-      if (json === "none") state.saveLocal = "none";
-      if (json !== null && json !== "none") {
+      if (json === 'none') state.saveLocal = 'none';
+      if (json !== null && json !== 'none') {
         state.saveLocal = json.saveLocal;
         state.setting = json.setting;
       }
@@ -73,7 +73,7 @@ export const settingSlice = createSlice({
         state.setting.theme_scheme_direction.value = action.payload;
       }
       updateHtmlAttr({
-        prop: "dir",
+        prop: 'dir',
         value: state.setting.theme_scheme_direction.value,
       });
       updateStorage(state.saveLocal, state.storeKey, createSettingObj(state));
@@ -84,14 +84,10 @@ export const settingSlice = createSlice({
         state.setting.theme_scheme.value = action.payload;
       }
       updateHtmlAttr({
-        prop: "data-bs-theme",
+        prop: 'data-bs-theme',
         value: state.setting.theme_scheme.value,
       });
-      updateThemeScheme(
-        state.setting.theme_scheme.value,
-        Choices,
-        state.setting.theme_color
-      );
+      updateThemeScheme(state.setting.theme_scheme.value, Choices, state.setting.theme_color);
       updateBodyClass(Choices.SchemeChoice, state.setting.theme_scheme.value);
       updateStorage(state.saveLocal, state.storeKey, createSettingObj(state));
     },
@@ -99,10 +95,7 @@ export const settingSlice = createSlice({
       if (typeof action.payload !== typeof undefined) {
         state.setting.theme_style_appearance.value = action.payload;
       }
-      updateBodyClass(
-        Choices.StyleAppearanceChoice,
-        state.setting.theme_style_appearance.value
-      );
+      updateBodyClass(Choices.StyleAppearanceChoice, state.setting.theme_style_appearance.value);
       updateStorage(state.saveLocal, state.storeKey, createSettingObj(state));
     },
     theme_color: (state, action) => {
@@ -113,15 +106,11 @@ export const settingSlice = createSlice({
         state.setting.theme_color.value = action.payload.value;
       }
       updateHtmlAttr({
-        prop: "data-bs-theme-color",
+        prop: 'data-bs-theme-color',
         value: state.setting.theme_color.value,
       });
       updateBodyClass(Choices.ColorChoice, state.setting.theme_color.value);
-      updateColorRootVar(
-        state.setting.theme_scheme.value,
-        state.setting.theme_color,
-        Choices.ColorChoice
-      );
+      updateColorRootVar(state.setting.theme_scheme.value, state.setting.theme_color, Choices.ColorChoice);
       updateStorage(state.saveLocal, state.storeKey, createSettingObj(state));
     },
     theme_transition: (state, action) => {

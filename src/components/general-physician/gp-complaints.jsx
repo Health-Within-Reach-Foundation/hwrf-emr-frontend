@@ -108,16 +108,16 @@
 
 // export default ComplaintsInput;
 
-import React, { useRef, useState } from "react";
-import { PlusOutlined, SaveOutlined } from "@ant-design/icons";
-import { Select, Divider, Input, Space, Button } from "antd";
-import formFieldsServices from "../../api/form-fields.services";
-import toast from "react-hot-toast";
+import React, { useRef, useState } from 'react';
+import { PlusOutlined, SaveOutlined } from '@ant-design/icons';
+import { Select, Divider, Input, Space, Button } from 'antd';
+import formFieldsServices from '../../api/form-fields.services';
+import toast from 'react-hot-toast';
 
 const ComplaintsInput = ({ value = [], onChange, formField = {}, disabled = false }) => {
   const [items, setItems] = useState(formField?.options || []); // Existing options
   const [newComplaints, setNewComplaints] = useState([]); // Store new complaints locally
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
 
@@ -135,7 +135,7 @@ const ComplaintsInput = ({ value = [], onChange, formField = {}, disabled = fals
     // Update local state to reflect the new complaint immediately
     setItems((prev) => [...prev, newComplaint]);
     setNewComplaints((prev) => [...prev, newComplaint]);
-    setName("");
+    setName('');
 
     // Automatically select the new complaint
     onChange([...value, name]);
@@ -147,7 +147,7 @@ const ComplaintsInput = ({ value = [], onChange, formField = {}, disabled = fals
   // Batch API call to save new complaints
   const saveComplaints = async () => {
     if (newComplaints.length === 0) {
-      toast.error("No new complaints to save.");
+      toast.error('No new complaints to save.');
       return;
     }
 
@@ -158,16 +158,14 @@ const ComplaintsInput = ({ value = [], onChange, formField = {}, disabled = fals
         fieldName: formField.fieldName,
         options: [...items], // Save all updated options
       };
-      const response = await formFieldsServices.updateFormFieldsOptions(
-        updateBody
-      );
+      const response = await formFieldsServices.updateFormFieldsOptions(updateBody);
 
       if (response.success) {
-        toast.success("New Complaints saved!");
+        toast.success('New Complaints saved!');
         setNewComplaints([]);
       }
     } catch (error) {
-      toast.error("Failed to save complaints!");
+      toast.error('Failed to save complaints!');
     }
     setLoading(false);
   };
@@ -175,7 +173,7 @@ const ComplaintsInput = ({ value = [], onChange, formField = {}, disabled = fals
   return (
     <Select
       mode="multiple"
-      style={{ width: "100%" }}
+      style={{ width: '100%' }}
       placeholder="Select or add complaints"
       value={value}
       onChange={onChange}
@@ -183,8 +181,8 @@ const ComplaintsInput = ({ value = [], onChange, formField = {}, disabled = fals
       dropdownRender={(menu) => (
         <>
           {menu}
-          <Divider style={{ margin: "8px 0" }} />
-          <Space style={{ padding: "0 8px 4px", display: "flex" }}>
+          <Divider style={{ margin: '8px 0' }} />
+          <Space style={{ padding: '0 8px 4px', display: 'flex' }}>
             <Input
               placeholder="Add new complaint"
               ref={inputRef}
@@ -193,16 +191,12 @@ const ComplaintsInput = ({ value = [], onChange, formField = {}, disabled = fals
               onChange={onNameChange}
               onKeyDown={(e) => e.stopPropagation()}
             />
-            <Button
-              type="primary"
-              onClick={addComplaintLocally}
-              className="bg-primary btn-primary"
-            >
+            <Button type="primary" onClick={addComplaintLocally} className="bg-primary btn-primary">
               <PlusOutlined />
             </Button>
           </Space>
           {newComplaints.length > 0 && (
-            <div style={{ padding: "8px 8px 4px", textAlign: "right" }}>
+            <div style={{ padding: '8px 8px 4px', textAlign: 'right' }}>
               <Button
                 type="primary"
                 icon={<SaveOutlined />}

@@ -1,6 +1,6 @@
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 
 export function formatDate(date, format) {
-  if (!date) return "";
+  if (!date) return '';
   return dayjs(date).format(format);
 }

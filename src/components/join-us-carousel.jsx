@@ -1,6 +1,6 @@
-import React from "react";
-import { Carousel, Col } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Carousel, Col } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 const generatePath = (path) => {
   return window.origin + import.meta.env.BASE_URL + path;
 };
@@ -10,17 +10,13 @@ const JoinUsCarousel = () => {
     <Col md={6} className="text-center z-2">
       <div className="sign-in-detail text-white">
         <Link to="/" className="sign-in-logo mb-2">
-          <img
-            src={generatePath("/assets/images/hwrf-vertical.svg")}
-            className="img-fluid"
-            alt="Logo"
-          />
+          <img src={generatePath('/assets/images/hwrf-vertical.svg')} className="img-fluid" alt="Logo" />
         </Link>
         <Carousel interval={2000} controls={false}>
           <Carousel.Item>
             <img
               // src={generatePath("/assets/images/login/1.png")}
-              src={generatePath("/assets/images/login/login-carousel-1.jpg")}
+              src={generatePath('/assets/images/login/login-carousel-1.jpg')}
               className="d-block w-100"
               alt="Slide 1"
             />

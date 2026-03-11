@@ -31,21 +31,19 @@
 
 // export const LayoutsRoute = [...SecuredDefaultRoute, ...BlankLayoutRouter];
 
-import React from "react";
-import { DefaultRoute, BlankLayoutRouter } from "./default-router";
-import { useAuth } from "../utilities/AuthProvider";
-import DefaultLayout from "../layouts/defaultLayout";
-import BlankLayout from "../layouts/blank-layout";
-import { Navigate } from "react-router-dom";
-import { Loading } from "../components/loading";
-import { AuthGuard, ProtectedRoute } from "./layout-guards";
-
-
+import React from 'react';
+import { DefaultRoute, BlankLayoutRouter } from './default-router';
+import { useAuth } from '../utilities/AuthProvider';
+import DefaultLayout from '../layouts/defaultLayout';
+import BlankLayout from '../layouts/blank-layout';
+import { Navigate } from 'react-router-dom';
+import { Loading } from '../components/loading';
+import { AuthGuard, ProtectedRoute } from './layout-guards';
 
 export const LayoutsRoute = [
   // Default Routes (protected)
   {
-    path: "",
+    path: '',
     element: (
       <ProtectedRoute>
         <DefaultLayout />
@@ -56,7 +54,7 @@ export const LayoutsRoute = [
 
   // Auth Routes (public)
   {
-    path: "",
+    path: '',
     element: (
       <AuthGuard>
         <BlankLayout />
@@ -64,6 +62,4 @@ export const LayoutsRoute = [
     ),
     children: BlankLayoutRouter[0].children,
   },
-
-    
 ];

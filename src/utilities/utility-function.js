@@ -1,20 +1,20 @@
 export const dentalQuadrant = (number) => {
-  let textDentalQuadrant = "";
+  let textDentalQuadrant = '';
   switch (number) {
-    case "1":
-      textDentalQuadrant = "One";
+    case '1':
+      textDentalQuadrant = 'One';
       break;
-    case "2":
-      textDentalQuadrant = "Two";
+    case '2':
+      textDentalQuadrant = 'Two';
       break;
-    case "3":
-      textDentalQuadrant = "Three";
+    case '3':
+      textDentalQuadrant = 'Three';
       break;
-    case "4":
-      textDentalQuadrant = "Four";
+    case '4':
+      textDentalQuadrant = 'Four';
       break;
     default:
-      textDentalQuadrant = "";
+      textDentalQuadrant = '';
       break;
   }
 
@@ -23,7 +23,7 @@ export const dentalQuadrant = (number) => {
 
 export const transformText = (text) => {
   return text
-    ?.replace(/_/g, " ") // Replace underscores with spaces
+    ?.replace(/_/g, ' ') // Replace underscores with spaces
     ?.replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
 };
 
@@ -59,7 +59,7 @@ export function formatRegisterNumberOfPatient(patient) {
 
 export function calculateBMI(weight, heightFeet) {
   if (weight && heightFeet) {
-    const heightParts = heightFeet.toString().split(".");
+    const heightParts = heightFeet.toString().split('.');
     const feet = parseInt(heightParts[0], 10);
     const inches = heightParts[1] ? parseInt(heightParts[1], 10) : 0;
     const height = feet * 0.3048 + inches * 0.0254; // Convert height to meters
@@ -70,8 +70,6 @@ export function calculateBMI(weight, heightFeet) {
 
 // here perissions is array of permission associated to the user role and permission is the array which is requrired to check if any of the permission is present in the permissions array the return true else return false
 export function checkPermission(permissions, requriredPermission = []) {
-  const formattedPermission = permissions?.map(
-    (permission) => permission?.action
-  );
+  const formattedPermission = permissions?.map((permission) => permission?.action);
   return requriredPermission?.some((p) => formattedPermission?.includes(p));
 }

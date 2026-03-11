@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { Row, Col } from "react-bootstrap";
-import Select from "react-select";
-import { Loading } from "../../components/loading";
-import campManagementService from "../../api/camp-management-service";
-import clinicServices from "../../api/clinic-services";
-import CampModalForm from "../../components/administration/camp-form";
-import DateCell from "../../components/date-cell";
-import { RiAddLine } from "@remixicon/react";
-import { Badge, Button, Tooltip, Tabs } from "antd";
-import AntdTable from "../../components/antd-table";
-import { Link } from "react-router-dom";
-import { useAuth } from "../../utilities/AuthProvider";
+import React, { useState, useEffect } from 'react';
+import { Row, Col } from 'react-bootstrap';
+import Select from 'react-select';
+import { Loading } from '../../components/loading';
+import campManagementService from '../../api/camp-management-service';
+import clinicServices from '../../api/clinic-services';
+import CampModalForm from '../../components/administration/camp-form';
+import DateCell from '../../components/date-cell';
+import { RiAddLine } from '@remixicon/react';
+import { Badge, Button, Tooltip, Tabs } from 'antd';
+import AntdTable from '../../components/antd-table';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../utilities/AuthProvider';
 
 const { TabPane } = Tabs;
 
@@ -40,7 +40,7 @@ const CampManagement = () => {
       setCamps(response.camps || []);
       setFilteredCamps(response.camps || []);
     } catch (error) {
-      console.error("Error fetching camps:", error);
+      console.error('Error fetching camps:', error);
     } finally {
       setLoading(false);
       setCampLoading(false);
@@ -74,7 +74,7 @@ const CampManagement = () => {
         }))
       );
     } catch (error) {
-      console.error("Error fetching departments:", error);
+      console.error('Error fetching departments:', error);
     } finally {
       setLoading2(false);
     }
@@ -84,9 +84,9 @@ const CampManagement = () => {
     try {
       setLoading(true);
       const response = await campManagementService.getCampsAnalytics();
-      console.log("Camps Analytics: ", response);
+      console.log('Camps Analytics: ', response);
     } catch (error) {
-      console.error("Error fetching camps analytics:", error);
+      console.error('Error fetching camps analytics:', error);
     } finally {
       setLoading(false);
     }
@@ -132,82 +132,79 @@ const CampManagement = () => {
 
   const campColumns = [
     {
-      title: "Start Date",
-      dataIndex: "startDate",
-      key: "startDate",
-      fixed: "left",
+      title: 'Start Date',
+      dataIndex: 'startDate',
+      key: 'startDate',
+      fixed: 'left',
       sortable: true,
       render: (text, record) => <Link to={`/camps/${record.id}`}>{text}</Link>,
     },
     {
-      title: "Camp Name",
-      dataIndex: "name",
-      key: "name",
+      title: 'Camp Name',
+      dataIndex: 'name',
+      key: 'name',
       sortable: true,
       render: (text, record) => <Link to={`/camps/${record.id}`}>{text}</Link>,
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
       sortable: true,
       filters: [
-        { text: "Active", value: "active" },
-        { text: "Inactive", value: "inactive" },
+        { text: 'Active', value: 'active' },
+        { text: 'Inactive', value: 'inactive' },
       ],
       onFilter: (value, record) => record.status === value,
       render: (text, record) => (
         <Link to={`/camps/${record.id}`}>
-          <Badge status={text === "active" ? "success" : "error"} text={text} />
+          <Badge status={text === 'active' ? 'success' : 'error'} text={text} />
         </Link>
       ),
     },
     {
-      title: "Location",
-      dataIndex: "location",
-      key: "location",
+      title: 'Location',
+      dataIndex: 'location',
+      key: 'location',
       sortable: true,
       render: (text, record) => <Link to={`/camps/${record.id}`}>{text}</Link>,
     },
     {
-      title: "City",
-      dataIndex: "city",
-      key: "city",
+      title: 'City',
+      dataIndex: 'city',
+      key: 'city',
       sortable: true,
       render: (text, record) => <Link to={`/camps/${record.id}`}>{text}</Link>,
     },
     {
-      title: "Vans",
-      dataIndex: "vans",
+      title: 'Vans',
+      dataIndex: 'vans',
       filters: [
-        { text: "BharatBenz", value: "BharatBenz" },
-        { text: "Force", value: "Force" },
-        { text: "TATA", value: "TATA" },
+        { text: 'BharatBenz', value: 'BharatBenz' },
+        { text: 'Force', value: 'Force' },
+        { text: 'TATA', value: 'TATA' },
       ],
       onFilter: (value, record) => record.vans.includes(value),
-      key: "vans",
+      key: 'vans',
       sortable: true,
-      render: (text, record) => (
-        <Link to={`/camps/${record.id}`}>{text?.join(", ")}</Link>
-      ),
+      render: (text, record) => <Link to={`/camps/${record.id}`}>{text?.join(', ')}</Link>,
     },
     // here manaeg is not link it is button so you can use button component from react-bootstrap
     {
-      title: "Manage",
+      title: 'Manage',
       dataIndex: null,
-      key: "manage",
+      key: 'manage',
       render: (text, record) => {
         const showWarning =
-          new Date(record.startDate) < new Date() - 7 * 24 * 60 * 60 * 1000 &&
-          !userRoles.includes("admin");
+          new Date(record.startDate) < new Date() - 7 * 24 * 60 * 60 * 1000 && !userRoles.includes('admin');
 
         return (
           <Tooltip
             zIndex={1000}
             title={
               showWarning
-                ? "Permission denied, You can only edit camps that are created today or within 7 days, To edit contact admin "
-                : "Edit Camp"
+                ? 'Permission denied, You can only edit camps that are created today or within 7 days, To edit contact admin '
+                : 'Edit Camp'
             }
             placement="top"
             color="#0a58b8"
@@ -218,11 +215,7 @@ const CampManagement = () => {
               className="bg-primary"
               size="sm"
               onClick={() => handleEditCamp(record)}
-              disabled={
-                new Date(record.startDate) <
-                  new Date() - 7 * 24 * 60 * 60 * 1000 &&
-                !userRoles.includes("admin")
-              }
+              disabled={new Date(record.startDate) < new Date() - 7 * 24 * 60 * 60 * 1000 && !userRoles.includes('admin')}
             >
               Edit
             </Button>
@@ -292,12 +285,7 @@ const CampManagement = () => {
               </Tabs>
             </TabPane>
           </Tabs> */}
-          <AntdTable
-            columns={campColumns}
-            data={filteredCamps}
-            pageSizeOptions={[50, 100, 150, 200]}
-            defaultPageSize={50}
-          />
+          <AntdTable columns={campColumns} data={filteredCamps} pageSizeOptions={[50, 100, 150, 200]} defaultPageSize={50} />
         </Col>
       </Row>
 
