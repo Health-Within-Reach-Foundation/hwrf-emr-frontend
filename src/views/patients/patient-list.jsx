@@ -1,12 +1,10 @@
 import { RiFileExcel2Line } from '@remixicon/react';
-import { Button, Dropdown } from 'antd';
-import { saveAs } from 'file-saver';
+import { Button, Dropdown, Space, Input } from 'antd';
 import 'flatpickr/dist/themes/material_blue.css';
 import { useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
-import * as XLSX from 'xlsx';
 import patientServices from '../../api/patient-services';
 import Antdtable from '../../components/antd-table';
 import Card from '../../components/Card';
@@ -17,7 +15,11 @@ const PatientList = () => {
   const [patientList, setPatientList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
-  const [searchText, setSearchText] = useState('');
+
+  // Filters state
+  const [filters, setFilters] = useState({ name: '', address: '', service: '' });
+  const [filterVisible, setFilterVisible] = useState(false);
+
   const [pagination, setPagination] = useState({
     currentPage: 1,
     limit: 50,
@@ -26,7 +28,8 @@ const PatientList = () => {
     totalPages: 0,
     hasMore: false,
   });
-  const { userRoles, permissions } = useAuth();
+
+  const { userRoles } = useAuth();
 
   function getFormattedRegNo(patient) {
     if (!patient?.createdAt) return `HWRF/--/ ${patient.regNo}`;
@@ -139,66 +142,59 @@ const PatientList = () => {
     },
   ];
 
-  // Helper: flatten data for export
-  function getFlatData(data) {
-    return data.map((item) => ({
-      'Register No': getFormattedRegNo(item),
-      Name: item.name,
-      Age: item.age,
-      Gender: item.sex,
-      Mobile: item.mobile,
-      Address: item.address,
-      'Service Taken': item.serviceTaken?.join(', ') || '-',
-      'Cash Paid (In ₹)': item.onlinePaid || 0,
-      'Online Paid Amount (In ₹)': item.offlinePaid || 0,
-      'Total Paid Amount (In ₹)': item.total || 0,
-      'Referral Source': item?.referral_source || '',
-    }));
-  }
-
-  // Export visible paginated list to Excel
-  const exportVisibleToExcel = async () => {
+  // ✅ Always reads current filters from state
+  const getPatients = async (limit = 50, offset = 0) => {
     try {
       setLoading(true);
 
-      if (patientList.length === 0) {
-        throw new Error('No patients to export on this page');
-      }
+      const safeLimit = Number(limit) || 50;
+      const safeOffset = Number(offset) || 0;
 
-      // Format the visible data for Excel
-      const flatData = getFlatData(patientList);
+      const payload = {
+        limit: safeLimit,
+        offset: safeOffset,
+        name: filters?.name || '',
+        address: filters?.address || '',
+        service: filters?.service || '',
+      };
 
-      // Generate Excel file
-      const worksheet = XLSX.utils.json_to_sheet(flatData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Patients');
+      const response = await patientServices.getPatients(payload);
 
-      const excelBuffer = XLSX.write(workbook, {
-        bookType: 'xlsx',
-        type: 'array',
+      const patients = response.data || [];
+      patients.forEach((p) => (p.key = p.id));
+
+      setPatientList(patients);
+
+      setPagination({
+        currentPage: response.meta?.currentPage || 1,
+        limit: response.meta?.limit || safeLimit,
+        offset: response.meta?.offset || 0,
+        total: response.meta?.total || 0,
+        totalPages: response.meta?.totalPages || 0,
+        hasMore: response.meta?.hasMore || false,
       });
-
-      const blob = new Blob([excelBuffer], {
-        type: 'application/octet-stream',
-      });
-      const timestamp = new Date().toISOString().split('T')[0];
-      saveAs(blob, `patients_export_visible_${timestamp}.xlsx`);
     } catch (error) {
-      console.error('Export error:', error);
-      toast.error(`Export failed: ${error.message}`);
+      console.error('Error fetching patients:', error);
+      setPatientList([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Export to Excel - triggers backend to generate Excel and email it to the user
-  const exportAllToExcel = async () => {
+  const handlePaginationChange = (offset, limit) => getPatients(limit, offset);
+
+  // ✅ Export All — sends filtered patients to email
+  const exportAllToEmail = async () => {
+    setExportLoading(true);
     try {
-      setExportLoading(true);
-      const response = await patientServices.getPatientForExport();
-      if (response?.success) {
-        toast.success(response.message || 'Patient export report is being sent to your email. Please check your inbox.');
-      }
+      const response = await patientServices.getPatientForExport({
+        name: filters?.name || '',
+        address: filters?.address || '',
+        service: filters?.service || '',
+      });
+      response?.success
+        ? toast.success(response.message || 'Patient export report is being sent to your email. Please check your inbox.')
+        : toast.error('Export failed');
     } catch (error) {
       console.error('Export error:', error);
       toast.error(`Export failed: ${error.message}`);
@@ -207,81 +203,56 @@ const PatientList = () => {
     }
   };
 
-  // Fetch initial data
-  const getPatients = async (limit = 50, offset = 0, search = '') => {
-    try {
-      setLoading(true);
-
-      // Use search endpoint if search term is provided, otherwise use regular patients endpoint
-      const response = search
-        ? await patientServices.searchPatients(search, limit, offset)
-        : await patientServices.getPatients(limit, offset);
-
-      // Ensure each patient has a key for React rendering
-      response.data.forEach((patient) => {
-        patient.key = patient.id;
-      });
-
-      setPatientList(response.data);
-
-      // Update pagination metadata
-      setPagination({
-        currentPage: response.meta?.currentPage || 1,
-        limit: response.meta?.limit || limit,
-        offset: response.meta?.offset || offset,
-        total: response.meta?.total || 0,
-        totalPages: response.meta?.totalPages || 0,
-        hasMore: response.meta?.hasMore || false,
-      });
-    } catch (error) {
-      console.error('Error fetching patients:', error);
-      // Keep the current page data if there's an error
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle pagination change from table
-  const handlePaginationChange = (offset, limit) => {
-    getPatients(limit, offset, searchText);
-  };
-
-  // Handle search input change
-  const handleSearch = async (value) => {
-    setSearchText(value);
-    // Reset to first page when searching
-    try {
-      setLoading(true);
-      const response = await patientServices.searchPatients(value, 50, 0);
-
-      response.data.forEach((patient) => {
-        patient.key = patient.id;
-      });
-
-      setPatientList(response.data);
-      setPagination({
-        currentPage: response.meta?.currentPage || 1,
-        limit: response.meta?.limit || 50,
-        offset: response.meta?.offset || 0,
-        total: response.meta?.total || 0,
-        totalPages: response.meta?.totalPages || 0,
-        hasMore: response.meta?.hasMore || false,
-      });
-    } catch (error) {
-      console.error('Error searching patients:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    // Fetch first page on component mount
     getPatients(50, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading && patientList.length === 0) {
     return <Loading />;
   }
+
+  // Filter dropdown content
+  const filterContent = (
+    <div
+      style={{
+        padding: 16,
+        width: 280,
+        background: '#fff',
+        border: '1px solid #d9d9d9',
+        borderRadius: 6,
+        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+      }}
+    >
+      <Space direction="vertical" style={{ width: '100%' }}>
+        <Input
+          placeholder="Name"
+          value={filters.name}
+          onChange={(e) => setFilters((prev) => ({ ...prev, name: e.target.value }))}
+        />
+        <Input
+          placeholder="Address"
+          value={filters.address}
+          onChange={(e) => setFilters((prev) => ({ ...prev, address: e.target.value }))}
+        />
+        <Input
+          placeholder="Service"
+          value={filters.service}
+          onChange={(e) => setFilters((prev) => ({ ...prev, service: e.target.value }))}
+        />
+        <Button
+          type="primary"
+          onClick={() => {
+            getPatients(50, 0);
+            setFilterVisible(false);
+          }}
+          block
+        >
+          Apply
+        </Button>
+      </Space>
+    </div>
+  );
 
   return (
     <Row>
@@ -291,41 +262,27 @@ const PatientList = () => {
             <Card.Header.Title>
               <h4 className="card-title">Patients List</h4>
             </Card.Header.Title>
-          </Card.Header>
-          {userRoles.includes('admin') && (
-            <div style={{ margin: '16px 0 0 16px', display: 'flex', gap: '10px' }}>
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      key: 'visible',
-                      label: 'Export Visible List',
-                      onClick: exportVisibleToExcel,
-                    },
-                    {
-                      key: 'all',
-                      label: 'Export All',
-                      onClick: exportAllToExcel,
-                    },
-                  ],
-                }}
-                placement="bottomLeft"
-                trigger="hover"
-              >
-                <Button
-                  className="bg-primary"
-                  type="primary"
-                  variant="primary"
-                  loading={loading || exportLoading}
-                  disabled={patientList.length === 0}
-                  style={{ width: 'auto' }}
+
+            {userRoles.includes('admin') && (
+              <Space>
+                {/* Button 1: Filter */}
+                <Dropdown
+                  overlay={filterContent}
+                  trigger={['click']}
+                  open={filterVisible}
+                  onOpenChange={(flag) => setFilterVisible(flag)}
+                  placement="bottomLeft"
                 >
-                  <RiFileExcel2Line className="h-3 w-4 me-2" />
-                  Export to Excel ▼
+                  <Button type="primary">Filter</Button>
+                </Dropdown>
+
+                {/* Button 2: Export All (sends filtered patients to email) */}
+                <Button type="primary" onClick={exportAllToEmail} loading={exportLoading}>
+                  <RiFileExcel2Line className="me-2" /> Export All
                 </Button>
-              </Dropdown>
-            </div>
-          )}
+              </Space>
+            )}
+          </Card.Header>
         </Card>
       </Col>
       <Col sm={12}>
@@ -339,8 +296,6 @@ const PatientList = () => {
           onPaginationChange={handlePaginationChange}
           isServerSide={true}
           loading={loading}
-          searchValue={searchText}
-          onSearch={handleSearch}
         />
       </Col>
     </Row>
