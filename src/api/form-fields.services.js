@@ -1,11 +1,8 @@
-import apiClient from "./axios-client";
+import apiClient from './axios-client';
 
 const createFormFields = async (formFieldDetails) => {
   try {
-    const response = await apiClient.post(
-      `/clinics/form-fields`,
-      formFieldDetails
-    );
+    const response = await apiClient.post(`/clinics/form-fields`, formFieldDetails);
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -14,22 +11,21 @@ const createFormFields = async (formFieldDetails) => {
       if (status === 400) {
         return {
           success: false,
-          message:
-            data.message || "Validation error or form field already exists.",
+          message: data.message || 'Validation error or form field already exists.',
         };
       }
 
       if (status === 500) {
         return {
           success: false,
-          message: data.message || "Internal server error occurred.",
+          message: data.message || 'Internal server error occurred.',
         };
       }
     }
 
     return {
       success: false,
-      message: error.message || "An unexpected error occurred.",
+      message: error.message || 'An unexpected error occurred.',
     };
   }
 };
@@ -40,13 +36,11 @@ const getAllFormFields = async () => {
     return response.data;
   } catch (error) {
     if (error.response) {
-      console.error("Error response:", error.response.data);
-      throw new Error(
-        error.response.data.message || "Failed to fetch form fields"
-      );
+      console.error('Error response:', error.response.data);
+      throw new Error(error.response.data.message || 'Failed to fetch form fields');
     } else {
-      console.error("Unexpected error:", error.message);
-      throw new Error("An unexpected error occurred.");
+      console.error('Unexpected error:', error.message);
+      throw new Error('An unexpected error occurred.');
     }
   }
 };
@@ -57,13 +51,11 @@ const getFormFieldOptions = async () => {
     return response.data;
   } catch (error) {
     if (error.response) {
-      console.error("Error response:", error.response.data);
-      throw new Error(
-        error.response.data.message || "Failed to fetch form field options"
-      );
+      console.error('Error response:', error.response.data);
+      throw new Error(error.response.data.message || 'Failed to fetch form field options');
     } else {
-      console.error("Unexpected error:", error.message);
-      throw new Error("An unexpected error occurred.");
+      console.error('Unexpected error:', error.message);
+      throw new Error('An unexpected error occurred.');
     }
   }
 };
@@ -79,31 +71,28 @@ const getFormFieldById = async (formFieldId) => {
       if (status === 404) {
         return {
           success: false,
-          message: data.message || "Form field not found.",
+          message: data.message || 'Form field not found.',
         };
       }
 
       if (status === 500) {
         return {
           success: false,
-          message: data.message || "Internal server error occurred.",
+          message: data.message || 'Internal server error occurred.',
         };
       }
     }
 
     return {
       success: false,
-      message: error.message || "An unexpected error occurred.",
+      message: error.message || 'An unexpected error occurred.',
     };
   }
 };
 
 const updateFormField = async (formFieldId, formFieldDetails) => {
   try {
-    const response = await apiClient.patch(
-      `/clinics/form-fields/${formFieldId}`,
-      formFieldDetails
-    );
+    const response = await apiClient.patch(`/clinics/form-fields/${formFieldId}`, formFieldDetails);
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -112,57 +101,50 @@ const updateFormField = async (formFieldId, formFieldDetails) => {
       if (status === 400) {
         return {
           success: false,
-          message: data.message || "Validation error occurred.",
+          message: data.message || 'Validation error occurred.',
         };
       }
 
       if (status === 404) {
         return {
           success: false,
-          message: data.message || "Form field not found.",
+          message: data.message || 'Form field not found.',
         };
       }
 
       if (status === 500) {
         return {
           success: false,
-          message: data.message || "Internal server error occurred.",
+          message: data.message || 'Internal server error occurred.',
         };
       }
     }
 
     return {
       success: false,
-      message: error.message || "An unexpected error occurred.",
+      message: error.message || 'An unexpected error occurred.',
     };
   }
 };
 
 const updateFormFieldsOptions = async (updateBody) => {
   try {
-    const response = await apiClient.patch(
-      `/clinics/form-fields/options`,
-      updateBody
-    );
+    const response = await apiClient.patch(`/clinics/form-fields/options`, updateBody);
     return response.data;
   } catch (error) {
     if (error.response) {
-      console.error("Error response:", error.response.data);
-      throw new Error(
-        error.response.data.message || "Failed to update form field options"
-      );
+      console.error('Error response:', error.response.data);
+      throw new Error(error.response.data.message || 'Failed to update form field options');
     } else {
-      console.error("Unexpected error:", error.message);
-      throw new Error("An unexpected error occurred.");
+      console.error('Unexpected error:', error.message);
+      throw new Error('An unexpected error occurred.');
     }
   }
 };
 
 const deleteFormField = async (formFieldId) => {
   try {
-    const response = await apiClient.delete(
-      `/clinics/form-fields/${formFieldId}`
-    );
+    const response = await apiClient.delete(`/clinics/form-fields/${formFieldId}`);
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -171,21 +153,21 @@ const deleteFormField = async (formFieldId) => {
       if (status === 404) {
         return {
           success: false,
-          message: data.message || "Form field not found.",
+          message: data.message || 'Form field not found.',
         };
       }
 
       if (status === 500) {
         return {
           success: false,
-          message: data.message || "Internal server error occurred.",
+          message: data.message || 'Internal server error occurred.',
         };
       }
     }
 
     return {
       success: false,
-      message: error.message || "An unexpected error occurred.",
+      message: error.message || 'An unexpected error occurred.',
     };
   }
 };

@@ -1,14 +1,9 @@
-import React, { useState } from "react";
-import CustomTable from "../custom-table";
-import { Button } from "react-bootstrap";
-import DiagnosisTreatmentSettingForm from "./diagnosis-treatment-setting-form";
+import React, { useState } from 'react';
+import CustomTable from '../custom-table';
+import { Button } from 'react-bootstrap';
+import DiagnosisTreatmentSettingForm from './diagnosis-treatment-setting-form';
 
-const SelectedDiagnosisTreatementDetaiils = ({
-  treatementsRows = [],
-  patientData,
-  diagnosisData,
-  fetchPatientData,
-}) => {
+const SelectedDiagnosisTreatementDetaiils = ({ treatementsRows = [], patientData, diagnosisData, fetchPatientData }) => {
   const [selectedTreatments, setSelectedTreatments] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
@@ -21,40 +16,35 @@ const SelectedDiagnosisTreatementDetaiils = ({
 
   const treatmentColumns = [
     {
-      title: "Treatment Date",
-      data: "treatmentDate",
+      title: 'Treatment Date',
+      data: 'treatmentDate',
       render: (data) => new Date(data).toLocaleDateString(),
     },
     {
-      title: "Complaints",
-      data: "complaints",
+      title: 'Complaints',
+      data: 'complaints',
     },
     {
-      title: "Treatments",
-      data: "treatments",
+      title: 'Treatments',
+      data: 'treatments',
     },
     {
-      title: "Dental Quadrant Type",
-      data: "dentalQuadrantType",
+      title: 'Dental Quadrant Type',
+      data: 'dentalQuadrantType',
     },
     {
-      title: "Selected Teeth",
-      data: "selectedTeeth",
+      title: 'Selected Teeth',
+      data: 'selectedTeeth',
     },
     {
-      title: "Treatment Status",
-      data: "treatmentStatus",
+      title: 'Treatment Status',
+      data: 'treatmentStatus',
     },
     {
-      title: "Actions",
+      title: 'Actions',
       data: null,
       render: (_, record) => (
-        <Button
-          size="sm"
-          
-          variant="warning"
-          onClick={() => handleOpenDrawer(record, true)}
-        >
+        <Button size="sm" variant="warning" onClick={() => handleOpenDrawer(record, true)}>
           View/Edit
         </Button>
       ),
@@ -62,21 +52,11 @@ const SelectedDiagnosisTreatementDetaiils = ({
   ];
   return (
     <div className="my-9">
-      <Button
-        variant="primary"
-        size="sm"
-        className="my-3"
-        onClick={() => handleOpenDrawer(null, false)}
-      >
+      <Button variant="primary" size="sm" className="my-3" onClick={() => handleOpenDrawer(null, false)}>
         Add treatment setting
       </Button>
-      <CustomTable
-        columns={treatmentColumns}
-        data={treatementsRows}
-        enableFilters={false}
-      />
+      <CustomTable columns={treatmentColumns} data={treatementsRows} enableFilters={false} />
       {drawerVisible && (
-      
         <DiagnosisTreatmentSettingForm
           isEdit={isEdit}
           selectedTreatments={selectedTreatments}

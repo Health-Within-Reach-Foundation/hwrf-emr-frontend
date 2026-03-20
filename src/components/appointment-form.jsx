@@ -1,23 +1,17 @@
-import { RiBuildingLine, RiGroupLine } from "@remixicon/react";
-import { Button, Checkbox, Col, Form, Modal, Row, Select, Spin } from "antd";
-import { useMemo, useState } from "react";
-import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
-import appointmentServices from "../api/appointment-services";
-import patientServices from "../api/patient-services";
+import { RiBuildingLine, RiGroupLine } from '@remixicon/react';
+import { Button, Checkbox, Col, Form, Modal, Row, Select, Spin } from 'antd';
+import { useMemo, useState } from 'react';
+import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
+import appointmentServices from '../api/appointment-services';
+import patientServices from '../api/patient-services';
 
-const AppointmentForm = ({
-  show,
-  modalClose,
-  recentPatients,
-  departments,
-  onSave,
-}) => {
+const AppointmentForm = ({ show, modalClose, recentPatients, departments, onSave }) => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
   const [patientSearchLoading, setPatientSearchLoading] = useState(false);
   const [patientOptions, setPatientOptions] = useState(recentPatients || []);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Debounce utility function
   const debounce = (func, delay) => {
@@ -47,9 +41,7 @@ const AppointmentForm = ({
           label: (
             <div className="d-flex justify-content-between align-items-center p-2">
               <span className="fw-medium">{patient.name}</span>
-              <span className="text-muted ms-2 fst-italic">
-                {patient.mobileNumber}
-              </span>
+              <span className="text-muted ms-2 fst-italic">{patient.mobileNumber}</span>
             </div>
           ),
           name: patient.name,
@@ -60,17 +52,14 @@ const AppointmentForm = ({
         setPatientOptions([]);
       }
     } catch (error) {
-      console.error("Error searching patients:", error);
-      toast.error("Failed to search patients");
+      console.error('Error searching patients:', error);
+      toast.error('Failed to search patients');
     } finally {
       setPatientSearchLoading(false);
     }
   };
 
-  const debouncedSearch = useMemo(
-    () => debounce(handlePatientSearch, 500),
-    []
-  );
+  const debouncedSearch = useMemo(() => debounce(handlePatientSearch, 500), []);
 
   const handleDepartmentChange = (checkedValues) => {
     form.setFieldsValue({ departments: checkedValues });
@@ -80,21 +69,19 @@ const AppointmentForm = ({
     try {
       const values = await form.validateFields(); // Validate form fields before proceeding
 
-      const appointmentDate = new Date().toLocaleDateString("en-CA");
+      const appointmentDate = new Date().toLocaleDateString('en-CA');
 
       const appointmentData = {
         patientId: values.patient, // Now directly using form state
         specialties: values.departments,
         appointmentDate,
-        status: "in queue",
+        status: 'in queue',
       };
 
       setIsLoading(true);
-      console.log("Appointment Data:", appointmentData);
+      console.log('Appointment Data:', appointmentData);
 
-      const response = await appointmentServices.bookAppointment(
-        appointmentData
-      );
+      const response = await appointmentServices.bookAppointment(appointmentData);
 
       if (response?.success) {
         toast.success(response.message);
@@ -104,23 +91,21 @@ const AppointmentForm = ({
         form.resetFields();
         modalClose();
       } else {
-        throw new Error(response?.message || "Failed to book appointment.");
+        throw new Error(response?.message || 'Failed to book appointment.');
       }
     } catch (error) {
-      console.error("Error booking appointment:", error);
+      console.error('Error booking appointment:', error);
 
       // Handle validation error
       if (error?.errorFields) {
         // Extracting all validation messages
         const validationMessages = error.errorFields
-          .map((field) => field.errors.join(", ")) // Join multiple errors if any
-          .join("\n");
-        toast.error(
-          validationMessages || "Please correct the errors in the form."
-        );
+          .map((field) => field.errors.join(', ')) // Join multiple errors if any
+          .join('\n');
+        toast.error(validationMessages || 'Please correct the errors in the form.');
       } else {
         // Handle API or unexpected errors
-        toast.error(error.message || "An unexpected error occurred!");
+        toast.error(error.message || 'An unexpected error occurred!');
       }
     } finally {
       setIsLoading(false);
@@ -144,7 +129,7 @@ const AppointmentForm = ({
           name="patient"
           layout="horizontal"
           label={<RiGroupLine />}
-          rules={[{ required: true, message: "Please select a patient!" }]}
+          rules={[{ required: true, message: 'Please select a patient!' }]}
         >
           <Select
             placeholder="Search and select patient (type name or mobile)"
@@ -161,9 +146,7 @@ const AppointmentForm = ({
                 <Spin size="small" />
               ) : (
                 <div className="text-muted text-center p-2">
-                  {searchTerm
-                    ? "No patients found"
-                    : "Start typing to search patients"}
+                  {searchTerm ? 'No patients found' : 'Start typing to search patients'}
                 </div>
               )
             }
@@ -182,14 +165,9 @@ const AppointmentForm = ({
           name="departments"
           layout="horizontal"
           label={<RiBuildingLine />}
-          rules={[
-            { required: true, message: "Please select at least one service!" },
-          ]}
+          rules={[{ required: true, message: 'Please select at least one service!' }]}
         >
-          <Checkbox.Group
-            options={departments}
-            onChange={handleDepartmentChange}
-          />
+          <Checkbox.Group options={departments} onChange={handleDepartmentChange} />
         </Form.Item>
 
         {/* Footer Actions */}
@@ -199,7 +177,7 @@ const AppointmentForm = ({
               onClick={() => {
                 form.resetFields();
                 setPatientOptions([]);
-                setSearchTerm("");
+                setSearchTerm('');
                 modalClose();
               }}
               style={{ marginRight: 10 }}
@@ -207,7 +185,7 @@ const AppointmentForm = ({
               Cancel
             </Button>
             <Button type="primary" onClick={handleSave} loading={isLoading}>
-              {isLoading ? "Saving..." : "Save"}
+              {isLoading ? 'Saving...' : 'Save'}
             </Button>
           </Col>
         </Row>

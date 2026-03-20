@@ -1,7 +1,7 @@
-import React, { Fragment } from "react";
-import { Col, Row, Pagination } from "react-bootstrap";
-import Card from "../../components/Card";
-import { Link } from "react-router-dom";
+import React, { Fragment } from 'react';
+import { Col, Row, Pagination } from 'react-bootstrap';
+import Card from '../../components/Card';
+import { Link } from 'react-router-dom';
 
 const Paginations = () => {
   let active = 2;
@@ -25,12 +25,10 @@ const Paginations = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                In addition, as pages likely have more than one such navigation
-                section, it’s advisable to provide a descriptive{" "}
-                <code>aria-label</code> for the <code>&lt;nav&gt;</code> to
-                reflect its purpose. For example, if the pagination component is
-                used to navigate between a set of search results, an appropriate
-                label could be <code>aria-label=&quot;Search results pages&quot;</code>.
+                In addition, as pages likely have more than one such navigation section, it’s advisable to provide a
+                descriptive <code>aria-label</code> for the <code>&lt;nav&gt;</code> to reflect its purpose. For example, if
+                the pagination component is used to navigate between a set of search results, an appropriate label could be{' '}
+                <code>aria-label=&quot;Search results pages&quot;</code>.
               </p>
               <nav aria-label="Page navigation example">
                 <ul className="pagination mb-0">
@@ -71,14 +69,15 @@ const Paginations = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Pagination links are customizable for different circumstances.
-                Use <code>.disabled</code> for links that appear un-clickable
-                and <code>.active</code> to indicate the current page.
+                Pagination links are customizable for different circumstances. Use <code>.disabled</code> for links that
+                appear un-clickable and <code>.active</code> to indicate the current page.
               </p>
-              <p>While the <code>.disabled</code> class uses <code>pointer-events: none</code> to <em>try</em> to disable
-                the link functionality of <code>&lt;a&gt;</code>s, that CSS property is not yet standardized and doesn’t
-                account for keyboard navigation. As such, you should always add <code>tabindex=&quot;-1&quot;</code> on disabled
-                links and use custom JavaScript to fully disable their functionality.</p>
+              <p>
+                While the <code>.disabled</code> class uses <code>pointer-events: none</code> to <em>try</em> to disable the
+                link functionality of <code>&lt;a&gt;</code>s, that CSS property is not yet standardized and doesn’t account
+                for keyboard navigation. As such, you should always add <code>tabindex=&quot;-1&quot;</code> on disabled
+                links and use custom JavaScript to fully disable their functionality.
+              </p>
               <nav aria-label="...">
                 <ul className="pagination">
                   <li className="page-item disabled">
@@ -109,10 +108,9 @@ const Paginations = () => {
                 </ul>
               </nav>
               <p>
-                You can optionally swap out active or disabled anchors for{" "}
-                <code>&lt;span&gt;</code>, or omit the anchor in the case of the
-                prev/next arrows, to remove click functionality and prevent
-                keyboard focus while retaining intended styles.
+                You can optionally swap out active or disabled anchors for <code>&lt;span&gt;</code>, or omit the anchor in
+                the case of the prev/next arrows, to remove click functionality and prevent keyboard focus while retaining
+                intended styles.
               </p>
               <nav aria-label="...">
                 <ul className="pagination">
@@ -125,8 +123,7 @@ const Paginations = () => {
                     </Link>
                   </li>
                   <li className="page-item active" aria-current="page">
-                    <span className="page-link">
-                      2</span>
+                    <span className="page-link">2</span>
                   </li>
                   <li className="page-item">
                     <Link className="page-link" to="#">
@@ -150,52 +147,35 @@ const Paginations = () => {
             </Card.Header>
             <div className="card-body">
               <p>
-                In addition, as pages likely have more than one such navigation
-                section, it’s advisable to provide a descriptive{" "}
-                <code>aria-label</code> for the <code>&lt;nav&gt;</code> to
-                reflect its purpose. For example, if the pagination component is
-                used to navigate between a set of search results, an appropriate
-                label could be <code>aria-label=&quot;Search results pages&quot;</code>.
+                In addition, as pages likely have more than one such navigation section, it’s advisable to provide a
+                descriptive <code>aria-label</code> for the <code>&lt;nav&gt;</code> to reflect its purpose. For example, if
+                the pagination component is used to navigate between a set of search results, an appropriate label could be{' '}
+                <code>aria-label=&quot;Search results pages&quot;</code>.
               </p>
               <nav aria-label="Page navigation example">
                 <ul className="pagination">
                   <li className="page-item">
-                    <Link
-                      className="page-link border-primary bg-primary text-white rtl-pageLink-pre"
-                      to="#"
-                    >
+                    <Link className="page-link border-primary bg-primary text-white rtl-pageLink-pre" to="#">
                       Previous
                     </Link>
                   </li>
                   <li className="page-item">
-                    <Link
-                      className="page-link border-primary bg-primary text-white"
-                      to="#"
-                    >
+                    <Link className="page-link border-primary bg-primary text-white" to="#">
                       1
                     </Link>
                   </li>
                   <li className="page-item">
-                    <Link
-                      className="page-link border-primary bg-primary text-white"
-                      to="#"
-                    >
+                    <Link className="page-link border-primary bg-primary text-white" to="#">
                       2
                     </Link>
                   </li>
                   <li className="page-item">
-                    <Link
-                      className="page-link border-primary bg-primary text-white"
-                      to="#"
-                    >
+                    <Link className="page-link border-primary bg-primary text-white" to="#">
                       3
                     </Link>
                   </li>
                   <li className="page-item">
-                    <Link
-                      className="page-link border-primary bg-primary text-white rtl-pageLink-next"
-                      to="#"
-                    >
+                    <Link className="page-link border-primary bg-primary text-white rtl-pageLink-next" to="#">
                       Next
                     </Link>
                   </li>
@@ -212,34 +192,22 @@ const Paginations = () => {
                     </Link>
                   </li>
                   <li className="page-item">
-                    <Link
-                      className="page-link border-success bg-success text-white"
-                      to="#"
-                    >
+                    <Link className="page-link border-success bg-success text-white" to="#">
                       1
                     </Link>
                   </li>
                   <li className="page-item">
-                    <Link
-                      className="page-link border-success bg-success text-white"
-                      to="#"
-                    >
+                    <Link className="page-link border-success bg-success text-white" to="#">
                       2
                     </Link>
                   </li>
                   <li className="page-item">
-                    <Link
-                      className="page-link border-success bg-success text-white"
-                      to="#"
-                    >
+                    <Link className="page-link border-success bg-success text-white" to="#">
                       3
                     </Link>
                   </li>
                   <li className="page-item">
-                    <Link
-                      className="page-link border-success bg-success text-white rtl-pageLink-next"
-                      to="#"
-                    >
+                    <Link className="page-link border-success bg-success text-white rtl-pageLink-next" to="#">
                       Next
                     </Link>
                   </li>
@@ -248,42 +216,27 @@ const Paginations = () => {
               <nav aria-label="Page navigation example">
                 <ul className="pagination mb-0 ">
                   <li className="page-item">
-                    <Link
-                      className="page-link border-info bg-info text-white rtl-pageLink-pre"
-                      to="#"
-                    >
+                    <Link className="page-link border-info bg-info text-white rtl-pageLink-pre" to="#">
                       Previous
                     </Link>
                   </li>
                   <li className="page-item">
-                    <Link
-                      className="page-link border-info bg-info text-white"
-                      to="#"
-                    >
+                    <Link className="page-link border-info bg-info text-white" to="#">
                       1
                     </Link>
                   </li>
                   <li className="page-item">
-                    <Link
-                      className="page-link border-info bg-info text-white"
-                      to="#"
-                    >
+                    <Link className="page-link border-info bg-info text-white" to="#">
                       2
                     </Link>
                   </li>
                   <li className="page-item">
-                    <Link
-                      className="page-link border-info bg-info text-white"
-                      to="#"
-                    >
+                    <Link className="page-link border-info bg-info text-white" to="#">
                       3
                     </Link>
                   </li>
                   <li className="page-item">
-                    <Link
-                      className="page-link border-info bg-info text-white rtl-pageLink-next"
-                      to="#"
-                    >
+                    <Link className="page-link border-info bg-info text-white rtl-pageLink-next" to="#">
                       Next
                     </Link>
                   </li>
@@ -301,9 +254,8 @@ const Paginations = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Looking to use an icon or symbol in place of text for some
-                pagination links? Be sure to provide proper screen reader
-                support with <code>aria</code> attributes.
+                Looking to use an icon or symbol in place of text for some pagination links? Be sure to provide proper screen
+                reader support with <code>aria</code> attributes.
               </p>
               <nav aria-label="Page navigation example">
                 <ul className="pagination mb-0">
@@ -344,16 +296,13 @@ const Paginations = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Fancy larger or smaller pagination? Add{" "}
-                <code>.pagination-lg</code> or <code>.pagination-sm</code> for
+                Fancy larger or smaller pagination? Add <code>.pagination-lg</code> or <code>.pagination-sm</code> for
                 additional sizes.
               </p>
               <nav aria-label="...">
                 <ul className="pagination pagination-lg">
                   <li className="page-item active" aria-current="page">
-                    <span className="page-link rtl-pageLink-pre">
-                      1
-                    </span>
+                    <span className="page-link rtl-pageLink-pre">1</span>
                   </li>
                   <li className="page-item">
                     <Link className="page-link" to="#">
@@ -370,9 +319,7 @@ const Paginations = () => {
               <nav aria-label="...">
                 <ul className="pagination">
                   <li className="page-item active" aria-current="page">
-                    <span className="page-link rtl-pageLink-pre ">
-                      1
-                    </span>
+                    <span className="page-link rtl-pageLink-pre ">1</span>
                   </li>
                   <li className="page-item">
                     <Link className="page-link" to="#">
@@ -389,8 +336,7 @@ const Paginations = () => {
               <nav aria-label="...">
                 <ul className="pagination pagination-sm">
                   <li className="page-item active" aria-current="page">
-                    <span className="page-link rtl-pageLink-pre ">
-                      1 </span>
+                    <span className="page-link rtl-pageLink-pre ">1 </span>
                   </li>
                   <li className="page-item">
                     <Link className="page-link" to="#">
@@ -414,8 +360,7 @@ const Paginations = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Change the alignment of pagination components with{" "}
-                <a href="#">flexbox utilities</a>.
+                Change the alignment of pagination components with <a href="#">flexbox utilities</a>.
               </p>
               <h6>left</h6>
               <nav aria-label="Page navigation example">

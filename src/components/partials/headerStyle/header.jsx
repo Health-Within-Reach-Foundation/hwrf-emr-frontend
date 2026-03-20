@@ -1,26 +1,26 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 // Import From React Bootstrap
-import { Col, Container, Dropdown, Nav, Navbar, Row } from "react-bootstrap";
+import { Col, Container, Dropdown, Nav, Navbar, Row } from 'react-bootstrap';
 
 // Import selectors & action from setting store
-import * as SettingSelector from "../../../store/setting/selectors";
+import * as SettingSelector from '../../../store/setting/selectors';
 
 // Redux Selector / Action
-import { useSelector } from "react-redux";
+import { useSelector } from 'react-redux';
 
 // Import Image
-import flag01 from "/assets/images/small/flag-01.png";
-import flag02 from "/assets/images/small/flag-02.png";
-import flag03 from "/assets/images/small/flag-03.png";
-import flag04 from "/assets/images/small/flag-04.png";
-import flag05 from "/assets/images/small/flag-05.png";
-import flag06 from "/assets/images/small/flag-06.png";
+import flag01 from '/assets/images/small/flag-01.png';
+import flag02 from '/assets/images/small/flag-02.png';
+import flag03 from '/assets/images/small/flag-03.png';
+import flag04 from '/assets/images/small/flag-04.png';
+import flag05 from '/assets/images/small/flag-05.png';
+import flag06 from '/assets/images/small/flag-06.png';
 
-import { useAuth } from "../../../utilities/AuthProvider";
-import { RiHammerLine, RiLogoutBoxLine, RiMenuLine } from "@remixicon/react";
-import { Button, Image } from "antd";
+import { useAuth } from '../../../utilities/AuthProvider';
+import { RiHammerLine, RiLogoutBoxLine, RiMenuLine } from '@remixicon/react';
+import { Button, Image } from 'antd';
 // import SettingOffCanvas from "../../setting/SettingOffCanvas";
 
 const generatePath = (path) => {
@@ -43,11 +43,11 @@ const Header = () => {
       }
     };
 
-    window.addEventListener("scroll", handleScrolld);
+    window.addEventListener('scroll', handleScrolld);
 
     // Cleanup event listener on component unmount
     return () => {
-      window.removeEventListener("scroll", handleScrolld);
+      window.removeEventListener('scroll', handleScrolld);
     };
   }, []);
 
@@ -67,13 +67,9 @@ const Header = () => {
       } else if (document.documentElement.mozRequestFullScreen) {
         document.documentElement.mozRequestFullScreen();
       } else if (document.documentElement.webkitRequestFullscreen) {
-        document.documentElement.webkitRequestFullscreen(
-          Element.ALLOW_KEYBOARD_INPUT
-        );
+        document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
       } else if (document.documentElement.msRequestFullscreen) {
-        document.documentElement.msRequestFullscreen(
-          Element.ALLOW_KEYBOARD_INPUT
-        );
+        document.documentElement.msRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
       }
       setIsFullScreen(true);
     } else {
@@ -92,20 +88,20 @@ const Header = () => {
   };
 
   const handleSidebar = () => {
-    let aside = document.getElementsByTagName("ASIDE")[0];
+    let aside = document.getElementsByTagName('ASIDE')[0];
     if (aside) {
-      if (!aside.classList.contains("sidebar-mini")) {
-        aside.classList.toggle("sidebar-mini");
-        aside.classList.toggle("sidebar-hover");
+      if (!aside.classList.contains('sidebar-mini')) {
+        aside.classList.toggle('sidebar-mini');
+        aside.classList.toggle('sidebar-hover');
       } else {
-        aside.classList.remove("sidebar-mini");
-        aside.classList.remove("sidebar-hover");
+        aside.classList.remove('sidebar-mini');
+        aside.classList.remove('sidebar-hover');
       }
 
       if (window.innerWidth < 990) {
-        if (!aside.classList.contains("sidebar-mini")) {
-          aside.classList.remove("sidebar-mini");
-          aside.classList.toggle("sidebar-hover");
+        if (!aside.classList.contains('sidebar-mini')) {
+          aside.classList.remove('sidebar-mini');
+          aside.classList.toggle('sidebar-hover');
         }
       }
     }
@@ -116,8 +112,8 @@ const Header = () => {
       {/* <Navbar> */}
       <Navbar
         className={`nav navbar-expand-xl navbar-light iq-navbar pt-2 pb-2 px-2 iq-header ${
-          isScrolled ? "fixed-header" : ""
-        } ${pageLayout === "container-fluid" ? "" : "container-box"}`}
+          isScrolled ? 'fixed-header' : ''
+        } ${pageLayout === 'container-fluid' ? '' : 'container-box'}`}
         id="boxid"
       >
         <Container fluid className="navbar-inner">
@@ -163,47 +159,18 @@ const Header = () => {
                 </div>
               </Nav.Item>
             </Col> */}
-            <Col
-              lg={12}
-              md={12}
-              className="d-flex justify-content-end align-items-center"
-            >
-              <Nav.Item
-                as="li"
-                className="nav-item iq-full-screen d-none d-xl-block"
-                id="fullscreen-item"
-              >
-                <a
-                  href="#"
-                  className="nav-link"
-                  id="btnFullscreen"
-                  onClick={() => toggleFullScreen()}
-                >
-                  <i
-                    className={`ri-fullscreen-line normal-screen ${
-                      isFullScreen ? "d-none" : ""
-                    }`}
-                  ></i>
-                  <i
-                    className={`ri-fullscreen-exit-line full-normal-screen ${
-                      isFullScreen ? "" : " d-none"
-                    }`}
-                  ></i>
+            <Col lg={12} md={12} className="d-flex justify-content-end align-items-center">
+              <Nav.Item as="li" className="nav-item iq-full-screen d-none d-xl-block" id="fullscreen-item">
+                <a href="#" className="nav-link" id="btnFullscreen" onClick={() => toggleFullScreen()}>
+                  <i className={`ri-fullscreen-line normal-screen ${isFullScreen ? 'd-none' : ''}`}></i>
+                  <i className={`ri-fullscreen-exit-line full-normal-screen ${isFullScreen ? '' : ' d-none'}`}></i>
                 </a>
                 {/* <SettingOffCanvas /> */}
               </Nav.Item>
-              <Nav.Item
-                as="li"
-                className="nav-item d-block d-xl-none"
-                onClick={handleSidebar}
-              >
-                <a
-                  className="wrapper-menu"
-                  data-toggle="sidebar"
-                  data-active="true"
-                >
+              <Nav.Item as="li" className="nav-item d-block d-xl-none" onClick={handleSidebar}>
+                <a className="wrapper-menu" data-toggle="sidebar" data-active="true">
                   <div className="main-circle">
-                    <RiMenuLine /> 
+                    <RiMenuLine />
                   </div>
                 </a>
               </Nav.Item>
@@ -219,20 +186,20 @@ const Header = () => {
                 >
                   <Image
                     preview={false}
-                    src={generatePath("/assets/images/hwrf-vertical.svg")}
+                    src={generatePath('/assets/images/hwrf-vertical.svg')}
                     style={{
-                      width: "50px",
-                      height: "50px",
-                      borderRadius: "100px",
+                      width: '50px',
+                      height: '50px',
+                      borderRadius: '100px',
                     }}
                     className="img-fluid rounded-circle mr-2"
                     alt="user"
                   />
                   <div className="caption d-none d-lg-block">
                     <h6 className="mb-0 line-height">{user.name}</h6>
-                    <span className="font-size-12">{userRoles.join(", ")}</span>
-                  </div>{" "}
-                </Dropdown.Toggle>{" "}
+                    <span className="font-size-12">{userRoles.join(', ')}</span>
+                  </div>{' '}
+                </Dropdown.Toggle>{' '}
                 <Dropdown.Menu
                   as="div"
                   className="p-0 sub-drop dropdown-menu dropdown-menu-end"
@@ -241,9 +208,7 @@ const Header = () => {
                   <div className="m-0 -none card">
                     <div className="py-3 card-header d-flex justify-content-between bg-primary mb-0 rounded-top-3">
                       <div className="header-title">
-                        <h5 className="mb-0 text-white font-weight-bold">
-                          {user.name}
-                        </h5>
+                        <h5 className="mb-0 text-white font-weight-bold">{user.name}</h5>
                       </div>
                     </div>
                     <div className="p-0 card-body">

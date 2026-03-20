@@ -1,8 +1,8 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../utilities/AuthProvider";
-import AccessDenied from "../views/extra-pages/access-denied";
-import { Loading } from "../components/loading";
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../utilities/AuthProvider';
+import AccessDenied from '../views/extra-pages/access-denied';
+import { Loading } from '../components/loading';
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -43,7 +43,7 @@ const SuperadminRouteGuard = ({ allowedRoles, children }) => {
   if (!hasAccess) {
     return <AccessDenied />;
   }
-  console.log("returning the outlet");
+  console.log('returning the outlet');
   return children;
 };
 
@@ -56,16 +56,14 @@ const ClinicRouteGuard = ({ requiredPermissions, children }) => {
   }
 
   // Check if the user is an admin (admin has full access)
-  const isAdmin = userRoles.some((role) => role === "admin");
+  const isAdmin = userRoles.some((role) => role === 'admin');
   if (isAdmin) {
     return children; // Admins bypass all permission checks
   }
 
   // Check if any role has the required permissions
   const hasAccess = user?.roles?.some((role) =>
-    role.permissions.some((permission) =>
-      requiredPermissions.includes(permission.action)
-    )
+    role.permissions.some((permission) => requiredPermissions.includes(permission.action))
   );
 
   // Deny access if no matching permissions are found

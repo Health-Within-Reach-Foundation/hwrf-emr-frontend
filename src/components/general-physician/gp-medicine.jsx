@@ -270,40 +270,27 @@
 
 // export default EditableMedicineTable;
 
-import React, { useState, useRef, useEffect } from "react";
-import {
-  Table,
-  Form,
-  Select,
-  Input,
-  Button,
-  Tooltip,
-  Divider,
-  Space,
-} from "antd";
-import { PlusOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
-import toast from "react-hot-toast";
-import formFieldsServices from "../../api/form-fields.services";
+import React, { useState, useRef, useEffect } from 'react';
+import { Table, Form, Select, Input, Button, Tooltip, Divider, Space } from 'antd';
+import { PlusOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons';
+import toast from 'react-hot-toast';
+import formFieldsServices from '../../api/form-fields.services';
 
 const { TextArea } = Input;
 
 const EditableMedicineTable = ({ form, formField, disabled = false }) => {
   /** Fetch options for each column from formField */
   const getOptions = (fieldName) => {
-    return (
-      formField.find((field) => field.fieldName === fieldName)?.options || []
-    );
+    return formField.find((field) => field.fieldName === fieldName)?.options || [];
   };
-  console.log("Inside medicine table", form.getFieldsValue());
+  console.log('Inside medicine table', form.getFieldsValue());
 
-  const watchedMedicineList = Form.useWatch("medicine", form) || [];
-  console.log("watchedMedicineList", watchedMedicineList);
+  const watchedMedicineList = Form.useWatch('medicine', form) || [];
+  console.log('watchedMedicineList', watchedMedicineList);
   const [medicineList, setMedicineList] = useState(watchedMedicineList || []);
-  const [medicineOptions, setMedicineOptions] = useState(
-    getOptions("medicine") || []
-  );
+  const [medicineOptions, setMedicineOptions] = useState(getOptions('medicine') || []);
   const [newMedicines, setNewMedicines] = useState([]);
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
 
@@ -311,13 +298,13 @@ const EditableMedicineTable = ({ form, formField, disabled = false }) => {
   const handleAddRow = () => {
     const newRow = {
       key: Date.now(),
-      medicineType: "",
-      medicine: "",
-      dose: "",
-      when: "",
-      frequency: "",
-      duration: "",
-      notes: "",
+      medicineType: '',
+      medicine: '',
+      dose: '',
+      when: '',
+      frequency: '',
+      duration: '',
+      notes: '',
     };
     const updatedList = [...medicineList, newRow];
     setMedicineList(updatedList);
@@ -337,41 +324,37 @@ const EditableMedicineTable = ({ form, formField, disabled = false }) => {
     const newMedicine = { label: name, value: name };
     setMedicineOptions((prev) => [...prev, newMedicine]);
     setNewMedicines((prev) => [...prev, newMedicine]);
-    setName("");
+    setName('');
     setTimeout(() => inputRef.current?.focus(), 0);
   };
 
   /** Save New Medicines (Batch) */
   const saveMedicines = async () => {
     if (newMedicines.length === 0) {
-      toast.error("No new medicines to save.");
+      toast.error('No new medicines to save.');
       return;
     }
     setLoading(true);
     try {
-      const medicineFormField = formField.find(
-        (field) => field.fieldName === "medicine"
-      );
-      console.log("new medicines", newMedicines);
+      const medicineFormField = formField.find((field) => field.fieldName === 'medicine');
+      console.log('new medicines', newMedicines);
       const updateBody = {
         formId: medicineFormField.id,
         fieldName: medicineFormField.fieldName,
         options: [...medicineFormField.options, ...newMedicines], // Save all updated options
       };
-      console.log("updated medicine options", updateBody);
-      const response = await formFieldsServices.updateFormFieldsOptions(
-        updateBody
-      );
+      console.log('updated medicine options', updateBody);
+      const response = await formFieldsServices.updateFormFieldsOptions(updateBody);
       if (response.success) {
         setTimeout(() => {
           setNewMedicines([]);
-          toast.success("New medicines saved!");
+          toast.success('New medicines saved!');
           setLoading(false);
         }, 1000);
       }
     } catch (error) {
       console.log(error);
-      toast.error("Failed to save complaints!");
+      toast.error('Failed to save complaints!');
     } finally {
       setLoading(false);
     }
@@ -380,33 +363,27 @@ const EditableMedicineTable = ({ form, formField, disabled = false }) => {
   /** Table Columns Definition */
   const columns = [
     {
-      title: "Medicine/Drug Type",
-      dataIndex: "medicineType",
+      title: 'Medicine/Drug Type',
+      dataIndex: 'medicineType',
       width: 200,
       render: (_, record, index) => (
-        <Form.Item
-          name={["medicine", index, "medicineType"]}
-          rules={[{ required: true, message: "Required" }]}
-        >
+        <Form.Item name={['medicine', index, 'medicineType']} rules={[{ required: true, message: 'Required' }]}>
           <Select
             showSearch
             disabled={disabled}
             placeholder="Select Medicine Type"
             allowClear
-            options={getOptions("medicineType")}
+            options={getOptions('medicineType')}
           />
         </Form.Item>
       ),
     },
     {
-      title: "Medicine/Drug",
-      dataIndex: "medicine",
+      title: 'Medicine/Drug',
+      dataIndex: 'medicine',
       width: 600,
       render: (_, record, index) => (
-        <Form.Item
-          name={["medicine", index, "medicine"]}
-          rules={[{ required: true, message: "Required" }]}
-        >
+        <Form.Item name={['medicine', index, 'medicine']} rules={[{ required: true, message: 'Required' }]}>
           <Select
             showSearch
             disabled={disabled}
@@ -417,8 +394,8 @@ const EditableMedicineTable = ({ form, formField, disabled = false }) => {
             dropdownRender={(menu) => (
               <>
                 {menu}
-                <Divider style={{ margin: "8px 0" }} />
-                <Space style={{ padding: "0 8px 4px", display: "flex" }}>
+                <Divider style={{ margin: '8px 0' }} />
+                <Space style={{ padding: '0 8px 4px', display: 'flex' }}>
                   <Input
                     placeholder="Add new medicine"
                     ref={inputRef}
@@ -430,17 +407,9 @@ const EditableMedicineTable = ({ form, formField, disabled = false }) => {
                   </Button>
                 </Space>
                 {newMedicines.length > 0 && (
-                  <div style={{ padding: "8px 8px 4px", textAlign: "right" }}>
-                    <Tooltip
-                      title="Save newly added medicines"
-                      color="blue-inverse"
-                    >
-                      <Button
-                        type="primary"
-                        icon={<SaveOutlined />}
-                        loading={loading}
-                        onClick={saveMedicines}
-                      >
+                  <div style={{ padding: '8px 8px 4px', textAlign: 'right' }}>
+                    <Tooltip title="Save newly added medicines" color="blue-inverse">
+                      <Button type="primary" icon={<SaveOutlined />} loading={loading} onClick={saveMedicines}>
                         Save Medicines
                       </Button>
                     </Tooltip>
@@ -453,99 +422,62 @@ const EditableMedicineTable = ({ form, formField, disabled = false }) => {
       ),
     },
     {
-      title: "Dose",
-      dataIndex: "dose",
+      title: 'Dose',
+      dataIndex: 'dose',
       width: 350,
       render: (_, record, index) => (
-        <Form.Item
-          name={["medicine", index, "dose"]}
-          rules={[{ required: true, message: "Required" }]}
-        >
-          <Select
-            showSearch
-            disabled={disabled}
-            placeholder="Select Dose"
-            options={getOptions("medicineDose")}
-          />
+        <Form.Item name={['medicine', index, 'dose']} rules={[{ required: true, message: 'Required' }]}>
+          <Select showSearch disabled={disabled} placeholder="Select Dose" options={getOptions('medicineDose')} />
         </Form.Item>
       ),
     },
     {
-      title: "When",
-      dataIndex: "when",
+      title: 'When',
+      dataIndex: 'when',
       width: 400,
       render: (_, record, index) => (
-        <Form.Item
-          name={["medicine", index, "when"]}
-          rules={[{ required: true, message: "Required" }]}
-        >
-          <Select
-            showSearch
-            disabled={disabled}
-            placeholder="Select Timing"
-            options={getOptions("medicineWhen")}
-          />
+        <Form.Item name={['medicine', index, 'when']} rules={[{ required: true, message: 'Required' }]}>
+          <Select showSearch disabled={disabled} placeholder="Select Timing" options={getOptions('medicineWhen')} />
         </Form.Item>
       ),
     },
     {
-      title: "Frequency",
-      dataIndex: "frequency",
+      title: 'Frequency',
+      dataIndex: 'frequency',
       width: 400,
       render: (_, record, index) => (
-        <Form.Item
-          name={["medicine", index, "frequency"]}
-          rules={[{ required: true, message: "Required" }]}
-        >
-          <Select
-            showSearch
-            disabled={disabled}
-            placeholder="Select Frequency"
-            options={getOptions("medicineFrequency")}
-          />
+        <Form.Item name={['medicine', index, 'frequency']} rules={[{ required: true, message: 'Required' }]}>
+          <Select showSearch disabled={disabled} placeholder="Select Frequency" options={getOptions('medicineFrequency')} />
         </Form.Item>
       ),
     },
     {
-      title: "Duration",
-      dataIndex: "duration",
+      title: 'Duration',
+      dataIndex: 'duration',
       width: 300,
       render: (_, record, index) => (
-        <Form.Item
-          name={["medicine", index, "duration"]}
-          rules={[{ required: true, message: "Required" }]}
-        >
-          <Select
-            showSearch
-            disabled={disabled}
-            placeholder="Select Duration"
-            options={getOptions("medicineDuration")}
-          />
+        <Form.Item name={['medicine', index, 'duration']} rules={[{ required: true, message: 'Required' }]}>
+          <Select showSearch disabled={disabled} placeholder="Select Duration" options={getOptions('medicineDuration')} />
         </Form.Item>
       ),
     },
     {
-      title: "Notes/Instructions",
-      dataIndex: "notes",
+      title: 'Notes/Instructions',
+      dataIndex: 'notes',
       width: 700,
       render: (_, record, index) => (
-        <Form.Item name={["medicine", index, "notes"]}>
+        <Form.Item name={['medicine', index, 'notes']}>
           <TextArea rows={1} placeholder="Add notes" disabled={disabled} />
         </Form.Item>
       ),
     },
     {
-      title: "Action",
-      dataIndex: "action",
+      title: 'Action',
+      dataIndex: 'action',
       width: 120,
       render: (_, record) => (
         <Form.Item>
-          <Button
-            danger
-            onClick={() => handleRemoveRow(record.key)}
-            icon={<DeleteOutlined />}
-            disabled={disabled}
-          />
+          <Button danger onClick={() => handleRemoveRow(record.key)} icon={<DeleteOutlined />} disabled={disabled} />
         </Form.Item>
       ),
     },

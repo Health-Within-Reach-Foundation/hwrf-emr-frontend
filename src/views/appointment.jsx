@@ -1,20 +1,20 @@
-import { RiAddLine, RiRefreshLine } from "@remixicon/react";
-import { Badge, Button, Dropdown } from "antd";
-import "flatpickr/dist/flatpickr.css";
-import { useEffect, useState } from "react";
-import { Col, Row } from "react-bootstrap";
-import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
-import appointmentServices from "../api/appointment-services";
-import campManagementService from "../api/camp-management-service";
-import AntdTable from "../components/antd-table";
-import AppointmentForm from "../components/appointment-form";
-import CurrentCampDetailsHeader from "../components/camp/currentcamp-detail-header";
-import DateCell from "../components/date-cell";
-import { Loading } from "../components/loading";
-import { useAuth } from "../utilities/AuthProvider";
-import { transformText } from "../utilities/utility-function";
-import patientServices from "../api/patient-services";
+import { RiAddLine, RiRefreshLine } from '@remixicon/react';
+import { Badge, Button, Dropdown } from 'antd';
+import 'flatpickr/dist/flatpickr.css';
+import { useEffect, useState } from 'react';
+import { Col, Row } from 'react-bootstrap';
+import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
+import appointmentServices from '../api/appointment-services';
+import campManagementService from '../api/camp-management-service';
+import AntdTable from '../components/antd-table';
+import AppointmentForm from '../components/appointment-form';
+import CurrentCampDetailsHeader from '../components/camp/currentcamp-detail-header';
+import DateCell from '../components/date-cell';
+import { Loading } from '../components/loading';
+import { useAuth } from '../utilities/AuthProvider';
+import { transformText } from '../utilities/utility-function';
+import patientServices from '../api/patient-services';
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -31,87 +31,75 @@ const Appointment = () => {
 
   const queuePatientColumns = [
     {
-      title: "Token Number",
-      dataIndex: "tokenNumber",
-      key: "tokenNumber",
+      title: 'Token Number',
+      dataIndex: 'tokenNumber',
+      key: 'tokenNumber',
       sortable: true,
       width: 180,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
-      ),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>,
     },
     {
-      title: "Name",
-      dataIndex: "patientName",
-      key: "patientName",
+      title: 'Name',
+      dataIndex: 'patientName',
+      key: 'patientName',
       sortable: true,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
-      ),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>,
     },
     {
-      title: "Sex",
-      dataIndex: "patientSex",
-      key: "patientSex",
+      title: 'Sex',
+      dataIndex: 'patientSex',
+      key: 'patientSex',
       sortable: true,
       width: 120,
       filters: [
-        { text: "Male", value: "male" },
-        { text: "Female", value: "female" },
+        { text: 'Male', value: 'male' },
+        { text: 'Female', value: 'female' },
       ],
       onFilter: (value, record) => {
         console.log(value, record);
         return record.patientSex === value;
       },
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
-      ),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>,
     },
     {
-      title: "Mobile No.",
-      dataIndex: "patientMobile",
-      key: "patientMobile",
+      title: 'Mobile No.',
+      dataIndex: 'patientMobile',
+      key: 'patientMobile',
       sortable: false,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
-      ),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>,
     },
     {
-      title: "Service Type",
-      dataIndex: "queueType",
-      key: "queueType",
+      title: 'Service Type',
+      dataIndex: 'queueType',
+      key: 'queueType',
       sortable: true,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
-      ),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>,
     },
     {
-      title: "Primary Doctor",
-      dataIndex: "primaryDoctor",
-      key: "primaryDoctor",
+      title: 'Primary Doctor',
+      dataIndex: 'primaryDoctor',
+      key: 'primaryDoctor',
       width: 150,
       sortable: true,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>
-      ),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.patientId}`}>{text}</Link>,
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
       sortable: true,
       filters: [
-        { text: "In Queue", value: "in queue" },
-        { text: "In", value: "in" },
-        { text: "Out", value: "out" },
+        { text: 'In Queue', value: 'in queue' },
+        { text: 'In', value: 'in' },
+        { text: 'Out', value: 'out' },
       ],
       onFilter: (value, record) => record.status === value,
       render: (text, record) => {
         // Define a color mapping for different statuses
         const statusColors = {
-          "in queue": "success",
-          in: "processing",
-          out: "warning",
+          'in queue': 'success',
+          in: 'processing',
+          out: 'warning',
         };
 
         return (
@@ -138,9 +126,9 @@ const Appointment = () => {
       },
     },
     {
-      title: "Last Updated Status",
-      dataIndex: "statusUpdatedAt",
-      key: "statusUpdatedAt",
+      title: 'Last Updated Status',
+      dataIndex: 'statusUpdatedAt',
+      key: 'statusUpdatedAt',
       render: (text, record) => {
         return (
           <a href={`/patient/patient-profile/${record.patientId}`}>
@@ -150,57 +138,51 @@ const Appointment = () => {
       },
     },
     {
-      title: "Action",
+      title: 'Action',
       dataIndex: null,
-      key: "action",
+      key: 'action',
       render: (text, record) => {
         const menu = {
           items: [
             {
-              key: "1",
+              key: '1',
               label: (
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
-                >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <i className="ri-login-box-line"></i>
                   <span>In</span>
                 </div>
               ),
               onClick: () =>
                 handleMarkAppointment(record.id, {
-                  status: "in",
+                  status: 'in',
                   statusUpdatedAt: new Date(),
                 }),
             },
             {
-              key: "2",
+              key: '2',
               label: (
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
-                >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <i className="ri-logout-box-line"></i>
                   <span>Out</span>
                 </div>
               ),
               onClick: () =>
                 handleMarkAppointment(record.id, {
-                  status: "out",
+                  status: 'out',
                   statusUpdatedAt: new Date(),
                 }),
             },
             {
-              key: "3",
+              key: '3',
               label: (
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
-                >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <i className="ri-calendar-schedule-line"></i>
                   <span>In Queue</span>
                 </div>
               ),
               onClick: () =>
                 handleMarkAppointment(record.id, {
-                  status: "in queue",
+                  status: 'in queue',
                   statusUpdatedAt: new Date(),
                 }),
             },
@@ -208,7 +190,7 @@ const Appointment = () => {
         };
 
         return (
-          <Dropdown menu={menu} trigger={["click"]}>
+          <Dropdown menu={menu} trigger={['click']}>
             <Button className="bg-primary" type="primary" size="sm">
               Action
             </Button>
@@ -220,15 +202,12 @@ const Appointment = () => {
 
   const handleMarkAppointment = async (rowId, rowBody) => {
     try {
-      const response = await appointmentServices.updateAppointment(
-        rowId,
-        rowBody
-      );
+      const response = await appointmentServices.updateAppointment(rowId, rowBody);
       if (response.success) {
         toast.success(response?.message);
       }
     } catch (error) {
-      console.error("Error while marking appointment:", error);
+      console.error('Error while marking appointment:', error);
       toast.error(error.message);
     } finally {
       setLoading(false);
@@ -239,10 +218,8 @@ const Appointment = () => {
   const fetchAppointments = async (selectedDate = date) => {
     try {
       setLoadingAppointments(true);
-      const adjustedDate = new Date(
-        selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000
-      );
-      const dateString = adjustedDate.toISOString().split("T")[0];
+      const adjustedDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
+      const dateString = adjustedDate.toISOString().split('T')[0];
       const response = await appointmentServices.getAppointments();
       console.log(response);
       response.data.map((appointment) => {
@@ -250,14 +227,10 @@ const Appointment = () => {
         return appointment;
       });
 
-      setAppointments(
-        response?.data.sort((a, b) => a.tokenNumber - b.tokenNumber) || []
-      );
-      setFilteredAppointments(
-        response?.data.sort((a, b) => a.tokenNumber - b.tokenNumber) || []
-      );
+      setAppointments(response?.data.sort((a, b) => a.tokenNumber - b.tokenNumber) || []);
+      setFilteredAppointments(response?.data.sort((a, b) => a.tokenNumber - b.tokenNumber) || []);
     } catch (error) {
-      console.error("Error fetching appointments:", error);
+      console.error('Error fetching appointments:', error);
     } finally {
       setLoadingAppointments(false);
     }
@@ -266,9 +239,7 @@ const Appointment = () => {
   const fetchCampDetails = async () => {
     try {
       setLoading(true);
-      const response = await campManagementService.getCampById(
-        user.currentCampId
-      );
+      const response = await campManagementService.getCampById(user.currentCampId);
       setDepartmentList(
         response.data.specialties.map((department) => ({
           value: department.id,
@@ -276,7 +247,7 @@ const Appointment = () => {
         }))
       );
     } catch (error) {
-      console.error("Error fetching camp details:", error);
+      console.error('Error fetching camp details:', error);
     } finally {
       setLoading(false);
     }
@@ -292,9 +263,7 @@ const Appointment = () => {
           label: (
             <div className="d-flex justify-content-between align-items-center p-2">
               <span className="fw-medium">{patient.name}</span>
-              <span className="text-muted ms-2 fst-italic">
-                {patient.mobileNumber}
-              </span>
+              <span className="text-muted ms-2 fst-italic">{patient.mobileNumber}</span>
             </div>
           ),
           name: patient.name,
@@ -303,7 +272,7 @@ const Appointment = () => {
         setRecentPatients(options);
       }
     } catch (error) {
-      console.error("Error fetching recent patients:", error);
+      console.error('Error fetching recent patients:', error);
     } finally {
       setPatientLoading(false);
     }
@@ -329,9 +298,7 @@ const Appointment = () => {
       // Save the sortedBy value in localStorage
       localStorage.setItem(localStorageKey, queueType.label);
 
-      const filtered = appointments.filter(
-        (appointment) => appointment.queueType === queueType.label
-      );
+      const filtered = appointments.filter((appointment) => appointment.queueType === queueType.label);
       setFilteredAppointments(filtered);
     }
   };
@@ -355,9 +322,7 @@ const Appointment = () => {
     const savedQueueType = localStorage.getItem(localStorageKey);
     if (savedQueueType) {
       setSelectedQueueType(savedQueueType);
-      const filtered = appointments.filter(
-        (appointment) => appointment.queueType === savedQueueType
-      );
+      const filtered = appointments.filter((appointment) => appointment.queueType === savedQueueType);
       setFilteredAppointments(filtered);
     }
   }, [appointments, user?.id]); // Dependencies for effect
@@ -368,10 +333,10 @@ const Appointment = () => {
   }, []);
 
   const customRowClass = (record) => {
-    if (record.status === "in queue") return "row-success";
-    if (record.status === "in") return "row-info";
-    if (record.status === "out") return "row-warning";
-    return "";
+    if (record.status === 'in queue') return 'row-success';
+    if (record.status === 'in') return 'row-info';
+    if (record.status === 'out') return 'row-warning';
+    return '';
   };
 
   // useEffect(() => {
@@ -398,10 +363,8 @@ const Appointment = () => {
                   variant="primary"
                   onClick={() => setShow(true)}
                   disabled={user?.currentCampId === null}
-                  title={
-                    user?.currentCampId === null ? "Please select camp!" : null
-                  }
-                  style={{ width: "auto" }} // Keeps the button width to content size
+                  title={user?.currentCampId === null ? 'Please select camp!' : null}
+                  style={{ width: 'auto' }} // Keeps the button width to content size
                 >
                   <RiAddLine />
                   Add to Queue
@@ -412,7 +375,7 @@ const Appointment = () => {
                   variant="outline-primary"
                   onClick={refreshData}
                   // className="mb-3"
-                  style={{ width: "auto" }}
+                  style={{ width: 'auto' }}
                 >
                   <RiRefreshLine />
                 </Button>
@@ -425,15 +388,9 @@ const Appointment = () => {
                     size="lg"
                     onClick={() => handleQueueTypeSort(department)}
                     style={{
-                      backgroundColor:
-                        selectedQueueType === department.label
-                          ? "#0a58b8"
-                          : "transparent",
-                      color:
-                        selectedQueueType === department.label
-                          ? "#fff"
-                          : "#0a58b8",
-                      border: "1px solid #0a58b8",
+                      backgroundColor: selectedQueueType === department.label ? '#0a58b8' : 'transparent',
+                      color: selectedQueueType === department.label ? '#fff' : '#0a58b8',
+                      border: '1px solid #0a58b8',
                     }}
                   >
                     {department.label}

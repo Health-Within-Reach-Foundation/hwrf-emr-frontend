@@ -1,37 +1,37 @@
-import _ from "lodash";
-import { getColorShadeTint } from "./colors";
-import { getRootVars, setRootVariables, setFontFamily } from "./root-var";
-import { addClass, removeClass, setAttr, setContent } from "./dom";
+import _ from 'lodash';
+import { getColorShadeTint } from './colors';
+import { getRootVars, setRootVariables, setFontFamily } from './root-var';
+import { addClass, removeClass, setAttr, setContent } from './dom';
 
 export const updateBodyClass = (choices, value) => {
   // remove class from choices
   if (choices.length > 0) {
     choices.forEach((other) => {
-      removeClass("body", other);
+      removeClass('body', other);
     });
   }
   if (_.isArray(value)) {
     _.forEach(value, (val) => {
-      addClass("body", val);
+      addClass('body', val);
     });
   } else {
-    addClass("body", value);
+    addClass('body', value);
   }
 };
 
 export const updateHtmlAttr = (value) => {
   // set direction
-  setAttr("html", value);
+  setAttr('html', value);
 };
 
 export const updateHtmlClass = (choices, value) => {
   // remove class from choices
   if (choices.length > 0) {
     choices.forEach((other) => {
-      removeClass("html", other);
+      removeClass('html', other);
     });
   }
-  addClass("html", value);
+  addClass('html', value);
 };
 
 export const updateTitle = (value) => {
@@ -40,58 +40,51 @@ export const updateTitle = (value) => {
 };
 
 export const updateColorRootVar = (theme_scheme, theme_color, choices) => {
-  const prefix = getRootVars("--prefix") || "bs-";
+  const prefix = getRootVars('--prefix') || 'bs-';
   let newColors = {};
   let dark = false;
-  if (theme_scheme !== "light" && theme_scheme !== "auto") {
+  if (theme_scheme !== 'light' && theme_scheme !== 'auto') {
     dark = true;
   }
 
   _.forEach(theme_color.colors, (value, key) => {
-    key = key.replace("{{prefix}}", prefix);
+    key = key.replace('{{prefix}}', prefix);
     newColors = {
       ...newColors,
       ...getColorShadeTint(key, value, dark),
     };
   });
   setRootVariables(newColors);
-  removeClass("body", choices);
+  removeClass('body', choices);
   // addClass("body", [theme_color.value]);
-  removeClass("body", theme_color.value);
+  removeClass('body', theme_color.value);
 };
 
 export const updateDomValueBySetting = (setting, Choices) => {
-  updateHtmlAttr({ prop: "dir", value: setting.theme_scheme_direction.value });
+  updateHtmlAttr({ prop: 'dir', value: setting.theme_scheme_direction.value });
   updateHtmlClass(Choices.FSChoice, setting.theme_font_size.value);
   updateHtmlAttr({
-    prop: "data-bs-theme-color",
+    prop: 'data-bs-theme-color',
     value: setting.theme_color.value,
   });
-  updateHtmlAttr({ prop: "data-bs-theme", value: setting.theme_scheme.value });
+  updateHtmlAttr({ prop: 'data-bs-theme', value: setting.theme_scheme.value });
   updateBodyClass(Choices.SchemeChoice, setting.theme_scheme.value);
   updateBodyClass(Choices.SchemeChoice, setting.theme_scheme.value);
-  updateBodyClass(
-    Choices.StyleAppearanceChoice,
-    setting.theme_style_appearance.value
-  );
+  updateBodyClass(Choices.StyleAppearanceChoice, setting.theme_style_appearance.value);
   updateBodyClass(Choices.Animation, setting.theme_transition.value);
-  updateColorRootVar(
-    setting.theme_scheme.value,
-    setting.theme_color,
-    Choices.ColorChoice
-  );
+  updateColorRootVar(setting.theme_scheme.value, setting.theme_color, Choices.ColorChoice);
   updateTitle(setting.app_name.value);
 };
 
 export const updateStorage = (storage, key, value) => {
   if (typeof value !== typeof undefined && typeof key !== typeof undefined) {
     switch (storage) {
-      case "localStorage":
+      case 'localStorage':
         sessionStorage.removeItem(key);
         localStorage.setItem(key, JSON.stringify(value));
         break;
 
-      case "sessionStorage":
+      case 'sessionStorage':
         localStorage.removeItem(key);
         sessionStorage.setItem(key, JSON.stringify(value));
         break;
@@ -99,22 +92,18 @@ export const updateStorage = (storage, key, value) => {
       default:
         localStorage.removeItem(key);
         sessionStorage.removeItem(key);
-        localStorage.setItem(key, "none");
-        sessionStorage.setItem(key, "none");
+        localStorage.setItem(key, 'none');
+        sessionStorage.setItem(key, 'none');
         break;
     }
   }
 };
 
 export const getStorage = (key) => {
+  if (localStorage.getItem(key) === 'none' || sessionStorage.getItem(key) === 'none') return 'none';
   if (
-    localStorage.getItem(key) === "none" ||
-    sessionStorage.getItem(key) === "none"
-  )
-    return "none";
-  if (
-    (localStorage.getItem(key) !== null && localStorage.getItem(key) !== "") ||
-    (sessionStorage.getItem(key) !== null && sessionStorage.getItem(key) !== "")
+    (localStorage.getItem(key) !== null && localStorage.getItem(key) !== '') ||
+    (sessionStorage.getItem(key) !== null && sessionStorage.getItem(key) !== '')
   ) {
     let value = localStorage.getItem(key);
     if (value === null) value = sessionStorage.getItem(key);
@@ -130,17 +119,17 @@ export const getStorage = (key) => {
 };
 export const updateThemeScheme = (value, Choices, theme_color) => {
   let className = [];
-  if (value === "auto") {
-    className.push("auto");
-    if (matchMedia("(prefers-color-scheme: light)").matches) {
-      className.push("light");
+  if (value === 'auto') {
+    className.push('auto');
+    if (matchMedia('(prefers-color-scheme: light)').matches) {
+      className.push('light');
     } else {
-      className.push("dark");
+      className.push('dark');
     }
   } else {
     className.push(value);
   }
-  const filterValue = className.filter((x) => x !== "auto");
+  const filterValue = className.filter((x) => x !== 'auto');
   // updateBodyClass(Choices.SchemeChoice, className)
   updateColorRootVar(...filterValue, theme_color, Choices.ColorChoice);
 };

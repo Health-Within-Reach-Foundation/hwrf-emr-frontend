@@ -1,21 +1,23 @@
-import { RiFileExcel2Line } from "@remixicon/react";
-import { Button } from "antd";
-import { saveAs } from "file-saver";
-import "flatpickr/dist/themes/material_blue.css";
-import { useEffect, useState } from "react";
-import { Col, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import * as XLSX from "xlsx";
-import patientServices from "../../api/patient-services";
-import Antdtable from "../../components/antd-table";
-import Card from "../../components/Card";
-import { Loading } from "../../components/loading";
-import { useAuth } from "../../utilities/AuthProvider";
+import { RiFileExcel2Line } from '@remixicon/react';
+import { Button, Dropdown } from 'antd';
+import { saveAs } from 'file-saver';
+import 'flatpickr/dist/themes/material_blue.css';
+import { useEffect, useState } from 'react';
+import { Col, Row } from 'react-bootstrap';
+import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
+import * as XLSX from 'xlsx';
+import patientServices from '../../api/patient-services';
+import Antdtable from '../../components/antd-table';
+import Card from '../../components/Card';
+import { Loading } from '../../components/loading';
+import { useAuth } from '../../utilities/AuthProvider';
 
 const PatientList = () => {
   const [patientList, setPatientList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searchText, setSearchText] = useState("");
+  const [exportLoading, setExportLoading] = useState(false);
+  const [searchText, setSearchText] = useState('');
   const [pagination, setPagination] = useState({
     currentPage: 1,
     limit: 50,
@@ -42,9 +44,9 @@ const PatientList = () => {
 
   const patientColumns = [
     {
-      title: "Register No",
-      dataIndex: "regNo",
-      key: "regNo",
+      title: 'Register No',
+      dataIndex: 'regNo',
+      key: 'regNo',
       sortable: true,
       width: 180,
       render: (text, record) => {
@@ -58,177 +60,160 @@ const PatientList = () => {
         } else {
           financialYear = `${year - 1}-${year}`;
         }
-        return (
-          <Link to={`/patient/patient-profile/${record?.id}`}>
-            {`HWRF/${financialYear}/${text}`}
-          </Link>
-        );
+        return <Link to={`/patient/patient-profile/${record?.id}`}>{`HWRF/${financialYear}/${text}`}</Link>;
       },
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
       sortable: true,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
-      ),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>,
     },
     {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
+      title: 'Age',
+      dataIndex: 'age',
+      key: 'age',
       sortable: true,
       width: 80,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
-      ),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>,
     },
     {
-      title: "Gender",
-      dataIndex: "sex",
-      key: "sex",
+      title: 'Gender',
+      dataIndex: 'sex',
+      key: 'sex',
       sortable: true,
       width: 120,
       filters: [
-        { text: "Male", value: "male" },
-        { text: "Female", value: "female" },
+        { text: 'Male', value: 'male' },
+        { text: 'Female', value: 'female' },
       ],
       onFilter: (value, record) => record.sex === value,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
-      ),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>,
     },
     {
-      title: "Mobile",
-      dataIndex: "mobile",
-      key: "mobile",
+      title: 'Mobile',
+      dataIndex: 'mobile',
+      key: 'mobile',
       sortable: true,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
-      ),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>,
     },
     {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
+      title: 'Address',
+      dataIndex: 'address',
+      key: 'address',
       sortable: false,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
-      ),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>,
     },
     {
-      title: "Service Taken",
-      dataIndex: "serviceTaken",
-      key: "serviceTaken",
+      title: 'Service Taken',
+      dataIndex: 'serviceTaken',
+      key: 'serviceTaken',
       width: 150,
       sortable: true,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>
-          {text?.join(", ") || "-"}
-        </Link>
-      ),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.id}`}>{text?.join(', ') || '-'}</Link>,
     },
     {
-      title: "Cash Paid",
-      dataIndex: "onlinePaid",
-      key: "onlinePaid",
+      title: 'Cash Paid',
+      dataIndex: 'onlinePaid',
+      key: 'onlinePaid',
       width: 120,
       sortable: true,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>
-          {text ? `₹ ${text}` : "₹ 0"}
-        </Link>
-      ),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.id}`}>{text ? `₹ ${text}` : '₹ 0'}</Link>,
     },
     {
-      title: "Online Paid Amount",
-      dataIndex: "offlinePaid",
-      key: "offlinePaid",
+      title: 'Online Paid Amount',
+      dataIndex: 'offlinePaid',
+      key: 'offlinePaid',
       width: 150,
       sortable: true,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>
-          {text ? `₹ ${text}` : "₹ 0"}
-        </Link>
-      ),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.id}`}>{text ? `₹ ${text}` : '₹ 0'}</Link>,
     },
     {
-      title: "Total Paid Amount",
-      dataIndex: "total",
-      key: "total",
+      title: 'Total Paid Amount',
+      dataIndex: 'total',
+      key: 'total',
       width: 150,
       sortable: true,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>
-          {text ? `₹ ${text}` : "₹ 0"}
-        </Link>
-      ),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.id}`}>{text ? `₹ ${text}` : '₹ 0'}</Link>,
     },
   ];
 
   // Helper: flatten data for export
   function getFlatData(data) {
     return data.map((item) => ({
-      "Register No": getFormattedRegNo(item),
+      'Register No': getFormattedRegNo(item),
       Name: item.name,
       Age: item.age,
       Gender: item.sex,
       Mobile: item.mobile,
       Address: item.address,
-      "Service Taken": item.serviceTaken?.join(", ") || "-",
-      "Cash Paid (In ₹)": item.onlinePaid || 0,
-      "Online Paid Amount (In ₹)": item.offlinePaid || 0,
-      "Total Paid Amount (In ₹)": item.total || 0,
-      "Referral Source": item?.referral_source || "",
+      'Service Taken': item.serviceTaken?.join(', ') || '-',
+      'Cash Paid (In ₹)': item.onlinePaid || 0,
+      'Online Paid Amount (In ₹)': item.offlinePaid || 0,
+      'Total Paid Amount (In ₹)': item.total || 0,
+      'Referral Source': item?.referral_source || '',
     }));
   }
 
-  // Export to Excel - fetch ALL patients, not just current page
-  const exportToExcel = async () => {
+  // Export visible paginated list to Excel
+  const exportVisibleToExcel = async () => {
     try {
       setLoading(true);
 
-      // Fetch ALL patients for export
-      const response = await patientServices.getPatientForExport();
-
-      if (!response.success || !response.data.length) {
-        throw new Error("No patients found to export");
+      if (patientList.length === 0) {
+        throw new Error('No patients to export on this page');
       }
 
-      // Format the data for Excel
-      const flatData = getFlatData(response.data);
+      // Format the visible data for Excel
+      const flatData = getFlatData(patientList);
 
       // Generate Excel file
       const worksheet = XLSX.utils.json_to_sheet(flatData);
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Patients");
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Patients');
 
       const excelBuffer = XLSX.write(workbook, {
-        bookType: "xlsx",
-        type: "array",
+        bookType: 'xlsx',
+        type: 'array',
       });
 
       const blob = new Blob([excelBuffer], {
-        type: "application/octet-stream",
+        type: 'application/octet-stream',
       });
-      const timestamp = new Date().toISOString().split("T")[0];
-      saveAs(blob, `patients_export_${timestamp}.xlsx`);
+      const timestamp = new Date().toISOString().split('T')[0];
+      saveAs(blob, `patients_export_visible_${timestamp}.xlsx`);
     } catch (error) {
-      console.error("Export error:", error);
-      alert(`Export failed: ${error.message}`);
+      console.error('Export error:', error);
+      toast.error(`Export failed: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
+  // Export to Excel - triggers backend to generate Excel and email it to the user
+  const exportAllToExcel = async () => {
+    try {
+      setExportLoading(true);
+      const response = await patientServices.getPatientForExport();
+      if (response?.success) {
+        toast.success(response.message || 'Patient export report is being sent to your email. Please check your inbox.');
+      }
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error(`Export failed: ${error.message}`);
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
   // Fetch initial data
-  const getPatients = async (limit = 50, offset = 0, search = "") => {
+  const getPatients = async (limit = 50, offset = 0, search = '') => {
     try {
       setLoading(true);
-      
+
       // Use search endpoint if search term is provided, otherwise use regular patients endpoint
-      const response = search 
+      const response = search
         ? await patientServices.searchPatients(search, limit, offset)
         : await patientServices.getPatients(limit, offset);
 
@@ -249,7 +234,7 @@ const PatientList = () => {
         hasMore: response.meta?.hasMore || false,
       });
     } catch (error) {
-      console.error("Error fetching patients:", error);
+      console.error('Error fetching patients:', error);
       // Keep the current page data if there's an error
     } finally {
       setLoading(false);
@@ -283,7 +268,7 @@ const PatientList = () => {
         hasMore: response.meta?.hasMore || false,
       });
     } catch (error) {
-      console.error("Error searching patients:", error);
+      console.error('Error searching patients:', error);
     } finally {
       setLoading(false);
     }
@@ -307,22 +292,38 @@ const PatientList = () => {
               <h4 className="card-title">Patients List</h4>
             </Card.Header.Title>
           </Card.Header>
-          {userRoles.includes("admin") && (
-            <div
-              style={{ margin: "16px 0 0 16px", display: "flex", gap: "10px" }}
-            >
-              <Button
-                className="bg-primary"
-                type="primary"
-                variant="primary"
-                onClick={exportToExcel}
-                loading={loading}
-                disabled={patientList.length === 0}
-                style={{ width: "auto" }}
+          {userRoles.includes('admin') && (
+            <div style={{ margin: '16px 0 0 16px', display: 'flex', gap: '10px' }}>
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: 'visible',
+                      label: 'Export Visible List',
+                      onClick: exportVisibleToExcel,
+                    },
+                    {
+                      key: 'all',
+                      label: 'Export All',
+                      onClick: exportAllToExcel,
+                    },
+                  ],
+                }}
+                placement="bottomLeft"
+                trigger="hover"
               >
-                <RiFileExcel2Line className="h-3 w-4 me-2" />
-                Export to Excel
-              </Button>
+                <Button
+                  className="bg-primary"
+                  type="primary"
+                  variant="primary"
+                  loading={loading || exportLoading}
+                  disabled={patientList.length === 0}
+                  style={{ width: 'auto' }}
+                >
+                  <RiFileExcel2Line className="h-3 w-4 me-2" />
+                  Export to Excel ▼
+                </Button>
+              </Dropdown>
             </div>
           )}
         </Card>

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Form, Input, Select, Checkbox, Button, Upload, InputNumber, DatePicker, Radio } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import React, { useState } from 'react';
+import { Form, Input, Select, Checkbox, Button, Upload, InputNumber, DatePicker, Radio } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
@@ -10,7 +10,6 @@ const FormPreview = ({ formFields, onSubmit }) => {
 
   // Handle form value changes
   const handleChange = (key, value) => {
-
     setFormValues((prevValues) => ({ ...prevValues, [key]: value }));
   };
 
@@ -21,15 +20,15 @@ const FormPreview = ({ formFields, onSubmit }) => {
       .then(() => {
         onSubmit(formValues);
       })
-      .catch((error) => console.log("Validation Failed:", error));
+      .catch((error) => console.log('Validation Failed:', error));
   };
 
   return (
     <Form form={form} layout="vertical">
       {formFields.map((field) => {
         switch (field.type) {
-          case "text":
-          case "email":
+          case 'text':
+          case 'email':
             return (
               <Form.Item
                 key={field.key}
@@ -41,26 +40,27 @@ const FormPreview = ({ formFields, onSubmit }) => {
               </Form.Item>
             );
 
-          case "number":
+          case 'number':
             return (
               <Form.Item key={field.key} label={field.label} name={field.key}>
                 <InputNumber
                   min={field.min || 0}
                   max={field.max || 1000}
-                  style={{ width: "100%" }}
+                  style={{ width: '100%' }}
                   onChange={(value) => handleChange(field.key, value)}
                 />
               </Form.Item>
             );
 
-          case "select":
+          case 'select':
             return (
               <Form.Item key={field.key} label={field.label} name={field.key}>
                 <Select
-                  mode={field.multiple ? "multiple" : "default"}
+                  mode={field.multiple ? 'multiple' : 'default'}
                   onChange={(value, option) => {
-                    console.log(option, value)
-                    handleChange(field.key, value)}}
+                    console.log(option, value);
+                    handleChange(field.key, value);
+                  }}
                   options={field?.options?.map((option, index) => ({ value: option, label: option }))}
                 >
                   {/* {field.options?.map((option, index) => (
@@ -72,16 +72,14 @@ const FormPreview = ({ formFields, onSubmit }) => {
               </Form.Item>
             );
 
-          case "checkbox":
+          case 'checkbox':
             return (
               <Form.Item key={field.key} name={field.key} valuePropName="checked">
-                <Checkbox onChange={(e) => handleChange(field.key, e.target.checked)}>
-                  {field.label}
-                </Checkbox>
+                <Checkbox onChange={(e) => handleChange(field.key, e.target.checked)}>{field.label}</Checkbox>
               </Form.Item>
             );
 
-          case "radio":
+          case 'radio':
             return (
               <Form.Item key={field.key} label={field.label} name={field.key}>
                 <Radio.Group onChange={(e) => handleChange(field.key, e.target.value)}>
@@ -94,14 +92,14 @@ const FormPreview = ({ formFields, onSubmit }) => {
               </Form.Item>
             );
 
-          case "date":
+          case 'date':
             return (
               <Form.Item key={field.key} label={field.label} name={field.key}>
-                <DatePicker style={{ width: "100%" }} onChange={(date, dateString) => handleChange(field.key, dateString)} />
+                <DatePicker style={{ width: '100%' }} onChange={(date, dateString) => handleChange(field.key, dateString)} />
               </Form.Item>
             );
 
-          case "file":
+          case 'file':
             return (
               <Form.Item key={field.key} label={field.label} name={field.key}>
                 <Upload beforeUpload={() => false} onChange={(info) => handleChange(field.key, info.file)}>

@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { Container } from "react-bootstrap";
-import { Loading } from "../../components/loading";
-import CustomTable from "../../components/custom-table";
-import RoleModalForm from "../../components/administration/role-form";
-import rolePermissionService from "../../api/role-permission-service";
-import { RiAddLine } from "@remixicon/react";
-import { transformText } from "../../utilities/utility-function";
-import AntdTable from "../../components/antd-table";
-import { Button } from "antd";
+import React, { useState, useEffect } from 'react';
+import { Container } from 'react-bootstrap';
+import { Loading } from '../../components/loading';
+import CustomTable from '../../components/custom-table';
+import RoleModalForm from '../../components/administration/role-form';
+import rolePermissionService from '../../api/role-permission-service';
+import { RiAddLine } from '@remixicon/react';
+import { transformText } from '../../utilities/utility-function';
+import AntdTable from '../../components/antd-table';
+import { Button } from 'antd';
 
 const Roles = () => {
   const [roles, setRoles] = useState([]);
@@ -41,28 +41,24 @@ const Roles = () => {
 
   const roleColumns = [
     {
-      title: "Role Name",
-      dataIndex: "roleName",
-      key: "roleName",
+      title: 'Role Name',
+      dataIndex: 'roleName',
+      key: 'roleName',
       sortable: true,
       render: (text) => transformText(text),
     },
     {
-      title: "Role Description",
-      dataIndex: "roleDescription",
+      title: 'Role Description',
+      dataIndex: 'roleDescription',
       sortable: true,
-      key: "roleDescription",
+      key: 'roleDescription',
     },
     {
-      title: "Actions",
+      title: 'Actions',
       dataIndex: null,
-      key: "actions",
+      key: 'actions',
       render: (_, record) => (
-        <Button
-          variant="outline-primary"
-          size="sm"
-          onClick={() => handleEditRole(record)}
-        >
+        <Button variant="outline-primary" size="sm" onClick={() => handleEditRole(record)}>
           Edit
         </Button>
       ),
@@ -80,7 +76,7 @@ const Roles = () => {
       });
       setRoles(response.data);
     } catch (error) {
-      console.error("Error fetching roles:", error);
+      console.error('Error fetching roles:', error);
     } finally {
       setLoading(false);
     }
@@ -94,7 +90,7 @@ const Roles = () => {
 
       setPermissions(response.data);
     } catch (error) {
-      console.error("Error fetching permissions:", error);
+      console.error('Error fetching permissions:', error);
     } finally {
       setPermissionLoading(false);
     }
@@ -125,7 +121,7 @@ const Roles = () => {
     <Container className="mt-4">
       <h2>Role Management</h2>
       <div className="d-flex flex-row-reverse justify-content-between align-items-center mb-4">
-        <Button  className="bg-primary" type="primary" variant="primary" onClick={handleCreateRole}>
+        <Button className="bg-primary" type="primary" variant="primary" onClick={handleCreateRole}>
           <RiAddLine />
           Create Role
         </Button>
@@ -133,12 +129,7 @@ const Roles = () => {
 
       {/* Custom Table */}
       {/* <CustomTable data={roles} columns={columns} enableFilters={false} /> */}
-      <AntdTable
-        data={roles}
-        columns={roleColumns}
-        pageSizeOptions={[10, 20, 30]}
-        defaultPageSize={10}
-      />
+      <AntdTable data={roles} columns={roleColumns} pageSizeOptions={[10, 20, 30]} defaultPageSize={10} />
 
       {/* Create/Edit Role Modal */}
       <RoleModalForm

@@ -74,15 +74,15 @@
 
 // export default Index;
 
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Card, Row, Col, Container } from "react-bootstrap";
-import adminServices from "../../api/admin-services"; // Import your API service
-import toast from "react-hot-toast";
-import { Loading } from "../../components/loading";
-import DateCell from "../../components/date-cell";
-import DynamicFields from "./editableForm";
-import DynamicForm from "./formRender";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Card, Row, Col, Container } from 'react-bootstrap';
+import adminServices from '../../api/admin-services'; // Import your API service
+import toast from 'react-hot-toast';
+import { Loading } from '../../components/loading';
+import DateCell from '../../components/date-cell';
+import DynamicFields from './editableForm';
+import DynamicForm from './formRender';
 
 const FormTemplates = () => {
   const [templates, setTemplates] = useState([]);
@@ -95,7 +95,7 @@ const FormTemplates = () => {
         const response = await adminServices.getAllFormTemplates();
         setTemplates(response.data);
       } catch (error) {
-        toast.error("Failed to load templates.");
+        toast.error('Failed to load templates.');
       } finally {
         setLoading(false);
       }
@@ -118,28 +118,21 @@ const FormTemplates = () => {
       <Row className="g-4">
         {templates.map((template) => (
           <Col key={template.id} md={4} sm={6} xs={12}>
-            <Card
-              className="h-100 shadow-sm cursor-pointer"
-              onClick={() => handleCardClick(template)}
-            >
+            <Card className="h-100 shadow-sm cursor-pointer" onClick={() => handleCardClick(template)}>
               <Card.Body>
-                <Card.Title className="text-primary">
-                  {template.name}
-                </Card.Title>
+                <Card.Title className="text-primary">{template.name}</Card.Title>
                 <div>
-                  <strong>Created At:</strong>{" "}
-                  <DateCell date={template.createdAt} showTime/>
+                  <strong>Created At:</strong> <DateCell date={template.createdAt} showTime />
                 </div>
                 <div>
-                  <strong>Updated At:</strong>{" "}
-                  <DateCell date={template.updatedAt} showTime/>
+                  <strong>Updated At:</strong> <DateCell date={template.updatedAt} showTime />
                 </div>
               </Card.Body>
             </Card>
           </Col>
         ))}
       </Row>
-      <DynamicFields/>
+      <DynamicFields />
       {/* <DynamicForm/> */}
     </Container>
   );

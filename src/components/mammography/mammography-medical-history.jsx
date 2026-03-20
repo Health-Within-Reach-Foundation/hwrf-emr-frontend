@@ -1,22 +1,12 @@
 // TODO : remove the defaultValues try to use form initialValues
-import { RiDownload2Line, RiUpload2Fill } from "@remixicon/react";
-import {
-  Button,
-  Checkbox,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Radio,
-  Upload,
-  Select,
-} from "antd";
-import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
-import { Col, Row } from "react-bootstrap";
-import toast from "react-hot-toast";
-import patientServices from "../../api/patient-services";
-import DeletePopover from "../delete-trigger-button";
+import { RiDownload2Line, RiUpload2Fill } from '@remixicon/react';
+import { Button, Checkbox, DatePicker, Form, Input, InputNumber, Radio, Upload, Select } from 'antd';
+import dayjs from 'dayjs';
+import React, { useEffect, useState } from 'react';
+import { Col, Row } from 'react-bootstrap';
+import toast from 'react-hot-toast';
+import patientServices from '../../api/patient-services';
+import DeletePopover from '../delete-trigger-button';
 // import ImageEditor from "./image-editor";
 
 const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
@@ -33,41 +23,41 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
     const defaultPatient = {
       menstrualAge: null,
       lastMenstrualDate: null,
-      cycleType: "",
+      cycleType: '',
       obstetricHistory: [],
       numberOfPregnancies: null,
       numberOfDeliveries: null,
       numberOfLivingChildren: null,
-      menopause: "",
-      familyHistory: "",
-      familyHistoryDetails: "",
-      firstDegreeRelatives: "",
-      previousCancer: "",
-      previousDiagnosis: "",
-      previousBiopsy: "",
-      previousTreatment: "",
+      menopause: '',
+      familyHistory: '',
+      familyHistoryDetails: '',
+      firstDegreeRelatives: '',
+      previousCancer: '',
+      previousDiagnosis: '',
+      previousBiopsy: '',
+      previousTreatment: '',
       previousTreatmentDetails: [],
-      pain: "",
-      painDetails: "",
-      implants: "",
+      pain: '',
+      painDetails: '',
+      implants: '',
       screeningImage: [],
-      smoking: "",
+      smoking: '',
       smokingDetails: { packsPerDay: null, yearsSmoked: null },
-      alcohol: "",
+      alcohol: '',
       alcoholDetails: { mlPerDay: null, yearsConsumed: null },
-      misheriTobacco: "",
+      misheriTobacco: '',
       misheriTobaccoDetails: { timesPerDay: null, yearsUsed: null },
-      imagingStudies: { location: "", type: "", date: null },
-      lump: "",
-      lumpDetails: "",
-      discharge: "",
-      dischargeDetails: "",
-      skinChanges: "",
-      skinChangesDetails: "",
-      nippleRetraction: "",
-      nippleRetractionDetails: "",
-      additionalInfo: "",
-      reportStatus: "Normal",
+      imagingStudies: { location: '', type: '', date: null },
+      lump: '',
+      lumpDetails: '',
+      discharge: '',
+      dischargeDetails: '',
+      skinChanges: '',
+      skinChangesDetails: '',
+      nippleRetraction: '',
+      nippleRetractionDetails: '',
+      additionalInfo: '',
+      reportStatus: 'Normal',
       aiReportScore: null,
       aiReport: [],
       onlineAmount: null,
@@ -76,38 +66,28 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
 
     // If patient is null, return the defaultPatient object
     if (!patient) return defaultPatient;
-    console.log("*", patient);
+    console.log('*', patient);
     return {
       menstrualAge: patient.menstrualAge || defaultPatient.menstrualAge,
-      lastMenstrualDate:
-        patient.lastMenstrualDate || defaultPatient.lastMenstrualDate,
+      lastMenstrualDate: patient.lastMenstrualDate || defaultPatient.lastMenstrualDate,
       cycleType: patient.cycleType || defaultPatient.cycleType,
       obstetricHistory: patient.obstetricHistory
         ? Object.entries(patient.obstetricHistory)
             .filter(([_, value]) => value) // Extract selected values (true keys)
             .map(([key]) => key.toUpperCase()) // Convert keys to uppercase (G, P, L)
         : defaultPatient.obstetricHistory,
-      numberOfPregnancies:
-        patient.numberOfPregnancies || defaultPatient.numberOfPregnancies,
-      numberOfDeliveries:
-        patient.numberOfDeliveries || defaultPatient.numberOfDeliveries,
-      numberOfLivingChildren:
-        patient.numberOfLivingChildren || defaultPatient.numberOfLivingChildren,
+      numberOfPregnancies: patient.numberOfPregnancies || defaultPatient.numberOfPregnancies,
+      numberOfDeliveries: patient.numberOfDeliveries || defaultPatient.numberOfDeliveries,
+      numberOfLivingChildren: patient.numberOfLivingChildren || defaultPatient.numberOfLivingChildren,
       menopause: patient.menopause || defaultPatient.menopause,
       familyHistory: patient.familyHistory || defaultPatient.familyHistory,
-      familyHistoryDetails:
-        patient.familyHistoryDetails || defaultPatient.familyHistoryDetails,
-      firstDegreeRelatives:
-        patient.firstDegreeRelatives || defaultPatient.firstDegreeRelatives,
+      familyHistoryDetails: patient.familyHistoryDetails || defaultPatient.familyHistoryDetails,
+      firstDegreeRelatives: patient.firstDegreeRelatives || defaultPatient.firstDegreeRelatives,
       previousCancer: patient.previousCancer || defaultPatient.previousCancer,
-      previousDiagnosis:
-        patient.previousDiagnosis || defaultPatient.previousDiagnosis,
+      previousDiagnosis: patient.previousDiagnosis || defaultPatient.previousDiagnosis,
       previousBiopsy: patient.previousBiopsy || defaultPatient.previousBiopsy,
-      previousTreatment:
-        patient.previousTreatment || defaultPatient.previousTreatment,
-      previousTreatmentDetails:
-        patient.previousTreatmentDetails ||
-        defaultPatient.previousTreatmentDetails,
+      previousTreatment: patient.previousTreatment || defaultPatient.previousTreatment,
+      previousTreatmentDetails: patient.previousTreatmentDetails || defaultPatient.previousTreatmentDetails,
       implants: patient.implants || defaultPatient.implants,
       screeningImage: patient.screeningImage || defaultPatient.screeningImage,
       smoking: patient.smoking || defaultPatient.smoking,
@@ -115,22 +95,16 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
       alcohol: patient.alcohol || defaultPatient.alcohol,
       alcoholDetails: patient.alcoholDetails || defaultPatient.alcoholDetails,
       misheriTobacco: patient.misheriTobacco || defaultPatient.misheriTobacco,
-      misheriTobaccoDetails:
-        patient.misheriTobaccoDetails || defaultPatient.misheriTobaccoDetails,
+      misheriTobaccoDetails: patient.misheriTobaccoDetails || defaultPatient.misheriTobaccoDetails,
       imagingStudies: patient.imagingStudies || defaultPatient.imagingStudies,
       lump: patient.lump || defaultPatient.lump,
       lumpDetails: patient.lumpDetails || defaultPatient.lumpDetails,
       discharge: patient.discharge || defaultPatient.discharge,
-      dischargeDetails:
-        patient.dischargeDetails || defaultPatient.dischargeDetails,
+      dischargeDetails: patient.dischargeDetails || defaultPatient.dischargeDetails,
       skinChanges: patient.skinChanges || defaultPatient.skinChanges,
-      skinChangesDetails:
-        patient.skinChangesDetails || defaultPatient.skinChangesDetails,
-      nippleRetraction:
-        patient.nippleRetraction || defaultPatient.nippleRetraction,
-      nippleRetractionDetails:
-        patient.nippleRetractionDetails ||
-        defaultPatient.nippleRetractionDetails,
+      skinChangesDetails: patient.skinChangesDetails || defaultPatient.skinChangesDetails,
+      nippleRetraction: patient.nippleRetraction || defaultPatient.nippleRetraction,
+      nippleRetractionDetails: patient.nippleRetractionDetails || defaultPatient.nippleRetractionDetails,
       additionalInfo: patient.additionalInfo || defaultPatient.additionalInfo,
       reportStatus: patient.reportStatus || defaultPatient.reportStatus,
       aiReportScore: patient.aiReportScore || defaultPatient.aiReportScore,
@@ -143,7 +117,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
   });
 
   const handleFormChange = (changedValues) => {
-    console.log("chnaged values -->", changedValues);
+    console.log('chnaged values -->', changedValues);
     setFormState((prevState) => ({
       ...prevState,
       ...changedValues,
@@ -197,49 +171,38 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
     const { screeningImage, aiReport, ...otherFormState } = formState;
 
     // Append each field in the form state to the FormData object
-    Object.entries({ ...otherFormState, obstetricHistory }).forEach(
-      ([key, value]) => {
-        if (key === "lastMenstrualDate") {
-          formData.append(
-            key,
-            value ? dayjs(value).format("YYYY-MM-DD") : null
-          );
-        } else if (
-          (typeof value === "object" || Array.isArray(value)) &&
-          key !== "lastMenstrualDate"
-        ) {
-          formData.append(key, JSON.stringify(value)); // Convert objects to JSON strings
-        } else {
-          formData.append(key, value); // Append other fields directly
-        }
+    Object.entries({ ...otherFormState, obstetricHistory }).forEach(([key, value]) => {
+      if (key === 'lastMenstrualDate') {
+        formData.append(key, value ? dayjs(value).format('YYYY-MM-DD') : null);
+      } else if ((typeof value === 'object' || Array.isArray(value)) && key !== 'lastMenstrualDate') {
+        formData.append(key, JSON.stringify(value)); // Convert objects to JSON strings
+      } else {
+        formData.append(key, value); // Append other fields directly
       }
-    );
+    });
 
     // Add the screeningImage file if it exists
     if (screeningImage && screeningImage.length > 0) {
-      formData.append("screeningFile", screeningImage[0]); // Only append the first file
+      formData.append('screeningFile', screeningImage[0]); // Only append the first file
     }
 
     if (aiReport && aiReport.length > 0) {
-      formData.append("aiReport", aiReport[0]); // Only append the first file
+      formData.append('aiReport', aiReport[0]); // Only append the first file
     }
 
-    console.log("Form Data Submitted:", formState);
+    console.log('Form Data Submitted:', formState);
 
     // Send the FormData to the server
     try {
       setLoading(true);
-      const response = await patientServices.createMammographyDetails(
-        patientId,
-        formData
-      );
+      const response = await patientServices.createMammographyDetails(patientId, formData);
       if (response.success) {
         toast.success(response.message);
         await onSave();
       }
     } catch (error) {
-      console.log("error: ", error);
-      toast.error("Internal server error!");
+      console.log('error: ', error);
+      toast.error('Internal server error!');
     } finally {
       setLoading(false);
     }
@@ -277,7 +240,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
   // const handleReportGenerate=async()={  }
 
   const handleReportGenerate = async () => {
-    console.log("hey");
+    console.log('hey');
   };
 
   const handleUpdate = async () => {
@@ -297,26 +260,18 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
     const { screeningImage, aiReport, ...otherFormState } = formState;
 
     // Append each field in the form state to the FormData object
-    console.log("Form Data Submitted:", formState);
-    Object.entries({ ...otherFormState, obstetricHistory }).forEach(
-      ([key, value]) => {
-        if (key === "screeningImage" || key === "aiReport") {
-          formData.append(key, value[0]); // Only append the first file
-        } else if (key === "lastMenstrualDate") {
-          formData.append(
-            key,
-            value ? dayjs(value).format("YYYY-MM-DD") : null
-          );
-        } else if (
-          (typeof value === "object" || Array.isArray(value)) &&
-          key !== "lastMenstrualDate"
-        ) {
-          formData.append(key, JSON.stringify(value)); // Convert objects to JSON strings
-        } else {
-          formData.append(key, value); // Append other fields directly
-        }
+    console.log('Form Data Submitted:', formState);
+    Object.entries({ ...otherFormState, obstetricHistory }).forEach(([key, value]) => {
+      if (key === 'screeningImage' || key === 'aiReport') {
+        formData.append(key, value[0]); // Only append the first file
+      } else if (key === 'lastMenstrualDate') {
+        formData.append(key, value ? dayjs(value).format('YYYY-MM-DD') : null);
+      } else if ((typeof value === 'object' || Array.isArray(value)) && key !== 'lastMenstrualDate') {
+        formData.append(key, JSON.stringify(value)); // Convert objects to JSON strings
+      } else {
+        formData.append(key, value); // Append other fields directly
       }
-    );
+    });
 
     // Add the screeningImage file if it exists
     // if (screeningImage && screeningImage.length > 0) {
@@ -325,17 +280,14 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
     // Send the FormData to the server
     try {
       setLoading(true);
-      const response = await patientServices.updateMammographyDetails(
-        patientId,
-        formData
-      );
+      const response = await patientServices.updateMammographyDetails(patientId, formData);
       if (response.success) {
         toast.success(response.message);
         await onSave();
       }
     } catch (error) {
-      console.log("error: ", error);
-      toast.error("Internal server error");
+      console.log('error: ', error);
+      toast.error('Internal server error');
     } finally {
       setLoading(false);
     }
@@ -343,15 +295,13 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
 
   const handleDelete = async (patientId) => {
     try {
-      const response = await patientServices.deleteMammographyDetailsById(
-        patientId
-      );
+      const response = await patientServices.deleteMammographyDetailsById(patientId);
       if (response) {
-        toast.success("Record deleted successfully!");
+        toast.success('Record deleted successfully!');
         await onSave(); // Refresh the data after deletion
       }
     } catch (error) {
-      console.error("Error deleting record:", error);
+      console.error('Error deleting record:', error);
     }
   };
 
@@ -359,7 +309,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
     form.setFieldsValue(formState);
   }, [formState]);
 
-  console.log("form state in isEdit --> ", formState);
+  console.log('form state in isEdit --> ', formState);
   return (
     <div className="p-4">
       <div className="d-flex justify-content-between align-items-center">
@@ -369,9 +319,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
             type="link"
             href={`/patient/patient-profile/${patient?.patientId}/mammographyreport/${patient?.id}`}
             size="large"
-            className={`${
-              !editMode && readOnly ? "" : "d-none"
-            } p-2 bg-primary text-white rounded-0 `}
+            className={`${!editMode && readOnly ? '' : 'd-none'} p-2 bg-primary text-white rounded-0 `}
             // onClick={handleReportGenerate}
             // loading={loading}
           >
@@ -381,9 +329,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
 
           {/* Update button */}
           <Button
-            className={` bg-primary rounded-0 ${
-              editMode && readOnly ? "" : "d-none"
-            }`}
+            className={` bg-primary rounded-0 ${editMode && readOnly ? '' : 'd-none'}`}
             type="primary"
             size="large"
             onClick={handleUpdate}
@@ -400,15 +346,15 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               onClick={() => setEditMode((prevMode) => !prevMode)}
               className="bg-primary bg-primary rounded-0"
             >
-              {editMode ? "Cancel" : "Edit"}
+              {editMode ? 'Cancel' : 'Edit'}
             </Button>
           )}
 
           {readOnly && (
             <DeletePopover
               size="large"
-              title={"Delete Record?"}
-              description={"Are you sure you want to delete this record?"}
+              title={'Delete Record?'}
+              description={'Are you sure you want to delete this record?'}
               onDelete={() => {
                 // Add your delete logic here
                 handleDelete(patientId);
@@ -437,44 +383,27 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 name="menstrualAge"
                 rules={[
                   {
-                    type: "number",
+                    type: 'number',
                     min: 10,
                     max: 70,
-                    message: "Enter a valid age between 10-70!",
+                    message: 'Enter a valid age between 10-70!',
                   },
                 ]}
               >
-                <InputNumber
-                  placeholder="Enter Age"
-                  defaultValue={formState.menstrualAge}
-                  style={{ width: "100%" }}
-                />
+                <InputNumber placeholder="Enter Age" defaultValue={formState.menstrualAge} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12} xl={4}>
-              <Form.Item
-                label="Last Menstrual Period Date"
-                name={"lastMenstrualDate"}
-              >
+              <Form.Item label="Last Menstrual Period Date" name={'lastMenstrualDate'}>
                 <DatePicker
-                  style={{ width: "100%" }}
-                  defaultValue={
-                    formState.lastMenstrualDate
-                      ? dayjs(formState.lastMenstrualDate)
-                      : null
-                  }
+                  style={{ width: '100%' }}
+                  defaultValue={formState.lastMenstrualDate ? dayjs(formState.lastMenstrualDate) : null}
                   // write onchnage function to handle the formState lastMenstrualDate
                   // onChange={() => {
                   //   handleFormChange
                   // }}
 
-                  disabledDate={(current) =>
-                    current &&
-                    current.isAfter(
-                      new Date().toLocaleDateString("en-CA"),
-                      "day"
-                    )
-                  }
+                  disabledDate={(current) => current && current.isAfter(new Date().toLocaleDateString('en-CA'), 'day')}
                 />
               </Form.Item>
             </Col>
@@ -482,9 +411,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               <Form.Item
                 label="Cycle Type"
                 name="cycleType"
-                rules={[
-                  { required: true, message: "Please select a cycle type!" },
-                ]}
+                rules={[{ required: true, message: 'Please select a cycle type!' }]}
               >
                 <Radio.Group defaultValue={formState.cycleType}>
                   <Radio value="Regular">Regular</Radio>
@@ -502,16 +429,14 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 rules={[
                   {
                     required: true,
-                    message: "Please select at least one option!",
+                    message: 'Please select at least one option!',
                   },
                 ]}
                 required
               >
                 <Checkbox.Group
                   defaultValue={formState?.obstetricHistory}
-                  onChange={(value) =>
-                    handleFormChange({ obstetricHistory: value })
-                  }
+                  onChange={(value) => handleFormChange({ obstetricHistory: value })}
                 >
                   <Checkbox value="G">G</Checkbox>
                   <Checkbox value="P">P</Checkbox>
@@ -519,7 +444,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 </Checkbox.Group>
               </Form.Item>
             </Col>
-            {formState?.obstetricHistory?.includes("G") && (
+            {formState?.obstetricHistory?.includes('G') && (
               <Col xs={24} sm={12} xl={4}>
                 <Form.Item
                   label="Number of Pregnancies"
@@ -527,24 +452,24 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                   rules={[
                     {
                       required: true,
-                      message: "Please enter the number of pregnancies!",
+                      message: 'Please enter the number of pregnancies!',
                     },
                     {
-                      type: "number",
+                      type: 'number',
                       min: 0,
-                      message: "Must be at least 0!",
+                      message: 'Must be at least 0!',
                     },
                   ]}
                 >
                   <InputNumber
                     placeholder="Enter number"
-                    style={{ width: "100%" }}
+                    style={{ width: '100%' }}
                     defaultValue={formState?.numberOfPregnancies}
                   />
                 </Form.Item>
               </Col>
             )}
-            {formState?.obstetricHistory?.includes("P") && (
+            {formState?.obstetricHistory?.includes('P') && (
               <Col xs={24} sm={12} xl={4}>
                 <Form.Item
                   label="Number of Deliveries"
@@ -552,24 +477,24 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                   rules={[
                     {
                       required: true,
-                      message: "Please enter the number of deliveries!",
+                      message: 'Please enter the number of deliveries!',
                     },
                     {
-                      type: "number",
+                      type: 'number',
                       min: 0,
-                      message: "Must be at least 0!",
+                      message: 'Must be at least 0!',
                     },
                   ]}
                 >
                   <InputNumber
                     placeholder="Enter number"
-                    style={{ width: "100%" }}
+                    style={{ width: '100%' }}
                     defaultValue={formState.numberOfDeliveries}
                   />
                 </Form.Item>
               </Col>
             )}
-            {formState?.obstetricHistory?.includes("L") && (
+            {formState?.obstetricHistory?.includes('L') && (
               <Col xs={24} sm={12} xl={4}>
                 <Form.Item
                   label="Number of Living Children"
@@ -577,18 +502,18 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                   rules={[
                     {
                       required: true,
-                      message: "Please enter the number of living children!",
+                      message: 'Please enter the number of living children!',
                     },
                     {
-                      type: "number",
+                      type: 'number',
                       min: 0,
-                      message: "Must be at least 0!",
+                      message: 'Must be at least 0!',
                     },
                   ]}
                 >
                   <InputNumber
                     placeholder="Enter number"
-                    style={{ width: "100%" }}
+                    style={{ width: '100%' }}
                     defaultValue={formState.numberOfLivingChildren}
                   />
                 </Form.Item>
@@ -601,7 +526,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 rules={[
                   {
                     required: true,
-                    message: "Please select an option for Menopause!",
+                    message: 'Please select an option for Menopause!',
                   },
                 ]}
               >
@@ -618,8 +543,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 rules={[
                   {
                     required: true,
-                    message:
-                      "Please select an option for family history of breast cancer!",
+                    message: 'Please select an option for family history of breast cancer!',
                   },
                 ]}
               >
@@ -637,7 +561,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 </Radio.Group>
               </Form.Item>
             </Col>
-            {formState.familyHistory === "Yes" && (
+            {formState.familyHistory === 'Yes' && (
               <>
                 <Col xs={36} sm={12} xl={12}>
                   <Form.Item
@@ -646,8 +570,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                     rules={[
                       {
                         required: true,
-                        message:
-                          "Please select an option for family history of breast cancer!",
+                        message: 'Please select an option for family history of breast cancer!',
                       },
                     ]}
                   >
@@ -668,12 +591,9 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               </>
             )}
 
-            {formState?.familyHistory === "No" && (
+            {formState?.familyHistory === 'No' && (
               <Col xs={24} sm={12} xl={12}>
-                <Form.Item
-                  label="If No, Please fill"
-                  name="familyHistoryDetails"
-                >
+                <Form.Item label="If No, Please fill" name="familyHistoryDetails">
                   <Input.TextArea
                     placeholder="Enter details of any other cancer history"
                     defaultValue={formState.familyHistoryDetails}
@@ -685,9 +605,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               <Form.Item
                 label="Smoking History"
                 name="smoking"
-                rules={[
-                  { required: true, message: "Please select Smoking History!" },
-                ]}
+                rules={[{ required: true, message: 'Please select Smoking History!' }]}
               >
                 <Radio.Group defaultValue={formState.smoking}>
                   <Radio value="Yes">Yes</Radio>
@@ -695,30 +613,30 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 </Radio.Group>
               </Form.Item>
 
-              {formState.smoking === "Yes" && (
+              {formState.smoking === 'Yes' && (
                 <div>
                   <Form.Item label="If Yes, Please fill" required>
                     <Row gutter={[16, 16]}>
                       <Col xs={24} sm={12}>
                         <Form.Item
                           label="Packs/Day"
-                          name={["smokingDetails", "packsPerDay"]}
+                          name={['smokingDetails', 'packsPerDay']}
                           rules={[
                             {
                               required: true,
-                              message: "Please enter Packs/Day!",
+                              message: 'Please enter Packs/Day!',
                             },
                             {
-                              type: "number",
+                              type: 'number',
                               min: 1,
-                              message: "Must be at least 1 pack/day!",
+                              message: 'Must be at least 1 pack/day!',
                             },
                           ]}
                           style={{ marginBottom: 0 }}
                         >
                           <InputNumber
                             placeholder="packs/day"
-                            style={{ width: "100%" }}
+                            style={{ width: '100%' }}
                             // write the on change function to update the form state key named smokingDetails, here smokingDetails is an object with keys packsPerDay and yearsSmoked, but while using the handleFomChane function make sure that other states should not be disturbed or made undefined as this function is accepting only one para but you gave two so code neat
                             onChange={(value) => {
                               handleFormChange({
@@ -735,23 +653,23 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                       <Col xs={24} sm={12} className="mt-2">
                         <Form.Item
                           label="No. of Years Smoked"
-                          name={["smokingDetails", "yearsSmoked"]}
+                          name={['smokingDetails', 'yearsSmoked']}
                           rules={[
                             {
                               required: true,
-                              message: "Please enter Years Smoked!",
+                              message: 'Please enter Years Smoked!',
                             },
                             {
-                              type: "number",
+                              type: 'number',
                               min: 1,
-                              message: "Must be at least 1 year!",
+                              message: 'Must be at least 1 year!',
                             },
                           ]}
                           style={{ marginBottom: 0 }}
                         >
                           <InputNumber
                             placeholder="years"
-                            style={{ width: "100%" }}
+                            style={{ width: '100%' }}
                             defaultValue={formState.smokingDetails.yearsSmoked}
                             // onChange={(value) =>
                             //   handleFormChange(
@@ -786,42 +704,38 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               <Form.Item
                 label="Alcohol History"
                 name="alcohol"
-                rules={[
-                  { required: true, message: "Please select Alcohol History!" },
-                ]}
+                rules={[{ required: true, message: 'Please select Alcohol History!' }]}
               >
                 <Radio.Group
                   defaultValue={formState.alcohol}
-                  onChange={(e) =>
-                    setFormState({ ...formState, alcohol: e.target.value })
-                  }
+                  onChange={(e) => setFormState({ ...formState, alcohol: e.target.value })}
                 >
                   <Radio value="Yes">Yes</Radio>
                   <Radio value="No">No</Radio>
                 </Radio.Group>
               </Form.Item>
 
-              {formState.alcohol === "Yes" && (
+              {formState.alcohol === 'Yes' && (
                 <div>
                   <Form.Item label="If Yes, Please fill" required>
                     <Row gutter={[16, 16]}>
                       <Col xs={24} sm={12}>
                         <Form.Item
                           label="ML/Day"
-                          name={["alcoholDetails", "mlPerDay"]}
+                          name={['alcoholDetails', 'mlPerDay']}
                           rules={[
-                            { required: true, message: "Please enter ML/Day!" },
+                            { required: true, message: 'Please enter ML/Day!' },
                             {
-                              type: "number",
+                              type: 'number',
                               min: 1,
-                              message: "Must be at least 1 ML/day!",
+                              message: 'Must be at least 1 ML/day!',
                             },
                           ]}
                           style={{ marginBottom: 0 }}
                         >
                           <InputNumber
                             placeholder="ML/day"
-                            style={{ width: "100%" }}
+                            style={{ width: '100%' }}
                             defaultValue={formState?.alcoholDetails?.mlPerDay}
                             // write the on change function to update the form state key named alcoholDetails, here alcoholDetails is an object with keys mlPerDay and yearsConsumed, but while using the handleFomChane function make sure that other states should not be disturbed or made undefined as this function is accepting only one para but you gave two so code neat
                             onChange={(value) => {
@@ -838,26 +752,24 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                       <Col xs={24} sm={12} className="mt-2">
                         <Form.Item
                           label="No. of Years Consumed"
-                          name={["alcoholDetails", "yearsConsumed"]}
+                          name={['alcoholDetails', 'yearsConsumed']}
                           rules={[
                             {
                               required: true,
-                              message: "Please enter Years Consumed!",
+                              message: 'Please enter Years Consumed!',
                             },
                             {
-                              type: "number",
+                              type: 'number',
                               min: 1,
-                              message: "Must be at least 1 year!",
+                              message: 'Must be at least 1 year!',
                             },
                           ]}
                           style={{ marginBottom: 0 }}
                         >
                           <InputNumber
                             placeholder="years"
-                            style={{ width: "100%" }}
-                            defaultValue={
-                              formState?.alcoholDetails?.yearsConsumed
-                            }
+                            style={{ width: '100%' }}
+                            defaultValue={formState?.alcoholDetails?.yearsConsumed}
                             // onChange={(value) =>
                             //   handleFormChange(
                             //     { alcoholDetails: { yearsConsumed: value } },
@@ -894,7 +806,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 rules={[
                   {
                     required: true,
-                    message: "Please select Misheri/Tobacco History!",
+                    message: 'Please select Misheri/Tobacco History!',
                   },
                 ]}
               >
@@ -904,33 +816,31 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 </Radio.Group>
               </Form.Item>
 
-              {formState.misheriTobacco === "Yes" && (
+              {formState.misheriTobacco === 'Yes' && (
                 <div>
                   <Form.Item label="If Yes, Please fill" required>
                     <Row gutter={[16, 16]}>
                       <Col xs={24} sm={12}>
                         <Form.Item
                           label="Times/Day"
-                          name={["misheriTobaccoDetails", "timesPerDay"]}
+                          name={['misheriTobaccoDetails', 'timesPerDay']}
                           rules={[
                             {
                               required: true,
-                              message: "Please enter Times/Day!",
+                              message: 'Please enter Times/Day!',
                             },
                             {
-                              type: "number",
+                              type: 'number',
                               min: 1,
-                              message: "Must be at least 1 time/day!",
+                              message: 'Must be at least 1 time/day!',
                             },
                           ]}
                           style={{ marginBottom: 0 }}
                         >
                           <InputNumber
                             placeholder="times/day"
-                            style={{ width: "100%" }}
-                            defaultValue={
-                              formState?.misheriTobaccoDetails?.timesPerDay
-                            }
+                            style={{ width: '100%' }}
+                            defaultValue={formState?.misheriTobaccoDetails?.timesPerDay}
                             // onChange={(value) =>
                             //   handleFormChange(
                             //     {
@@ -960,26 +870,24 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                       <Col xs={24} sm={12} className="mt-2">
                         <Form.Item
                           label="No. of Years Used"
-                          name={["misheriTobaccoDetails", "yearsUsed"]}
+                          name={['misheriTobaccoDetails', 'yearsUsed']}
                           rules={[
                             {
                               required: true,
-                              message: "Please enter Years Used!",
+                              message: 'Please enter Years Used!',
                             },
                             {
-                              type: "number",
+                              type: 'number',
                               min: 1,
-                              message: "Must be at least 1 year!",
+                              message: 'Must be at least 1 year!',
                             },
                           ]}
                           style={{ marginBottom: 0 }}
                         >
                           <InputNumber
                             placeholder="years"
-                            style={{ width: "100%" }}
-                            defaultValue={
-                              formState?.misheriTobaccoDetails?.yearsUsed
-                            }
+                            style={{ width: '100%' }}
+                            defaultValue={formState?.misheriTobaccoDetails?.yearsUsed}
                             // onChange={(value) =>
                             //   handleFormChange(
                             //     { misheriTobaccoDetails: { yearsUsed: value } },
@@ -1019,8 +927,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 rules={[
                   {
                     required: true,
-                    message:
-                      "Please select an option for Previous Breast Cancer!",
+                    message: 'Please select an option for Previous Breast Cancer!',
                   },
                 ]}
               >
@@ -1029,23 +936,18 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                   <Radio value="No">No</Radio>
                 </Radio.Group>
               </Form.Item>
-              {formState.previousCancer === "Yes" && (
+              {formState.previousCancer === 'Yes' && (
                 <Form.Item
                   label="If Yes, Diagnoses"
                   name="previousDiagnosis"
                   rules={[
                     {
                       required: true,
-                      message:
-                        "Please provide details for Previous Breast Cancer!",
+                      message: 'Please provide details for Previous Breast Cancer!',
                     },
                   ]}
                 >
-                  <Input.TextArea
-                    placeholder="Describe details"
-                    rows={3}
-                    defaultValue={formState.previousDiagnosis}
-                  />
+                  <Input.TextArea placeholder="Describe details" rows={3} defaultValue={formState.previousDiagnosis} />
                 </Form.Item>
               )}
             </Col>
@@ -1056,7 +958,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 rules={[
                   {
                     required: true,
-                    message: "Please select an option for Previous Biopsy",
+                    message: 'Please select an option for Previous Biopsy',
                   },
                 ]}
               >
@@ -1073,7 +975,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 rules={[
                   {
                     required: true,
-                    message: "Please select an option for Previous Treatment",
+                    message: 'Please select an option for Previous Treatment',
                   },
                 ]}
               >
@@ -1091,29 +993,25 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 </Radio.Group>
               </Form.Item>
 
-              {formState.previousTreatment === "Yes" && (
+              {formState.previousTreatment === 'Yes' && (
                 <Form.Item
                   label="If Yes, Please Select"
                   // name="previousTreatmentDetails"
                   rules={[
                     {
                       required: true,
-                      message: "Please select at least one treatment type!",
+                      message: 'Please select at least one treatment type!',
                     },
                   ]}
                   required
                 >
                   <Checkbox.Group
                     defaultValue={formState.previousTreatmentDetails}
-                    onChange={(value) =>
-                      handleFormChange({ previousTreatmentDetails: value })
-                    }
+                    onChange={(value) => handleFormChange({ previousTreatmentDetails: value })}
                   >
                     <Checkbox value="Surgery">Surgery</Checkbox>
                     <Checkbox value="Chemotherapy">Chemotherapy</Checkbox>
-                    <Checkbox value="Radiation Therapy">
-                      Radiation Therapy
-                    </Checkbox>{" "}
+                    <Checkbox value="Radiation Therapy">Radiation Therapy</Checkbox>{' '}
                   </Checkbox.Group>
                 </Form.Item>
               )}
@@ -1126,7 +1024,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               rules={[
                 {
                   required: true,
-                  message: "Please select an option for Implants!",
+                  message: 'Please select an option for Implants!',
                 },
               ]}
             >
@@ -1168,51 +1066,42 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                       },
                     }))
                   }
-                />{" "}
+                />{' '}
               </Form.Item>
             </Col>
             <Col xs={24} sm={12} xl={4}>
               <Form.Item label="Imaging Studies Date">
                 <DatePicker
-                  style={{ width: "100%" }}
-                  value={
-                    formState.imagingStudies.date
-                      ? dayjs(formState.imagingStudies.date)
-                      : null
-                  } // Use `dayjs` to handle date objects
+                  style={{ width: '100%' }}
+                  value={formState.imagingStudies.date ? dayjs(formState.imagingStudies.date) : null} // Use `dayjs` to handle date objects
                   onChange={(date, dateString) =>
                     setFormState((prevState) => ({
                       ...prevState,
                       imagingStudies: {
                         ...prevState.imagingStudies,
-                        date: date
-                          ? date.toDate().toLocaleDateString("en-CA")
-                          : null, // Save the date in string format or null
+                        date: date ? date.toDate().toLocaleDateString('en-CA') : null, // Save the date in string format or null
                       },
                     }))
                   }
-                />{" "}
+                />{' '}
               </Form.Item>
             </Col>
 
             <Col xs={24} sm={12} xl={7} md={7}>
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "8px" }}
-              >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <RiDownload2Line />
                 <Button
                   type="link"
                   style={{
                     padding: 0,
-                    fontSize: "14px",
-                    textDecoration: "underline",
-                    color: "#1890ff",
+                    fontSize: '14px',
+                    textDecoration: 'underline',
+                    color: '#1890ff',
                   }}
                   onClick={() => {
-                    const link = document.createElement("a");
-                    link.href =
-                      "/assets/images/mammography-screening-template.jpg"; // Path to the image
-                    link.download = "mammography-screening-template.jpg"; // File name for download
+                    const link = document.createElement('a');
+                    link.href = '/assets/images/mammography-screening-template.jpg'; // Path to the image
+                    link.download = 'mammography-screening-template.jpg'; // File name for download
                     document.body.appendChild(link); // Append link to body
                     link.click(); // Programmatically click the link
                     document.body.removeChild(link); // Clean up by removing the link
@@ -1240,7 +1129,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                           ...file,
                           name: file.name || file.originFileObj?.name,
                           uid: file.uid || file.originFileObj?.uid,
-                          status: "done",
+                          status: 'done',
                         }))
                       : []
                   }
@@ -1272,7 +1161,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 rules={[
                   {
                     required: true,
-                    message: "Please select an option for pain!",
+                    message: 'Please select an option for pain!',
                   },
                 ]}
                 label="Pain"
@@ -1285,13 +1174,9 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                   <Radio value="Both">Both side</Radio>
                 </Radio.Group>
               </Form.Item>
-              {formState.pain !== "No" && formState.pain !== "" && (
+              {formState.pain !== 'No' && formState.pain !== '' && (
                 <Form.Item label="Pain Details" name="painDetails">
-                  <Input.TextArea
-                    placeholder="Enter pain details"
-                    rows={3}
-                    defaultValue={formState.painDetails}
-                  />
+                  <Input.TextArea placeholder="Enter pain details" rows={3} defaultValue={formState.painDetails} />
                 </Form.Item>
               )}
             </Col>
@@ -1303,7 +1188,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 rules={[
                   {
                     required: true,
-                    message: "Please select an option for Lump!",
+                    message: 'Please select an option for Lump!',
                   },
                 ]}
               >
@@ -1314,13 +1199,9 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                   <Radio value="Both">Both</Radio>
                 </Radio.Group>
               </Form.Item>
-              {formState.lump !== "No" && formState.lump !== "" && (
+              {formState.lump !== 'No' && formState.lump !== '' && (
                 <Form.Item label="Lump Details" name="lumpDetails">
-                  <Input.TextArea
-                    placeholder="Enter lump details"
-                    rows={3}
-                    defaultValue={formState.lumpDetails}
-                  />
+                  <Input.TextArea placeholder="Enter lump details" rows={3} defaultValue={formState.lumpDetails} />
                 </Form.Item>
               )}
             </Col>
@@ -1332,7 +1213,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 rules={[
                   {
                     required: true,
-                    message: "Please select an option for Dischange!",
+                    message: 'Please select an option for Dischange!',
                   },
                 ]}
               >
@@ -1343,13 +1224,9 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                   <Radio value="Both">Both</Radio>
                 </Radio.Group>
               </Form.Item>
-              {formState.discharge !== "No" && formState.discharge && (
+              {formState.discharge !== 'No' && formState.discharge && (
                 <Form.Item label="Discharge Details" name="dischargeDetails">
-                  <Input.TextArea
-                    placeholder="Enter discharge details"
-                    rows={3}
-                    defaultValue={formState.dischargeDetails}
-                  />
+                  <Input.TextArea placeholder="Enter discharge details" rows={3} defaultValue={formState.dischargeDetails} />
                 </Form.Item>
               )}
             </Col>
@@ -1360,7 +1237,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 rules={[
                   {
                     required: true,
-                    message: "Please select an option for Skin Change!",
+                    message: 'Please select an option for Skin Change!',
                   },
                 ]}
               >
@@ -1371,19 +1248,15 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                   <Radio value="Both">Both</Radio>
                 </Radio.Group>
               </Form.Item>
-              {formState.skinChanges !== "No" &&
-                formState.skinChanges !== "" && (
-                  <Form.Item
-                    label="Skin Changes Details"
-                    name="skinChangesDetails"
-                  >
-                    <Input.TextArea
-                      placeholder="Enter skin changes details"
-                      defaultValue={formState.skinChangesDetails}
-                      rows={3}
-                    />
-                  </Form.Item>
-                )}
+              {formState.skinChanges !== 'No' && formState.skinChanges !== '' && (
+                <Form.Item label="Skin Changes Details" name="skinChangesDetails">
+                  <Input.TextArea
+                    placeholder="Enter skin changes details"
+                    defaultValue={formState.skinChangesDetails}
+                    rows={3}
+                  />
+                </Form.Item>
+              )}
             </Col>
             <Col xs={30} sm={14} xl={6}>
               <Form.Item
@@ -1392,7 +1265,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 rules={[
                   {
                     required: true,
-                    message: "Please select an option for Nipple Retraction!",
+                    message: 'Please select an option for Nipple Retraction!',
                   },
                 ]}
               >
@@ -1403,19 +1276,15 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                   <Radio value="Both">Both</Radio>
                 </Radio.Group>
               </Form.Item>
-              {formState.nippleRetraction !== "No" &&
-                formState.nippleRetraction !== "" && (
-                  <Form.Item
-                    label="Nipple Retraction Details"
-                    name="nippleRetractionDetails"
-                  >
-                    <Input.TextArea
-                      placeholder="Enter nipple retraction details"
-                      defaultValue={formState.nippleRetractionDetails}
-                      rows={3}
-                    />
-                  </Form.Item>
-                )}
+              {formState.nippleRetraction !== 'No' && formState.nippleRetraction !== '' && (
+                <Form.Item label="Nipple Retraction Details" name="nippleRetractionDetails">
+                  <Input.TextArea
+                    placeholder="Enter nipple retraction details"
+                    defaultValue={formState.nippleRetractionDetails}
+                    rows={3}
+                  />
+                </Form.Item>
+              )}
             </Col>
           </Row>
           {/* Additional Information */}
@@ -1435,17 +1304,13 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 name="onlineAmount"
                 rules={[
                   {
-                    type: "number",
+                    type: 'number',
                     min: 0,
-                    message: "Must be at least 0!",
+                    message: 'Must be at least 0!',
                   },
                 ]}
               >
-                <InputNumber
-                  placeholder="Enter amount"
-                  style={{ width: "100%" }}
-                  defaultValue={formState.onlineAmount}
-                />
+                <InputNumber placeholder="Enter amount" style={{ width: '100%' }} defaultValue={formState.onlineAmount} />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12} xl={4}>
@@ -1454,27 +1319,21 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 name="offlineAmount"
                 rules={[
                   {
-                    type: "number",
+                    type: 'number',
                     min: 0,
-                    message: "Must be at least 0!",
+                    message: 'Must be at least 0!',
                   },
                 ]}
               >
-                <InputNumber
-                  style={{ width: "100%" }}
-                  defaultValue={formState.offlineAmount}
-                />
+                <InputNumber style={{ width: '100%' }} defaultValue={formState.offlineAmount} />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12} xl={4}>
               <Form.Item label="Total Amount">
                 <InputNumber
-                  style={{ width: "100%" }}
+                  style={{ width: '100%' }}
                   readOnly
-                  value={
-                    Number(formState.onlineAmount) +
-                    Number(formState.offlineAmount)
-                  }
+                  value={Number(formState.onlineAmount) + Number(formState.offlineAmount)}
                 />
               </Form.Item>
             </Col>
@@ -1486,9 +1345,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               <Form.Item label="Report Status" name="reportStatus">
                 <Select
                   defaultValue={formState.reportStatus}
-                  onChange={(value) =>
-                    setFormState({ ...formState, reportStatus: value })
-                  }
+                  onChange={(value) => setFormState({ ...formState, reportStatus: value })}
                 >
                   <Select.Option value="Normal">Normal</Select.Option>
                   <Select.Option value="Abnormal">Abnormal</Select.Option>
@@ -1497,11 +1354,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
             </Col>
             <Col xs={24} sm={12} xl={4}>
               <Form.Item label="Report Score from Ai" name="aiReportScore">
-                <InputNumber
-                  placeholder="Enter score"
-                  style={{ width: "100%" }}
-                  defaultValue={formState.aiReportScore}
-                />
+                <InputNumber placeholder="Enter score" style={{ width: '100%' }} defaultValue={formState.aiReportScore} />
               </Form.Item>
             </Col>
 
@@ -1523,7 +1376,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                           ...file,
                           name: file.name || file.originFileObj?.name,
                           uid: file.uid || file.originFileObj?.uid,
-                          status: "done",
+                          status: 'done',
                         }))
                       : []
                   }
@@ -1548,11 +1401,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
             <Button
               type="primary"
               variant="primary"
-              className={
-                readOnly
-                  ? "d-none w-auto rounded-0 bg-primary"
-                  : "w-auto rounded-0 bg-primary"
-              }
+              className={readOnly ? 'd-none w-auto rounded-0 bg-primary' : 'w-auto rounded-0 bg-primary'}
               htmlType="submit"
               block
               loading={loading}
@@ -1576,13 +1425,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 <Input
                   value={formState.lastMenstrualDate}
                   readOnly
-                  disabledDate={(current) =>
-                    current &&
-                    current.isAfter(
-                      new Date().toLocaleDateString("en-CA"),
-                      "day"
-                    )
-                  }
+                  disabledDate={(current) => current && current.isAfter(new Date().toLocaleDateString('en-CA'), 'day')}
                 />
               </Form.Item>
             </Col>
@@ -1600,75 +1443,75 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 </Checkbox.Group>
               </Form.Item>
             </Col>
-            {formState?.obstetricHistory?.includes("G") && (
+            {formState?.obstetricHistory?.includes('G') && (
               <Col xs={24} sm={12} xl={4}>
                 <Form.Item
                   label="Number of Pregnancies"
                   rules={[
                     {
                       required: true,
-                      message: "Please enter the number of pregnancies!",
+                      message: 'Please enter the number of pregnancies!',
                     },
                     {
-                      type: "number",
+                      type: 'number',
                       min: 0,
-                      message: "Must be at least 0!",
+                      message: 'Must be at least 0!',
                     },
                   ]}
                 >
                   <InputNumber
                     placeholder="Enter number"
-                    style={{ width: "100%" }}
+                    style={{ width: '100%' }}
                     readOnly
                     value={formState.numberOfPregnancies}
                   />
                 </Form.Item>
               </Col>
             )}
-            {formState?.obstetricHistory?.includes("P") && (
+            {formState?.obstetricHistory?.includes('P') && (
               <Col xs={24} sm={12} xl={4}>
                 <Form.Item
                   label="Number of Deliveries"
                   rules={[
                     {
                       required: true,
-                      message: "Please enter the number of deliveries!",
+                      message: 'Please enter the number of deliveries!',
                     },
                     {
-                      type: "number",
+                      type: 'number',
                       min: 0,
-                      message: "Must be at least 0!",
+                      message: 'Must be at least 0!',
                     },
                   ]}
                 >
                   <InputNumber
                     placeholder="Enter number"
-                    style={{ width: "100%" }}
+                    style={{ width: '100%' }}
                     readOnly
                     value={formState.numberOfDeliveries}
                   />
                 </Form.Item>
               </Col>
             )}
-            {formState.obstetricHistory.includes("L") && (
+            {formState.obstetricHistory.includes('L') && (
               <Col xs={24} sm={12} xl={4}>
                 <Form.Item
                   label="Number of Living Children"
                   rules={[
                     {
                       required: true,
-                      message: "Please enter the number of living children!",
+                      message: 'Please enter the number of living children!',
                     },
                     {
-                      type: "number",
+                      type: 'number',
                       min: 0,
-                      message: "Must be at least 0!",
+                      message: 'Must be at least 0!',
                     },
                   ]}
                 >
                   <InputNumber
                     placeholder="Enter number"
-                    style={{ width: "100%" }}
+                    style={{ width: '100%' }}
                     readOnly
                     value={formState.numberOfLivingChildren}
                   />
@@ -1685,17 +1528,14 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 <Input value={formState.familyHistory} readOnly />
               </Form.Item>
               <>
-                {formState.familyHistory === "Yes" && (
+                {formState.familyHistory === 'Yes' && (
                   <Form.Item label="first degree relatives with breast cancer">
                     <Input value={formState.firstDegreeRelatives} readOnly />
                   </Form.Item>
                 )}
-                {formState?.familyHistory === "No" && (
+                {formState?.familyHistory === 'No' && (
                   <Form.Item label="Any other cancer history">
-                    <Input.TextArea
-                      value={formState.familyHistoryDetails}
-                      readOnly
-                    />
+                    <Input.TextArea value={formState.familyHistoryDetails} readOnly />
                   </Form.Item>
                 )}
               </>
@@ -1704,19 +1544,13 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               <Form.Item label="Smoking History">
                 <Input value={formState.smoking} readOnly />
               </Form.Item>
-              {formState.smoking === "Yes" && (
+              {formState.smoking === 'Yes' && (
                 <>
                   <Form.Item label="Packs/Day">
-                    <Input
-                      value={formState.smokingDetails.packsPerDay}
-                      readOnly
-                    />
+                    <Input value={formState.smokingDetails.packsPerDay} readOnly />
                   </Form.Item>
                   <Form.Item label="Years Smoked">
-                    <Input
-                      value={formState.smokingDetails.yearsSmoked}
-                      readOnly
-                    />
+                    <Input value={formState.smokingDetails.yearsSmoked} readOnly />
                   </Form.Item>
                 </>
               )}
@@ -1725,19 +1559,13 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               <Form.Item label="Alcohol History">
                 <Input value={formState.alcohol} readOnly />
               </Form.Item>
-              {formState.alcohol === "Yes" && (
+              {formState.alcohol === 'Yes' && (
                 <div>
                   <Form.Item label="ML/Day">
-                    <Input
-                      value={formState.alcoholDetails?.mlPerDay}
-                      readOnly
-                    />
+                    <Input value={formState.alcoholDetails?.mlPerDay} readOnly />
                   </Form.Item>
                   <Form.Item label="No. of Years Consumed">
-                    <Input
-                      value={formState.alcoholDetails?.yearsConsumed}
-                      readOnly
-                    />
+                    <Input value={formState.alcoholDetails?.yearsConsumed} readOnly />
                   </Form.Item>
                 </div>
               )}
@@ -1746,19 +1574,13 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               <Form.Item label="Misheri History">
                 <Input value={formState.misheriTobacco} readOnly />
               </Form.Item>
-              {formState.misheriTobacco === "Yes" && (
+              {formState.misheriTobacco === 'Yes' && (
                 <div>
                   <Form.Item label="Times/Day">
-                    <Input
-                      value={formState.misheriTobaccoDetails?.timesPerDay}
-                      readOnly
-                    />
+                    <Input value={formState.misheriTobaccoDetails?.timesPerDay} readOnly />
                   </Form.Item>
                   <Form.Item label="No. of Years Used">
-                    <Input
-                      value={formState.misheriTobaccoDetails?.yearsUsed}
-                      readOnly
-                    />
+                    <Input value={formState.misheriTobaccoDetails?.yearsUsed} readOnly />
                   </Form.Item>
                 </div>
               )}
@@ -1771,7 +1593,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               <Form.Item label="Previous Breast Cancer">
                 <Input value={formState.previousCancer} readOnly />
               </Form.Item>
-              {formState.previousCancer === "Yes" && (
+              {formState.previousCancer === 'Yes' && (
                 <Form.Item label="Diagnoses">
                   <Input value={formState.previousDiagnosis} readOnly />
                 </Form.Item>
@@ -1786,9 +1608,9 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               <Form.Item label="Previous Treatment">
                 <Input value={formState.previousTreatment} readOnly />
               </Form.Item>
-              {formState.previousTreatment === "Yes" && (
+              {formState.previousTreatment === 'Yes' && (
                 <Checkbox.Group
-                  options={["Surgery", "Chemotherapy", "Radiation Therapy"]}
+                  options={['Surgery', 'Chemotherapy', 'Radiation Therapy']}
                   defaultValue={formState.previousTreatmentDetails}
                   onChange={(checkedValues) =>
                     setFormState({
@@ -1819,13 +1641,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
             <Col xs={24} sm={12} xl={4}>
               <Form.Item label="Imaging Studies Date">
                 <Input
-                  value={
-                    formState.imagingStudies?.date
-                      ? dayjs(formState.imagingStudies.date).format(
-                          "YYYY-MM-DD"
-                        )
-                      : ""
-                  }
+                  value={formState.imagingStudies?.date ? dayjs(formState.imagingStudies.date).format('YYYY-MM-DD') : ''}
                   readOnly
                 />
               </Form.Item>
@@ -1839,9 +1655,9 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                 {Object.keys(patient?.screeningImage).length > 0 ? (
                   <div
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
                     }}
                   >
                     <Button
@@ -1849,20 +1665,20 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                       href={`/files?key=${patient.screeningImage.key}`}
                       style={{
                         padding: 0,
-                        fontSize: "14px",
-                        textDecoration: "underline",
-                        color: "#1890ff",
+                        fontSize: '14px',
+                        textDecoration: 'underline',
+                        color: '#1890ff',
                       }}
                       onClick={() => {}}
                     >
-                      {patient.screeningImage.fileName || "file"}
+                      {patient.screeningImage.fileName || 'file'}
                     </Button>
                   </div>
                 ) : (
                   <div
                     style={{
-                      fontSize: "14px",
-                      color: "#6c757d", // Bootstrap muted text color
+                      fontSize: '14px',
+                      color: '#6c757d', // Bootstrap muted text color
                     }}
                   >
                     No file uploaded.
@@ -1879,7 +1695,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               <Form.Item label="Pain">
                 <Input value={formState.pain} readOnly />
               </Form.Item>
-              {formState.pain !== "No" && formState.pain && (
+              {formState.pain !== 'No' && formState.pain && (
                 <Form.Item label="Pain details">
                   <Input.TextArea value={formState.painDetails} readOnly />
                 </Form.Item>
@@ -1889,7 +1705,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               <Form.Item label="Lump">
                 <Input value={formState.lump} readOnly />
               </Form.Item>
-              {formState.lump !== "No" && formState.lump && (
+              {formState.lump !== 'No' && formState.lump && (
                 <Form.Item label="Lump Details">
                   <Input.TextArea value={formState.lumpDetails} readOnly />
                 </Form.Item>
@@ -1899,7 +1715,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               <Form.Item label="Discharge">
                 <Input value={formState.discharge} readOnly />
               </Form.Item>
-              {formState.discharge !== "No" && formState.discharge && (
+              {formState.discharge !== 'No' && formState.discharge && (
                 <Form.Item label="Discharge Details">
                   <Input.TextArea value={formState.dischargeDetails} readOnly />
                 </Form.Item>
@@ -1909,12 +1725,9 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               <Form.Item label="Skin Changes">
                 <Input value={formState.skinChanges} readOnly />
               </Form.Item>
-              {formState.skinChanges === "Yes" && (
+              {formState.skinChanges === 'Yes' && (
                 <Form.Item label="Skin Changes Details">
-                  <Input.TextArea
-                    value={formState.skinChangesDetails}
-                    readOnly
-                  />
+                  <Input.TextArea value={formState.skinChangesDetails} readOnly />
                 </Form.Item>
               )}
             </Col>
@@ -1922,12 +1735,9 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               <Form.Item label="Nipple Retraction">
                 <Input value={formState.nippleRetraction} readOnly />
               </Form.Item>
-              {formState.nippleRetraction === "Yes" && (
+              {formState.nippleRetraction === 'Yes' && (
                 <Form.Item label="Nipple Retraction Details">
-                  <Input.TextArea
-                    value={formState.nippleRetractionDetails}
-                    readOnly
-                  />
+                  <Input.TextArea value={formState.nippleRetractionDetails} readOnly />
                 </Form.Item>
               )}
             </Col>
@@ -1953,13 +1763,7 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
             </Col>
             <Col xs={24} sm={12} xl={4}>
               <Form.Item label="Total Amount">
-                <Input
-                  value={
-                    Number(formState.onlineAmount) +
-                    Number(formState.offlineAmount)
-                  }
-                  readOnly
-                />
+                <Input value={Number(formState.onlineAmount) + Number(formState.offlineAmount)} readOnly />
               </Form.Item>
             </Col>
           </Row>
@@ -1978,16 +1782,13 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
               </Form.Item>
             </Col>
             <Col xs={24} sm={12} md={7}>
-              <Form.Item
-                label="Uploaded Report"
-                className="responsive-form-item"
-              >
+              <Form.Item label="Uploaded Report" className="responsive-form-item">
                 {Object.keys(patient?.aiReport).length > 0 ? (
                   <div
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
                     }}
                   >
                     <Button
@@ -1995,20 +1796,20 @@ const MammoMedicalHistory = ({ patient, onSave, readOnly, patientId }) => {
                       href={`/files?key=${patient?.aiReport?.key}`}
                       style={{
                         padding: 0,
-                        fontSize: "14px",
-                        textDecoration: "underline",
-                        color: "#1890ff",
+                        fontSize: '14px',
+                        textDecoration: 'underline',
+                        color: '#1890ff',
                       }}
                       onClick={() => {}}
                     >
-                      {patient?.aiReport?.fileName || "file"}
+                      {patient?.aiReport?.fileName || 'file'}
                     </Button>
                   </div>
                 ) : (
                   <div
                     style={{
-                      fontSize: "14px",
-                      color: "#6c757d", // Bootstrap muted text color
+                      fontSize: '14px',
+                      color: '#6c757d', // Bootstrap muted text color
                     }}
                   >
                     No file uploaded.

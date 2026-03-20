@@ -1,20 +1,23 @@
-import { Pie, Bar } from "react-chartjs-2";
-import React, { useEffect, useState, useMemo } from "react";
-import { Link, useParams } from "react-router-dom";
-import { Container, Row, Col, Card, Badge, Accordion } from "react-bootstrap";
-import { Form, Input, DatePicker, Select, Tabs, Button, Tooltip } from "antd";
-import campManagementService from "../../api/camp-management-service";
-import { Loading } from "../../components/loading";
-import dayjs from "dayjs";
-import clinicServices from "../../api/clinic-services";
-import toast from "react-hot-toast";
-import AntdTable from "../../components/antd-table";
-import DentistryAnalytics from "../../components/camp/dentistry-analytics";
-import MammographyAnalytics from "../../components/camp/mammography-analytics";
-import GPAnalytics from "../../components/camp/gp-analytics";
-import { useAuth } from "../../utilities/AuthProvider";
-import BackButton from "../../components/back-button";
-import { checkPermission } from "../../utilities/utility-function";
+import { Pie, Bar } from 'react-chartjs-2';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { Container, Row, Col, Card, Badge, Accordion } from 'react-bootstrap';
+import { Form, Input, DatePicker, Select, Tabs, Button, Tooltip } from 'antd';
+import { RiFileExcel2Line } from '@remixicon/react';
+import { saveAs } from 'file-saver';
+import * as XLSX from 'xlsx';
+import campManagementService from '../../api/camp-management-service';
+import { Loading } from '../../components/loading';
+import dayjs from 'dayjs';
+import clinicServices from '../../api/clinic-services';
+import toast from 'react-hot-toast';
+import AntdTable from '../../components/antd-table';
+import DentistryAnalytics from '../../components/camp/dentistry-analytics';
+import MammographyAnalytics from '../../components/camp/mammography-analytics';
+import GPAnalytics from '../../components/camp/gp-analytics';
+import { useAuth } from '../../utilities/AuthProvider';
+import BackButton from '../../components/back-button';
+import { checkPermission } from '../../utilities/utility-function';
 
 const CampDetails = () => {
   const { campId } = useParams();
@@ -27,6 +30,7 @@ const CampDetails = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({});
   const [specialtiesOptions, setSpecialtiesOptions] = useState([]);
+  const [exportLoading, setExportLoading] = useState(false);
 
   const fetchCampDetails = async () => {
     try {
@@ -45,16 +49,16 @@ const CampDetails = () => {
       setCampData(response.data);
       // setEditData(response.data); // Initialize edit form with existing data
       setEditData({
-        name: response.data.name || "",
-        location: response.data.location || "",
-        city: response.data.city || "",
-        startDate: response.data.startDate || "",
-        endDate: response.data.endDate || "",
+        name: response.data.name || '',
+        location: response.data.location || '',
+        city: response.data.city || '',
+        startDate: response.data.startDate || '',
+        endDate: response.data.endDate || '',
         vans: response.data.vans || [], // Ensure it's an array
         specialties: response.data.specialties?.map((s) => s.id) || [], // Store only IDs
       });
     } catch (error) {
-      console.error("Error fetching camp details:", error);
+      console.error('Error fetching camp details:', error);
     } finally {
       setCampLoading(false);
     }
@@ -71,7 +75,7 @@ const CampDetails = () => {
         }))
       );
     } catch (error) {
-      console.error("Error fetching departments:", error);
+      console.error('Error fetching departments:', error);
     } finally {
       setServiceLoading(false);
     }
@@ -82,9 +86,7 @@ const CampDetails = () => {
     try {
       const response = await clinicServices.getUsersByClinic();
       const filteredUsers = response.data.filter((eachUser) => {
-        const isDoctor = eachUser?.roles?.some(
-          (role) => role?.roleName === "doctor"
-        );
+        const isDoctor = eachUser?.roles?.some((role) => role?.roleName === 'doctor');
         return isDoctor;
       });
 
@@ -114,6 +116,62 @@ const CampDetails = () => {
     }));
   };
 
+  // Helper: flatten patient data for export
+  function getFlatPatientData(data) {
+    return data.map((patient) => ({
+      'Token Number': patient.tokenNumber || '',
+      Name: patient.name || '',
+      Age: patient.age || '',
+      Gender: patient.sex || '',
+      Mobile: patient.mobile || '',
+      Address: patient.address || '',
+      'Service Taken': Array.isArray(patient.serviceTaken) ? patient.serviceTaken.join(', ') : patient.serviceTaken || '',
+      'Offline Amount (₹)': patient.collectedAmount?.offlineAmount || 0,
+      'Online Amount (₹)': patient.collectedAmount?.onlineAmount || 0,
+      'Total Collected (₹)': (patient.collectedAmount?.offlineAmount || 0) + (patient.collectedAmount?.onlineAmount || 0),
+      'Treated Doctors': Array.isArray(patient.treatingDoctors)
+        ? patient.treatingDoctors.map((d) => d?.label).join(', ')
+        : '',
+      'Amount Paid (₹)': patient.paidAmount || 0,
+    }));
+  }
+
+  // Export all patients to Excel
+  const exportPatientsToExcel = async () => {
+    try {
+      setExportLoading(true);
+
+      if (!patients || patients.length === 0) {
+        throw new Error('No patients to export');
+      }
+
+      // Format the patient data for Excel
+      const flatData = getFlatPatientData(patients);
+
+      // Generate Excel file
+      const worksheet = XLSX.utils.json_to_sheet(flatData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Camp Patients');
+
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: 'xlsx',
+        type: 'array',
+      });
+
+      const blob = new Blob([excelBuffer], {
+        type: 'application/octet-stream',
+      });
+      const timestamp = new Date().toISOString().split('T')[0];
+      saveAs(blob, `camp-patients_${name}_${timestamp}.xlsx`);
+      toast.success('Patients exported to Excel successfully');
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error(`Export failed: ${error.message}`);
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
   useEffect(() => {
     getDoctors();
     fetchCampDetails();
@@ -128,34 +186,20 @@ const CampDetails = () => {
     return <p className="text-center mt-5">No camp data found.</p>;
   }
 
-  const {
-    name,
-    status,
-    location,
-    city,
-    startDate,
-    endDate,
-    vans,
-    specialties,
-    patients,
-    users,
-  } = campData;
+  const { name, status, location, city, startDate, endDate, vans, specialties, patients, users } = campData;
 
   // Handle Save Changes
   const handleSave = async () => {
     try {
       setCampLoading(true);
       console.log(editData);
-      const response = await campManagementService.updateCampById(
-        campId,
-        editData
-      );
+      const response = await campManagementService.updateCampById(campId, editData);
       if (response.success) {
         toast.success(response.message);
       }
       setIsEditing(false);
     } catch (error) {
-      console.error("Error updating camp details:", error);
+      console.error('Error updating camp details:', error);
       toast.error(error.message);
     } finally {
       fetchCampDetails();
@@ -164,85 +208,89 @@ const CampDetails = () => {
   };
   const newPatientColumns = [
     {
-      title: "Token Number",
-      dataIndex: "tokenNumber",
-      key: "tokenNumber",
+      title: 'Token Number',
+      dataIndex: 'tokenNumber',
+      key: 'tokenNumber',
       sortable: true,
       width: 150,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
-      ),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>,
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
       sortable: true,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
-      ),
+      width: 200,
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>,
+    },
+    // Add age, geneder, and mobile keys are age, sex and mobile respectively in the response
+    {
+      title: 'Age',
+      dataIndex: 'age',
+      key: 'age',
+      width: 100,
+      sortable: true,
     },
     {
-      title: "Service Taken",
-      dataIndex: "serviceTaken",
-      key: "serviceTaken",
+      title: 'Gender',
+      dataIndex: 'sex',
+      key: 'sex',
+      width: 100,
+      sortable: true,
+    },
+    {
+      title: 'Mobile',
+      dataIndex: 'mobile',
+      key: 'mobile',
+      width: 150,
+      sortable: true,
+    },
+    {
+      title: 'Service Taken',
+      dataIndex: 'serviceTaken',
+      key: 'serviceTaken',
       filters: [
-        { text: "Mammography", value: "Mammography" },
-        { text: "Dentistry", value: "Dentistry" },
-        { text: "GP", value: "GP" },
+        { text: 'Mammography', value: 'Mammography' },
+        { text: 'Dentistry', value: 'Dentistry' },
+        { text: 'GP', value: 'GP' },
       ],
       onFilter: (value, record) => record.serviceTaken === value,
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
-      ),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>,
     },
     {
-      title: "Collected Amount",
-      dataIndex: "collectedAmount",
+      title: 'Collected Amount',
+      dataIndex: 'collectedAmount',
       width: 150,
-      key: "collectedAmount",
-      hidden: !checkPermission(permissions, ["camps:finance"]),
+      key: 'collectedAmount',
+      hidden: !checkPermission(permissions, ['camps:finance']),
       render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>
-          {text?.offlineAmount + text?.onlineAmount}
-        </Link>
+        <Link to={`/patient/patient-profile/${record.id}`}>{text?.offlineAmount + text?.onlineAmount}</Link>
       ),
     },
     {
-      title: "Cash",
-      dataIndex: "collectedAmount",
+      title: 'Cash',
+      dataIndex: 'collectedAmount',
       width: 150,
-      key: "collectedAmount",
-      hidden: !checkPermission(permissions, ["camps:finance"]),
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>
-          {text?.offlineAmount}
-        </Link>
-      ),
+      key: 'collectedAmount',
+      hidden: !checkPermission(permissions, ['camps:finance']),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.id}`}>{text?.offlineAmount}</Link>,
     },
     {
-      title: "Online Amount",
-      dataIndex: "collectedAmount",
+      title: 'Online Amount',
+      dataIndex: 'collectedAmount',
       width: 150,
-      key: "collectedAmount",
-      hidden: !checkPermission(permissions, ["camps:finance"]),
-      render: (text, record) => (
-        <Link to={`/patient/patient-profile/${record.id}`}>
-          {text?.onlineAmount}
-        </Link>
-      ),
+      key: 'collectedAmount',
+      hidden: !checkPermission(permissions, ['camps:finance']),
+      render: (text, record) => <Link to={`/patient/patient-profile/${record.id}`}>{text?.onlineAmount}</Link>,
     },
     {
-      title: "Treated doctors",
-      dataIndex: "treatingDoctors",
-      key: "treatingDoctors",
+      title: 'Treated doctors',
+      dataIndex: 'treatingDoctors',
+      key: 'treatingDoctors',
       width: 200,
       filters: treatingDoctorsOptions,
       onFilter: (value, record) => {
-        return (
-          Array.isArray(record?.treatingDoctors) &&
-          record.treatingDoctors.some((doctor) => doctor?.label === value)
-        );
+        return Array.isArray(record?.treatingDoctors) && record.treatingDoctors.some((doctor) => doctor?.label === value);
       },
       sortable: true,
       render: (text, record) => {
@@ -254,21 +302,19 @@ const CampDetails = () => {
         }, []);
         return (
           <Link to={`/patient/patient-profile/${record.id}`}>
-            {uniqueDoctors?.map((doctor) => doctor?.label)?.join(", ")}
+            {uniqueDoctors?.map((doctor) => doctor?.label)?.join(', ')}
           </Link>
         );
       },
     },
     {
-      title: "Total amount paid",
-      dataIndex: "paidAmount",
+      title: 'Total amount paid',
+      dataIndex: 'paidAmount',
       width: 150,
-      key: "paidAmount",
-      hidden: !checkPermission(permissions, ["camps:finance"]),
+      key: 'paidAmount',
+      hidden: !checkPermission(permissions, ['camps:finance']),
       render: (text, record) =>
-        permissions
-          .map((permission) => permission.action)
-          .includes("camps:finance") ? (
+        permissions.map((permission) => permission.action).includes('camps:finance') ? (
           <Link to={`/patient/patient-profile/${record.id}`}>{text}</Link>
         ) : (
           <Link to={`/patient/patient-profile/${record.id}`}>-</Link>
@@ -277,15 +323,15 @@ const CampDetails = () => {
   ];
   const newStaffColumns = [
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
       width: 200,
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
       width: 200,
     },
   ];
@@ -301,43 +347,24 @@ const CampDetails = () => {
               <Accordion.Header>Camp Details</Accordion.Header>
               <Accordion.Body>
                 <div>
-                  <h4 className="mb-0">
-                    {isEditing ? "Edit Camp Details" : name}
-                  </h4>
-                  <Badge bg={status === "active" ? "success" : "secondary"}>
-                    {status}
-                  </Badge>
+                  <h4 className="mb-0">{isEditing ? 'Edit Camp Details' : name}</h4>
+                  <Badge bg={status === 'active' ? 'success' : 'secondary'}>{status}</Badge>
                 </div>
                 <div>
                   {isEditing ? (
                     <Form layout="vertical">
                       <Form.Item label="Name">
-                        <Input
-                          type="text"
-                          name="name"
-                          value={editData.name}
-                          onChange={handleChange}
-                        />
+                        <Input type="text" name="name" value={editData.name} onChange={handleChange} />
                       </Form.Item>
                       <Row gutter={16}>
                         <Col span={12}>
                           <Form.Item label="Location">
-                            <Input
-                              type="text"
-                              name="location"
-                              value={editData.location}
-                              onChange={handleChange}
-                            />
+                            <Input type="text" name="location" value={editData.location} onChange={handleChange} />
                           </Form.Item>
                         </Col>
                         <Col span={12}>
                           <Form.Item label="City">
-                            <Input
-                              type="text"
-                              name="city"
-                              value={editData.city}
-                              onChange={handleChange}
-                            />
+                            <Input type="text" name="city" value={editData.city} onChange={handleChange} />
                           </Form.Item>
                         </Col>
                       </Row>
@@ -345,14 +372,10 @@ const CampDetails = () => {
                         <Col span={12}>
                           <Form.Item label="Start Date">
                             <DatePicker
-                              style={{ width: "100%" }}
+                              style={{ width: '100%' }}
                               name="startDate"
                               format="YYYY-MM-DD"
-                              value={
-                                editData.startDate
-                                  ? dayjs(editData.startDate)
-                                  : null
-                              } // ✅ Convert string to dayjs
+                              value={editData.startDate ? dayjs(editData.startDate) : null} // ✅ Convert string to dayjs
                               onChange={(date, dateString) =>
                                 setEditData({
                                   ...editData,
@@ -365,14 +388,10 @@ const CampDetails = () => {
                         <Col span={12}>
                           <Form.Item label="End Date">
                             <DatePicker
-                              style={{ width: "100%" }}
+                              style={{ width: '100%' }}
                               format="YYYY-MM-DD"
                               name="endDate"
-                              value={
-                                editData.endDate
-                                  ? dayjs(editData.endDate)
-                                  : null
-                              } // ✅ Convert string to dayjs
+                              value={editData.endDate ? dayjs(editData.endDate) : null} // ✅ Convert string to dayjs
                               onChange={(date, dateString) =>
                                 setEditData({
                                   ...editData,
@@ -391,13 +410,11 @@ const CampDetails = () => {
                               value={editData.vans}
                               placeholder="Select Van"
                               allowClear
-                              onChange={(value) =>
-                                handleMultiSelectChange(value, "vans")
-                              }
+                              onChange={(value) => handleMultiSelectChange(value, 'vans')}
                               options={[
-                                { value: "BharatBenz", label: "BharatBenz" },
-                                { value: "Force", label: "Force" },
-                                { value: "TATA", label: "TATA" },
+                                { value: 'BharatBenz', label: 'BharatBenz' },
+                                { value: 'Force', label: 'Force' },
+                                { value: 'TATA', label: 'TATA' },
                               ]}
                             />
                           </Form.Item>
@@ -409,9 +426,7 @@ const CampDetails = () => {
                               placeholder="Select services"
                               allowClear
                               value={editData.specialties} // ✅ Now contains only IDs
-                              onChange={(value) =>
-                                handleMultiSelectChange(value, "specialties")
-                              }
+                              onChange={(value) => handleMultiSelectChange(value, 'specialties')}
                               options={specialtiesOptions} // Options from API
                             />
                           </Form.Item>
@@ -419,19 +434,10 @@ const CampDetails = () => {
                       </Row>
 
                       <div className="d-flex justify-content-end">
-                        <Button
-                          variant="outlined"
-                          onClick={() => setIsEditing(false)}
-                          className="me-2"
-                        >
+                        <Button variant="outlined" onClick={() => setIsEditing(false)} className="me-2">
                           Cancel
                         </Button>
-                        <Button
-                          className="bg-primary"
-                          type="primary"
-                          variant="primary"
-                          onClick={handleSave}
-                        >
+                        <Button className="bg-primary" type="primary" variant="primary" onClick={handleSave}>
                           Save Changes
                         </Button>
                       </div>
@@ -451,27 +457,22 @@ const CampDetails = () => {
                         </Col>
                         <Col md={6}>
                           <p>
-                            <strong>Start Date:</strong>{" "}
-                            {new Date(startDate).toLocaleDateString()}
+                            <strong>Start Date:</strong> {new Date(startDate).toLocaleDateString()}
                           </p>
                         </Col>
                         <Col md={6}>
                           <p>
-                            <strong>End Date:</strong>{" "}
-                            {new Date(endDate).toLocaleDateString()}
+                            <strong>End Date:</strong> {new Date(endDate).toLocaleDateString()}
                           </p>
                         </Col>
                         <Col md={6}>
                           <p>
-                            <strong>Vans:</strong> {vans?.join(", ") || "N/A"}
+                            <strong>Vans:</strong> {vans?.join(', ') || 'N/A'}
                           </p>
                         </Col>
                         <Col md={6}>
                           <p>
-                            <strong>Clinic Services:</strong>{" "}
-                            {specialties
-                              ?.map((s) => s.departmentName)
-                              .join(", ")}
+                            <strong>Clinic Services:</strong> {specialties?.map((s) => s.departmentName).join(', ')}
                           </p>
                         </Col>
                       </Row>
@@ -479,11 +480,9 @@ const CampDetails = () => {
                         <Tooltip
                           zIndex={1000}
                           title={
-                            new Date(startDate) <
-                              new Date() - 7 * 24 * 60 * 60 * 1000 &&
-                            !userRoles.includes("admin")
-                              ? "Permission denied, You can only edit camps that are created today or within 7 days, To edit contact admin "
-                              : "Edit camp details"
+                            new Date(startDate) < new Date() - 7 * 24 * 60 * 60 * 1000 && !userRoles.includes('admin')
+                              ? 'Permission denied, You can only edit camps that are created today or within 7 days, To edit contact admin '
+                              : 'Edit camp details'
                           }
                           placement="top"
                           color="#0a58b8"
@@ -492,9 +491,7 @@ const CampDetails = () => {
                             type="primary"
                             className="bg-primary"
                             disabled={
-                              new Date(startDate) <
-                                new Date() - 7 * 24 * 60 * 60 * 1000 &&
-                              !userRoles.includes("admin")
+                              new Date(startDate) < new Date() - 7 * 24 * 60 * 60 * 1000 && !userRoles.includes('admin')
                             }
                             onClick={() => setIsEditing(true)}
                           >
@@ -516,9 +513,7 @@ const CampDetails = () => {
           <CampAnalytics
             patients={patients}
             analytics={campData?.analytics}
-            serviceTabs={campData?.specialties?.map(
-              (service) => service?.departmentName
-            )}
+            serviceTabs={campData?.specialties?.map((service) => service?.departmentName)}
           />
         </Col>
       </Row>
@@ -527,8 +522,20 @@ const CampDetails = () => {
       <Row className="mb-4">
         <Col>
           <Card className="shadow-sm">
-            <Card.Header>
-              <h5>Patients Attended</h5>
+            <Card.Header className="d-flex justify-content-between align-items-center">
+              <h5 className="mb-0">Patients Attended</h5>
+              <Button
+                className="bg-primary"
+                type="primary"
+                variant="primary"
+                loading={exportLoading}
+                disabled={!patients || patients.length === 0}
+                onClick={exportPatientsToExcel}
+                style={{ width: 'auto' }}
+              >
+                <RiFileExcel2Line className="me-2" />
+                Export to Excel
+              </Button>
             </Card.Header>
             <Card.Body>
               <AntdTable
@@ -550,12 +557,7 @@ const CampDetails = () => {
               <h5>Staff</h5>
             </Card.Header>
             <Card.Body>
-              <AntdTable
-                columns={newStaffColumns}
-                data={users}
-                pageSizeOptions={[50, 100, 150, 200]}
-                defaultPageSize={50}
-              />
+              <AntdTable columns={newStaffColumns} data={users} pageSizeOptions={[50, 100, 150, 200]} defaultPageSize={50} />
             </Card.Body>
           </Card>
         </Col>
@@ -567,7 +569,7 @@ const CampDetails = () => {
 export default CampDetails;
 
 const CampAnalytics = ({ patients, analytics, serviceTabs = [] }) => {
-  console.log("analytics in camp page --> ", analytics);
+  console.log('analytics in camp page --> ', analytics);
   const serviceCounts = patients.reduce((acc, patient) => {
     const service = patient.serviceTaken;
     if (service) {
@@ -588,15 +590,15 @@ const CampAnalytics = ({ patients, analytics, serviceTabs = [] }) => {
   }));
 
   const colors = [
-    "#FF5733",
-    "#33FF57",
-    "#3357FF",
-    "#FF33A1",
-    "#33FFF6",
-    "#F633FF",
-    "#FF9633",
-    "#F6FF33",
-    "#33F6FF",
+    '#FF5733',
+    '#33FF57',
+    '#3357FF',
+    '#FF33A1',
+    '#33FFF6',
+    '#F633FF',
+    '#FF9633',
+    '#F6FF33',
+    '#33F6FF',
     // You can add more colors as needed.
   ];
 
@@ -605,9 +607,7 @@ const CampAnalytics = ({ patients, analytics, serviceTabs = [] }) => {
       labels: doctorWiseEarnings.map((data) => data.doctor),
       datasets: [
         {
-          data: doctorWiseEarnings.map(
-            (data) => data.onlineEarnings + data.offlineEarnings
-          ),
+          data: doctorWiseEarnings.map((data) => data.onlineEarnings + data.offlineEarnings),
           backgroundColor: colors.slice(0, doctorWiseEarnings.length),
         },
       ],
@@ -628,8 +628,7 @@ const CampAnalytics = ({ patients, analytics, serviceTabs = [] }) => {
                 <strong> {analytics?.totalPatients}</strong>
               </p> */}
               <p className="text-decoration-underline card-title">
-                Total Patients Registered:{" "}
-                <strong> {analytics?.totalAttended}</strong>
+                Total Patients Registered: <strong> {analytics?.totalAttended}</strong>
               </p>
               {/* <p className="text-decoration-underline">
                 Camp missed Patients: <strong> {analytics?.missed}</strong>
@@ -650,15 +649,11 @@ const CampAnalytics = ({ patients, analytics, serviceTabs = [] }) => {
               label: `${_}`,
               key: id,
               children:
-                _ === "Dentistry" ? (
-                  <DentistryAnalytics
-                    dentistryAnalytics={analytics?.dentistryAnalytics}
-                  />
-                ) : _ === "Mammography" ? (
-                  <MammographyAnalytics
-                    mammoAnalytics={analytics?.mammoAnalytics}
-                  />
-                ) : _ === "GP" ? (
+                _ === 'Dentistry' ? (
+                  <DentistryAnalytics dentistryAnalytics={analytics?.dentistryAnalytics} />
+                ) : _ === 'Mammography' ? (
+                  <MammographyAnalytics mammoAnalytics={analytics?.mammoAnalytics} />
+                ) : _ === 'GP' ? (
                   <GPAnalytics gpAnalytics={analytics?.gpAnalytics} />
                 ) : (
                   `Comming Soon ...`

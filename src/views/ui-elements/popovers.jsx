@@ -1,6 +1,6 @@
-import React, { Fragment } from "react";
-import { Col, Row, Button, OverlayTrigger, Popover } from "react-bootstrap";
-import Card from "../../components/Card";
+import React, { Fragment } from 'react';
+import { Col, Row, Button, OverlayTrigger, Popover } from 'react-bootstrap';
+import Card from '../../components/Card';
 
 const Popovers = () => {
   return (
@@ -14,20 +14,14 @@ const Popovers = () => {
               </div>
             </Card.Header>
             <Card.Body>
-              <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry.
-              </p>
+              <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
               <OverlayTrigger
                 trigger="click"
                 placement="right"
                 overlay={
                   <Popover id="popover-basic">
                     <Popover.Header as="h3">Popover title</Popover.Header>
-                    <Popover.Body>
-                      And here&apos;s some amazing content. It&apos;s very engaging.
-                      Right?
-                    </Popover.Body>
+                    <Popover.Body>And here&apos;s some amazing content. It&apos;s very engaging. Right?</Popover.Body>
                   </Popover>
                 }
               >
@@ -45,9 +39,8 @@ const Popovers = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Use the <code>focus</code> trigger to dismiss popovers on the
-                user’s next click of a different element than the toggle
-                element.
+                Use the <code>focus</code> trigger to dismiss popovers on the user’s next click of a different element than
+                the toggle element.
               </p>
               <OverlayTrigger
                 trigger="click"
@@ -55,10 +48,7 @@ const Popovers = () => {
                 overlay={
                   <Popover id="popover-basic">
                     <Popover.Header as="h3">Dismissible popover</Popover.Header>
-                    <Popover.Body>
-                      And here&apos;s some amazing content. It&apos;s very engaging.
-                      Right?
-                    </Popover.Body>
+                    <Popover.Body>And here&apos;s some amazing content. It&apos;s very engaging. Right?</Popover.Body>
                   </Popover>
                 }
               >
@@ -74,19 +64,14 @@ const Popovers = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                Elements with the <code>disabled</code> attribute aren’t
-                interactive, meaning users cannot hover or click them to trigger
-                a popover (or tooltip). As a workaround, you’ll want to trigger
-                the popover from a wrapper <code>&lt;div&gt;</code> or{" "}
-                <code>&lt;span&gt;</code> and override the{" "}
-                <code>pointer-events</code> on the disabled element.
+                Elements with the <code>disabled</code> attribute aren’t interactive, meaning users cannot hover or click
+                them to trigger a popover (or tooltip). As a workaround, you’ll want to trigger the popover from a wrapper{' '}
+                <code>&lt;div&gt;</code> or <code>&lt;span&gt;</code> and override the <code>pointer-events</code> on the
+                disabled element.
               </p>
-              <span
-                className="d-inline-block" 
-              >
-
+              <span className="d-inline-block">
                 <span className="d-inline-block">
-                  <Button disabled style={{ pointerEvents: "none" }}>
+                  <Button disabled style={{ pointerEvents: 'none' }}>
                     Disabled button
                   </Button>
                 </span>
@@ -101,31 +86,20 @@ const Popovers = () => {
             </Card.Header>
             <Card.Body>
               <p>
-                For disabled popover triggers, you may also prefer{" "}
-                <code>data-bs-trigger=&quot;hover&quot;</code> so that the popover appears
-                as immediate visual feedback to your users as they may not
-                expect to <em>click</em> on a disabled element.
+                For disabled popover triggers, you may also prefer <code>data-bs-trigger=&quot;hover&quot;</code> so that the
+                popover appears as immediate visual feedback to your users as they may not expect to <em>click</em> on a
+                disabled element.
               </p>
               <OverlayTrigger
                 placement="right"
                 overlay={
                   <Popover id="popover-basic">
-                    <Popover.Body>
-                      Disabled popover
-                    </Popover.Body>
+                    <Popover.Body>Disabled popover</Popover.Body>
                   </Popover>
                 }
               >
-                <span
-                  className="d-inline-block"
-                  data-bs-toggle="popover"
-                  data-bs-content="Disabled popover"
-                >
-                  <Button
-                    className="btn-primary"
-                    style={{ pointerEvents: "none" }}
-                    disabled
-                  >
+                <span className="d-inline-block" data-bs-toggle="popover" data-bs-content="Disabled popover">
+                  <Button className="btn-primary" style={{ pointerEvents: 'none' }} disabled>
                     Disabled button
                   </Button>
                 </span>
@@ -141,62 +115,51 @@ const Popovers = () => {
               </div>
             </Card.Header>
             <Card.Body>
-              <p>
-                Four options are available: top, right, bottom, and left
-                aligned.
-              </p>
+              <p>Four options are available: top, right, bottom, and left aligned.</p>
               <OverlayTrigger
                 trigger="click"
                 placement="top"
                 overlay={
                   <Popover id="popover-basic">
-                    <Popover.Body>
-                      Vivamus sagittis lacus vel augue laoreet rutrum faucibus.
-                    </Popover.Body>
+                    <Popover.Body>Vivamus sagittis lacus vel augue laoreet rutrum faucibus.</Popover.Body>
                   </Popover>
                 }
               >
                 <Button variant="secondary-subtle mb-3">Popover on top</Button>
-              </OverlayTrigger>{" "}
+              </OverlayTrigger>{' '}
               <OverlayTrigger
                 trigger="click"
                 placement="right"
                 overlay={
                   <Popover id="popover-basic">
-                    <Popover.Body>
-                      Vivamus sagittis lacus vel augue laoreet rutrum faucibus.
-                    </Popover.Body>
+                    <Popover.Body>Vivamus sagittis lacus vel augue laoreet rutrum faucibus.</Popover.Body>
                   </Popover>
                 }
               >
                 <Button variant="secondary-subtle mb-3">Popover on right</Button>
-              </OverlayTrigger>{" "}
+              </OverlayTrigger>{' '}
               <OverlayTrigger
                 trigger="click"
                 placement="bottom"
                 overlay={
                   <Popover id="popover-basic">
-                    <Popover.Body>
-                      Vivamus sagittis lacus vel augue laoreet rutrum faucibus.
-                    </Popover.Body>
+                    <Popover.Body>Vivamus sagittis lacus vel augue laoreet rutrum faucibus.</Popover.Body>
                   </Popover>
                 }
               >
                 <Button variant="secondary-subtle mb-3">Popover on bottom</Button>
-              </OverlayTrigger>{" "}
+              </OverlayTrigger>{' '}
               <OverlayTrigger
                 trigger="click"
                 placement="left"
                 overlay={
                   <Popover id="popover-basic">
-                    <Popover.Body>
-                      Vivamus sagittis lacus vel augue laoreet rutrum faucibus.
-                    </Popover.Body>
+                    <Popover.Body>Vivamus sagittis lacus vel augue laoreet rutrum faucibus.</Popover.Body>
                   </Popover>
                 }
               >
                 <Button variant="secondary-subtle mb-3">Popover on left</Button>
-              </OverlayTrigger>{" "}
+              </OverlayTrigger>{' '}
             </Card.Body>
           </Card>
           <Card>
@@ -206,62 +169,51 @@ const Popovers = () => {
               </div>
             </Card.Header>
             <Card.Body>
-              <p>
-                Four options are available: top, right, bottom, and left
-                aligned.
-              </p>
+              <p>Four options are available: top, right, bottom, and left aligned.</p>
               <OverlayTrigger
                 trigger="click"
                 placement="top"
                 overlay={
                   <Popover id="popover-basic">
-                    <Popover.Body>
-                      Vivamus sagittis lacus vel augue laoreet rutrum faucibus.
-                    </Popover.Body>
+                    <Popover.Body>Vivamus sagittis lacus vel augue laoreet rutrum faucibus.</Popover.Body>
                   </Popover>
                 }
               >
                 <Button variant="primary-subtle mb-3">Popover on top</Button>
-              </OverlayTrigger>{" "}
+              </OverlayTrigger>{' '}
               <OverlayTrigger
                 trigger="click"
                 placement="right"
                 overlay={
                   <Popover id="popover-basic">
-                    <Popover.Body>
-                      Vivamus sagittis lacus vel augue laoreet rutrum faucibus.
-                    </Popover.Body>
+                    <Popover.Body>Vivamus sagittis lacus vel augue laoreet rutrum faucibus.</Popover.Body>
                   </Popover>
                 }
               >
                 <Button variant="success-subtle mb-3">Popover on right</Button>
-              </OverlayTrigger>{" "}
+              </OverlayTrigger>{' '}
               <OverlayTrigger
                 trigger="click"
                 placement="bottom"
                 overlay={
                   <Popover id="popover-basic">
-                    <Popover.Body>
-                      Vivamus sagittis lacus vel augue laoreet rutrum faucibus.
-                    </Popover.Body>
+                    <Popover.Body>Vivamus sagittis lacus vel augue laoreet rutrum faucibus.</Popover.Body>
                   </Popover>
                 }
               >
                 <Button variant="danger-subtle mb-3">Popover on bottom</Button>
-              </OverlayTrigger>{" "}
+              </OverlayTrigger>{' '}
               <OverlayTrigger
                 trigger="click"
                 placement="left"
                 overlay={
                   <Popover id="popover-basic">
-                    <Popover.Body>
-                      Vivamus sagittis lacus vel augue laoreet rutrum faucibus.
-                    </Popover.Body>
+                    <Popover.Body>Vivamus sagittis lacus vel augue laoreet rutrum faucibus.</Popover.Body>
                   </Popover>
                 }
               >
                 <Button variant="info-subtle mb-3">Popover on left</Button>
-              </OverlayTrigger>{" "}
+              </OverlayTrigger>{' '}
             </Card.Body>
           </Card>
           <Card>
@@ -271,62 +223,51 @@ const Popovers = () => {
               </div>
             </Card.Header>
             <Card.Body>
-              <p>
-                Four options are available: top, right, bottom, and left
-                aligned.
-              </p>
+              <p>Four options are available: top, right, bottom, and left aligned.</p>
               <OverlayTrigger
                 trigger="click"
                 placement="top"
                 overlay={
                   <Popover id="popover-basic">
-                    <Popover.Body>
-                      Vivamus sagittis lacus vel augue laoreet rutrum faucibus.
-                    </Popover.Body>
+                    <Popover.Body>Vivamus sagittis lacus vel augue laoreet rutrum faucibus.</Popover.Body>
                   </Popover>
                 }
               >
                 <Button variant="primary-subtle mb-3">Popover on top</Button>
-              </OverlayTrigger>{" "}
+              </OverlayTrigger>{' '}
               <OverlayTrigger
                 trigger="click"
                 placement="right"
                 overlay={
                   <Popover id="popover-basic">
-                    <Popover.Body>
-                      Vivamus sagittis lacus vel augue laoreet rutrum faucibus.
-                    </Popover.Body>
+                    <Popover.Body>Vivamus sagittis lacus vel augue laoreet rutrum faucibus.</Popover.Body>
                   </Popover>
                 }
               >
                 <Button variant="success-subtle mb-3">Popover on right</Button>
-              </OverlayTrigger>{" "}
+              </OverlayTrigger>{' '}
               <OverlayTrigger
                 trigger="click"
                 placement="bottom"
                 overlay={
                   <Popover id="popover-basic">
-                    <Popover.Body>
-                      Vivamus sagittis lacus vel augue laoreet rutrum faucibus.
-                    </Popover.Body>
+                    <Popover.Body>Vivamus sagittis lacus vel augue laoreet rutrum faucibus.</Popover.Body>
                   </Popover>
                 }
               >
                 <Button variant="danger-subtle mb-3">Popover on bottom</Button>
-              </OverlayTrigger>{" "}
+              </OverlayTrigger>{' '}
               <OverlayTrigger
                 trigger="click"
                 placement="left"
                 overlay={
                   <Popover id="popover-basic">
-                    <Popover.Body>
-                      Vivamus sagittis lacus vel augue laoreet rutrum faucibus.
-                    </Popover.Body>
+                    <Popover.Body>Vivamus sagittis lacus vel augue laoreet rutrum faucibus.</Popover.Body>
                   </Popover>
                 }
               >
                 <Button variant="info-subtle mb-3">Popover on left</Button>
-              </OverlayTrigger>{" "}
+              </OverlayTrigger>{' '}
             </Card.Body>
           </Card>
         </Col>
@@ -335,4 +276,4 @@ const Popovers = () => {
   );
 };
 
-export default Popovers
+export default Popovers;

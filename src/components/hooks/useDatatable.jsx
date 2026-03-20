@@ -102,7 +102,7 @@
 //       };
 //       if (isMultilang) {
 //         setMultiLang();
-//       } 
+//       }
 //       let datatable = $(tableRef.current).DataTable(datatableObj);
 
 //       if (typeof actionCallback === "function") {
@@ -160,11 +160,10 @@
 
 // export default useDataTable;
 
-
-import { useEffect } from "react";
-import $ from "jquery";
-import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
-import "datatables.net-bs5";
+import { useEffect } from 'react';
+import $ from 'jquery';
+import 'datatables.net-bs5/css/dataTables.bootstrap5.min.css';
+import 'datatables.net-bs5';
 
 const useDataTable = ({
   tableRef,
@@ -173,7 +172,7 @@ const useDataTable = ({
   url = null,
   actionCallback,
   isColumnHidden = false,
-  isColumnHiddenClass = ".toggle-vis",
+  isColumnHiddenClass = '.toggle-vis',
   isFilterColumn = false,
   isFooter = false,
   isMultilang = false,
@@ -187,14 +186,14 @@ const useDataTable = ({
         destroy: true,
         createdRow: function (row, data) {
           // Highlight the "status" column based on its value
-          const statusIndex = columns.findIndex((col) => col.data === "status");
+          const statusIndex = columns.findIndex((col) => col.data === 'status');
           if (statusIndex >= 0) {
             const statusCell = row.children[statusIndex];
             const status = data.status.toLowerCase();
-            statusCell.classList.add("status-cell");
-            if (status === "active") statusCell.classList.add("table-success");
-            if (status === "pending") statusCell.classList.add("table-info");
-            if (status === "inactive") statusCell.classList.add("table-danger");
+            statusCell.classList.add('status-cell');
+            if (status === 'active') statusCell.classList.add('table-success');
+            if (status === 'pending') statusCell.classList.add('table-info');
+            if (status === 'inactive') statusCell.classList.add('table-danger');
           }
         },
       };
@@ -219,14 +218,14 @@ const useDataTable = ({
         datatableObj = {
           ...datatableObj,
           initComplete: function () {
-            const footerRow = document.createElement("tr");
+            const footerRow = document.createElement('tr');
             columns.forEach((column) => {
-              const footerCell = document.createElement("th");
+              const footerCell = document.createElement('th');
               footerCell.append(column.title);
               footerRow.append(footerCell);
             });
 
-            $(tableRef.current).append($("<tfoot>").append(footerRow));
+            $(tableRef.current).append($('<tfoot>').append(footerRow));
           },
         };
       }
@@ -235,48 +234,42 @@ const useDataTable = ({
         datatableObj = {
           ...datatableObj,
           initComplete: function () {
-            const footerRow = document.createElement("tr");
+            const footerRow = document.createElement('tr');
             const table = $(tableRef.current).DataTable();
             columns.forEach((column) => {
-              const footerCell = document.createElement("td");
-              const input = document.createElement("input");
-              input.type = "text";
-              input.className = "form-control form-control-sm";
+              const footerCell = document.createElement('td');
+              const input = document.createElement('input');
+              input.type = 'text';
+              input.className = 'form-control form-control-sm';
               input.placeholder = column.title;
-              input.addEventListener("keyup", (event) => {
-                const columnIndex = columns.findIndex(
-                  (c) => c.title === column.title
-                );
+              input.addEventListener('keyup', (event) => {
+                const columnIndex = columns.findIndex((c) => c.title === column.title);
                 table.columns(columnIndex).search(event.target.value).draw();
               });
               footerCell.append(input);
               footerRow.append(footerCell);
             });
 
-            $(tableRef.current).append($("<tfoot>").append(footerRow));
+            $(tableRef.current).append($('<tfoot>').append(footerRow));
           },
         };
       }
 
       let datatable = $(tableRef.current).DataTable(datatableObj);
 
-      if (typeof actionCallback === "function") {
-        $(datatable.table().body()).on(
-          "click",
-          '[data-table="action"]',
-          function () {
-            actionCallback({
-              id: $(this).data("id"),
-              method: $(this).data("method"),
-            });
-          }
-        );
+      if (typeof actionCallback === 'function') {
+        $(datatable.table().body()).on('click', '[data-table="action"]', function () {
+          actionCallback({
+            id: $(this).data('id'),
+            method: $(this).data('method'),
+          });
+        });
       }
 
       if (isColumnHidden) {
-        $(isColumnHiddenClass).on("click", function (e) {
+        $(isColumnHiddenClass).on('click', function (e) {
           e.preventDefault();
-          const column = datatable.column($(this).attr("data-column"));
+          const column = datatable.column($(this).attr('data-column'));
           column.visible(!column.visible());
         });
       }
@@ -303,4 +296,3 @@ const useDataTable = ({
 };
 
 export default useDataTable;
-

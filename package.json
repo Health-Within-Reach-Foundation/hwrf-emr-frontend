@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "lint:fix": "eslint . --fix",
+    "prettier": "prettier --check src/**/*.{js,jsx}",
+    "prettier:fix": "prettier --write src/**/*.{js,jsx}",
+    "preview": "vite preview",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@amcharts/amcharts4": "^4.10.39",
@@ -87,6 +91,9 @@
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.0.0",
+    "prettier": "^3.0.0",
     "vite": "^5.4.1"
   }
 }

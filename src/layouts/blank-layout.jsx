@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react';
 
 // react-router
-import { Outlet } from "react-router-dom";
-import SettingOffCanvas from "../components/setting/SettingOffCanvas";
-import { Loading } from "../components/loading";
+import { Outlet } from 'react-router-dom';
+import SettingOffCanvas from '../components/setting/SettingOffCanvas';
+import { Loading } from '../components/loading';
 
 const BlankLayout = () => {
   return (

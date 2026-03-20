@@ -1,6 +1,6 @@
-import React from "react";
-import { Popconfirm, Button } from "antd";
-import { DeleteOutlined, UndoOutlined } from "@ant-design/icons";
+import React from 'react';
+import { Popconfirm, Button } from 'antd';
+import { DeleteOutlined, UndoOutlined } from '@ant-design/icons';
 
 export default function DeletePopover({
   title,
@@ -9,21 +9,17 @@ export default function DeletePopover({
   children,
   isDeleteAction = true,
   disabled = false,
-  size = "middle",
+  size = 'middle',
 }) {
   return (
     <Popconfirm
       placement="bottom"
       title={
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           {isDeleteAction ? (
-            <DeleteOutlined
-              style={{ fontSize: "1.25rem", marginRight: "0.5rem" }}
-            />
+            <DeleteOutlined style={{ fontSize: '1.25rem', marginRight: '0.5rem' }} />
           ) : (
-            <UndoOutlined
-              style={{ fontSize: "1.25rem", marginRight: "0.5rem" }}
-            />
+            <UndoOutlined style={{ fontSize: '1.25rem', marginRight: '0.5rem' }} />
           )}
           <span>{title}</span>
         </div>
@@ -42,7 +38,7 @@ export default function DeletePopover({
         type="default"
         variant="outlined"
         danger
-        style={{ cursor: disabled ? "not-allowed" : "pointer" }}
+        style={{ cursor: disabled ? 'not-allowed' : 'pointer' }}
         icon={isDeleteAction ? <DeleteOutlined /> : <UndoOutlined />}
       >
         {children}

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import DynamicFields from "./editableForm";
-import adminServices from "../../api/admin-services";
-import { Loading } from "../../components/loading";
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import DynamicFields from './editableForm';
+import adminServices from '../../api/admin-services';
+import { Loading } from '../../components/loading';
 
 const FormTemplateById = () => {
   const { formTemplateId } = useParams(); // Extract formId from route params
@@ -11,9 +11,9 @@ const FormTemplateById = () => {
     setLoading(true);
     try {
       const response = await adminServices.getFormTemplateById(formTemplateId);
-      console.groupCollapsed("form templated fetched",response.data);
+      console.groupCollapsed('form templated fetched', response.data);
     } catch (error) {
-      console.error("Error while fetching form template --> ", error);
+      console.error('Error while fetching form template --> ', error);
     } finally {
       setLoading(false);
     }
@@ -28,7 +28,7 @@ const FormTemplateById = () => {
   }
 
   return (
-    <div style={{ padding: "2rem" }}>
+    <div style={{ padding: '2rem' }}>
       <DynamicFields />
     </div>
   );

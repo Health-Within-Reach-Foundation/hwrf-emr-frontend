@@ -1,8 +1,8 @@
-import React, { Fragment } from "react";
-import { Row, Col } from "react-bootstrap";
+import React, { Fragment } from 'react';
+import { Row, Col } from 'react-bootstrap';
 // component
-import Card from '../../components/Card'
-import { Link } from "react-router-dom";
+import Card from '../../components/Card';
+import { Link } from 'react-router-dom';
 
 const Colors = () => {
   return (
@@ -16,12 +16,15 @@ const Colors = () => {
               </div>
             </div>
             <Card.Body>
-              <p>Similar to the contextual text color classes, easily set
-                the background of an element to any contextual class.
-                Anchor components will darken on hover, just like the text classes.
-                Background utilities <strong>do not set <code>color</code></strong>,
-                so in some cases you’ll want to use
-                <code> .text-*</code> utilities.</p>
+              <p>
+                Similar to the contextual text color classes, easily set the background of an element to any contextual
+                class. Anchor components will darken on hover, just like the text classes. Background utilities{' '}
+                <strong>
+                  do not set <code>color</code>
+                </strong>
+                , so in some cases you’ll want to use
+                <code> .text-*</code> utilities.
+              </p>
               <Row className="mt-4">
                 <div className="col-lg-2 col-md-6 text-center ">
                   <p className="bg-primary-linear pt-5 pb-5 text-center rounded"></p>
@@ -66,46 +69,31 @@ const Colors = () => {
             </div>
             <Card.Body>
               <p>
-                Similar to the contextual text color classes, easily set the
-                background of an element to any contextual class. Anchor
-                components will darken on hover, just like the text classes.
-                Background utilities{" "}
+                Similar to the contextual text color classes, easily set the background of an element to any contextual
+                class. Anchor components will darken on hover, just like the text classes. Background utilities{' '}
                 <strong>
                   do not set <code>color</code>
                 </strong>
-                , so in some cases you’ll want to use <code>.text-*</code>{" "}
-                utilities.
+                , so in some cases you’ll want to use <code>.text-*</code> utilities.
               </p>
               <Row className="mt-4">
                 <div className="col-lg-2 col-md-6 text-center">
-                  <p className="bg-primary-subtle pt-5 pb-5 text-center rounded font-size-18">
-                    Primary
-                  </p>
+                  <p className="bg-primary-subtle pt-5 pb-5 text-center rounded font-size-18">Primary</p>
                 </div>
                 <div className="col-lg-2 col-md-6 text-center">
-                  <p className="bg-secondary-subtle pt-5 pb-5 text-center rounded font-size-18">
-                    Secondary
-                  </p>
+                  <p className="bg-secondary-subtle pt-5 pb-5 text-center rounded font-size-18">Secondary</p>
                 </div>
                 <div className="col-lg-2 col-md-6 text-center">
-                  <p className="bg-success-subtle pt-5 pb-5 text-center rounded font-size-18">
-                    Success
-                  </p>
+                  <p className="bg-success-subtle pt-5 pb-5 text-center rounded font-size-18">Success</p>
                 </div>
                 <div className="col-lg-2 col-md-6 text-center">
-                  <p className="bg-danger-subtle pt-5 pb-5 text-center rounded font-size-18">
-                    Danger
-                  </p>
+                  <p className="bg-danger-subtle pt-5 pb-5 text-center rounded font-size-18">Danger</p>
                 </div>
                 <div className="col-lg-2 col-md-6 text-center">
-                  <p className="bg-warning-subtle pt-5 pb-5 text-center rounded font-size-18">
-                    Warning
-                  </p>
+                  <p className="bg-warning-subtle pt-5 pb-5 text-center rounded font-size-18">Warning</p>
                 </div>
                 <div className="col-lg-2 col-md-6 text-center">
-                  <p className="bg-info-subtle pt-5 pb-5 text-center rounded font-size-18">
-                    Info
-                  </p>
+                  <p className="bg-info-subtle pt-5 pb-5 text-center rounded font-size-18">Info</p>
                 </div>
                 <div className="col-lg-2 col-md-6 text-center">
                   <p className="bg-dark-subtle  pt-5 pb-5 text-center rounded font-size-18">Dark</p>
@@ -123,11 +111,9 @@ const Colors = () => {
             </div>
             <Card.Body>
               <p>
-                Contextual text classes also work well on anchors with the
-                provided hover and focus states.{" "}
+                Contextual text classes also work well on anchors with the provided hover and focus states.{' '}
                 <strong>
-                  Note that the <code>.text-white</code> and{" "}
-                  <code>.text-muted</code> class has no additional link styling
+                  Note that the <code>.text-white</code> and <code>.text-muted</code> class has no additional link styling
                   beyond underline.
                 </strong>
               </p>
@@ -155,11 +141,9 @@ const Colors = () => {
             </div>
             <Card.Body>
               <p>
-                Contextual text classes also work well on anchors with the
-                provided hover and focus states.{" "}
+                Contextual text classes also work well on anchors with the provided hover and focus states.{' '}
                 <strong>
-                  Note that the <code>.text-white</code> and{" "}
-                  <code>.text-muted</code> class has no additional link styling
+                  Note that the <code>.text-white</code> and <code>.text-muted</code> class has no additional link styling
                   beyond underline.
                 </strong>
               </p>
@@ -225,35 +209,19 @@ const Colors = () => {
             </div>
             <Card.Body>
               <p>
-                Contextual text classes also work well on anchors with the
-                provided hover and focus states.{" "}
+                Contextual text classes also work well on anchors with the provided hover and focus states.{' '}
                 <strong>
-                  Note that the <code>.text-white</code> and{" "}
-                  <code>.text-muted</code> class has no additional link styling
+                  Note that the <code>.text-white</code> and <code>.text-muted</code> class has no additional link styling
                   beyond underline.
                 </strong>
               </p>
-              <p className="bg-primary-subtle ps-3 pe-3 pt-2 pb-2 ">
-                Primary link
-              </p>
-              <p className="bg-secondary-subtle ps-3 pe-3 pt-2 pb-2 ">
-                Secondary link
-              </p>
-              <p className="bg-success-subtle ps-3 pe-3 pt-2 pb-2 ">
-                Success link
-              </p>
-              <p className="bg-danger-subtle ps-3 pe-3 pt-2 pb-2 ">
-                Danger link
-              </p>
-              <p className="bg-warning-subtle ps-3 pe-3 pt-2 pb-2 ">
-                Warning link
-              </p>
-              <p className="bg-info-subtle ps-3 pe-3 pt-2 pb-2">
-                bg-Info link
-              </p>
-              <p className="bg-dark-subtle ps-3 pe-3 pt-2 pb-2 mb-0">
-                Dark link
-              </p>
+              <p className="bg-primary-subtle ps-3 pe-3 pt-2 pb-2 ">Primary link</p>
+              <p className="bg-secondary-subtle ps-3 pe-3 pt-2 pb-2 ">Secondary link</p>
+              <p className="bg-success-subtle ps-3 pe-3 pt-2 pb-2 ">Success link</p>
+              <p className="bg-danger-subtle ps-3 pe-3 pt-2 pb-2 ">Danger link</p>
+              <p className="bg-warning-subtle ps-3 pe-3 pt-2 pb-2 ">Warning link</p>
+              <p className="bg-info-subtle ps-3 pe-3 pt-2 pb-2">bg-Info link</p>
+              <p className="bg-dark-subtle ps-3 pe-3 pt-2 pb-2 mb-0">Dark link</p>
             </Card.Body>
           </Card>
         </Col>
@@ -266,67 +234,44 @@ const Colors = () => {
             </div>
             <Card.Body>
               <p>
-                Contextual text classes also work well on anchors with the
-                provided hover and focus states.{" "}
+                Contextual text classes also work well on anchors with the provided hover and focus states.{' '}
                 <strong>
-                  Note that the <code>.text-white</code> and{" "}
-                  <code>.text-muted</code> class has no additional link styling
+                  Note that the <code>.text-white</code> and <code>.text-muted</code> class has no additional link styling
                   beyond underline.
                 </strong>
               </p>
               <p>
-                <Link
-                  to="#"
-                  className="bg-primary-subtle ps-3 pe-3 pt-2 pb-2  d-inline-block"
-                >
+                <Link to="#" className="bg-primary-subtle ps-3 pe-3 pt-2 pb-2  d-inline-block">
                   Primary link
                 </Link>
               </p>
               <p>
-                <Link
-                  to="#"
-                  className="bg-secondary-subtle ps-3 pe-3 pt-2 pb-2  d-inline-block"
-                >
+                <Link to="#" className="bg-secondary-subtle ps-3 pe-3 pt-2 pb-2  d-inline-block">
                   Secondary link
                 </Link>
               </p>
               <p>
-                <Link
-                  to="#"
-                  className="bg-success-subtle ps-3 pe-3 pt-2 pb-2  d-inline-block"
-                >
+                <Link to="#" className="bg-success-subtle ps-3 pe-3 pt-2 pb-2  d-inline-block">
                   Success link
                 </Link>
               </p>
               <p>
-                <Link
-                  to="#"
-                  className="bg-danger-subtle ps-3 pe-3 pt-2 pb-2  d-inline-block"
-                >
+                <Link to="#" className="bg-danger-subtle ps-3 pe-3 pt-2 pb-2  d-inline-block">
                   Danger link
                 </Link>
               </p>
               <p>
-                <Link
-                  to="#"
-                  className="bg-warning-subtle ps-3 pe-3 pt-2 pb-2  d-inline-block"
-                >
+                <Link to="#" className="bg-warning-subtle ps-3 pe-3 pt-2 pb-2  d-inline-block">
                   Warning link
                 </Link>
               </p>
               <p>
-                <Link
-                  to="#"
-                  className="bg-info-subtle ps-3 pe-3 pt-2 pb-2  d-inline-block"
-                >
+                <Link to="#" className="bg-info-subtle ps-3 pe-3 pt-2 pb-2  d-inline-block">
                   bg-Info link
                 </Link>
               </p>
               <p className="mb-0">
-                <Link
-                  to="#"
-                  className="bg-dark-subtle ps-3 pe-3 pt-2 pb-2  d-inline-block"
-                >
+                <Link to="#" className="bg-dark-subtle ps-3 pe-3 pt-2 pb-2  d-inline-block">
                   Dark link
                 </Link>
               </p>

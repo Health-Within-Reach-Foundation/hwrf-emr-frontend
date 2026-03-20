@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
-import ReactDOM from "react-dom/client"; // Use createRoot from React 18
-import $ from "jquery";
-import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
-import "datatables.net-bs5";
+import 'datatables.net-bs5';
+import 'datatables.net-bs5/css/dataTables.bootstrap5.min.css';
+import $ from 'jquery';
+import React, { useEffect } from 'react';
+import ReactDOM from 'react-dom/client'; // Use createRoot from React 18
 
-const newUseDataTable = ({
+const useNewDataTable = ({
   tableRef,
   columns,
   data = [],
@@ -37,12 +37,7 @@ const newUseDataTable = ({
               const renderFunction = column.render;
 
               if (renderFunction) {
-                const renderedContent = renderFunction(
-                  cellData,
-                  rowData,
-                  rowIndex,
-                  colIndex
-                );
+                const renderedContent = renderFunction(cellData, rowData, rowIndex, colIndex);
                 if (React.isValidElement(renderedContent)) {
                   const root = ReactDOM.createRoot(cell);
                   root.render(renderedContent);
@@ -75,7 +70,7 @@ const newUseDataTable = ({
 
       // Handle row click handler if provided
       if (rowOnClick) {
-        $(datatable.table().body()).on("click", "tr", function () {
+        $(datatable.table().body()).on('click', 'tr', function () {
           const rowData = datatable.row(this).data();
           rowOnClick(rowData); // Call the row click handler with row data
         });
@@ -84,11 +79,9 @@ const newUseDataTable = ({
       // Handle filters if provided
       if (filters.length > 0) {
         filters.forEach((filter) => {
-          const filterColumnIndex = columns.findIndex(
-            (col) => col.data === filter.key
-          );
+          const filterColumnIndex = columns.findIndex((col) => col.data === filter.key);
           if (filterColumnIndex !== -1) {
-            $(`#filter-${filter.key}`).on("change", function () {
+            $(`#filter-${filter.key}`).on('change', function () {
               datatable.column(filterColumnIndex).search(this.value).draw();
             });
           }
@@ -96,17 +89,13 @@ const newUseDataTable = ({
       }
 
       // Ensure action callback is handled if available
-      if (typeof actionCallback === "function") {
-        $(datatable.table().body()).on(
-          "click",
-          '[data-table="action"]',
-          function () {
-            actionCallback({
-              id: $(this).data("id"),
-              method: $(this).data("method"),
-            });
-          }
-        );
+      if (typeof actionCallback === 'function') {
+        $(datatable.table().body()).on('click', '[data-table="action"]', function () {
+          actionCallback({
+            id: $(this).data('id'),
+            method: $(this).data('method'),
+          });
+        });
       }
     }, 0);
 
@@ -116,18 +105,7 @@ const newUseDataTable = ({
       }
       $(tableRef.current).empty();
     };
-  }, [
-    tableRef,
-    columns,
-    data,
-    url,
-    actionCallback,
-    filters,
-    globalSearchEnabled,
-    rowOnClick,
-    pageLength,
-    lengthMenu,
-  ]);
+  }, [tableRef, columns, data, url, actionCallback, filters, globalSearchEnabled, rowOnClick, pageLength, lengthMenu]);
 };
 
-export default newUseDataTable;
+export default useNewDataTable;
