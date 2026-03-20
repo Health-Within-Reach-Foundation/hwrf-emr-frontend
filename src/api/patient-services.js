@@ -3,45 +3,32 @@ import apiClient from './axios-client';
 
 const addPatient = async (patientData) => {
   try {
-    // Make the POST request with patient data in the request body
     const response = await apiClient.post('/patients', patientData);
-
-    // Return the data from the response
     return response.data;
   } catch (error) {
-    // Handle potential errors
     if (error.response) {
-      // Handle specific error responses from the API
       console.error('Error response:', error.response.data);
       throw new Error(error.response.data.message || 'Failed to add patient');
     } else {
-      // Handle other types of errors
       console.error('Unexpected error:', error.message);
       throw new Error('An unexpected error occurred while adding patient');
     }
   }
 };
 
-const getPatients = async (limit = 50, offset = 0) => {
+// ✅ FIX: accepts filters object (name, address, service) so Apply Filter works
+const getPatients = async ({ clinicId, limit = 50, offset = 0, name = '', address = '', service = '' } = {}) => {
   try {
-    // Make the GET request with pagination parameters
-    const response = await apiClient.get('/patients', {
-      params: {
-        limit,
-        offset,
-      },
-    });
+    const params = { limit, offset, name, address, service };
+    if (clinicId) params.clinicId = clinicId;
 
-    // Return the data from the response
+    const response = await apiClient.get('/patients', { params });
     return response.data;
   } catch (error) {
-    // Handle potential errors
     if (error.response) {
-      // Handle specific error responses from the API
       console.error('Error response:', error.response.data);
       throw new Error(error.response.data.message || 'Failed to fetch patients');
     } else {
-      // Handle other types of errors
       console.error('Unexpected error:', error.message);
       throw new Error('An unexpected error occurred while fetching patients');
     }
@@ -50,86 +37,46 @@ const getPatients = async (limit = 50, offset = 0) => {
 
 const getRecentPatients = async (limit = 50, offset = 0) => {
   try {
-    // Make the GET request to fetch recent patients
     const response = await apiClient.get('/patients/recent');
-    // Return the data from the response
     return response.data;
   } catch (error) {
-    // Handle potential errors
     if (error.response) {
-      // Handle specific error responses from the API
       console.error('Error response:', error.response.data);
       throw new Error(error.response.data.message || 'Failed to fetch recent patients');
     } else {
-      // Handle other types of errors
       console.error('Unexpected error:', error.message);
       throw new Error('An unexpected error occurred while fetching recent patients');
     }
   }
 };
 
-/**
- * Fetch ALL patients for the clinic for export (no pagination)
- * Used for Excel/CSV export functionality
- *
- * @param {number} maxRecords - Maximum records to export (default 10000)
- * @returns {Promise<Object>} - { success, data: [all patients], meta: { total, exported } }
- * @throws {Error} - If fetch fails or exceeds max records
- */
-/**
- * Search patients by name with server-side pagination
- * Searches across all clinic patients, not just current page
- *
- * @param {string} searchTerm - Name to search for
- * @param {number} limit - Records per page (default 50)
- * @param {number} offset - Pagination offset (default 0)
- * @returns {Promise<Object>} - { success, data: [matching patients], meta: { total, ... } }
- * @throws {Error} - If search fails
- */
 const searchPatients = async (searchTerm = '', limit = 50, offset = 0) => {
   try {
-    // Make the GET request with search parameters
     const response = await apiClient.get('/patients/search', {
-      params: {
-        searchTerm,
-        limit,
-        offset,
-      },
+      params: { searchTerm, limit, offset },
     });
-
-    // Return the data from the response
     return response.data;
   } catch (error) {
-    // Handle potential errors
     if (error.response) {
-      // Handle specific error responses from the API
       console.error('Error response:', error.response.data);
       throw new Error(error.response.data.message || 'Failed to search patients');
     } else {
-      // Handle other types of errors
       console.error('Unexpected error:', error.message);
       throw new Error('An unexpected error occurred while searching patients');
     }
   }
 };
 
-const getPatientForExport = async (maxRecords = 10000) => {
+// ✅ FIX: accepts filters so only filtered patients are emailed
+const getPatientForExport = async ({ name = '', address = '', service = '' } = {}) => {
   try {
-    // Make the GET request to the export endpoint without pagination
     const response = await apiClient.get('/patients/export', {
-      params: {
-        maxRecords,
-      },
-      // Increase timeout for large exports
+      params: { name, address, service },
       timeout: 60000,
     });
-
-    // Return the complete data including metadata
     return response.data;
   } catch (error) {
-    // Handle potential errors
     if (error.response) {
-      // Handle specific error responses from the API
       console.error('Error response:', error.response.data);
       throw new Error(error.response.data.message || 'Failed to fetch patients for export');
     } else if (error.code === 'ECONNABORTED') {
@@ -147,13 +94,10 @@ const updatePatientDetails = async (patientId, patientData) => {
     const response = await apiClient.patch(`/patients/${patientId}`, patientData);
     return response.data;
   } catch (error) {
-    // Handle potential errors
     if (error.response) {
-      // Handle specific error responses from the API
       console.error('Error response:', error.response.data);
       throw new Error(error.response.data.message || 'Failed to update patient');
     } else {
-      // Handle other types of errors
       console.error('Unexpected error:', error.message);
       throw new Error('An unexpected error occurred while updating patient');
     }
@@ -162,19 +106,13 @@ const updatePatientDetails = async (patientId, patientData) => {
 
 const getPatientDetailsById = async (patientId, specialtyId) => {
   try {
-    // Make the GET request with patient ID as a path parameter
     const response = await apiClient.get(`/patients/${patientId}?specialtyId=${specialtyId}`);
-
-    // Return the data from the response
     return response.data;
   } catch (error) {
-    // Handle potential errors
     if (error.response) {
-      // Handle specific error responses from the API
       console.error('Error response:', error.response.data);
       throw new Error(error.response.data.message || 'Failed to fetch patient details');
     } else {
-      // Handle other types of errors
       console.error('Unexpected error:', error.message);
       throw new Error('An unexpected error occurred while fetching patient details');
     }
@@ -184,19 +122,14 @@ const getPatientDetailsById = async (patientId, specialtyId) => {
 const addPatientDiagnosis = async (patientDiagnosisData) => {
   try {
     const response = await apiClient.post(`patients/diagnosis`, patientDiagnosisData, {
-      headers: {
-        'Content-Type': 'multipart/form-data', // Set the Content-Type for FormData
-      },
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
-
     return response.data;
   } catch (error) {
     if (error.response) {
-      // Handle specific error responses from the API
       console.error('Error response:', error.response.data);
       throw new Error(error.response.data.message || 'Failed to add diagnosis');
     } else {
-      // Handle other types of errors
       console.error('Unexpected error:', error.message);
       throw new Error('An unexpected error occurred while adding patient diagnosis');
     }
@@ -206,121 +139,107 @@ const addPatientDiagnosis = async (patientDiagnosisData) => {
 const updatePatientDiagnosis = async (diagnosisId, patientDiagnosisData) => {
   try {
     const response = await apiClient.patch(`patients/diagnosis/${diagnosisId}`, patientDiagnosisData);
-
     return response.data;
   } catch (error) {
     if (error.response) {
-      // Handle specific error responses from the API
       console.error('Error response:', error.response.data);
       throw new Error(error.response.data.message || 'Failed to update diagnosis');
     } else {
-      // Handle other types of errors
       console.error('Unexpected error:', error.message);
       throw new Error('An unexpected error occurred while updating patient diagnosis');
     }
   }
 };
 
-const addTreatmentByDiagnosis = async (treatementBody) => {
+const addTreatmentByDiagnosis = async (treatmentData) => {
   try {
-    const response = await apiClient.post(`patients/treatment`, treatementBody);
-
+    const response = await apiClient.post(`patients/treatment`, treatmentData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return response.data;
   } catch (error) {
     if (error.response) {
-      // Handle specific error responses from the API
       console.error('Error response:', error.response.data);
-      throw new Error(error.response.data.message || 'Failed to add treatement');
+      throw new Error(error.response.data.message || 'Failed to add treatment');
     } else {
-      // Handle other types of errors
       console.error('Unexpected error:', error.message);
-      throw new Error('An unexpected error occurred while adding patient diagnosis treatement');
+      throw new Error('An unexpected error occurred while adding patient diagnosis treatment');
     }
   }
 };
 
-const updateTreatmentById = async (treatementId, treatementBody) => {
+// ✅ FIX: correct param names (was treatementId/treatementBody in remote — typo)
+const updateTreatmentById = async (treatmentId, treatmentData) => {
   try {
-    const response = await apiClient.patch(`patients/treatment/${treatementId}`, treatementBody);
-
+    const response = await apiClient.patch(`patients/treatment/${treatmentId}`, treatmentData);
     return response.data;
   } catch (error) {
     if (error.response) {
-      // Handle specific error responses from the API
       console.error('Error response:', error.response.data);
-      throw new Error(error.response.data.message || 'Failed to add treatement');
+      throw new Error(error.response.data.message || 'Failed to update treatment');
     } else {
-      // Handle other types of errors
       console.error('Unexpected error:', error.message);
-      throw new Error('An unexpected error occurred while adding patient diagnosis treatement');
+      throw new Error('An unexpected error occurred while updating treatment');
     }
   }
 };
+
 const createMammographyDetails = async (patientId, mammographyBody) => {
   try {
-    const response = await apiClient.post(`patients/mammography/${patientId}`, mammographyBody);
-
+    const response = await apiClient.post(`patients/mammography/${patientId}`, mammographyBody, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return response.data;
   } catch (error) {
     if (error.response) {
-      // Handle specific error responses from the API
       console.error('Error response:', error.response.data);
       throw new Error(error.response.data.message || 'Failed to add mammography details');
     } else {
-      // Handle other types of errors
       console.error('Unexpected error:', error.message);
       throw new Error('An unexpected error occurred while adding patient mammography details');
     }
   }
 };
+
 const getMammographyDetails = async (patientId) => {
   try {
     const response = await apiClient.get(`patients/mammography/${patientId}`);
-
     return response.data;
   } catch (error) {
     if (error.response) {
-      // Handle specific error responses from the API
       console.error('Error response:', error.response.data);
       throw new Error(error.response.data.message || 'Failed to generate mammography report');
     } else {
-      // Handle other types of errors
       console.error('Unexpected error:', error.message);
       throw new Error('An unexpected error occurred while generating patient mammography report');
     }
   }
 };
+
 const updateMammographyDetails = async (patientId, mammographyBody) => {
   try {
     const response = await apiClient.patch(`patients/mammography/${patientId}`, mammographyBody);
-
     return response.data;
   } catch (error) {
     if (error.response) {
-      // Handle specific error responses from the API
       console.error('Error response:', error.response.data);
       throw new Error(error.response.data.message || 'Failed to update mammography details');
     } else {
-      // Handle other types of errors
       console.error('Unexpected error:', error.message);
       throw new Error('An unexpected error occurred while updating patient mammography details');
     }
   }
 };
 
-// delete mammography details by id
 const deleteMammographyDetailsById = async (mammographyId) => {
   try {
     const response = await apiClient.delete(`patients/mammography/${mammographyId}`);
-
     return response.data;
   } catch (error) {
     if (error.response) {
-      // Handle specific error responses from the API
       console.error('Error response:', error.response.data);
       throw new Error(error.response.data.message || 'Failed to delete mammography details');
     } else {
-      // Handle other types of errors
       console.error('Unexpected error:', error.message);
       throw new Error('An unexpected error occurred while deleting patient mammography details');
     }
@@ -330,17 +249,14 @@ const deleteMammographyDetailsById = async (mammographyId) => {
 const deleteDiagnosisById = async (diagnosisId) => {
   try {
     const response = await apiClient.delete(`patients/diagnosis/${diagnosisId}`);
-
     return response.data;
   } catch (error) {
     if (error.response) {
-      // Handle specific error responses from the API
       console.error('Error response:', error.response.data);
       throw new Error(error.response.data.message || 'Failed to delete diagnosis');
     } else {
-      // Handle other types of errors
       console.error('Unexpected error:', error.message);
-      throw new Error('An unexpected error occurred while deleting patient diagnosis treatement');
+      throw new Error('An unexpected error occurred while deleting patient diagnosis treatment');
     }
   }
 };
@@ -360,10 +276,11 @@ const createGPRecord = async (gpRecordData) => {
   }
 };
 
+// ✅ FIX: use params (not query) so patientId is actually sent
 const getGPRecordsByPatient = async (patientId) => {
   try {
     const response = await apiClient.get(`patients/gp-records`, {
-      query: { patientId },
+      params: { patientId },
     });
     return response.data;
   } catch (error) {
