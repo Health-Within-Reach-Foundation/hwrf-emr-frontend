@@ -26,43 +26,44 @@ apiClient.interceptors.response.use(
 
     // If unauthorized (401) and not retried yet
     if (error.response?.status === 401 && !originalRequest._retry) {
-  // ✅ Don't intercept auth endpoints — let them fail normally to the caller
-  if (originalRequest.url.includes('auth/')) {
-    return Promise.reject(error);
-  }
+      // ✅ Only skip login and verify-otp — allow all other endpoints (including auth/me) to refresh
+      const skipUrls = ['auth/login', 'auth/verify-otp'];
+      if (skipUrls.some((url) => originalRequest.url.includes(url))) {
+        return Promise.reject(error);
+      }
 
-  originalRequest._retry = true; // Mark as retried
-  const refreshToken = localStorage.getItem('refreshToken');
-  const accessToken = localStorage.getItem('accessToken');
-  if (!refreshToken) {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    console.log('No refresh token found, redirecting to login');
-    if (originalRequest.url !== 'auth/login') {
-      window.location.href = '/auth/sign-in';
-    }
-    return Promise.reject(error);
-  }
+      originalRequest._retry = true; // Mark as retried
+      const refreshToken = localStorage.getItem('refreshToken');
+      const accessToken = localStorage.getItem('accessToken');
+      if (!refreshToken) {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        console.log('No refresh token found, redirecting to login');
+        if (originalRequest.url !== 'auth/login') {
+          window.location.href = '/auth/sign-in';
+        }
+        return Promise.reject(error);
+      }
 
-  try {
-    const { tokens } = await authServices.refreshAccessToken(refreshToken, accessToken);
-    if (tokens?.access?.token == null && tokens?.refresh?.token == null) {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-    } else {
-      localStorage.setItem('accessToken', tokens?.access?.token);
+      try {
+        const { tokens } = await authServices.refreshAccessToken(refreshToken, accessToken);
+        if (tokens?.access?.token == null && tokens?.refresh?.token == null) {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+        } else {
+          localStorage.setItem('accessToken', tokens?.access?.token);
+        }
+        originalRequest.headers.Authorization = `Bearer ${tokens.access.token}`;
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        console.error('Token refresh failed:', refreshError.message);
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        console.log('Redirecting to login from interceptor catch');
+        window.location.href = '/auth/sign-in';
+        return Promise.reject(refreshError);
+      }
     }
-    originalRequest.headers.Authorization = `Bearer ${tokens.access.token}`;
-    return apiClient(originalRequest);
-  } catch (refreshError) {
-    console.error('Token refresh failed:', refreshError.message);
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    console.log('Redirecting to login from interceptor catch');
-    window.location.href = '/auth/sign-in';
-    return Promise.reject(refreshError);
-  }
-}
 
     return Promise.reject(error);
   }
