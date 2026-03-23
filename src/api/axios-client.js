@@ -26,6 +26,12 @@ apiClient.interceptors.response.use(
 
     // If unauthorized (401) and not retried yet
     if (error.response?.status === 401 && !originalRequest._retry) {
+      // ✅ Only skip login and verify-otp — allow all other endpoints (including auth/me) to refresh
+      const skipUrls = ['auth/login', 'auth/verify-otp'];
+      if (skipUrls.some((url) => originalRequest.url.includes(url))) {
+        return Promise.reject(error);
+      }
+
       originalRequest._retry = true; // Mark as retried
       const refreshToken = localStorage.getItem('refreshToken');
       const accessToken = localStorage.getItem('accessToken');
@@ -34,7 +40,7 @@ apiClient.interceptors.response.use(
         localStorage.removeItem('refreshToken');
         console.log('No refresh token found, redirecting to login');
         if (originalRequest.url !== 'auth/login') {
-          window.location.href = '/auth/sign-in'; // Redirect to login if no refresh token
+          window.location.href = '/auth/sign-in';
         }
         return Promise.reject(error);
       }
@@ -46,19 +52,13 @@ apiClient.interceptors.response.use(
           localStorage.removeItem('refreshToken');
         } else {
           localStorage.setItem('accessToken', tokens?.access?.token);
-          // localStorage.setItem("refreshToken", tokens.refresh.token);
         }
-        // Retry the original request with the new access token
         originalRequest.headers.Authorization = `Bearer ${tokens.access.token}`;
         return apiClient(originalRequest);
       } catch (refreshError) {
         console.error('Token refresh failed:', refreshError.message);
-
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
-        // Clear tokens and redirect to login if refresh fails
-        // localStorage.removeItem("accessToken");
-        // localStorage.removeItem("refreshToken");
         console.log('Redirecting to login from interceptor catch');
         window.location.href = '/auth/sign-in';
         return Promise.reject(refreshError);

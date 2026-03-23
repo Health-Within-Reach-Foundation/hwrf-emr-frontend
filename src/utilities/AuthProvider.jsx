@@ -5,7 +5,6 @@ const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  // const [userSpecialty, setUserSpecialty] = useState(null);
   const [userRoles, setUserRoles] = useState([]);
   const [permissions, setPermissions] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -15,34 +14,70 @@ const AuthProvider = ({ children }) => {
   const saveAuthData = (authData) => {
     setUser(authData.user);
     setIsAuthenticated(true);
-    setUserRoles(authData.user.roles.map((role) => role.roleName));
-    const permissionsArray = authData.user.roles?.reduce((acc, role) => {
-      // Check if the role has permissions and add them to the accumulator array
-      if (role.permissions) {
-        acc.push(...role.permissions);
-      }
+
+    // ✅ safely handle missing roles
+    const roles = authData.user.roles || [];
+    setUserRoles(roles.map((role) => role.roleName));
+
+    const permissionsArray = roles.reduce((acc, role) => {
+      if (role.permissions) acc.push(...role.permissions);
       return acc;
     }, []);
-    // Now set the permissions to the state
     setPermissions(permissionsArray);
-    setCurrentCampDetails(authData?.user?.camps.find((eachCamp) => eachCamp.id == authData?.user.currentCampId) || null);
-    // setUserSpecialty(authData.user.specialties[0].id);
+
+    // ✅ safely handle missing camps
+    const camps = authData.user.camps || [];
+    setCurrentCampDetails(
+      camps.find((eachCamp) => eachCamp.id == authData?.user.currentCampId) || null
+    );
+
     localStorage.setItem('accessToken', authData?.tokens?.access?.token);
     localStorage.setItem('refreshToken', authData?.tokens?.refresh?.token);
   };
 
+  // Step 1: email + password → may return otpRequired or full auth data
   const login = async (email, password) => {
     try {
-      // setLoading(true);
       const data = await authServices.login(email, password);
       console.log('Inside the Auth provider login function --> ', data);
+
+      // Production: OTP required — do NOT save auth yet, just return to sign-in
+      if (data?.otpRequired) {
+        return data;
+      }
+
+      // Development: direct login (no OTP)
       saveAuthData(data);
-      // setLoading(false);
       return data;
     } catch (error) {
       console.error('Login failed:', error);
-      // setLoading(false);
       throw error;
+    }
+  };
+
+  // ✅ Step 2: verify OTP → get full tokens and save auth
+  const verifyOtp = async (preAuthToken, otp) => {
+    try {
+      const data = await authServices.verifyOtp(preAuthToken, otp);
+      console.log('Inside the Auth provider verifyOtp function --> ', data);
+
+      // Save tokens first so getUser() can use them
+      localStorage.setItem('accessToken', data?.tokens?.access?.token);
+      localStorage.setItem('refreshToken', data?.tokens?.refresh?.token);
+
+      // Fetch full user data with all associations
+      const fullUserData = await authServices.getUser();
+      saveAuthData({ user: fullUserData.user, tokens: data.tokens });
+
+      return data;
+    } catch (error) {
+      console.error('OTP verification failed:', error);
+      // ✅ Clean up any partial tokens so initializeAuth doesn't redirect
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      // ✅ Re-throw with a clean message
+      const message = error?.message || error?.error || 'Invalid or expired OTP';
+      throw new Error(message);
     }
   };
 
@@ -82,14 +117,11 @@ const AuthProvider = ({ children }) => {
       setUser(data.user);
       setUserRoles(data.user.roles.map((role) => role.roleName));
       const permissionsArray = data.user.roles?.reduce((acc, role) => {
-        // Check if the role has permissions and add them to the accumulator array
         if (role.permissions) {
           acc.push(...role.permissions);
         }
         return acc;
       }, []);
-
-      // Now set the permissions to the state
       setPermissions(permissionsArray);
       setIsAuthenticated(true);
       if (data.user.currentCampId && data.user?.camps.length > 0) {
@@ -113,7 +145,10 @@ const AuthProvider = ({ children }) => {
           saveAuthData(newTokens);
         } catch (refreshError) {
           console.error('Token refresh failed:', refreshError.message);
-          logout();
+          // ✅ Only logout if NOT already on auth pages
+          if (!window.location.pathname.includes('/auth/')) {
+            logout();
+          }
         }
       }
     } finally {
@@ -132,6 +167,7 @@ const AuthProvider = ({ children }) => {
         user,
         isAuthenticated,
         login,
+        verifyOtp,
         logout,
         loading,
         userRoles,
