@@ -11,11 +11,18 @@ const login = async (email, password) => {
   }
 };
 
+// ✅ NEW: Verify OTP for 2-step login
+const verifyOtp = async (preAuthToken, otp) => {
+  try {
+    const response = await apiClient.post('auth/verify-otp', { preAuthToken, otp });
+    return response.data;
+  } catch (error) {
+    console.error('OTP verification failed:', error);
+    throw error.response?.data || error?.message || new Error('OTP verification failed');
+  }
+};
+
 // Logout function
-/**
- *
- * @returns {Boolean}
- */
 const logout = async () => {
   const refreshToken = localStorage.getItem('refreshToken');
   console.log('calling log out function ', refreshToken);
@@ -45,7 +52,7 @@ const refreshAccessToken = async (refreshToken, accessToken) => {
 // Fetch user data using access token
 const getUser = async () => {
   try {
-    const response = await apiClient.get('auth/me'); // Assuming "auth/me" validates the token and returns user data
+    const response = await apiClient.get('auth/me');
     return response.data;
   } catch (error) {
     throw error.response?.data || new Error('Failed to fetch user data');
@@ -64,7 +71,6 @@ const verifyToken = async (jwtToken) => {
 
 const resetPassword = async (jwtToken, password) => {
   try {
-    // Call the API endpoint to reset the password
     const response = await apiClient.post(`/auth/reset-password/?token=${jwtToken}`, {
       password,
     });
@@ -77,7 +83,6 @@ const resetPassword = async (jwtToken, password) => {
 
 const forgotPassword = async (email) => {
   try {
-    // Call the API endpoint to reset the password
     const response = await apiClient.post(`/auth//forgot-password`, { email });
     return response.data;
   } catch (error) {
@@ -88,6 +93,7 @@ const forgotPassword = async (email) => {
 
 export default {
   login,
+  verifyOtp,
   logout,
   refreshAccessToken,
   getUser,
